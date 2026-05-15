@@ -89,3 +89,4 @@ docker-compose.override.yml
 .huggingface/
 .sentence_transformers/
 
+.claude/
