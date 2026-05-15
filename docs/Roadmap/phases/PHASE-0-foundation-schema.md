@@ -12,7 +12,7 @@ tags:
 
 # Phase 0 - Foundation and Schema
 
-Goal: create the repository, API/web scaffolds, CI/config baseline, and persistence layer that every feature epic depends on.
+Goal: create the repository, **Django/DRF** + web scaffolds, CI/config baseline, and **Postgres 15 + pgvector** persistence layer that every feature epic depends on. See [ADR-0001 — Django backend stack](../../adr/ADR-0001-django-backend-stack.md).
 
 Source epics:
 
@@ -26,7 +26,7 @@ Source epics:
 ## Foundation Tickets
 
 - [CS-001](../tickets/CS-001.md) - Initialize public repo with MIT license and README skeleton.
-- [CS-002](../tickets/CS-002.md) - FastAPI scaffold with pyproject, ruff, mypy, pytest.
+- [CS-002](../tickets/CS-002.md) - Django 5.2 LTS + DRF scaffold with pyproject, ruff, mypy, pytest.
 - [CS-003](../tickets/CS-003.md) - Next.js scaffold with Tailwind, shadcn/ui, ESLint, Prettier.
 - [CS-004](../tickets/CS-004.md) - CI pipeline on PR.
 - [CS-005](../tickets/CS-005.md) - Pre-commit hooks for API and web.
@@ -39,8 +39,8 @@ Source epics:
 ## Persistence Tickets
 
 - [CS-020](../tickets/CS-020.md) - Provision Postgres 15+ with pgvector.
-- [CS-021](../tickets/CS-021.md) - Alembic init and initial migration framework.
-- [CS-022](../tickets/CS-022.md) - SQLAlchemy 2 base, session factory, FastAPI dependency.
+- [CS-021](../tickets/CS-021.md) - Initial Django migration framework.
+- [CS-022](../tickets/CS-022.md) - Django ORM / DB wiring for DRF and workers.
 - [CS-023](../tickets/CS-023.md) - Schema: Project entity.
 - [CS-024](../tickets/CS-024.md) - Schema: ContractAnalysis entity.
 - [CS-025](../tickets/CS-025.md) - Schema: ContractSubmission and OcrJob.

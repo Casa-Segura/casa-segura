@@ -28,7 +28,7 @@ tags:
 
 Deliver the rendered report through the channel the user chose at submission time: email PDF, WhatsApp via Zavu, or public web link with TTL. Manage delivery state, retries, and link expiration. Honor the privacy invariants in [[PRD_GENERAL]] BR-01 (no persisted report) and US-07 (hashed delivery targets, discard after confirmation).
 
-This is where **Zavu integration lives**. The TypeScript reference at [[GENERATED-RESEARCH-Zavu-implementation-typescript-2026-05-12]] is **prior art**: it was written for the Huella project (TS / Drizzle / Fastify / BullMQ). Casa Segura is Python / FastAPI / SQLAlchemy. Tickets in this epic adapt the patterns, they do not copy the code.
+This is where **Zavu integration lives**. The TypeScript reference at [[GENERATED-RESEARCH-Zavu-implementation-typescript-2026-05-12]] is **prior art**: it was written for the Huella project (TS / Drizzle / Fastify / BullMQ). Casa Segura is Python / **Django 5.2 LTS** + **DRF** / **Django ORM**, with **Celery** on **Redis** for async work. Tickets in this epic adapt the patterns, they do not copy the code. See [ADR-0001 — Django backend stack](../adr/ADR-0001-django-backend-stack.md).
 
 ## Definition of done
 
@@ -50,7 +50,7 @@ This is where **Zavu integration lives**. The TypeScript reference at [[GENERATE
 - Zavu Python client wrapper (no published SDK in Python, so a thin requests-based client)
 - Zavu template management (templates created in Zavu dashboard; client supplies template name + parameters)
 - Webhook endpoint for Zavu delivery status callbacks with signature validation
-- Worker / queue pattern for outbound delivery (Celery or RQ on Redis — pick one, justify in ADR)
+- Worker / queue pattern for outbound delivery (**Celery** on **Redis**; align with [ADR-0001](../adr/ADR-0001-django-backend-stack.md))
 - Rate limiting aligned with Zavu tier
 - Retry policy with exponential backoff
 - Link TTL enforcement at serve time
@@ -74,7 +74,7 @@ This is where **Zavu integration lives**. The TypeScript reference at [[GENERATE
 - [[CS-230]] — Pydantic schemas for delivery: DeliveryRequest payload, channel enum, status enum
 - [[CS-231]] — Delivery service interface (channel-agnostic dispatcher)
 - [[CS-232]] — Hashed delivery target storage; clear original after confirmation
-- [[CS-233]] — Worker / queue scaffolding (decision: Celery vs RQ; ADR + impl)
+- [[CS-233]] — Celery + Redis worker / queue scaffolding (ADR + impl)
 - [[CS-234]] — Retry policy with exponential backoff and dead-letter
 
 ### Email channel
@@ -115,6 +115,6 @@ This is where **Zavu integration lives**. The TypeScript reference at [[GENERATE
 
 ## Notes
 
-- [[GENERATED-RESEARCH-Zavu-implementation-typescript-2026-05-12]] — prior art. Use for: endpoint shapes, error codes, template structure, webhook payload structure, rate limit tiers, status semantics (sent/delivered/read/failed). Do **not** use for: SDK calls, BullMQ patterns (we use Celery or RQ — see [[CS-233]]), Drizzle migrations, Fastify routes.
+- [[GENERATED-RESEARCH-Zavu-implementation-typescript-2026-05-12]] — prior art. Use for: endpoint shapes, error codes, template structure, webhook payload structure, rate limit tiers, status semantics (sent/delivered/read/failed). Do **not** use for: SDK calls, BullMQ patterns (we use **Celery** on **Redis** — see [[CS-233]]), Drizzle migrations, Fastify routes (implement as **Django** views / **DRF** endpoints).
 - [[BE-SERVICES]] §5 has the updated `LegalReference` schema; the WhatsApp summary in [[CS-240]] is expected to include the citation line when a critical finding has one.
 - [[PRD_GENERAL]] BR-07 disclaimer is in every channel's template — verify in [[CS-236]], [[CS-240]] AC.

@@ -41,10 +41,10 @@ Add to the existing principles in `ARCHITECTURE.md` §2:
                            │                        │
                            └────────┬───────────────┘
                                     │ HTTPS / JSON
-                            ┌───────▼────────┐
-                            │   API (BE)     │
-                            │   FastAPI      │
-                            └───────┬────────┘
+                            ┌───────▼────────────────┐
+                            │   API (BE)             │
+                            │   Django 5.2 + DRF     │
+                            └───────┬────────────────┘
                                     │
         ┌───────────────────────────┼───────────────────────────┐
         │                           │                           │
@@ -61,8 +61,8 @@ Add to the existing principles in `ARCHITECTURE.md` §2:
               │  Static data + legal corpus  │
               │  patterns.yaml               │
               │  blacklist.csv               │
-              │  legal/laws/*.md      ◄──── NEW
-              │  legal/index.faiss    ◄──── NEW (article embeddings)
+              │  legal/laws/*.md      ◄──── NEW (markdown source / ingest)
+              │  Postgres 15 + pgvector ◄── canonical chunk + vector store
               └──────────────────────────────┘
                       ▲
                       │
@@ -73,8 +73,8 @@ Add to the existing principles in `ARCHITECTURE.md` §2:
 
 Three things change:
 
-1. **`legal/` data directory** added next to `data/`, holding the markdown corpus and a built embedding index.
-2. **`legal_index` service** added under `services/`, responsible for retrieval-time queries against the corpus.
+1. **`legal/` data directory** added next to `data/`, holding the markdown corpus used for ingestion into the DB.
+2. **`legal_index` service** (or shared RAG service — see `BE-SERVICES.md`) runs retrieval against **`pgvector`** in Postgres; optional **FAISS** may remain for local prototyping only.
 3. **`verdict.synthesize_*`** is upgraded to call `legal_index` for each finding before final synthesis, attaching `legal_basis` arrays.
 
 Nothing else moves. WhatsApp, Zavu, vision, blacklist, reputation, sessions: unchanged.
@@ -116,6 +116,8 @@ Each `## Article N` becomes one chunk. The chunk's metadata (law_id, article num
 This is the only source of legal grounding. Adding a new law = adding a new file + reindex. PR-able. Diffable.
 
 ## 5. The retrieval layer: `legal_index` service
+
+> **Implementation note:** The `LegalIndex` sketch below uses an in-process **FAISS** index as a **prototype** pattern. The **canonical** Casa Segura stack stores chunks and embeddings in **PostgreSQL 15 + pgvector** with Django ORM (see `docs/BE Documents/BE-SERVICES.md` §4 and [ADR-0001](../adr/ADR-0001-django-backend-stack.md)); wire the same public `search()` contract to `pgvector` similarity queries in production.
 
 ```python
 # services/legal_index.py
@@ -198,14 +200,14 @@ class LegalIndex:
 Notes:
 
 - **Embedding model:** for Spanish, a multilingual model that handles `es` well — `paraphrase-multilingual-MiniLM-L12-v2` or `intfloat/multilingual-e5-base` are both reasonable defaults. Lightweight, runs CPU.
-- **Index storage:** built at startup from markdown, kept in memory. ~200 chunks × 384 dims = trivial. No external vector DB needed for MVP. If the corpus grows, swap to Chroma or pgvector with no API change.
+- **Index storage (canonical):** **Postgres 15 + pgvector** — same pattern as `BE-SERVICES.md` / F3 (`LEGAL_CHUNK.embedding`). **Optional:** keep an in-memory FAISS index for small offline fixtures or dev-only scripts; it is **not** the production source of truth.
 - **Threshold:** 0.45 cosine sim is a starting point. Tuning data: a fixture set of 20 finding-text → expected-article pairs, run at startup as a regression check.
 - **Stay vigente-only.** The frontmatter `estado` filter prevents `derogado` articles (which Inquilinato has many of in chapter V) from showing up.
 - **Tag the chunks at build time** with finding-IDs from the `## Application to Casa Segura` section. A finding can pre-target chunks via tag boost rather than relying purely on semantic similarity.
 
 ## 6. Wiring into the verdict pipeline
 
-The two endpoints (`/check-project` and `/check-contract`) gain one step before synthesis:
+The two DRF endpoints (`/check-project` and `/check-contract`, names illustrative — see PRDs for actual `/v1/...` routes) gain one step before synthesis:
 
 ```python
 # services/verdict.py (sketch)

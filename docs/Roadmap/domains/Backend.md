@@ -11,7 +11,7 @@ API routes, service orchestration, queues, report generation functions, OCR/clas
 
 ## Ownership Notes
 
-Backend owners should watch contracts between FastAPI services, workers, persisted models, and downstream report or delivery flows. Cross-check secondary tags for security, data, AI/RAG, delivery, and product copy dependencies before implementation.
+Backend owners should watch contracts between **Django/DRF** APIs, **Celery** workers, **Django ORM** models, and downstream report or delivery flows. Stack reference: [ADR-0001 — Django backend stack](../../adr/ADR-0001-django-backend-stack.md). Cross-check secondary tags for security, data, AI/RAG, delivery, and product copy dependencies before implementation.
 
 ## Tickets
 

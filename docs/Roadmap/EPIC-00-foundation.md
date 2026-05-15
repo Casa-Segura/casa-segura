@@ -20,14 +20,14 @@ tags:
 
 ## Goal
 
-Bootstrap the repository and the developer environment so every other epic can start writing service code without paving the road first. This covers monorepo layout, FastAPI and Next.js scaffolds, CI, secrets baseline, logging conventions with the versioning fields the PRDs demand (`rubric_version`, `corpus_version`, analysis correlation IDs), and the error envelope contract that every API response will speak.
+Bootstrap the repository and the developer environment so every other epic can start writing service code without paving the road first. This covers monorepo layout, **Django 5.2 LTS** + **Django REST Framework (DRF)** and Next.js scaffolds, CI, secrets baseline, logging conventions with the versioning fields the PRDs demand (`rubric_version`, `corpus_version`, analysis correlation IDs), and the error envelope contract that every API response will speak. Stack rationale and boundaries: [ADR-0001 — Django backend stack](../adr/ADR-0001-django-backend-stack.md).
 
 This epic is BE-heavy on purpose — the FE scaffold is a thin shell that waits on stable BE contracts (per your direction).
 
 ## Definition of done
 
 - [ ] Repo public on GitHub under MIT, README states project posture and "not legal advice" disclaimer
-- [ ] `apps/api` runs `uvicorn` locally with one health endpoint, types check clean, tests run green
+- [ ] `apps/api` runs locally via `python manage.py runserver` (or project-documented equivalent) with one health endpoint, types check clean, tests run green
 - [ ] `apps/web` runs `next dev` locally with one page, types check clean
 - [ ] CI runs lint + type-check + test + build on every PR, blocks merge on failure
 - [ ] `.env.example` enumerates every variable the system needs across all services (per [[BE-SERVICES]] §9)
@@ -61,7 +61,7 @@ This epic is BE-heavy on purpose — the FE scaffold is a thin shell that waits 
 ## Tickets
 
 - [[CS-001]] — Initialize public repo with MIT license and README skeleton
-- [[CS-002]] — FastAPI scaffold with pyproject, ruff, mypy, pytest
+- [[CS-002]] — Django + DRF API scaffold with pyproject, ruff, mypy, pytest (per [ADR-0001](../adr/ADR-0001-django-backend-stack.md))
 - [[CS-003]] — Next.js scaffold with Tailwind, shadcn/ui, ESLint, Prettier
 - [[CS-004]] — CI pipeline (lint, type-check, test, build) on PR
 - [[CS-005]] — Pre-commit hooks for both `apps/api` and `apps/web`

@@ -24,7 +24,7 @@ The feature does not expose direct functionality to the user, but its correct im
 **In scope:**
 
 - Complete database schema with all persistent and transient tables defined in `DOMAIN_MODEL.md`
-- Versioned migrations (Alembic) to evolve the schema without downtime
+- Versioned Django migrations (`manage.py migrate`) to evolve the schema without downtime
 - Logic for `Project` entity creation/matching/update
 - Computation and update of `Project.avg_score` and `score_distribution`
 - Cron job `cleanup_transient`: deletes `contract_submission` and `ocr_job` with `expires_at < NOW()` (every 15 minutes)
@@ -62,9 +62,9 @@ The feature does not expose direct functionality to the user, but its correct im
 
 **Acceptance criteria:**
 
-- The system uses Alembic as migration tool
+- The system uses Django’s built-in migration framework (Django 5.2 LTS) as the migration tool
 - Migrations are versioned and committed to the repo
-- The command `alembic upgrade head` runs all pending migrations
+- The command `python manage.py migrate` runs all pending migrations
 - The initial schema creates all tables listed in `DOMAIN_MODEL.md` with their indices, constraints, and triggers where applicable
 - Migrations are idempotent: running twice does not break anything
 - An optional "seed" migration is included that loads initial catalogs (rubric version `1.0.0`, placeholder corpus version, criteria from YAML)
@@ -281,7 +281,7 @@ The feature does not expose direct functionality to the user, but its correct im
 
 **BR-00 (governing invariant):** The full text of the analyzed contract is never persisted in any system table. F1 discards it after extraction. F2, F4, F5 pass it in memory between features. The only ways textual fragments of the contract survive in the database are: (a) the `evidence_clause_snippet` embedded in each `Finding` inside `contract_analysis.findings`, subject to 90-day anonymization, and (b) the economic figures inside `economic_summary`, also subject to anonymization. This invariant is the structural guarantee of the product's privacy promise. Any future feature that requires persisting more contract content must pass through explicit privacy review and update of the general PRD.
 
-**BR-01:** The database schema is owned by F8. Other features can read/write but not alter the structure. Schema changes go through an Alembic migration with review.
+**BR-01:** The database schema is owned by F8. Other features can read/write but not alter the structure. Schema changes go through a Django migration with review.
 
 **BR-02:** Persistent tables (`project`, `contract_analysis`, catalogs) have indefinite life or governed by explicit retention policy. Transient ones (`contract_submission`, `ocr_job`, `delivery_request`) are deleted after their TTL.
 

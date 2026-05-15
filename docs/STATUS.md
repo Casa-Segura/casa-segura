@@ -9,7 +9,7 @@
 
 | | Name | Role | Stack |
 |---|---|---|---|
-| **A** | _tbd_ | Backend / ML | Python, FastAPI, OpenRouter, Redis |
+| **A** | _tbd_ | Backend / ML | Python, Django 5.2 LTS, DRF, OpenRouter, Celery, Redis |
 | **B** | _tbd_ | Frontend | Next.js, Tailwind, v0 |
 | **C** | _tbd_ | Integration / Content | Zavu, content curation, README, deck |
 
@@ -40,7 +40,7 @@
 | ID | Title | Owner | Status |
 |---|---|---|---|
 | T001 | Create GitHub org/repo, MIT license, README skeleton | C | ☐ |
-| T002 | BE scaffold: FastAPI + pyproject + Dockerfile + .env.example | A | ☐ |
+| T002 | BE scaffold: Django + DRF + pyproject + Dockerfile + .env.example | A | ☐ |
 | T003 | FE scaffold: Next.js App Router + Tailwind + shadcn | B | ☐ |
 | T004 | Set up OpenRouter account, store key in shared secrets | A | ☐ |
 | T005 | Set up Upstash Redis, store URL in shared secrets | A | ☐ |
@@ -68,8 +68,8 @@
 | ID | Title | Owner | Status |
 |---|---|---|---|
 | T015 | Provision Postgres + pgvector (Supabase or Railway) | A | ☐ |
-| T016 | Alembic init + initial migration (all ER tables, vector ext) | A | ☐ |
-| T017 | SQLAlchemy ORM models matching ER (legal_document, legal_chunk, fraud_pattern, pattern_legal_link, blacklisted_developer, blacklist_source, check_event) | A | ☐ |
+| T016 | Django migrations bootstrap (all ER tables, vector ext) | A | ☐ |
+| T017 | Django ORM models matching ER (legal_document, legal_chunk, fraud_pattern, pattern_legal_link, blacklisted_developer, blacklist_source, check_event) | A | ☐ |
 | T018 | Seed script: load `patterns.yaml` → `fraud_pattern` table | C | ☐ |
 | T019 | Seed script: load `blacklist.csv` → `blacklisted_developer` + `blacklist_source` | C | ☐ |
 

@@ -41,20 +41,20 @@ Primary folders:
 
 Start here:
 
-- `CS-002` - FastAPI scaffold with `pyproject`, ruff, mypy, pytest.
+- `CS-002` - Django 5.2 LTS + DRF API scaffold with `pyproject`, ruff, mypy, pytest (see [ADR-0001](../adr/ADR-0001-django-backend-stack.md)).
 
 Next picks after `CS-002`:
 
 - `CS-007` - Structured logging with correlation IDs and version fields.
 - `CS-008` - Health and readiness endpoints.
 - `CS-009` - Standard error envelope schema.
-- `CS-022` - SQLAlchemy 2 base, session factory, FastAPI dependency.
+- `CS-022` - Django ORM / database layer wired for DRF and workers.
 
 Skill hints:
 
 - Python design patterns for service layering and dependency injection.
 - Python error handling for validation, exception mapping, and public error envelopes.
-- Python type safety for strict public signatures, Pydantic models, and SQLAlchemy typing boundaries.
+- Python type safety for strict public signatures, **Pydantic v2** domain DTOs and payloads, and Django ORM boundaries.
 
 ### Engineer 2 - Frontend Foundation
 
@@ -258,7 +258,7 @@ flowchart TD
   cs007 --> cs009["CS-009 Error envelope"]
   cs002 --> cs020["CS-020 Postgres pgvector"]
   cs006 --> cs020
-  cs002 --> cs022["CS-022 SQLAlchemy"]
+  cs002 --> cs022["CS-022 Django ORM"]
   cs003 --> cs290["CS-290 Landing"]
   cs002 --> cs004["CS-004 CI"]
   cs003 --> cs004
@@ -289,18 +289,18 @@ flowchart TD
 
 ## BE Stack Trace To Keep Visible
 
-The roadmap strongly points to a Python backend:
+The roadmap standardizes on a **Django 5.2 LTS** + **DRF** Python backend ([ADR-0001](../adr/ADR-0001-django-backend-stack.md)):
 
-- FastAPI and Python 3.11+ in `CS-002`.
-- Pydantic schemas in `CS-009`, `CS-150`, `CS-230`, and related tickets.
-- SQLAlchemy 2 and Alembic in `CS-021` and `CS-022`.
-- Postgres 15+ with pgvector in `CS-020` and `CS-030`.
-- Redis for queues and jobs through foundation and delivery tickets.
+- Django + DRF and Python 3.11+ in `CS-002` (local dev via `manage.py` conventions).
+- **Pydantic v2** domain DTOs / validation in tickets such as `CS-009`, `CS-150`, `CS-230`, and related work (alongside DRF serializers where appropriate).
+- **Django ORM** and **Django migrations** in `CS-021` and `CS-022`.
+- **Postgres 15** with **pgvector** in `CS-020` and `CS-030`.
+- **Redis** for **Celery** brokers/backends and related jobs across foundation and delivery tickets.
 - pypdf, OpenRouter vision, and Tesseract for OCR in `CS-052` through `CS-055`.
 - sentence-transformers MiniLM embeddings and pgvector retrieval in `CS-083` through `CS-085`.
 - Jinja and WeasyPrint for report generation in `CS-200` through `CS-210`.
-- Celery or RQ decision for delivery workers in `CS-233`.
+- **Celery** workers on **Redis** for delivery and async tasks (`CS-233` and dependents).
 - Zavu outbound WhatsApp integration in `CS-238` through `CS-244`.
 
-When starting BE work, search for Python, FastAPI, Pydantic, SQLAlchemy, Postgres/pgvector, Redis queues, OCR, RAG, and Zavu skills before implementation.
+When starting BE work, search for Python, Django, DRF, **Pydantic v2**, Django ORM, Postgres/pgvector, **Redis**/Celery, OCR, RAG, and Zavu skills before implementation.
 

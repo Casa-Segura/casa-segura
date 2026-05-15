@@ -1,6 +1,8 @@
 # Casa Segura — Architecture
 
 > Working name: **Casa Segura** (alt: Buena Seña). See `STATUS.md` Decisions Log.
+>
+> **Implementation stack:** Django 5.2 LTS + DRF, Django ORM + Django migrations, Celery + Redis, PostgreSQL 15 + pgvector; Pydantic v2 for domain DTOs and queue/LLM payloads ([ADR-0001](./adr/ADR-0001-django-backend-stack.md), `docs/analysis/_shared/GLOBAL_ASSUMPTIONS.md`). The sections below center on the original **two-flow MVP** narrative; the full F1–F8 product scope lives in `PRD_GENERAL.md` and per-feature PRDs.
 
 ## 1. What we are building
 
@@ -30,24 +32,26 @@ Gated by Flow 1. User uploads the contract PDF. System checks for fraud-specific
                            │                        │
                            └────────┬───────────────┘
                                     │ HTTPS / JSON
-                            ┌───────▼────────┐
-                            │   API (BE)     │
-                            │   FastAPI      │
-                            └───────┬────────┘
+                            ┌───────▼────────────────┐
+                            │   API (BE)             │
+                            │   Django 5.2 + DRF     │
+                            └───────┬────────────────┘
                                     │
-              ┌─────────────────────┼─────────────────────┐
-              │                     │                     │
-       ┌──────▼──────┐      ┌───────▼───────┐    ┌────────▼────────┐
-       │ OpenRouter  │      │  Web search   │    │  Redis (session │
-       │ (vision +   │      │  (reputation) │    │   + Flow 1 gate)│
-       │  text LLMs) │      │               │    │                 │
-       └─────────────┘      └───────────────┘    └─────────────────┘
+       ┌────────────────────────────┼────────────────────────────┐
+       │                            │                            │
+┌──────▼──────┐            ┌────────▼────────┐           ┌────────▼────────┐
+│ OpenRouter  │            │  Web search     │           │ Redis           │
+│ (vision +   │            │  (reputation)   │           │ (sessions,      │
+│  text LLMs) │            │                 │           │  Celery broker) │
+└─────────────┘            └─────────────────┘           └─────────────────┘
                                     │
-                            ┌───────▼────────┐
-                            │  Static data   │
-                            │  patterns.yaml │
-                            │  blacklist.csv │
-                            └────────────────┘
+                   ┌────────────────┴────────────────┐
+                   │                                 │
+           ┌───────▼────────┐                 ┌───────▼────────┐
+           │  Static data   │                 │ Postgres 15   │
+           │  patterns.yaml │                 │ + pgvector    │
+           │  blacklist.csv │                 │ (curated rows)│
+           └────────────────┘                 └────────────────┘
 ```
 
 ## 4. Stack
@@ -55,10 +59,12 @@ Gated by Flow 1. User uploads the contract PDF. System checks for fraud-specific
 | Layer | Choice | Why |
 |---|---|---|
 | Frontend | Next.js (App Router) on Vercel | Fastest path to mobile-first, v0 output drops in cleanly |
-| Backend | Python 3.11 + FastAPI | One team member's strongest stack |
+| Backend | Python 3.11+ **Django 5.2 LTS** + **DRF**; **Celery** workers | LTS stability; ORM + admin + migrations; async jobs for LLM/OCR/RAG stages |
+| Domain DTOs / payloads | **Pydantic v2** | Framework-free types for domain, LLM structured I/O, and queue envelopes |
 | LLM gateway | OpenRouter | Single API for vision + text, model swap without code change |
 | WhatsApp | Zavu | Required by hackathon credits, LATAM-native |
-| Session | Redis (Upstash free tier) | Cheap, persists Flow 1 → Flow 2 gate |
+| Session & broker | **Redis** (Upstash free tier or managed) | Flow 1 → Flow 2 gate; Celery broker; optional stream handoffs |
+| Database | **PostgreSQL 15+** + **pgvector** | Curated corpus, rubric/catalog data, vectors — not for raw uploads (see privacy §10) |
 | OCR strategy | Vision LLM, **not** Tesseract | Better on weathered outdoor signs |
 | PDF text | pypdf | Simple text PDFs only in MVP |
 | Search | SerpAPI free tier or DuckDuckGo HTML | Reputation lookups |

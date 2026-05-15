@@ -168,11 +168,13 @@ These ship in the `shared/` module; every feature module imports from them and d
 
 ---
 
-## 2. CRITICAL contradiction — ARCHITECTURE.md vs. PRDs
+## 2. CRITICAL scope note — ARCHITECTURE.md vs. PRDs
 
-`docs/ARCHITECTURE.md` describes a two-flow MVP (sign photo + contract PDF), a blacklist, reputation search, FastAPI with Redis-only persistence and no Postgres. `PRD_GENERAL.md` §2 lists every one of those items as **out of scope**, and `DOMAIN_MODEL.md` + `FEATURES_MAP.md` describe a fully different system anchored on a 38-criterion rubric, RAG corpus, Postgres persistence, retention policy, and Project entity.
+`docs/ARCHITECTURE.md` centers on the **original two-flow MVP** narrative (billboard photo + contract PDF, blacklist- and reputation-first). `PRD_GENERAL.md` §2 and per-feature PRDs F1–F8 describe the **full product** (ingestion pipeline, rubric, RAG corpus, retention, `Project`, etc.).
 
-**Resolution:** `ARCHITECTURE.md` is treated as **stale** and **superseded** by `PRD_GENERAL.md` + per-feature PRDs F1–F8 + `DOMAIN_MODEL.md`. The shared assumption is that `ARCHITECTURE.md` is a historical document. It is not cited by any feature plan. The user should rename or archive it to avoid future confusion. The PRDs' mention of FastAPI-style endpoints (`POST /v1/contracts/submit`, etc.) is interpreted purely as URL-path commitment; the framework is Django/DRF.
+**Stack resolution (implementation):** `ARCHITECTURE.md`, `BE-SERVICES.md`, and the legal-layer architecture doc are aligned on **Django 5.2 LTS + DRF**, **Django ORM + Django migrations**, **Celery + Redis**, **PostgreSQL 15 + pgvector**, and **Pydantic v2** domain DTOs / queue payloads ([ADR-0001](../../adr/ADR-0001-django-backend-stack.md)).
+
+**Product resolution:** **Canonical behavior, schema, and business rules** remain `PRD_GENERAL.md` + F1–F8 + `DOMAIN_MODEL.md` + `FEATURES_MAP.md`. REST paths in PRDs (for example `POST /v1/contracts/submit`) are **URL contracts** implemented with **Django/DRF**, not FastAPI.
 
 ---
 
@@ -421,7 +423,7 @@ These items are short enough to fix once and reused across each plan instead of 
 
 | Document | Status | Action |
 |---|---|---|
-| `docs/ARCHITECTURE.md` | Stale — describes a different MVP | Archive; do not implement against it |
+| `docs/ARCHITECTURE.md` | **Stack:** current (Django 5.2 LTS per ADR-0001). **Narrative:** simplified two-flow MVP; **canonical product scope** is PRDs + `DOMAIN_MODEL.md`. | Use for high-level diagrams; do not override F1–F8 behavior |
 | `docs/STATUS.md` | Out of date; describes hour-marked hackathon plan | Ignore for the formal implementation plans |
 | `.claude/skills/shared-references/architecture-conventions.md` | **Canonical for the layered DDD/CQRS structure**. Casa Segura adopts it directly with only the permission classes substituted (Section 1 above). | — |
 | Per-feature PRDs F1–F8, `PRD_GENERAL.md`, `DOMAIN_MODEL.md`, `FEATURES_MAP.md`, `RUBRICA_CONTRATO.md` | **Canonical** for behavior, data, business rules. URL paths preserved verbatim. | All implementation plans align to these |

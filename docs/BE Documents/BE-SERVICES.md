@@ -18,12 +18,12 @@
 |---|---|---|
 | Relational DB | Postgres 15+ | Single DB for ER and vectors |
 | Vector store | pgvector extension | Avoids second service |
-| ORM / migrations | SQLAlchemy 2 + Alembic | Standard, fast for the team |
+| ORM / migrations | **Django ORM** + **Django migrations** | Native to Django 5.2 LTS; matches project ADR-0001 |
 | Embeddings | `paraphrase-multilingual-MiniLM-L12-v2` (sentence-transformers) | Free, multilingual, 80 MB, runs in-process |
 | OCR fallback | Tesseract + `pdf2image` | Free, offline, used only if vision LLM fails |
 | Hosting DB | Supabase or Railway Postgres | Free tier, pgvector available |
 
-Everything else (FastAPI, OpenRouter, Redis, Zavu) is unchanged from v1.
+Everything else (**Django REST Framework** for the HTTP API, Celery + **Redis**, OpenRouter, Zavu) follows the stack in `docs/ARCHITECTURE.md` and [ADR-0001](../adr/ADR-0001-django-backend-stack.md).
 
 ---
 
@@ -135,12 +135,14 @@ This separation is the privacy contract. Curated data persists. User data does n
 
 ### 2.4 Migrations
 
-Alembic from hour 0. Initial migration creates all tables and the pgvector extension:
+**Django migrations** from project bootstrap. Initial migration(s) enable the pgvector extension and create ORM-backed tables (via `RunSQL` / `CREATE EXTENSION` where the backend does not auto-create extensions):
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS vector;
--- then SQLAlchemy-generated tables
+-- then Django migration–generated tables (VectorField, etc.)
 ```
+
+See `docs/analysis/_shared/GLOBAL_ASSUMPTIONS.md` for per-module `migrations/` layout.
 
 ---
 
@@ -298,7 +300,9 @@ RAG_SIMILARITY_THRESHOLD=0.65
 
 ---
 
-## 5. Updated schemas
+## 5. Updated schemas (Pydantic v2 domain DTOs)
+
+API request/response serialization may use DRF serializers; **domain** shapes and LLM outputs stay as Pydantic `BaseModel` (v2) for a framework-free core.
 
 ```python
 class LegalReference(BaseModel):
@@ -327,36 +331,37 @@ Web rendering: the legal reference is a collapsible card under each finding.
 
 ---
 
-## 6. Updated repo layout
+## 6. Updated repo layout (Django)
+
+Concrete layout matches `GLOBAL_ASSUMPTIONS.md` (per-feature packages, `infrastructure/django/` per module). Sketch:
 
 ```
-backend/
-├── alembic/                  # NEW — migrations
-├── corpus/
-│   ├── raw/                  # source PDFs/HTML (gitignored if too big)
-│   └── README.md             # how to add a new legal source
+casa_segura/
+├── manage.py
+├── config/
+│   ├── settings/{base,dev,prod}.py
+│   ├── urls.py
+│   └── celery.py
 ├── scripts/
-│   └── ingest_corpus.py      # NEW
-├── app/
-│   ├── db/                   # NEW
-│   │   ├── base.py           # SQLAlchemy declarative base
-│   │   ├── session.py        # engine + session factory
-│   │   └── models.py         # ORM models matching ER above
-│   ├── services/
-│   │   ├── vision.py
-│   │   ├── llm.py
-│   │   ├── reputation.py
-│   │   ├── ocr.py            # NEW
-│   │   ├── rag.py            # NEW
-│   │   ├── pdf.py
-│   │   ├── patterns.py
-│   │   ├── session.py        # Redis sessions, unchanged
-│   │   └── verdict.py        # updated to consume RAG output
-│   ├── routes/
-│   ├── models/               # Pydantic
+│   └── ingest_corpus.py
+├── corpus/                   # F3: LegalDocument, LegalChunk, RAG
+│   ├── raw/                  # source PDFs/HTML (gitignored if too big)
+│   ├── README.md             # how to add a new legal source
+│   ├── domain/               # Pydantic v2 entities / DTOs
+│   ├── application/
+│   └── infrastructure/
+│       ├── django/
+│       │   ├── models.py
+│       │   ├── migrations/
+│       │   ├── serializers.py
+│       │   └── views.py
+│       └── celery/
+├── ingestion/                # F1: OCR, uploads
 │   └── ...
 └── tests/
 ```
+
+Shared **Pydantic** DTOs live under each module's `domain/`; **Django ORM** models under `infrastructure/django/models.py` with `migrations/` alongside—**no** Alembic/SQLAlchemy tree.
 
 ---
 

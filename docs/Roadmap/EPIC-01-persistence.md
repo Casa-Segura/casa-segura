@@ -22,14 +22,14 @@ tags:
 
 ## Goal
 
-Stand up Postgres + pgvector and define every persistent entity the system needs **before** any service-layer code wants to write rows. This epic owns the data contract: tables, constraints, ORM models, migrations, fixtures, and the seed data for the rubric and corpus version catalog.
+Stand up **Postgres 15** + **pgvector** and define every persistent entity the system needs **before** any service-layer code wants to write rows. This epic owns the data contract: tables, constraints, **Django ORM** models, **Django migrations**, fixtures, and the seed data for the rubric and corpus version catalog. ORM and migration approach: [ADR-0001 — Django backend stack](../adr/ADR-0001-django-backend-stack.md).
 
 This epic does NOT implement retention/anonymization cron jobs — those are [[EPIC-09-retention-privacy]] (F8 part 2). It stands up the schema; the schema enforces the privacy invariants (no contract content columns anywhere) but the jobs that prune are later.
 
 ## Definition of done
 
 - [ ] Postgres 15+ with `vector` extension running locally via docker-compose and on the chosen managed host (Supabase or Railway)
-- [ ] Alembic configured; `alembic upgrade head` builds a fresh DB from zero
+- [ ] Django migrations configured; `python manage.py migrate` builds a fresh DB from zero
 - [ ] Every entity from [[FEATURES_MAP]] §4 has an ORM model and a migration
 - [ ] CHECK constraints, ENUMs, and indexes enforce the invariants in [[RUBRICA_CONTRATO]] §12 and [[PRD_GENERAL]] BR-04, BR-05, BR-08, BR-16
 - [ ] Project normalization (`canonical_name` → `normalized_name`) is implemented and tested with accent/case edge cases
@@ -41,9 +41,9 @@ This epic does NOT implement retention/anonymization cron jobs — those are [[E
 
 - Postgres provisioning (local + remote)
 - pgvector extension
-- SQLAlchemy 2 declarative base + session/engine factory
-- Alembic config and initial migration
-- ORM models for all entities in [[FEATURES_MAP]] §4
+- Django ORM models and database settings (connections, router if needed)
+- Initial Django migration(s) and migration workflow (`makemigrations` / `migrate`)
+- Model + migration coverage for every entity in [[FEATURES_MAP]] §4
 - DB constraints (CHECK, NOT NULL, UNIQUE, FK, ENUMs)
 - Indexes (per-table, including pgvector HNSW or IVFFlat for `legal_chunk.embedding`)
 - Project canonicalization logic
@@ -66,8 +66,8 @@ This epic does NOT implement retention/anonymization cron jobs — those are [[E
 ## Tickets
 
 - [[CS-020]] — Provision Postgres + pgvector (local + remote)
-- [[CS-021]] — Alembic init + initial migration framework
-- [[CS-022]] — SQLAlchemy base, session factory, FastAPI dependency
+- [[CS-021]] — Initial Django migration framework (per [ADR-0001](../adr/ADR-0001-django-backend-stack.md))
+- [[CS-022]] — Django ORM / DB layer wired for DRF and workers (per [ADR-0001](../adr/ADR-0001-django-backend-stack.md))
 - [[CS-023]] — Schema: Project entity
 - [[CS-024]] — Schema: ContractAnalysis entity
 - [[CS-025]] — Schema: ContractSubmission + OcrJob (transient with expires_at)
@@ -80,7 +80,7 @@ This epic does NOT implement retention/anonymization cron jobs — those are [[E
 - [[CS-032]] — Test fixture infrastructure (factory pattern)
 - [[CS-033]] — Seed RubricVersion 0.1 with 38-criterion catalog
 - [[CS-034]] — Seed CorpusVersion placeholder
-- [[CS-035]] — Migration smoke test in CI (upgrade head → downgrade base → upgrade head)
+- [[CS-035]] — Migration smoke test in CI (Django `migrate` forward/backward cycle per ticket AC)
 
 ## Risks
 

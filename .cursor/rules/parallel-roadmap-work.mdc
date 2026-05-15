@@ -18,7 +18,7 @@ Use ticket frontmatter as the dependency contract:
 
 For Casa Segura specifically:
 
-- Backend work is Python/FastAPI-first and should preserve strict typing, Pydantic contracts, SQLAlchemy boundaries, and privacy-safe logging.
+- Backend work is **Python / Django 5.2 LTS + DRF**-first: preserve strict typing, **Pydantic v2** for domain DTOs and payload validation, **Django ORM** boundaries, **Django migrations**, **Celery** on **Redis** where async work applies, and privacy-safe logging. See `docs/adr/ADR-0001-django-backend-stack.md`.
 - Frontend work is Next.js/App Router-first and must stay mobile-first at 360px with Spanish `tú` copy.
 - Project verification is optional and separate; never gate contract upload or analysis on billboard OCR.
 - Treat OCR text, delivery targets, report content, logs, prompts, and errors as privacy-sensitive.

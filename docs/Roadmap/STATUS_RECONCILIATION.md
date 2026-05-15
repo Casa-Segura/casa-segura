@@ -33,12 +33,12 @@ tags:
 ## Items in STATUS that survive intact
 
 - T001 GitHub org/MIT license/README — [[CS-001]]
-- T002 FastAPI scaffold — [[CS-002]]
+- T002 Django + DRF API scaffold — [[CS-002]]
 - T003 Next.js scaffold — moved to [[EPIC-10-frontend]] backlog
 - T004 OpenRouter account — [[CS-006]] (secrets baseline)
 - T005 Redis (Upstash) — [[CS-006]]
 - T015 Postgres + pgvector — [[CS-020]]
-- T016 Alembic init — [[CS-021]]
+- T016 Django migrations bootstrap — [[CS-021]]
 - T017 ORM models — [[CS-023]]…[[CS-029]]
 - Risk log R8–R11 — survives, moved to [[EPIC-03-corpus-rag]] and [[EPIC-02-ingestion-ocr]] risk sections
 

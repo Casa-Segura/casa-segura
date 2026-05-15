@@ -29,7 +29,7 @@ graph TD
 sequenceDiagram
     actor Op as Operator
     participant Mgmt as Django management
-    participant Alembic as Django migrate
+    participant Migrate as Django migrate
     participant PG as Postgres
 
     Op->>Mgmt: python manage.py migrate
