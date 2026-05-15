@@ -1,0 +1,5409 @@
+{
+  "version": "2.11",
+  "children": [
+    {
+      "type": "frame",
+      "id": "WpIN5",
+      "x": 0,
+      "y": 0,
+      "name": "Component/Button/Primary",
+      "reusable": true,
+      "width": 358,
+      "height": 48,
+      "fill": "$accent",
+      "cornerRadius": "$radius-input",
+      "padding": [
+        0,
+        24
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "DG4de",
+          "name": "btnLabel",
+          "fill": "#FFFFFF",
+          "content": "Empezar",
+          "fontFamily": "$font-body",
+          "fontSize": 16,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "j3HtJ",
+      "x": 0,
+      "y": 80,
+      "name": "Component/Button/Secondary",
+      "reusable": true,
+      "width": 358,
+      "height": 48,
+      "fill": "$surface",
+      "cornerRadius": "$radius-input",
+      "stroke": {
+        "align": "inside",
+        "thickness": 1.5,
+        "fill": "$accent"
+      },
+      "padding": [
+        0,
+        24
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "C1V6bT",
+          "name": "btnSecLabel",
+          "fill": "$accent",
+          "content": "Verificar otro proyecto",
+          "fontFamily": "$font-body",
+          "fontSize": 16,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "OI7jl",
+      "x": 0,
+      "y": 160,
+      "name": "Component/Button/Link",
+      "reusable": true,
+      "height": 44,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "fnKWq",
+          "name": "btnLinkLabel",
+          "fill": "$accent",
+          "content": "¿Cómo funciona?",
+          "fontFamily": "$font-body",
+          "fontSize": 14,
+          "fontWeight": "500"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "dwPDT",
+      "x": 0,
+      "y": 240,
+      "name": "Component/Finding Card",
+      "reusable": true,
+      "width": 358,
+      "fill": "$surface",
+      "cornerRadius": "$radius-card",
+      "stroke": {
+        "align": "inside",
+        "thickness": 1,
+        "fill": "$border"
+      },
+      "gap": 12,
+      "padding": 16,
+      "children": [
+        {
+          "type": "frame",
+          "id": "XKFqO",
+          "name": "findingIcon",
+          "width": 32,
+          "height": 32,
+          "fill": "$verdict-yellow-bg",
+          "cornerRadius": 16,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "ellipse",
+              "id": "ounDs",
+              "name": "findingIconDot",
+              "fill": "$verdict-yellow",
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "aO9bg",
+          "name": "findingBody",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 4,
+          "children": [
+            {
+              "type": "text",
+              "id": "pNrGc",
+              "name": "findingTitle",
+              "fill": "$text-primary",
+              "content": "Sin permiso visible",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "WByI3",
+              "name": "findingExpl",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "No pudimos leer el número de permiso en el cartel.",
+              "lineHeight": 1.5,
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "nHpQE",
+      "x": 0,
+      "y": 380,
+      "name": "Component/Step Indicator",
+      "reusable": true,
+      "fill": "$accent-light",
+      "cornerRadius": 20,
+      "gap": 4,
+      "padding": [
+        6,
+        12
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "A9OhC",
+          "name": "stepText",
+          "fill": "$accent",
+          "content": "Paso 1 de 2 · Verificar proyecto",
+          "fontFamily": "$font-body",
+          "fontSize": 13,
+          "fontWeight": "500"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "lGRgW",
+      "x": 0,
+      "y": 440,
+      "name": "Component/Disclaimer",
+      "reusable": true,
+      "width": 358,
+      "fill": "#F5F3EE",
+      "cornerRadius": "$radius-card",
+      "gap": 12,
+      "padding": 16,
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "icon_font",
+          "id": "asRHO",
+          "name": "disclaimerIcon",
+          "width": 20,
+          "height": 20,
+          "iconFontName": "info",
+          "iconFontFamily": "lucide",
+          "fill": "$text-secondary"
+        },
+        {
+          "type": "text",
+          "id": "AkYSk",
+          "name": "disclaimerText",
+          "fill": "$text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Esto no es asesoría legal. Antes de firmar, consulta un abogado.",
+          "lineHeight": 1.5,
+          "fontFamily": "$font-body",
+          "fontSize": 13,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Rg0ey",
+      "x": 0,
+      "y": 530,
+      "name": "Component/Upload Zone",
+      "reusable": true,
+      "width": 358,
+      "fill": "$surface",
+      "cornerRadius": "$radius-card",
+      "stroke": {
+        "align": "inside",
+        "thickness": 1.5,
+        "fill": "$border"
+      },
+      "layout": "vertical",
+      "gap": 16,
+      "padding": 32,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "icon_font",
+          "id": "w6urZ",
+          "name": "uploadIcon",
+          "width": 40,
+          "height": 40,
+          "iconFontName": "camera",
+          "iconFontFamily": "lucide",
+          "fill": "$text-secondary"
+        },
+        {
+          "id": "iL9TZ",
+          "type": "ref",
+          "ref": "WpIN5",
+          "name": "uploadBtn1",
+          "flipX": false,
+          "flipY": false,
+          "width": 333,
+          "height": 45,
+          "x": 12.5,
+          "y": 88,
+          "descendants": {
+            "DG4de": {
+              "content": "Tomar foto"
+            }
+          }
+        },
+        {
+          "id": "YkgB7",
+          "type": "ref",
+          "ref": "j3HtJ",
+          "name": "uploadBtn2",
+          "flipX": false,
+          "flipY": false,
+          "width": 333,
+          "height": 45,
+          "x": 12.5,
+          "y": 149,
+          "descendants": {
+            "C1V6bT": {
+              "content": "Subir desde galería"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Vh9LR",
+      "x": 503,
+      "y": 0,
+      "name": "Screen 1 — Landing",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "u25yGO",
+          "name": "statusBar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "oNczB",
+              "name": "timeLabel",
+              "fill": "$text-primary",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "F0RmVH",
+              "name": "statusIcons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "N3KjRz",
+                  "name": "sigIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "rPpv8",
+                  "name": "wifiIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "Cx0Rv",
+                  "name": "batIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "fqllc",
+          "name": "content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            0,
+            16,
+            32,
+            16
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "x0SwO6",
+              "name": "logoRow",
+              "width": "fill_container",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "R8U2N",
+                  "name": "logoIcon",
+                  "width": 28,
+                  "height": 28,
+                  "iconFontName": "shield-check",
+                  "iconFontFamily": "lucide",
+                  "fill": "$accent"
+                },
+                {
+                  "type": "text",
+                  "id": "ou7tu",
+                  "name": "logoText",
+                  "fill": "$text-primary",
+                  "content": "Casa Segura",
+                  "fontFamily": "$font-body",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "DvPzn",
+              "name": "heroSpacer",
+              "width": "fill_container",
+              "height": 48
+            },
+            {
+              "type": "text",
+              "id": "vcJYD",
+              "name": "heroTitle",
+              "fill": "$text-primary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Antes de comprar\ntu casa, revísala.",
+              "lineHeight": 1.2,
+              "textAlign": "center",
+              "fontFamily": "$font-body",
+              "fontSize": 32,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "IGFwR",
+              "name": "heroSpacer2",
+              "width": "fill_container",
+              "height": 16
+            },
+            {
+              "type": "text",
+              "id": "iWmZp",
+              "name": "heroSub",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Sube una foto del proyecto.\nTe decimos si es legítimo.",
+              "lineHeight": 1.5,
+              "textAlign": "center",
+              "fontFamily": "$font-body",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "oNIT8",
+              "name": "heroSpacer3",
+              "width": "fill_container",
+              "height": 32
+            },
+            {
+              "id": "iX0Lm",
+              "type": "ref",
+              "ref": "WpIN5",
+              "width": "fill_container",
+              "name": "ctaBtn"
+            },
+            {
+              "type": "frame",
+              "id": "TbI35",
+              "name": "heroSpacer4",
+              "width": "fill_container",
+              "height": 24
+            },
+            {
+              "type": "frame",
+              "id": "Bv2nJ",
+              "name": "linksRow",
+              "gap": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "AQcky",
+                  "name": "link1",
+                  "fill": "$accent",
+                  "content": "¿Cómo funciona?",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "U0KCf",
+                  "name": "linkDot",
+                  "fill": "$text-secondary",
+                  "content": "·",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "TGlAI",
+                  "name": "link2",
+                  "fill": "$accent",
+                  "content": "Ver código en GitHub",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Wda8b",
+              "name": "footerSpacer",
+              "width": "fill_container",
+              "height": "fill_container"
+            },
+            {
+              "type": "text",
+              "id": "Qe95J",
+              "name": "footer",
+              "fill": "$text-secondary",
+              "content": "Esto no es asesoría legal.",
+              "textAlign": "center",
+              "fontFamily": "$font-body",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "oFRKZ",
+      "x": 943,
+      "y": 0,
+      "name": "Screen 2 — Upload Photo",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "o5fY4",
+          "name": "uStatusBar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "UqruR",
+              "name": "uTime",
+              "fill": "$text-primary",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "N1zIG",
+              "name": "uStatusIcons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "ZXimw",
+                  "name": "uSig",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "yqPA7",
+                  "name": "uWifi",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "UDFuc",
+                  "name": "uBat",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "YxPxb",
+          "name": "uContent",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            16,
+            16,
+            32,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "kOc02",
+              "name": "backRow",
+              "width": "fill_container",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "c4Gc0",
+                  "name": "backIcon",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "arrow-left",
+                  "iconFontFamily": "lucide",
+                  "fill": "$accent"
+                },
+                {
+                  "type": "text",
+                  "id": "B6Iydb",
+                  "name": "backText",
+                  "fill": "$accent",
+                  "content": "Atrás",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "id": "tjEwQ",
+              "type": "ref",
+              "ref": "nHpQE",
+              "name": "stepBadge"
+            },
+            {
+              "type": "text",
+              "id": "ZS9GX",
+              "name": "uploadTitle",
+              "fill": "$text-primary",
+              "content": "Sube la foto del cartel",
+              "fontFamily": "$font-body",
+              "fontSize": 24,
+              "fontWeight": "600"
+            },
+            {
+              "id": "YZIAi",
+              "type": "ref",
+              "ref": "Rg0ey",
+              "width": "fill_container",
+              "name": "uploadZoneInst"
+            },
+            {
+              "type": "frame",
+              "id": "tb9Jp",
+              "name": "helperCard",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "GO95p",
+                  "name": "helperTitle",
+                  "fill": "$text-primary",
+                  "content": "Consejo",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "AP93n",
+                  "name": "helperText",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Apunta al cartel del proyecto. Asegúrate de ver el nombre del desarrollador y el número de permiso.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "UtHqN",
+      "x": 1383,
+      "y": 0,
+      "name": "Screen 3 — Loading",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "GROLA",
+          "name": "lStatusBar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "HA6vx",
+              "name": "lTime",
+              "fill": "$text-primary",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "wYDdH",
+              "name": "lStatusIcons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "xHxjv",
+                  "name": "lSig",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "X6OPC",
+                  "name": "lWifi",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "fEFXD",
+                  "name": "lBat",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "L0tvz",
+          "name": "lContent",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            0,
+            16,
+            32,
+            16
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "ellipse",
+              "id": "FEBvJ",
+              "name": "spinnerOuter",
+              "fill": "#00000000",
+              "width": 56,
+              "height": 56,
+              "stroke": {
+                "align": "center",
+                "thickness": 4,
+                "fill": "$border"
+              }
+            },
+            {
+              "type": "ellipse",
+              "id": "LRsiI",
+              "name": "spinnerArc",
+              "sweepAngle": 90,
+              "fill": "#00000000",
+              "width": 56,
+              "height": 56,
+              "stroke": {
+                "align": "center",
+                "thickness": 4,
+                "fill": "$accent"
+              }
+            },
+            {
+              "type": "text",
+              "id": "EBqJM",
+              "name": "loadingText",
+              "fill": "$text-primary",
+              "content": "Leyendo el cartel...",
+              "textAlign": "center",
+              "fontFamily": "$font-body",
+              "fontSize": 16,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "IXAT4",
+              "name": "loadingSub",
+              "fill": "$text-secondary",
+              "content": "Esto puede tomar unos segundos",
+              "textAlign": "center",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "cWD2m",
+              "name": "cancelSpacer",
+              "width": 10,
+              "height": 32
+            },
+            {
+              "type": "text",
+              "id": "d8L0o",
+              "name": "cancelLink",
+              "fill": "$accent",
+              "content": "Cancelar",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "500"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Hs2qr",
+      "x": 1823,
+      "y": 0,
+      "name": "Screen 4a — Result Green",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "O0Ooj",
+          "name": "gStatusBar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "JxdyX",
+              "name": "gTime",
+              "fill": "$text-primary",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "ykOuW",
+              "name": "gStatusIcons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "CgsJK",
+                  "name": "gSig",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "jI8I3",
+                  "name": "gWifi",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "n5aw8o",
+                  "name": "gBat",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "EHFV2",
+          "name": "gContent",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            24,
+            16,
+            32,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "H47HVc",
+              "name": "verdictHeader",
+              "width": "fill_container",
+              "fill": "$verdict-green-bg",
+              "cornerRadius": "$radius-card",
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "kMD5Z",
+                  "name": "greenIcon",
+                  "width": 48,
+                  "height": 48,
+                  "iconFontName": "circle-check",
+                  "iconFontFamily": "lucide",
+                  "fill": "$verdict-green"
+                },
+                {
+                  "type": "text",
+                  "id": "kNaMh",
+                  "name": "greenTitle",
+                  "fill": "$verdict-green",
+                  "content": "Sin alertas públicas",
+                  "textAlign": "center",
+                  "fontFamily": "$font-body",
+                  "fontSize": 22,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "GJuS9",
+                  "name": "greenSub",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "No encontramos señales de fraude para este proyecto. Aún así, revisa el contrato antes de firmar.",
+                  "lineHeight": 1.5,
+                  "textAlign": "center",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "vpMrD",
+              "name": "extractedCard",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ROlFW",
+                  "name": "extractedTitle",
+                  "fill": "$text-primary",
+                  "content": "Datos del proyecto",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "r5xFG",
+                  "name": "row1",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "er0jr",
+                      "name": "row1Label",
+                      "fill": "$text-secondary",
+                      "content": "Desarrollador:",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ptlPX",
+                      "name": "row1Value",
+                      "fill": "$text-primary",
+                      "content": "Constructora Ejemplo S.A.",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "M7F9VV",
+                  "name": "row2",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "kUJl1",
+                      "name": "row2Label",
+                      "fill": "$text-secondary",
+                      "content": "Proyecto:",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "PuuBm",
+                      "name": "row2Value",
+                      "fill": "$text-primary",
+                      "content": "Residencial Las Brisas",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BWN49",
+                  "name": "row3",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ncWAt",
+                      "name": "row3Label",
+                      "fill": "$text-secondary",
+                      "content": "Permiso:",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "D1rwAd",
+                      "name": "row3Value",
+                      "fill": "$text-primary",
+                      "content": "OPAMSS-2024-0123",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "U10uAW",
+              "type": "ref",
+              "ref": "WpIN5",
+              "width": "fill_container",
+              "name": "gPrimary",
+              "descendants": {
+                "DG4de": {
+                  "content": "Ahora revisa el contrato"
+                }
+              }
+            },
+            {
+              "id": "tLe0O",
+              "type": "ref",
+              "ref": "j3HtJ",
+              "width": "fill_container",
+              "name": "gSecondary",
+              "descendants": {
+                "C1V6bT": {
+                  "content": "Verificar otro proyecto"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "PNZLJ",
+              "name": "shareRow",
+              "width": "fill_container",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "SD1vO",
+                  "name": "shareIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "share-2",
+                  "iconFontFamily": "lucide",
+                  "fill": "$accent"
+                },
+                {
+                  "type": "text",
+                  "id": "qaqY7",
+                  "name": "shareText",
+                  "fill": "$accent",
+                  "content": "Compartir resultado",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "id": "h2vfi",
+              "type": "ref",
+              "ref": "lGRgW",
+              "width": "fill_container",
+              "name": "gDisclaimer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "L1oCb",
+      "x": 2263,
+      "y": 0,
+      "name": "Screen 4b — Result Yellow",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "p3D4s",
+          "name": "yStatusBar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "QkH5v",
+              "name": "yTime",
+              "fill": "$text-primary",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "Z9Hf4r",
+              "name": "yStatusIcons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "QrSr8",
+                  "name": "ySig",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "L9nGn",
+                  "name": "yWifi",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "MyLUW",
+                  "name": "yBat",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "YjHVZ",
+          "name": "yContent",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            24,
+            16,
+            32,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "q3enD",
+              "name": "yHeader",
+              "width": "fill_container",
+              "fill": "$verdict-yellow-bg",
+              "cornerRadius": "$radius-card",
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "p9yvm",
+                  "name": "yIcon",
+                  "width": 48,
+                  "height": 48,
+                  "iconFontName": "triangle-alert",
+                  "iconFontFamily": "lucide",
+                  "fill": "$verdict-yellow"
+                },
+                {
+                  "type": "text",
+                  "id": "PxRMI",
+                  "name": "yTitle",
+                  "fill": "$verdict-yellow",
+                  "content": "Hay algo que revisar",
+                  "textAlign": "center",
+                  "fontFamily": "$font-body",
+                  "fontSize": 22,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "a5sElN",
+                  "name": "ySub",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Encontramos señales que vale la pena verificar.",
+                  "lineHeight": 1.5,
+                  "textAlign": "center",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "sY2b2",
+              "type": "ref",
+              "ref": "Vmd09",
+              "width": "fill_container",
+              "name": "lsSummary",
+              "flipX": false,
+              "flipY": false,
+              "height": 171,
+              "x": 16,
+              "y": 233,
+              "descendants": {
+                "H3VPTz": {
+                  "content": "Tus alertas se basan en la Ley de Urbanismo y Construcción (Art. 1, 2, 5). Esta ley exige que todo proyecto tenga permiso vigente de la autoridad competente."
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "sigey",
+              "name": "findingsSection",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "BswHA",
+                  "name": "findingsLabel",
+                  "fill": "$text-primary",
+                  "content": "Hallazgos",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "l3wlQ",
+                  "name": "Enhanced Finding 1",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": "$radius-card",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "emHdW",
+                      "name": "eF1Content",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "IVGla",
+                          "name": "eF1Icon",
+                          "width": 32,
+                          "height": 32,
+                          "fill": "$verdict-yellow-bg",
+                          "cornerRadius": 16,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "qpiYi",
+                              "name": "eF1Dot",
+                              "fill": "$verdict-yellow",
+                              "width": 10,
+                              "height": 10
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Nsq9P",
+                          "name": "eF1Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "q0kywu",
+                              "name": "eF1Title",
+                              "fill": "$text-primary",
+                              "content": "Sin permiso visible",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "UgCOf",
+                              "name": "eF1Expl",
+                              "fill": "$text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "No pudimos leer el número de permiso en el cartel. Todo proyecto debe exhibir su permiso vigente.",
+                              "lineHeight": 1.5,
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "vpSML",
+                      "name": "eF1Divider",
+                      "fill": "$border",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "S1KSp6",
+                      "name": "eF1Cite",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "id": "O7GNM",
+                          "type": "ref",
+                          "ref": "Y6youq",
+                          "width": "fill_container",
+                          "name": "eF1CiteInst",
+                          "descendants": {
+                            "S7CS6B": {
+                              "content": "Ley de Urbanismo — Art. 1, 2, 5"
+                            },
+                            "Ipojx": {
+                              "content": "\"No podrá procederse a la construcción... sin previa aprobación del Ministerio de Vivienda o municipalidad.\""
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "onT4l",
+                  "name": "Enhanced Finding 2",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": "$radius-card",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "hlzIf",
+                      "name": "eF2Content",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ARod2",
+                          "name": "eF2Icon",
+                          "width": 32,
+                          "height": 32,
+                          "fill": "$verdict-yellow-bg",
+                          "cornerRadius": 16,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "G8qOB9",
+                              "name": "eF2Dot",
+                              "fill": "$verdict-yellow",
+                              "width": 10,
+                              "height": 10
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Kqwa1",
+                          "name": "eF2Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "oLXNs",
+                              "name": "eF2Title",
+                              "fill": "$text-primary",
+                              "content": "Desarrollador sin historial",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "MZIwD",
+                              "name": "eF2Expl",
+                              "fill": "$text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "No encontramos información pública sobre esta empresa. La ley exige que el profesional responsable esté inscrito en el Registro Nacional.",
+                              "lineHeight": 1.5,
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "dVnFE",
+                      "name": "eF2Divider",
+                      "fill": "$border",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "aQsye",
+                      "name": "eF2Cite",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "id": "RWpOc",
+                          "type": "ref",
+                          "ref": "Y6youq",
+                          "width": "fill_container",
+                          "name": "eF2CiteInst",
+                          "descendants": {
+                            "S7CS6B": {
+                              "content": "Ley de Urbanismo — Art. 4, 8"
+                            },
+                            "Ipojx": {
+                              "content": "\"El profesional responsable debe estar inscrito en el Registro Nacional de Arquitectos, Ingenieros y Constructores.\""
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "FsEJA",
+              "type": "ref",
+              "ref": "WpIN5",
+              "width": "fill_container",
+              "name": "yPrimary",
+              "descendants": {
+                "DG4de": {
+                  "content": "Revisar el contrato con cuidado"
+                }
+              }
+            },
+            {
+              "id": "H9SbZp",
+              "type": "ref",
+              "ref": "j3HtJ",
+              "width": "fill_container",
+              "name": "ySecondary",
+              "descendants": {
+                "C1V6bT": {
+                  "content": "Verificar otro proyecto"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "q8GDX",
+              "name": "yShareRow",
+              "width": "fill_container",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "uZkWJ",
+                  "name": "yShareIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "share-2",
+                  "iconFontFamily": "lucide",
+                  "fill": "$accent"
+                },
+                {
+                  "type": "text",
+                  "id": "l4Ix5O",
+                  "name": "yShareText",
+                  "fill": "$accent",
+                  "content": "Compartir resultado",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "id": "M5Nqz",
+              "type": "ref",
+              "ref": "lGRgW",
+              "width": "fill_container",
+              "name": "yDisclaimer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "p4xgrz",
+      "x": 2703,
+      "y": 0,
+      "name": "Screen 4c — Result Red",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "CKYSf",
+          "name": "rStatusBar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "mSgSv",
+              "name": "rTime",
+              "fill": "$text-primary",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "O7Xk4Y",
+              "name": "rStatusIcons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "erKTJ",
+                  "name": "rSig",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "v1Vd0",
+                  "name": "rWifi",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "wLUEm",
+                  "name": "rBat",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "l3k6T",
+          "name": "rContent",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            24,
+            16,
+            32,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "RwS7n",
+              "name": "rHeader",
+              "width": "fill_container",
+              "fill": "$verdict-red-bg",
+              "cornerRadius": "$radius-card",
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "OSNlD",
+                  "name": "rIcon",
+                  "width": 48,
+                  "height": 48,
+                  "iconFontName": "octagon-alert",
+                  "iconFontFamily": "lucide",
+                  "fill": "$verdict-red"
+                },
+                {
+                  "type": "text",
+                  "id": "T4sdzV",
+                  "name": "rTitle",
+                  "fill": "$verdict-red",
+                  "content": "Procede con cuidado",
+                  "textAlign": "center",
+                  "fontFamily": "$font-body",
+                  "fontSize": 22,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "EZEGD",
+                  "name": "rSub",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Encontramos señales serias. Considera buscar asesoría antes de avanzar.",
+                  "lineHeight": 1.5,
+                  "textAlign": "center",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "jMGHl",
+              "type": "ref",
+              "ref": "Vmd09",
+              "width": "fill_container",
+              "name": "rLegalSummary",
+              "flipX": false,
+              "flipY": false,
+              "height": 173,
+              "x": 16,
+              "y": 233,
+              "descendants": {
+                "H3VPTz": {
+                  "content": "Tus alertas se basan en la Ley de Compras Públicas y la Ley de Urbanismo y Construcción (Art. 4, 8). Hay denuncias públicas que requieren atención antes de proceder."
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "e1xQfC",
+              "name": "rFindings",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "S7yRt",
+                  "name": "rFindLabel",
+                  "fill": "$text-primary",
+                  "content": "Hallazgos",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "HltQk",
+                  "name": "Enhanced Red Finding 1",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": "$radius-card",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "kBRDA",
+                      "name": "rEF1Content",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "UEIIX",
+                          "name": "rEF1Icon",
+                          "width": 32,
+                          "height": 32,
+                          "fill": "$verdict-red-bg",
+                          "cornerRadius": 16,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "efaZY",
+                              "name": "rEF1Dot",
+                              "fill": "$verdict-red",
+                              "width": 10,
+                              "height": 10
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "lB3v2",
+                          "name": "rEF1Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "C0gFhM",
+                              "name": "rEF1Title",
+                              "fill": "$text-primary",
+                              "content": "Desarrollador en lista negra",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Of0HT",
+                              "name": "rEF1Expl",
+                              "fill": "$text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Esta empresa ha sido reportada en medios por denuncias de fraude inmobiliario. No aparece en el Registro Nacional de Constructores.",
+                              "lineHeight": 1.5,
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "DncXt",
+                      "name": "rEF1Div",
+                      "fill": "$border",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "jtHbG",
+                      "name": "rEF1CiteWrap",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "id": "H6dZD",
+                          "type": "ref",
+                          "ref": "Y6youq",
+                          "width": "fill_container",
+                          "name": "rEF1Cite",
+                          "descendants": {
+                            "S7CS6B": {
+                              "content": "Ley de Urbanismo — Art. 4, 8"
+                            },
+                            "Ipojx": {
+                              "content": "\"El profesional responsable debe estar inscrito en el Registro Nacional de Arquitectos, Ingenieros y Constructores.\""
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "RQ6gp",
+                  "name": "Enhanced Red Finding 2",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": "$radius-card",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "uIi2Z",
+                      "name": "rEF2Content",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ouNhw",
+                          "name": "rEF2Icon",
+                          "width": 32,
+                          "height": 32,
+                          "fill": "$verdict-red-bg",
+                          "cornerRadius": 16,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "dyXnq",
+                              "name": "rEF2Dot",
+                              "fill": "$verdict-red",
+                              "width": 10,
+                              "height": 10
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "g6wPP",
+                          "name": "rEF2Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "X6Okh",
+                              "name": "rEF2Title",
+                              "fill": "$text-primary",
+                              "content": "Denuncias públicas encontradas",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "sV0LW",
+                              "name": "rEF2Expl",
+                              "fill": "$text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Encontramos 3 artículos de noticias con denuncias sobre este desarrollador. La ley protege contra prácticas abusivas en contratos de vivienda.",
+                              "lineHeight": 1.5,
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "h4FDWp",
+                      "name": "rEF2Div",
+                      "fill": "$border",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "AH1NO",
+                      "name": "rEF2CiteWrap",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "id": "VGmwm",
+                          "type": "ref",
+                          "ref": "Y6youq",
+                          "width": "fill_container",
+                          "name": "rEF2Cite",
+                          "descendants": {
+                            "S7CS6B": {
+                              "content": "Ley Protección al Consumidor — Art. 18"
+                            },
+                            "Ipojx": {
+                              "content": "\"Se prohíben las prácticas abusivas en la oferta y venta de bienes inmuebles destinados a vivienda.\""
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "qYuTw",
+              "type": "ref",
+              "ref": "WpIN5",
+              "width": "fill_container",
+              "name": "rPrimary",
+              "descendants": {
+                "DG4de": {
+                  "content": "Ver el contrato igual"
+                }
+              }
+            },
+            {
+              "id": "FXQOm",
+              "type": "ref",
+              "ref": "j3HtJ",
+              "width": "fill_container",
+              "name": "rSecondary",
+              "descendants": {
+                "C1V6bT": {
+                  "content": "Verificar otro proyecto"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "CXnrX",
+              "name": "rShareRow",
+              "width": "fill_container",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "d4hNYu",
+                  "name": "rShareIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "share-2",
+                  "iconFontFamily": "lucide",
+                  "fill": "$accent"
+                },
+                {
+                  "type": "text",
+                  "id": "Z550i",
+                  "name": "rShareText",
+                  "fill": "$accent",
+                  "content": "Compartir resultado",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "id": "Cgt9h",
+              "type": "ref",
+              "ref": "lGRgW",
+              "width": "fill_container",
+              "name": "rDisclaimer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "nJfEF",
+      "x": 503,
+      "y": 928,
+      "name": "Screen 5 — Contract Upload",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "gqDId",
+          "name": "cStatusBar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Bv0AL",
+              "name": "cTime",
+              "fill": "$text-primary",
+              "content": "9:42",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "Nvhja",
+              "name": "cStatusIcons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "YMnd6",
+                  "name": "cSig",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "JrgiX",
+                  "name": "cWifi",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "kOcgW",
+                  "name": "cBat",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "OXQQR",
+          "name": "cContent",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            16,
+            16,
+            32,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "G0Mpkw",
+              "name": "cBackRow",
+              "width": "fill_container",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "y9zIRf",
+                  "name": "cBackIcon",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "arrow-left",
+                  "iconFontFamily": "lucide",
+                  "fill": "$accent"
+                },
+                {
+                  "type": "text",
+                  "id": "l6Vj7",
+                  "name": "cBackText",
+                  "fill": "$accent",
+                  "content": "Atrás",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "id": "f2YB9p",
+              "type": "ref",
+              "ref": "nHpQE",
+              "name": "cStep",
+              "descendants": {
+                "A9OhC": {
+                  "content": "Paso 2 de 2 · Revisar contrato"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "GsPl9",
+              "name": "cTitle",
+              "fill": "$text-primary",
+              "content": "Sube el contrato",
+              "fontFamily": "$font-body",
+              "fontSize": 24,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "k9fXoD",
+              "name": "cUploadZone",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1.5,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 32,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "Ig3yy",
+                  "name": "cUploadIcon",
+                  "width": 40,
+                  "height": 40,
+                  "iconFontName": "file-text",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-secondary"
+                },
+                {
+                  "id": "koTam",
+                  "type": "ref",
+                  "ref": "WpIN5",
+                  "width": "fill_container",
+                  "name": "cUploadBtn",
+                  "descendants": {
+                    "DG4de": {
+                      "content": "Seleccionar PDF"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qjvLY",
+              "name": "cHelper",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "gTeR2",
+                  "name": "cHelperTitle",
+                  "fill": "$text-primary",
+                  "content": "Consejo",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "RGvoq",
+                  "name": "cHelperText",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Sube el contrato en PDF. Lo leemos y te marcamos lo riesgoso. Máximo 15 MB.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "WsZRA",
+              "name": "cProjectBadge",
+              "width": "fill_container",
+              "fill": "$accent-light",
+              "cornerRadius": "$radius-input",
+              "gap": 8,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "fGBcI",
+                  "name": "cBadgeIcon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "circle-check",
+                  "iconFontFamily": "lucide",
+                  "fill": "$accent"
+                },
+                {
+                  "type": "text",
+                  "id": "O4KVu3",
+                  "name": "cBadgeText",
+                  "fill": "$accent",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Proyecto verificado: Residencial Las Brisas",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "oVpGz",
+      "x": 943,
+      "y": 928,
+      "name": "Screen 6 — Contract Loading",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "aTnpM",
+          "name": "clStatusBar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Uu82t",
+              "name": "clTime",
+              "fill": "$text-primary",
+              "content": "9:42",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "n7hEJC",
+              "name": "clIcons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "y0BWsz",
+                  "name": "clSig",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "NscbC",
+                  "name": "clWifi",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "VAG8G",
+                  "name": "clBat",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "RXrRf",
+          "name": "clCenter",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            0,
+            16,
+            32,
+            16
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "ellipse",
+              "id": "dR1YE",
+              "name": "clSpinOuter",
+              "fill": "#00000000",
+              "width": 56,
+              "height": 56,
+              "stroke": {
+                "align": "center",
+                "thickness": 4,
+                "fill": "$border"
+              }
+            },
+            {
+              "type": "ellipse",
+              "id": "cuJRO",
+              "name": "clSpinArc",
+              "startAngle": 45,
+              "sweepAngle": 90,
+              "fill": "#00000000",
+              "width": 56,
+              "height": 56,
+              "stroke": {
+                "align": "center",
+                "thickness": 4,
+                "fill": "$accent"
+              }
+            },
+            {
+              "type": "text",
+              "id": "PvJQB",
+              "name": "clText",
+              "fill": "$text-primary",
+              "content": "Buscando cláusulas riesgosas...",
+              "textAlign": "center",
+              "fontFamily": "$font-body",
+              "fontSize": 16,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "gHHdb",
+              "name": "clSub",
+              "fill": "$text-secondary",
+              "content": "Comparando con el proyecto verificado",
+              "textAlign": "center",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "ABBz8",
+              "name": "clSpacer",
+              "width": 10,
+              "height": 32
+            },
+            {
+              "type": "text",
+              "id": "EuRPL",
+              "name": "clCancel",
+              "fill": "$accent",
+              "content": "Cancelar",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "500"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "kMca9",
+      "x": 1383,
+      "y": 928,
+      "name": "Screen 7 — Contract Result",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "wDgLe",
+          "name": "crStatusBar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "KyQUg",
+              "name": "crTime",
+              "fill": "$text-primary",
+              "content": "9:43",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "niCDO",
+              "name": "crIcons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "l6x0Z",
+                  "name": "crSig",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "itqPK",
+                  "name": "crWifi",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "KlPLi",
+                  "name": "crBat",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "N4dVVd",
+          "name": "crContent",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            24,
+            16,
+            32,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "ymsW0",
+              "name": "crHeader",
+              "width": "fill_container",
+              "fill": "$verdict-yellow-bg",
+              "cornerRadius": "$radius-card",
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "fYbns",
+                  "name": "crIcon",
+                  "width": 48,
+                  "height": 48,
+                  "iconFontName": "triangle-alert",
+                  "iconFontFamily": "lucide",
+                  "fill": "$verdict-yellow"
+                },
+                {
+                  "type": "text",
+                  "id": "gxT9y",
+                  "name": "crTitle",
+                  "fill": "$verdict-yellow",
+                  "content": "Hay cláusulas que revisar",
+                  "textAlign": "center",
+                  "fontFamily": "$font-body",
+                  "fontSize": 22,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "M02QyA",
+                  "name": "crSub",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Encontramos cláusulas en el contrato que podrían ser riesgosas.",
+                  "lineHeight": 1.5,
+                  "textAlign": "center",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "F6c42",
+              "type": "ref",
+              "ref": "Vmd09",
+              "width": "fill_container",
+              "name": "crLegalSummary",
+              "flipX": false,
+              "flipY": false,
+              "height": 171,
+              "x": 16,
+              "y": 233,
+              "descendants": {
+                "H3VPTz": {
+                  "content": "Tus alertas se basan en la Ley de Inquilinato (Art. 4, Art. 9) y el Código Civil (Art. 1605). Estas leyes exigen contratos por escrito con plazos y condiciones claras."
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "d5V5G",
+              "name": "crFindings",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "uiI2W",
+                  "name": "crFLabel",
+                  "fill": "$text-primary",
+                  "content": "Hallazgos del contrato",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "e7hkmR",
+                  "name": "Enhanced Contract Finding 1",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": "$radius-card",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "GZ5DX",
+                      "name": "crEF1Content",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "m5vFLW",
+                          "name": "crEF1Icon",
+                          "width": 32,
+                          "height": 32,
+                          "fill": "$verdict-yellow-bg",
+                          "cornerRadius": 16,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "uMEm2",
+                              "name": "crEF1Dot",
+                              "fill": "$verdict-yellow",
+                              "width": 10,
+                              "height": 10
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "XTXfp",
+                          "name": "crEF1Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Ixvx8",
+                              "name": "crEF1Title",
+                              "fill": "$text-primary",
+                              "content": "Sin mecanismo de fideicomiso",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "vJf0g",
+                              "name": "crEF1Expl",
+                              "fill": "$text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "El contrato no menciona que los fondos queden en fideicomiso hasta la entrega. La ley exige que el contrato proteja tu inversión.",
+                              "lineHeight": 1.5,
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "EdlZT",
+                      "name": "crEF1Div",
+                      "fill": "$border",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Z2Ygs",
+                      "name": "crEF1CiteWrap",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "id": "U82y8S",
+                          "type": "ref",
+                          "ref": "Y6youq",
+                          "width": "fill_container",
+                          "name": "crEF1Cite",
+                          "descendants": {
+                            "S7CS6B": {
+                              "content": "Ley de Inquilinato — Art. 4"
+                            },
+                            "Ipojx": {
+                              "content": "\"Todo contrato de arrendamiento deberá constar por escrito con datos del inmueble, precio y duración.\""
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "s8rMa6",
+                  "name": "Enhanced Contract Finding 2",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": "$radius-card",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sV2gr",
+                      "name": "crEF2Content",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "khgLl",
+                          "name": "crEF2Icon",
+                          "width": 32,
+                          "height": 32,
+                          "fill": "$verdict-yellow-bg",
+                          "cornerRadius": 16,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "FIife",
+                              "name": "crEF2Dot",
+                              "fill": "$verdict-yellow",
+                              "width": 10,
+                              "height": 10
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "g8YIx",
+                          "name": "crEF2Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "UZNKW",
+                              "name": "crEF2Title",
+                              "fill": "$text-primary",
+                              "content": "Fecha de entrega vaga",
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "XEOm2",
+                              "name": "crEF2Expl",
+                              "fill": "$text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "La fecha de entrega dice \"sujeto a avance de obra\" sin fecha concreta. La ley exige plazos específicos.",
+                              "lineHeight": 1.5,
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "kmmFz",
+                      "name": "crEF2Div",
+                      "fill": "$border",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "CtRJt",
+                      "name": "crEF2CiteWrap",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "id": "nj7ft",
+                          "type": "ref",
+                          "ref": "Y6youq",
+                          "width": "fill_container",
+                          "name": "crEF2Cite",
+                          "descendants": {
+                            "S7CS6B": {
+                              "content": "Código Civil — Art. 1605"
+                            },
+                            "Ipojx": {
+                              "content": "\"El plazo de entrega debe ser determinado o determinable. Una obligación sin plazo cierto puede ser exigible de inmediato.\""
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "lEUPM",
+              "name": "crDownload",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$accent",
+              "cornerRadius": "$radius-input",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "RWlKg",
+                  "name": "crDlIcon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "download",
+                  "iconFontFamily": "lucide",
+                  "fill": "#FFFFFF"
+                },
+                {
+                  "type": "text",
+                  "id": "uH35d",
+                  "name": "crDlText",
+                  "fill": "#FFFFFF",
+                  "content": "Descargar resumen",
+                  "fontFamily": "$font-body",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "id": "NzvcH",
+              "type": "ref",
+              "ref": "j3HtJ",
+              "width": "fill_container",
+              "name": "crSecondary",
+              "descendants": {
+                "C1V6bT": {
+                  "content": "Verificar otro proyecto"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "I0FXWI",
+              "name": "crShareRow",
+              "width": "fill_container",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "eLqxq",
+                  "name": "crShareIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "share-2",
+                  "iconFontFamily": "lucide",
+                  "fill": "$accent"
+                },
+                {
+                  "type": "text",
+                  "id": "hSBDs",
+                  "name": "crShareText",
+                  "fill": "$accent",
+                  "content": "Compartir resultado",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "id": "OXMGa",
+              "type": "ref",
+              "ref": "lGRgW",
+              "width": "fill_container",
+              "name": "crDisclaimer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Y6youq",
+      "x": 0,
+      "y": 858,
+      "name": "Component/Legal Citation",
+      "reusable": true,
+      "width": 326,
+      "fill": "#F0F7F6",
+      "cornerRadius": 8,
+      "stroke": {
+        "align": "inside",
+        "thickness": 1,
+        "fill": "$accent-light"
+      },
+      "layout": "vertical",
+      "gap": 8,
+      "padding": 12,
+      "children": [
+        {
+          "type": "frame",
+          "id": "d1sl8c",
+          "name": "citeHeader",
+          "width": "fill_container",
+          "gap": 6,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "ehy56",
+              "name": "citeIcon",
+              "width": 14,
+              "height": 14,
+              "iconFontName": "scale",
+              "iconFontFamily": "lucide",
+              "fill": "$accent"
+            },
+            {
+              "type": "text",
+              "id": "S7CS6B",
+              "name": "citeLaw",
+              "fill": "$accent",
+              "content": "Ley de Inquilinato — Art. 4",
+              "fontFamily": "$font-body",
+              "fontSize": 13,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "Ipojx",
+          "name": "citeQuote",
+          "fill": "$text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "\"Todo contrato de arrendamiento deberá constar por escrito con datos del inmueble, precio y duración.\"",
+          "lineHeight": 1.5,
+          "fontFamily": "$font-body",
+          "fontSize": 12,
+          "fontWeight": "normal",
+          "fontStyle": "italic"
+        },
+        {
+          "type": "frame",
+          "id": "x3yVu",
+          "name": "citeLink",
+          "gap": 4,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Yq43O",
+              "name": "citeLinkText",
+              "fill": "$accent",
+              "content": "Leer la ley",
+              "fontFamily": "$font-body",
+              "fontSize": 12,
+              "fontWeight": "500"
+            },
+            {
+              "type": "icon_font",
+              "id": "zmxTr",
+              "name": "citeLinkArrow",
+              "width": 12,
+              "height": 12,
+              "iconFontName": "external-link",
+              "iconFontFamily": "lucide",
+              "fill": "$accent"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Vmd09",
+      "x": 0,
+      "y": 996.4709897610921,
+      "name": "Component/Legal Summary",
+      "reusable": true,
+      "width": 358,
+      "height": 156,
+      "fill": "#F0F7F6",
+      "cornerRadius": "$radius-card",
+      "stroke": {
+        "align": "inside",
+        "thickness": 1,
+        "fill": "$accent-light"
+      },
+      "layout": "vertical",
+      "gap": 12,
+      "padding": 16,
+      "children": [
+        {
+          "type": "frame",
+          "id": "hHFvI",
+          "name": "lsHeader",
+          "width": "fill_container",
+          "gap": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "Ciu29",
+              "name": "lsIcon",
+              "width": 20,
+              "height": 20,
+              "iconFontName": "scale",
+              "iconFontFamily": "lucide",
+              "fill": "$accent"
+            },
+            {
+              "type": "text",
+              "id": "ZqgfG",
+              "name": "lsTitle",
+              "fill": "$accent",
+              "content": "Base legal de este resultado",
+              "fontFamily": "$font-body",
+              "fontSize": 15,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "H3VPTz",
+          "name": "lsBody",
+          "fill": "$text-primary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Tus alertas se basan en la Ley de Inquilinato (Art. 4, Art. 24) y el Código Civil (Art. 1605). Estas leyes protegen tu derecho a un contrato claro y completo.",
+          "lineHeight": 1.6,
+          "fontFamily": "$font-body",
+          "fontSize": 13,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "DF6ly",
+          "name": "lsExpandRow",
+          "gap": 4,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "nUQvW",
+              "name": "lsExpandText",
+              "fill": "$accent",
+              "content": "Ver leyes referenciadas",
+              "fontFamily": "$font-body",
+              "fontSize": 13,
+              "fontWeight": "500"
+            },
+            {
+              "type": "icon_font",
+              "id": "ghJ5z",
+              "name": "lsExpandIcon",
+              "width": 14,
+              "height": 14,
+              "iconFontName": "chevron-down",
+              "iconFontFamily": "lucide",
+              "fill": "$accent"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Sj4oU",
+      "x": 503,
+      "y": -48,
+      "name": "row1label",
+      "height": 32,
+      "gap": 8,
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "l2N7H",
+          "fill": "$text-secondary",
+          "content": "Flujo 1 — Verificar proyecto",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ed5wA",
+      "x": 503,
+      "y": 876,
+      "name": "row2label",
+      "height": 32,
+      "gap": 8,
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "Zg9JR",
+          "fill": "$text-secondary",
+          "content": "Flujo 2 — Analizar contrato",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "FyXwl",
+      "x": 503,
+      "y": 1823,
+      "name": "row3label",
+      "height": 32,
+      "gap": 8,
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "r6YheZ",
+          "fill": "$text-secondary",
+          "content": "Estados especiales",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "P9AKUQ",
+      "x": 898,
+      "y": 410,
+      "name": "arr1",
+      "width": 40,
+      "height": 24,
+      "fill": "$accent-light",
+      "cornerRadius": 12,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "zBzeV",
+          "fill": "$accent",
+          "content": "→",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "T7eDK",
+      "x": 1338,
+      "y": 410,
+      "name": "arr2",
+      "width": 40,
+      "height": 24,
+      "fill": "$accent-light",
+      "cornerRadius": 12,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "S0TxxL",
+          "fill": "$accent",
+          "content": "→",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "vWWh0",
+      "x": 1778,
+      "y": 410,
+      "name": "arr3",
+      "width": 40,
+      "height": 24,
+      "fill": "$accent-light",
+      "cornerRadius": 12,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "uWDhz",
+          "fill": "$accent",
+          "content": "→",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "zfwmM",
+      "x": 898,
+      "y": 1338,
+      "name": "arr4",
+      "width": 40,
+      "height": 24,
+      "fill": "$accent-light",
+      "cornerRadius": 12,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "k6rpkZ",
+          "fill": "$accent",
+          "content": "→",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "U01mM1",
+      "x": 1338,
+      "y": 1338,
+      "name": "arr5",
+      "width": 40,
+      "height": 24,
+      "fill": "$accent-light",
+      "cornerRadius": 12,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "l48jk",
+          "fill": "$accent",
+          "content": "→",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "W2oUj",
+      "x": 1778,
+      "y": 1338,
+      "name": "arr6",
+      "width": 40,
+      "height": 24,
+      "fill": "$accent-light",
+      "cornerRadius": 12,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "bLq66",
+          "fill": "$accent",
+          "content": "→",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "GF5tA",
+      "x": 2218,
+      "y": 1338,
+      "name": "arr7",
+      "width": 40,
+      "height": 24,
+      "fill": "$accent-light",
+      "cornerRadius": 12,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "SgBeT",
+          "fill": "$accent",
+          "content": "→",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "TGBnx",
+      "x": 2658,
+      "y": 1338,
+      "name": "arr8",
+      "width": 40,
+      "height": 24,
+      "fill": "$accent-light",
+      "cornerRadius": 12,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "mVecs",
+          "fill": "$accent",
+          "content": "→",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "x4BnSu",
+      "x": 1823,
+      "y": 928,
+      "name": "s8",
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "DBkhN",
+          "name": "sb8",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Y8PgoR",
+              "fill": "$text-primary",
+              "content": "9:42",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "tYddd",
+              "name": "sb8icons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "q3Fzos",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "DpeKt",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "w3runy",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "cm0qB",
+          "name": "ct8",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            16,
+            16,
+            32,
+            16
+          ],
+          "children": [
+            {
+              "id": "H786V",
+              "type": "ref",
+              "ref": "nHpQE",
+              "descendants": {
+                "A9OhC": {
+                  "content": "Paso 3 de 4 · Seleccionar canal"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "v2mN7u",
+              "fill": "$text-primary",
+              "content": "¿Cómo recibir tu análisis?",
+              "fontFamily": "Inter",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "NnUdp",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Elige cómo quieres recibir el análisis detallado de tu contrato.",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "tBzxe",
+              "name": "card8a",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 2,
+                "fill": "$accent"
+              },
+              "gap": 12,
+              "padding": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "kXSAt",
+                  "name": "card8aLeft",
+                  "height": "fill_container",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "pWkv1",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "mail",
+                      "iconFontFamily": "lucide",
+                      "fill": "$accent"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "rjphE",
+                      "name": "card8aText",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "retuX",
+                          "fill": "$text-primary",
+                          "content": "Correo electrónico",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "mSHBo",
+                          "fill": "$text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 240,
+                          "content": "Recibe el PDF completo en tu bandeja de entrada",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "GQVoK",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "circle-check",
+                  "iconFontFamily": "lucide",
+                  "fill": "$accent"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "LRYHP",
+              "name": "card8b",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "gap": 12,
+              "padding": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hwV7B",
+                  "name": "card8bLeft",
+                  "height": "fill_container",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "sWGLj",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "message-circle",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-secondary"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "OcMk6",
+                      "name": "card8bText",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qzt9X",
+                          "fill": "$text-primary",
+                          "content": "WhatsApp",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "TxEYH",
+                          "fill": "$text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 240,
+                          "content": "Resumen por mensaje con los puntos clave",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "ICsLP",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "circle",
+                  "iconFontFamily": "lucide",
+                  "fill": "$border"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Q5ezsd",
+              "name": "card8c",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "gap": 12,
+              "padding": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "x0jnqV",
+                  "name": "card8cLeft",
+                  "height": "fill_container",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "b1V9Kk",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "link",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-secondary"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "s53oL",
+                      "name": "card8cText",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "w8fu2",
+                          "fill": "$text-primary",
+                          "content": "Enlace web",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "oYHlD",
+                          "fill": "$text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 240,
+                          "content": "Accede al reporte en línea por 30 días",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "M1LdNV",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "circle",
+                  "iconFontFamily": "lucide",
+                  "fill": "$border"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "xLqs9",
+              "name": "spacer8",
+              "width": "fill_container",
+              "height": "fill_container"
+            },
+            {
+              "id": "BPnvG",
+              "type": "ref",
+              "ref": "WpIN5",
+              "width": "fill_container",
+              "descendants": {
+                "DG4de": {
+                  "content": "Continuar"
+                }
+              }
+            },
+            {
+              "id": "ZLO8I",
+              "type": "ref",
+              "ref": "lGRgW",
+              "width": "fill_container"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "d4Q7Lq",
+      "x": 2268,
+      "y": 928,
+      "name": "s9",
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "b6eRQ",
+          "name": "sb9",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "FBMbG",
+              "fill": "$text-primary",
+              "content": "9:42",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "l9HZi",
+              "name": "sb9icons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "PF4bq",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "Wk3aW",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "M88Wgk",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ymMtT",
+          "name": "ct9",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            16,
+            16,
+            32,
+            16
+          ],
+          "children": [
+            {
+              "id": "nu53X",
+              "type": "ref",
+              "ref": "nHpQE",
+              "descendants": {
+                "A9OhC": {
+                  "content": "Paso 4 de 4 · Confirmar envío"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "faE1r",
+              "fill": "$text-primary",
+              "content": "¿A qué correo enviamos?",
+              "fontFamily": "Inter",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "k0iUT",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Ingresa tu correo para recibir el análisis en PDF.",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "kbhNO",
+              "name": "inputGroup",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "gC6iK",
+                  "fill": "$text-primary",
+                  "content": "Correo electrónico",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "zUJIA",
+                  "name": "inputField",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "$surface",
+                  "cornerRadius": "$radius-input",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$accent"
+                  },
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "HI2Fs",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "mail",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-secondary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tCMiw",
+                      "fill": "$text-secondary",
+                      "content": "tu@correo.com",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "rLNAj",
+              "name": "privacyRow",
+              "width": "fill_container",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "FqBQ2",
+                  "width": 14,
+                  "height": 14,
+                  "iconFontName": "shield-check",
+                  "iconFontFamily": "lucide",
+                  "fill": "$accent"
+                },
+                {
+                  "type": "text",
+                  "id": "a2mLkn",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": 310,
+                  "content": "Tu correo no se comparte con terceros ni se usa para publicidad.",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "CwC7K",
+              "name": "spacer9",
+              "width": "fill_container",
+              "height": "fill_container"
+            },
+            {
+              "id": "oxC17",
+              "type": "ref",
+              "ref": "WpIN5",
+              "width": "fill_container",
+              "descendants": {
+                "DG4de": {
+                  "content": "Enviar análisis"
+                }
+              }
+            },
+            {
+              "id": "J4JzYE",
+              "type": "ref",
+              "ref": "OI7jl",
+              "width": "fill_container",
+              "descendants": {
+                "fnKWq": {
+                  "content": "← Cambiar canal"
+                }
+              }
+            },
+            {
+              "id": "o0esA",
+              "type": "ref",
+              "ref": "lGRgW",
+              "width": "fill_container"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "y4ZD9u",
+      "x": 2703,
+      "y": 928,
+      "name": "s10",
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "SGZfY",
+          "name": "sb10",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "q25Fz",
+              "fill": "$text-primary",
+              "content": "9:42",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "RBRR8",
+              "name": "sb10icons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "CK9T0",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "o54VCd",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "x2hVM",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "y38pGB",
+          "name": "ct10",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            32,
+            16,
+            40,
+            16
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Kbbhb",
+              "name": "heroArea",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "N7hhY",
+                  "width": 64,
+                  "height": 64,
+                  "iconFontName": "circle-check",
+                  "iconFontFamily": "lucide",
+                  "fill": "$verdict-green"
+                },
+                {
+                  "type": "text",
+                  "id": "PF3uH",
+                  "fill": "$text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "¡Análisis enviado!",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 24,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "HrVIn",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Tu análisis de contrato está listo y en camino.",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "rpn2p",
+              "name": "idCard",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Wqu9g",
+                  "name": "idCardHeader",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "uDuft",
+                      "fill": "$text-secondary",
+                      "content": "ID del análisis",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "hIKHX",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "copy",
+                      "iconFontFamily": "lucide",
+                      "fill": "$accent"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "A7Sptx",
+                  "fill": "$text-primary",
+                  "content": "CS-2026-A1B2C3",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "700",
+                  "fontStyle": "monospace"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "crpk4",
+              "name": "deliveryCard",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "CQTAA",
+                  "name": "delivRow1",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tpez4",
+                      "fill": "$text-secondary",
+                      "content": "Enviado a",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Qyhbi",
+                      "fill": "$text-primary",
+                      "content": "tu@correo.com",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "sNGVV",
+                  "name": "divider",
+                  "width": "fill_container",
+                  "height": 1,
+                  "fill": "$border"
+                },
+                {
+                  "type": "frame",
+                  "id": "t7u98",
+                  "name": "delivRow2",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QLj09",
+                      "fill": "$text-secondary",
+                      "content": "Disponible por",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "pG5Am",
+                      "fill": "$text-primary",
+                      "content": "30 días",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "rrJZT",
+              "name": "spacer10",
+              "width": "fill_container",
+              "height": "fill_container"
+            },
+            {
+              "id": "caMBu",
+              "type": "ref",
+              "ref": "WpIN5",
+              "width": "fill_container",
+              "descendants": {
+                "DG4de": {
+                  "content": "Ver reporte ahora"
+                }
+              }
+            },
+            {
+              "id": "G1zU9",
+              "type": "ref",
+              "ref": "j3HtJ",
+              "width": "fill_container",
+              "descendants": {
+                "C1V6bT": {
+                  "content": "Compartir enlace"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ijVEG",
+      "x": 503,
+      "y": 1871,
+      "name": "s11",
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "DxuHv",
+          "name": "sb11",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "B9anyC",
+              "fill": "$text-primary",
+              "content": "9:42",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "ldtW3",
+              "name": "sb11icons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "CkWGH",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "BE2tw",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "N7cRJb",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "RC91O",
+          "name": "ct11",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            16,
+            16,
+            32,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "zaG1Y",
+              "name": "headerRow11",
+              "width": "fill_container",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "J1ReJ",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "triangle-alert",
+                  "iconFontFamily": "lucide",
+                  "fill": "$verdict-yellow"
+                },
+                {
+                  "type": "text",
+                  "id": "dUId5",
+                  "fill": "$text-primary",
+                  "content": "Aviso legal importante",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "pXy5X",
+              "name": "warnCard",
+              "width": "fill_container",
+              "fill": "$verdict-yellow-bg",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$verdict-yellow"
+              },
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 14,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Yn8qQ",
+                  "fill": "$verdict-yellow",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Este análisis es una herramienta de apoyo y no constituye asesoría legal. Los resultados son informativos y no deben usarse como única base para decisiones legales.",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "SaiXm",
+              "name": "doList",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XixBP",
+                  "fill": "$text-primary",
+                  "content": "Puedes usar este análisis para:",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "rrhTE",
+                  "name": "doItem1",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "C5ewc3",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "check",
+                      "iconFontFamily": "lucide",
+                      "fill": "$verdict-green"
+                    },
+                    {
+                      "type": "text",
+                      "id": "VLwg6",
+                      "fill": "$text-primary",
+                      "content": "Comparar condiciones del contrato",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dyqqK",
+                  "name": "doItem2",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "c7Srk",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "check",
+                      "iconFontFamily": "lucide",
+                      "fill": "$verdict-green"
+                    },
+                    {
+                      "type": "text",
+                      "id": "gT9E4",
+                      "fill": "$text-primary",
+                      "content": "Identificar cláusulas de riesgo",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "WO6Eh",
+                  "name": "doItem3",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "MjDd2",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "check",
+                      "iconFontFamily": "lucide",
+                      "fill": "$verdict-green"
+                    },
+                    {
+                      "type": "text",
+                      "id": "NuXY8",
+                      "fill": "$text-primary",
+                      "content": "Preparar preguntas para tu abogado",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "SHWRK",
+                  "name": "dontItem1",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "pA416",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "x",
+                      "iconFontFamily": "lucide",
+                      "fill": "$verdict-red"
+                    },
+                    {
+                      "type": "text",
+                      "id": "cBRYL",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 300,
+                      "content": "Tomar decisiones finales basándote solo en esto",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "a1FgF8",
+                  "name": "dontItem2",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "y3raYH",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "x",
+                      "iconFontFamily": "lucide",
+                      "fill": "$verdict-red"
+                    },
+                    {
+                      "type": "text",
+                      "id": "rjFkK",
+                      "fill": "$text-secondary",
+                      "content": "Reemplazar asesoría legal profesional",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "te1Z8",
+              "name": "spacer11",
+              "width": "fill_container",
+              "height": "fill_container"
+            },
+            {
+              "id": "BoetL",
+              "type": "ref",
+              "ref": "WpIN5",
+              "width": "fill_container",
+              "descendants": {
+                "DG4de": {
+                  "content": "Acepto y continuar"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "TEyxz",
+      "x": 943,
+      "y": 1871,
+      "name": "s12",
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Z9JexQ",
+          "name": "sb12",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "pR8zX",
+              "fill": "$text-primary",
+              "content": "9:42",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "HxzMA",
+              "name": "sb12icons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "MEvAB",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "N0dfO1",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "sR0ym",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "v16Ce1",
+          "name": "ct12",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            32,
+            16,
+            40,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "iRjcy",
+              "width": 56,
+              "height": 56,
+              "iconFontName": "file-x",
+              "iconFontFamily": "lucide",
+              "fill": "$verdict-red"
+            },
+            {
+              "type": "text",
+              "id": "A35YT",
+              "fill": "$text-primary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "No podemos analizar este contrato",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 20,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "dblTR",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "El archivo no cumple con los requisitos mínimos para el análisis.",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "bikpB",
+              "name": "reasonsCard",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "a2Jwj",
+                  "fill": "$text-primary",
+                  "content": "Posibles razones:",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "De2X2",
+                  "name": "r1",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "L8aXEP",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "dot",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-secondary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "gxQMO",
+                      "fill": "$text-secondary",
+                      "content": "Imagen borrosa o de baja resolución",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LpnQB",
+                  "name": "r2",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "pCvJj",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "dot",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-secondary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "aHPCj",
+                      "fill": "$text-secondary",
+                      "content": "Documento no es un contrato inmobiliario",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "jC5C7",
+                  "name": "r3",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "wkG3O",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "dot",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-secondary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "e82xbT",
+                      "fill": "$text-secondary",
+                      "content": "Texto no legible por OCR",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "FPJjS",
+                  "name": "r4",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "B6LFE",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "dot",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-secondary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "w4cr1I",
+                      "fill": "$text-secondary",
+                      "content": "Archivo dañado o incompleto",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "SyASp",
+              "name": "spacer12",
+              "width": "fill_container",
+              "height": "fill_container"
+            },
+            {
+              "id": "Fkaqe",
+              "type": "ref",
+              "ref": "WpIN5",
+              "width": "fill_container",
+              "descendants": {
+                "DG4de": {
+                  "content": "Intentar de nuevo"
+                }
+              }
+            },
+            {
+              "id": "sdoxu",
+              "type": "ref",
+              "ref": "OI7jl",
+              "width": "fill_container",
+              "descendants": {
+                "fnKWq": {
+                  "content": "Subir otro contrato"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "mHSNY",
+      "x": 1383,
+      "y": 1871,
+      "name": "s13",
+      "width": 390,
+      "height": 844,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "U7tTY",
+          "name": "sb13",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            16,
+            20,
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "IBQqS",
+              "fill": "$text-primary",
+              "content": "9:42",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "u5Ie3S",
+              "name": "sb13icons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "nboey",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "fqty0",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "wtF4T",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "aFR2j",
+          "name": "ct13",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            32,
+            16,
+            40,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "t8XZn4",
+              "width": 56,
+              "height": 56,
+              "iconFontName": "lock",
+              "iconFontFamily": "lucide",
+              "fill": "$text-secondary"
+            },
+            {
+              "type": "text",
+              "id": "v6CCrd",
+              "fill": "$text-primary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Enlace expirado",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "V8MB8d",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Este enlace de reporte ya no está disponible.",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "N9t18b",
+              "name": "retCard",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": "$radius-card",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "y56t4N",
+                  "name": "retHeaderFixed",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "gxIPi",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "hourglass",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-secondary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "CKObB",
+                      "fill": "$text-primary",
+                      "content": "Política de retención",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "fhT3g",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Los reportes están disponibles por 30 días desde su generación. Pasado este tiempo, el enlace expira y los datos son eliminados de nuestros servidores.",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "LQiEF",
+              "name": "spacer13",
+              "width": "fill_container",
+              "height": "fill_container"
+            },
+            {
+              "id": "aaeTz",
+              "type": "ref",
+              "ref": "WpIN5",
+              "width": "fill_container",
+              "descendants": {
+                "DG4de": {
+                  "content": "Subir contrato nuevo"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "ZKAvv",
+              "name": "hintRow",
+              "width": "fill_container",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "AzcfM",
+                  "fill": "$text-secondary",
+                  "content": "¿Tienes el ID?",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "ZaR7B",
+                  "type": "ref",
+                  "ref": "OI7jl",
+                  "descendants": {
+                    "fnKWq": {
+                      "content": "Reenviar análisis"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "accent": {
+      "type": "color",
+      "value": "#0F766E"
+    },
+    "accent-light": {
+      "type": "color",
+      "value": "#E6F2F1"
+    },
+    "bg": {
+      "type": "color",
+      "value": "#FAF7F2"
+    },
+    "border": {
+      "type": "color",
+      "value": "#E7E2D9"
+    },
+    "font-body": {
+      "type": "string",
+      "value": "Inter"
+    },
+    "radius-card": {
+      "type": "number",
+      "value": 12
+    },
+    "radius-input": {
+      "type": "number",
+      "value": 8
+    },
+    "spacing-section": {
+      "type": "number",
+      "value": 28
+    },
+    "surface": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "text-primary": {
+      "type": "color",
+      "value": "#1F1A14"
+    },
+    "text-secondary": {
+      "type": "color",
+      "value": "#6B6258"
+    },
+    "verdict-green": {
+      "type": "color",
+      "value": "#15803D"
+    },
+    "verdict-green-bg": {
+      "type": "color",
+      "value": "#ECFDF5"
+    },
+    "verdict-red": {
+      "type": "color",
+      "value": "#B91C1C"
+    },
+    "verdict-red-bg": {
+      "type": "color",
+      "value": "#FEF2F2"
+    },
+    "verdict-yellow": {
+      "type": "color",
+      "value": "#CA8A04"
+    },
+    "verdict-yellow-bg": {
+      "type": "color",
+      "value": "#FEFCE8"
+    }
+  }
+}

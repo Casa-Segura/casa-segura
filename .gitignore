@@ -1,0 +1,91 @@
+# OS and editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Node / Next.js web app
+node_modules/
+.next/
+out/
+dist/
+build/
+.turbo/
+.vercel/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python / FastAPI backend
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Test and browser automation artifacts
+coverage/
+playwright-report/
+test-results/
+blob-report/
+.nyc_output/
+
+# Local build and runtime artifacts
+logs/
+*.log
+tmp/
+temp/
+.cache/
+.parcel-cache/
+uploads/
+generated/
+
+# Docker and local service state
+docker-compose.override.yml
+.docker/
+.postgres-data/
+.redis-data/
+*.pid
+
+# Database and migration scratch files
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+
+# Infrastructure and deployment caches
+.serverless/
+.sst/
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Large model / embedding caches
+.huggingface/
+.sentence_transformers/
+

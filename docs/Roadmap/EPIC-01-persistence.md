@@ -1,0 +1,98 @@
+---
+id: EPIC-01
+name: Persistence & Schema
+phase: 0
+status: backlog
+depends_on:
+  - EPIC-00
+prd_refs:
+  - FEATURES_MAP §4
+  - RUBRICA_CONTRATO §12
+  - BE-SERVICES §2
+  - DOMAIN_MODEL
+feature: F8 (part 1)
+owner: tbd
+tags:
+  - casa-segura
+  - epic
+  - epic-01
+---
+
+# EPIC-01 — Persistence & Schema
+
+## Goal
+
+Stand up Postgres + pgvector and define every persistent entity the system needs **before** any service-layer code wants to write rows. This epic owns the data contract: tables, constraints, ORM models, migrations, fixtures, and the seed data for the rubric and corpus version catalog.
+
+This epic does NOT implement retention/anonymization cron jobs — those are [[EPIC-09-retention-privacy]] (F8 part 2). It stands up the schema; the schema enforces the privacy invariants (no contract content columns anywhere) but the jobs that prune are later.
+
+## Definition of done
+
+- [ ] Postgres 15+ with `vector` extension running locally via docker-compose and on the chosen managed host (Supabase or Railway)
+- [ ] Alembic configured; `alembic upgrade head` builds a fresh DB from zero
+- [ ] Every entity from [[FEATURES_MAP]] §4 has an ORM model and a migration
+- [ ] CHECK constraints, ENUMs, and indexes enforce the invariants in [[RUBRICA_CONTRATO]] §12 and [[PRD_GENERAL]] BR-04, BR-05, BR-08, BR-16
+- [ ] Project normalization (`canonical_name` → `normalized_name`) is implemented and tested with accent/case edge cases
+- [ ] Test fixtures exist for every entity and the test DB resets cleanly between tests
+- [ ] Seed: `RubricVersion` 0.1 loaded with the 38 criteria catalog from [[RUBRICA_CONTRATO]] §16
+- [ ] Seed: `CorpusVersion` placeholder row exists; actual chunks loaded by [[EPIC-03-corpus-rag]]
+
+## In scope
+
+- Postgres provisioning (local + remote)
+- pgvector extension
+- SQLAlchemy 2 declarative base + session/engine factory
+- Alembic config and initial migration
+- ORM models for all entities in [[FEATURES_MAP]] §4
+- DB constraints (CHECK, NOT NULL, UNIQUE, FK, ENUMs)
+- Indexes (per-table, including pgvector HNSW or IVFFlat for `legal_chunk.embedding`)
+- Project canonicalization logic
+- Test fixtures
+- Seed scripts for `RubricVersion` and `Criterion`
+
+## Out of scope (explicit)
+
+- Retention cron jobs and anonymization — [[EPIC-09-retention-privacy]]
+- Corpus ingestion (chunking, embedding, persisting `legal_chunk` rows) — [[EPIC-03-corpus-rag]]
+- Service-layer code that consumes these models — owned by feature epics
+- Backup / DR strategy — [[EPIC-11-observability]]
+- Connection pool tuning under load — measure first, tune later
+
+## Dependencies
+
+- Blocks: every feature epic that persists state (02–09)
+- Blocked by: [[EPIC-00-foundation]]
+
+## Tickets
+
+- [[CS-020]] — Provision Postgres + pgvector (local + remote)
+- [[CS-021]] — Alembic init + initial migration framework
+- [[CS-022]] — SQLAlchemy base, session factory, FastAPI dependency
+- [[CS-023]] — Schema: Project entity
+- [[CS-024]] — Schema: ContractAnalysis entity
+- [[CS-025]] — Schema: ContractSubmission + OcrJob (transient with expires_at)
+- [[CS-026]] — Schema: LegalDocument + LegalChunk + CorpusVersion
+- [[CS-027]] — Schema: Criterion + RubricVersion
+- [[CS-028]] — Schema: EconomicBenchmark
+- [[CS-029]] — Schema: DeliveryRequest
+- [[CS-030]] — DB invariants: CHECK constraints, ENUMs, indexes (incl. pgvector index)
+- [[CS-031]] — Project name canonicalization (slugify + match)
+- [[CS-032]] — Test fixture infrastructure (factory pattern)
+- [[CS-033]] — Seed RubricVersion 0.1 with 38-criterion catalog
+- [[CS-034]] — Seed CorpusVersion placeholder
+- [[CS-035]] — Migration smoke test in CI (upgrade head → downgrade base → upgrade head)
+
+## Risks
+
+| ID | Risk | Mitigation |
+|---|---|---|
+| R-01-1 | pgvector not available on Railway free tier | Switch to Supabase (pgvector default). See [[STATUS]] R10. |
+| R-01-2 | Schema evolves a lot during EPIC-06 build | Keep migrations granular; one logical change per migration |
+| R-01-3 | Project name collision across genuinely-different developments | Normalization rules in [[CS-031]] AC handle accent/case/whitespace; manual dedupe path documented |
+| R-01-4 | pgvector index type wrong for our query volume | Start with HNSW; benchmark with realistic corpus size in [[EPIC-03-corpus-rag]] |
+
+## Notes
+
+- [[DOMAIN_MODEL]] is the canonical entity reference
+- [[RUBRICA_CONTRATO]] §12.4 lists what is **never** stored — schema must make those columns impossible to add accidentally
+- [[BE-SERVICES]] §2.3 reinforces the privacy separation: curated data persists, user data does not
