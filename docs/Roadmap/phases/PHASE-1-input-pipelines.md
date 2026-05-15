@@ -19,7 +19,25 @@ Source epics:
 - [EPIC-02 - Contract Ingestion & OCR](../EPIC-02-ingestion-ocr.md)
 - [EPIC-03 - Legal Corpus & RAG](../EPIC-03-corpus-rag.md)
 
-## OCR and Ingestion
+Source-of-truth links:
+
+- [PRD_F1_INGESTA_Y_OCR](../../Casa%20Segura%20Formal%20PRDs/PRD_F1_INGESTA_Y_OCR.md) - upload, OCR, disclaimer gate, and retention expectations.
+- [PRD_F3_CORPUS_Y_RAG](../../Casa%20Segura%20Formal%20PRDs/PRD_F3_CORPUS_Y_RAG.md) - legal corpus and retrieval behavior.
+- [DOMAIN_MODEL](../../Casa%20Segura%20Formal%20PRDs/DOMAIN_MODEL.md) - `ContractSubmission`, `OcrJob`, `LegalDocument`, `LegalChunk`, and `CorpusVersion`.
+- [F1 analysis plan](../../analysis/F1_ingesta_ocr/IMPLEMENTATION_PLAN.md) - engineering breakdown for ingestion/OCR.
+- [F3 analysis plan](../../analysis/F3_corpus_rag/IMPLEMENTATION_PLAN.md) - engineering breakdown for corpus/RAG.
+
+## Ready Now
+
+No Phase 1 tickets are ready yet. Start after the Phase 0 app and persistence foundations land.
+
+## FE WORK
+
+- [CS-058](../tickets/CS-058.md) - Disclaimer acceptance gate.
+
+FE should coordinate this lane with [CS-291](../tickets/CS-291.md) and [CS-297](../tickets/CS-297.md) in [Cross-Cutting Work](CROSS-cutting.md), keeping Spanish disclaimer copy centralized.
+
+## BE WORK
 
 - [CS-050](../tickets/CS-050.md) - Upload endpoint with format and size validation.
 - [CS-051](../tickets/CS-051.md) - Content hash for idempotency.
@@ -29,27 +47,31 @@ Source epics:
 - [CS-055](../tickets/CS-055.md) - Tesseract Spanish fallback path.
 - [CS-056](../tickets/CS-056.md) - `not_analyzable` error envelope and reasons.
 - [CS-057](../tickets/CS-057.md) - Discard-after-extract invariant and test.
-- [CS-058](../tickets/CS-058.md) - Disclaimer acceptance gate.
 - [CS-059](../tickets/CS-059.md) - Page-count and size caps.
 - [CS-060](../tickets/CS-060.md) - Latency budget instrumentation.
 
-## Legal Corpus and RAG
+## INFRA WORK
+
+- [CS-084](../tickets/CS-084.md) - Transactional ingestion CLI with idempotency.
+- [CS-087](../tickets/CS-087.md) - Similarity threshold tuning with eval set.
+- [CS-088](../tickets/CS-088.md) - Curated finding/article eval pairs.
+
+Infra/data support should verify pgvector availability, OCR/vision model env configuration, fixtures, and CI hooks before declaring Phase 1 end-to-end runnable in staging.
+
+## API / AI CONNECTIONS
 
 - [CS-080](../tickets/CS-080.md) - Corpus loader for legal sources.
 - [CS-081](../tickets/CS-081.md) - Chunk markdown body into LegalChunk segments.
 - [CS-082](../tickets/CS-082.md) - Tag and relevance normalization rules.
 - [CS-083](../tickets/CS-083.md) - Embedding pipeline.
-- [CS-084](../tickets/CS-084.md) - Transactional ingestion CLI with idempotency.
 - [CS-085](../tickets/CS-085.md) - `retrieve_for_finding` API.
 - [CS-086](../tickets/CS-086.md) - `pattern_legal_link` shortcut.
-- [CS-087](../tickets/CS-087.md) - Similarity threshold tuning with eval set.
-- [CS-088](../tickets/CS-088.md) - Curated finding/article eval pairs.
 - [CS-089](../tickets/CS-089.md) - Per-finding citation tracing.
 - [CS-090](../tickets/CS-090.md) - Corpus version stamp on ingestion.
 
 ## Parallel Pick Guidance
 
-- One BE owner can take upload/OCR routing and extraction.
-- One AI/RAG owner can take corpus loading, chunking, embeddings, and retrieval.
-- One infra/data owner can support pgvector, env variables, fixtures, telemetry, and CI hooks.
+- BE can take upload/OCR routing, extraction, not-analyzable envelopes, and retention invariants.
+- API / AI can take corpus loading, chunking, embeddings, retrieval, and citation tracing.
+- Infra supports pgvector checks, model/env variables, latency instrumentation, fixtures, and CI hooks.
 

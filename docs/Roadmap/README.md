@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: roadmap_index
 status: living
-last_updated: 2026-05-12
+last_updated: 2026-05-15
 tags:
   - casa-segura
   - roadmap
@@ -35,6 +35,10 @@ PRD_GENERAL ──► user stories US-01..US-07
 ```
 
 Every ticket's `prd_refs` frontmatter cites the section it implements. Acceptance criteria must be testable against that section.
+
+## Parallel execution
+
+For day-to-day pickup, start with the phase-first team index in [phases/README.md](phases/README.md) and the three-engineer coordination view in [PARALLEL_WORK_PLAN.md](PARALLEL_WORK_PLAN.md). Those files organize work into `FE WORK`, `BE WORK`, `INFRA WORK`, and `API / AI CONNECTIONS` lanes while the tickets remain authoritative.
 
 ## Epic catalog
 

@@ -18,9 +18,24 @@ Source epic:
 
 - [EPIC-05 - Economic Analysis & Benchmarks](../EPIC-05-economic-analysis.md)
 
-## Tickets
+Source-of-truth links:
 
-- [CS-130](../tickets/CS-130.md) - `economic_benchmarks.yaml` schema and initial values.
+- [PRD_F5_ANALISIS_ECONOMICO](../../Casa%20Segura%20Formal%20PRDs/PRD_F5_ANALISIS_ECONOMICO.md) - economic calculations and benchmark expectations.
+- [RUBRICA_CONTRATO](../../Casa%20Segura%20Formal%20PRDs/RUBRICA_CONTRATO.md) - numeric thresholds consumed by category B evaluators.
+- [DOMAIN_MODEL](../../Casa%20Segura%20Formal%20PRDs/DOMAIN_MODEL.md) - `EconomicBenchmark` and economic summary persistence shape.
+- [F5 analysis plan](../../analysis/F5_analisis_economico/IMPLEMENTATION_PLAN.md) - implementation breakdown.
+- [F5 evaluation coverage](../../analysis/F5_analisis_economico/EVALUATION_COVERAGE.md) - boundary-value coverage expectations.
+
+## Ready Now
+
+No Phase 3 tickets are ready yet. Start after Phase 2 extraction fields are stable.
+
+## FE WORK
+
+No primary FE tickets live in this phase. FE consumes these outputs later in report/result surfaces.
+
+## BE WORK
+
 - [CS-131](../tickets/CS-131.md) - Effective annual rate computation.
 - [CS-132](../tickets/CS-132.md) - Monthly payment ratio computation.
 - [CS-133](../tickets/CS-133.md) - Total cost computation.
@@ -29,9 +44,19 @@ Source epic:
 - [CS-136](../tickets/CS-136.md) - Benchmark version stamp on summary.
 - [CS-137](../tickets/CS-137.md) - Renormalization when fields are unverifiable.
 
+## INFRA WORK
+
+- [CS-130](../tickets/CS-130.md) - `economic_benchmarks.yaml` schema and initial values.
+
+Benchmark data needs versioning, fixture coverage, and reviewable source notes before computations depend on it.
+
+## API / AI CONNECTIONS
+
+No primary API / AI tickets live in this phase. The main integration point is the `EconomicSummary` contract consumed by Phase 4 rubric evaluators and Phase 5 reports.
+
 ## Parallel Pick Guidance
 
-- Data/Backend owner: benchmark schema, computations, summary model, and version stamping.
-- QA owner: boundary coverage for rates, payment ratios, missing fields, and asymmetric penalty inputs.
-- Rubric owner should review outputs before Phase 4 starts, because category B depends on these shapes.
+- BE owns computations, `EconomicSummary`, version stamping, and missing-field renormalization.
+- INFRA WORK owns benchmark schema, fixture management, and source review.
+- API / AI and rubric owners should review `EconomicSummary` before Phase 4 starts, because category B depends on these shapes.
 

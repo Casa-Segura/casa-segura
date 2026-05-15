@@ -15,15 +15,15 @@ This document turns the roadmap into pickable chunks for a three-engineer team w
 
 Use this plan to decide who owns which folder, which tickets are safe to start, and which work should wait for a dependency to land.
 
-## Current Snapshot
+## Current Ready Picks
 
-Only three tickets are marked `ready` right now:
+Only three tickets are marked `ready` with no dependencies right now:
 
 - `CS-001` - Initialize public repo with MIT license and README skeleton.
 - `CS-270` - Choose retention job scheduler and document ADR.
 - `CS-290` - Build mobile-first landing page.
 
-Most practical implementation work unlocks after `CS-001`, `CS-002`, and `CS-003`:
+Keep this list synchronized with `docs/Roadmap/phases/README.md`. Most practical implementation work unlocks after `CS-001`, `CS-002`, and `CS-003`:
 
 - `CS-001` unlocks both app scaffolds.
 - `CS-002` creates `apps/api`, which unlocks backend, config, logging, database, and CI work.
@@ -31,7 +31,9 @@ Most practical implementation work unlocks after `CS-001`, `CS-002`, and `CS-003
 
 ## Engineer Lanes
 
-### Engineer 1 - Backend Foundation
+These are ownership lanes for a three-person team. The phase docs use the same lane names: `FE WORK`, `BE WORK`, `INFRA WORK`, and `API / AI CONNECTIONS`.
+
+### Engineer 1 - BE WORK: Backend Foundation
 
 Primary folders:
 
@@ -56,7 +58,7 @@ Skill hints:
 - Python error handling for validation, exception mapping, and public error envelopes.
 - Python type safety for strict public signatures, **Pydantic v2** domain DTOs and payloads, and Django ORM boundaries.
 
-### Engineer 2 - Frontend Foundation
+### Engineer 2 - FE WORK: Frontend Foundation
 
 Primary folders:
 
@@ -78,7 +80,7 @@ Next picks after `CS-003`:
 
 Constraints:
 
-- `CS-290` is marked ready, but implementation needs `apps/web`.
+- `CS-290` is marked ready for landing-page planning, copy, and UI work; code should land once `apps/web` exists.
 - Keep landing copy focused on contract analysis. Do not make billboard/project verification a prerequisite.
 - Maintain Spanish `tú` register and include `Esto no es asesoría legal` where required.
 
@@ -88,7 +90,7 @@ Skill hints:
 - TypeScript expert for strict frontend contracts and test setup.
 - UI/UX Pro Max and Web Interface Guidelines for mobile-first layout, accessibility, and contrast.
 
-### Engineer 3 - Infra, Config, and Coordination
+### Engineer 3 - INFRA WORK: Infra, Config, and Coordination
 
 Primary folders:
 
@@ -122,6 +124,16 @@ Skill hints:
 - Python error handling for job exit codes and failure semantics.
 - Supabase or Neon Postgres skills if the remote pgvector host is selected.
 
+### Shared - API / AI CONNECTIONS
+
+Primary folders and contracts:
+
+- `apps/api/` service boundaries that call OCR, RAG, delivery, or external providers
+- prompt, retrieval, eval, and integration fixtures
+- webhook, Zavu, SMTP, model, and vector-search contracts
+
+Start this lane when its backing BE or Infra foundation exists. Early API / AI work is concentrated in Phase 1 input pipelines, Phase 2 extraction, Phase 4 synthesis/citation wiring, Phase 5 delivery integrations, and optional project verification.
+
 ## Today Plan
 
 ### Round 1 - Unblock Folders
@@ -154,9 +166,10 @@ Own this before feature work:
 
 Recommended split:
 
-- Backend: `CS-002`, `CS-007`, `CS-008`, `CS-009`, `CS-022`.
-- Frontend: `CS-003`, then `CS-290` from the cross-cutting frontend epic.
-- Infra/Data: `CS-004`, `CS-005`, `CS-006`, `CS-020`, `CS-021`, `CS-035`.
+- `BE WORK`: `CS-002`, `CS-007`, `CS-008`, `CS-009`, `CS-021`, `CS-022`, and schema tickets.
+- `FE WORK`: `CS-003`, then `CS-290` from the cross-cutting frontend epic.
+- `INFRA WORK`: `CS-004`, `CS-005`, `CS-006`, `CS-020`, `CS-030`, `CS-032`, `CS-035`.
+- `API / AI CONNECTIONS`: seed `RubricVersion` and `CorpusVersion` contracts that later rubric and RAG work consume.
 
 ### Phase 1 - Parallel Input Pipelines
 
@@ -167,9 +180,10 @@ These can split after schema basics are in place:
 
 Recommended split:
 
-- Backend OCR owner: upload, file validation, extraction routing, pypdf, vision, Tesseract, not-analyzable envelopes.
-- AI/RAG owner: corpus loader, chunking, tagging, embeddings, retrieval, evals, citation tracing.
-- Infra support: model/env variables, pgvector checks, latency instrumentation, CI fixture support.
+- `BE WORK`: upload, file validation, extraction routing, pypdf, vision, Tesseract, not-analyzable envelopes.
+- `FE WORK`: disclaimer acceptance coordination with upload UI.
+- `INFRA WORK`: model/env variables, pgvector checks, latency instrumentation, CI fixture support.
+- `API / AI CONNECTIONS`: corpus loader, chunking, tagging, embeddings, retrieval, evals, citation tracing.
 
 ### Phase 2 - Contract Intelligence
 
@@ -179,9 +193,10 @@ Main tickets:
 
 Recommended split:
 
-- AI/RAG owner: prompts, few-shot anchors, leasing reclassification detector, economic extraction prompt.
-- Backend/Data owner: project name normalization handoff, confidence schemas, unverifiable bookkeeping.
-- QA owner: classification eval set.
+- `BE WORK`: project name normalization handoff, confidence schemas, unverifiable bookkeeping.
+- `FE WORK`: no primary phase-owned tickets; consume stable API outputs later.
+- `INFRA WORK`: classification eval set and fixture hygiene.
+- `API / AI CONNECTIONS`: prompts, few-shot anchors, leasing reclassification detector, economic extraction prompt.
 
 ### Phase 3 - Economic Analysis
 
@@ -191,10 +206,12 @@ Main tickets:
 
 Recommended split:
 
-- Data/Backend owner: benchmark schema, rate computations, total cost, overcost, summary model.
-- QA owner: boundary tests for rates, payment ratios, missing fields, and asymmetric penalty inputs.
+- `BE WORK`: rate computations, total cost, overcost, summary model, and unverifiable renormalization.
+- `FE WORK`: no primary phase-owned tickets; consume outputs later in reports.
+- `INFRA WORK`: benchmark schema, versioned benchmark data, and boundary fixtures.
+- `API / AI CONNECTIONS`: review the `EconomicSummary` contract before rubric work consumes it.
 
-### Phase 4 - Rubric Engine
+### Phase 4 - Evaluation Engine
 
 Main tickets:
 
@@ -202,9 +219,10 @@ Main tickets:
 
 Recommended split:
 
-- Backend core owner: schemas, aggregation, applicability, overrides, band assignment, evaluator framework.
-- Backend/AI owner: category evaluators and RAG citation wiring.
-- QA owner: BVA tests for bands, interest, down payment, overrides, and asymmetric penalty.
+- `BE WORK`: schemas, aggregation, applicability, overrides, band assignment, evaluator framework, and deterministic category evaluators.
+- `FE WORK`: no primary phase-owned tickets; consume verdicts and findings later.
+- `INFRA WORK`: BVA tests for bands, interest, down payment, overrides, and asymmetric penalty.
+- `API / AI CONNECTIONS`: RAG citation wiring, verdict synthesis, and output validation.
 
 ### Phase 5 - User Output
 
@@ -215,9 +233,10 @@ Main tickets:
 
 Recommended split:
 
-- Backend/report owner: Jinja shell, sections, PDF rendering, mobile HTML QA.
-- Delivery owner: Pydantic schemas, dispatcher, queue, retry policy, email, Zavu, webhook, public link route.
-- Frontend owner: result page and upload/delivery surface in `CS-291` through `CS-296`.
+- `BE WORK`: Jinja shell, report sections, PDF rendering, delivery schemas, dispatcher, email, public link route, resend, and regeneration.
+- `FE WORK`: result page, upload/delivery surface, mobile report behavior, and expired-link UX.
+- `INFRA WORK`: queue, retry policy, dead-letter handling, and Zavu secrets.
+- `API / AI CONNECTIONS`: Zavu, SMTP normalization, webhook contracts, and external delivery behavior.
 
 ### Phase 6 - Privacy Closure
 
@@ -227,21 +246,22 @@ Main tickets:
 
 Recommended split:
 
-- Infra owner: scheduler ADR and operational contract.
-- Backend/Data owner: cleanup SQL, anonymization, link expiration, recompute project metrics.
-- Security/Privacy owner: irreversible anonymization checks and audit rows.
+- `BE WORK`: cleanup SQL, anonymization, link expiration, recompute project metrics, and audit rows.
+- `FE WORK`: expired-link behavior coordination.
+- `INFRA WORK`: scheduler ADR and operational contract.
+- `API / AI CONNECTIONS`: no primary tickets; privacy review still covers prompts, OCR text, delivery targets, reports, and logs.
 
 ### Cross-Cutting
 
-Frontend:
+`FE WORK`:
 
 - `CS-290` through `CS-299`.
 
-Observability and security:
+`INFRA WORK`:
 
 - `CS-330` through `CS-337`.
 
-Optional project verification:
+`API / AI CONNECTIONS`:
 
 - `CS-350` through `CS-356`.
 
@@ -274,7 +294,7 @@ flowchart TD
 - Read the ticket frontmatter before coding, especially `depends_on`, `domain`, and `secondary_domains`.
 - Do not start a blocked ticket unless the blocker is stubbed behind an agreed interface and the PR calls out the assumption.
 - Stay inside your lane's primary folders unless the ticket explicitly spans domains.
-- If a ticket changes an API contract, update or create the corresponding schema/version note before frontend work depends on it.
+- If a ticket changes an API contract, update or create the corresponding schema/version note before `FE WORK` depends on it.
 - If a ticket touches privacy, logging, OCR text, delivery targets, or report content, assume PII leakage is the main failure mode.
 - If a ticket touches UI, verify 360px mobile behavior and avoid horizontal scroll.
 - If a ticket touches numeric thresholds, add or preserve BVA coverage from the ticket.

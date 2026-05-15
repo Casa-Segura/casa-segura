@@ -1,0 +1,20 @@
+---
+description: Keep phase pickup docs synchronized after roadmap consensus or completion
+globs: docs/Roadmap/phases/*.md,docs/Roadmap/phases/README.md,docs/Roadmap/PARALLEL_WORK_PLAN.md,docs/Roadmap/README.md
+alwaysApply: false
+---
+
+# Phase Roadmap Hygiene
+
+Use phase docs as pickup/navigation pages only. Tickets in `docs/Roadmap/tickets/CS-*.md` remain authoritative for scope, dependencies, acceptance criteria, and status.
+
+When a phase is completed, a ready set changes, or the team agrees on a roadmap adjustment:
+
+- Update affected tickets first. Follow `ticket-status-hygiene.mdc` for `status`, `depends_on`, and acceptance criteria.
+- Keep phase-local `Ready Now` sections limited to tickets that are actually unblocked and ready according to ticket frontmatter.
+- Sync the global `Current Ready Picks` lists in `docs/Roadmap/phases/README.md` and `docs/Roadmap/PARALLEL_WORK_PLAN.md` in the same change when current picks or lane guidance changes.
+- Preserve the phase-first lane vocabulary: `FE WORK`, `BE WORK`, `INFRA WORK`, and `API / AI CONNECTIONS`.
+- Bump `last_updated` on edited roadmap, phase, or plan docs.
+- If phase order or epic mapping changes, update `docs/Roadmap/README.md` and include the dependency rationale. Follow `parallel-roadmap-work.mdc`.
+- Link to PRDs, domain docs, analysis docs, and ADRs instead of copying requirements into phase docs.
+- Keep project verification optional; never make it a blocker for contract upload, analysis, report generation, or delivery.
