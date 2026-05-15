@@ -1,0 +1,26 @@
+---
+description: Coordinate parallel roadmap work across BE, FE, and Infra lanes
+globs: docs/Roadmap/**,docs/adr/**,apps/**,.github/**,*.toml,*.json,*.yml,*.yaml,*.md
+alwaysApply: false
+---
+
+# Parallel Roadmap Work
+
+Before changing roadmap, app, CI, or config files, read `docs/Roadmap/README.md` and the relevant `docs/Roadmap/tickets/CS-*.md` ticket.
+
+Use ticket frontmatter as the dependency contract:
+
+- Respect `depends_on`; do not implement blocked work without documenting the temporary assumption in the PR.
+- Keep one ticket to one PR when practical.
+- Prefer folder ownership lanes: BE in `apps/api`, FE in `apps/web`, Infra/Config in `.github`, `docs/adr`, root config, env, and Docker files.
+- If work crosses lanes, call out the cross-domain files and reviewer expectations.
+- Do not rewrite roadmap phase order unless the PR explicitly updates the dependency rationale.
+
+For Casa Segura specifically:
+
+- Backend work is Python/FastAPI-first and should preserve strict typing, Pydantic contracts, SQLAlchemy boundaries, and privacy-safe logging.
+- Frontend work is Next.js/App Router-first and must stay mobile-first at 360px with Spanish `tú` copy.
+- Project verification is optional and separate; never gate contract upload or analysis on billboard OCR.
+- Treat OCR text, delivery targets, report content, logs, prompts, and errors as privacy-sensitive.
+- Numeric rubric, retention, RAG, and delivery thresholds need boundary value coverage.
+

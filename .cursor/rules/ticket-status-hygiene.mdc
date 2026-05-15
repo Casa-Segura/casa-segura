@@ -1,0 +1,19 @@
+---
+description: Keep roadmap ticket status current when acceptance criteria are met
+globs: docs/Roadmap/tickets/*.md,docs/Roadmap/phases/*.md,docs/Roadmap/PARALLEL_WORK_PLAN.md
+alwaysApply: false
+---
+
+# Ticket Status Hygiene
+
+When work satisfies a ticket's acceptance criteria, update that ticket's frontmatter `status` before considering the work complete.
+
+Use the ticket file as the source of truth:
+
+- Read `depends_on`, `status`, `domain`, and the full Acceptance criteria section before implementation.
+- Do not mark a ticket done if any AC remains unmet or unverified.
+- If implementation is complete but verification is pending, leave `status` as `backlog` or move to the project-standard intermediate status only if one exists in roadmap conventions.
+- If all AC are met and verified, update `status` to `done` in the relevant `docs/Roadmap/tickets/CS-*.md` file.
+- If a ticket becomes blocked or needs a follow-up split, record that in the ticket or PR notes instead of silently leaving stale status.
+- Phase index files are navigation only; never treat them as the authoritative status location.
+
