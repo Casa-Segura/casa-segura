@@ -57,11 +57,23 @@ Goal: **`main`** → Production, Pull Requests → Preview. Never put API secret
 
 Additional optional toggles mirror [`frontend/src/server/contract-env.ts`](src/server/contract-env.ts) (poll timeouts, path templates).
 
-### Without a live backend yet
+### Placeholder `CASASEGURA_API_BASE_URL` (backend not deployed yet)
 
-You can still ship the marketing shell (landing + gated `/subir` UX):
+Use this when Django is not live but you still want Vercel Preview/Production builds to pass.
 
-1. Set **`CASASEGURA_API_BASE_URL`** to a placeholder or future staging origin (must be non-empty — build gate).
+**Canonical placeholder:** `https://api.backend-pending.invalid`
+
+- **Why this shape:** The [`.invalid`](https://datatracker.ietf.org/doc/html/rfc2606#section-2) suffix is reserved; the hostname must not resolve in the public DNS hierarchy, so you avoid pointing “accidental” traffic at a real org or hitting someone else’s API.
+- **HTTPS, no trailing slash:** Matches how you will configure the real API later (`readContractApiBase` strips trailing slashes anyway).
+- **Must pair with upload off:** Set **`CASASEGURA_UPLOAD_ENABLED=false`**. The server action returns before any upstream `fetch`, so this URL is never contacted in that mode—only the build gate reads the variable.
+- **Do not reuse a real host** (staging/production URLs) as a placeholder. If upload is ever enabled by mistake, you could leak traffic or spam logs toward the wrong environment.
+- **When the API is ready:** Replace the placeholder with the real base URL on Preview and Production (and any branch-specific env), then set **`CASASEGURA_UPLOAD_ENABLED=true`** only when upload should actually call Django.
+
+Preview and Production may use the **same** placeholder while upload is disabled; use distinct real URLs later if Preview should hit staging instead of production.
+
+### Without a live backend yet (checklist)
+
+1. Set **`CASASEGURA_API_BASE_URL`** to the canonical placeholder above (or another `.invalid` URL your team agrees on—document that choice in the PR/deploy notes).
 2. Set **`CASASEGURA_UPLOAD_ENABLED=false`** so `/subir` short-circuits with the deterministic Spanish message instead of opaque upstream failures.
 
 Replace both when Django is reachable and upload should flow end-to-end.

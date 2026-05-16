@@ -1,4 +1,8 @@
-/** Server-side env reads for Casa Segura API bridging (CASASEGURA_*). No NEXT_PUBLIC_* for privileged config. */
+/** Server-side env reads for Casa Segura API bridging (CASASEGURA_*). No NEXT_PUBLIC_* for privileged config.
+ *
+ * Vercel build requires a non-empty `CASASEGURA_API_BASE_URL`; when the API is not deployed, use the
+ * documented `.invalid` placeholder with `CASASEGURA_UPLOAD_ENABLED=false` — see `frontend/README.md`.
+ */
 
 function parseCsvNumbers(raw: string | undefined): number[] {
   if (!raw) return [];

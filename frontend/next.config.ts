@@ -10,7 +10,7 @@ if (
   !process.env.CASASEGURA_API_BASE_URL?.trim()
 ) {
   throw new Error(
-    "[CS-298] CASASEGURA_API_BASE_URL is required for Vercel builds. Configure it under Project Settings → Environment Variables (Preview + Production). See frontend/README.md (Vercel deployment).",
+    "[CS-298] CASASEGURA_API_BASE_URL is required for Vercel builds. Configure it under Project Settings → Environment Variables (Preview + Production). If the API is not deployed yet, use the documented `.invalid` placeholder + CASASEGURA_UPLOAD_ENABLED=false — see frontend/README.md § Vercel deployment → Placeholder CASASEGURA_API_BASE_URL.",
   );
 }
 
