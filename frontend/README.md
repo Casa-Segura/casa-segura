@@ -18,7 +18,21 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to load **Inter** (design token `font-body` from `docs/Design/casa-segura.pen`).
+
+## BVA — landing (CS-290)
+
+Manual or automated checks should cover boundary cases from the ticket:
+
+| Input | Boundary | Expected |
+|-------|-----------|----------|
+| Viewport width | **360px** | No horizontal scroll; headline, CTA, footer disclaimer visible; primary CTA height **≥44px** |
+| Viewport width | **768px+** | Stays single-column until a future breakpoint ticket adds a desktop grid |
+| CTA target | `/subir` | Placeholder upload route (CS-291 replaces content) |
+| Copy | Spanish **tú** | No mixed-language UI; no implication that billboard/project verification is required before upload |
+| Contrast | Body vs background | WCAG **AA** spot-check (e.g. Lighthouse or axe) on primary text |
+
+Future work: add Playwright (or similar) viewport matrix and optional axe CI step.
 
 ## Learn More
 
