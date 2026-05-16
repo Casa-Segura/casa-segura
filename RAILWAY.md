@@ -41,57 +41,48 @@ Dockerfile target plus an overridden `startCommand`.
 ## 3. Postgres with pgvector
 
 Casa Segura's schema requires pgvector (CS-026 `legal_chunk.embedding`,
-CS-030 HNSW index). Choose ONE of the two paths below.
+CS-030 HNSW index) plus `pgcrypto` and `uuid-ossp`.
 
-### 3.A (Recommended) External Postgres on Neon
+### 3.A (Recommended) Railway's default Postgres
 
-Railway's custom Postgres image ships with pre-release GUCs (e.g.
-`autovacuum_worker_slots`, a PG 19 dev parameter) that no stable pgvector
-image accepts. Image-swapping inside Railway is fragile and breaks on
-every PG version bump. **Neon decouples the DB from Railway entirely and
-ships pgvector enabled by default.**
+**Confirmed 2026-05-16:** Railway's default Postgres image bundles
+pgvector. Use it as-is — do NOT swap the Source Image to
+`pgvector/pgvector:*` on a service that already has a volume (see §3.C
+for why).
 
-1. Create a project at https://neon.tech (free tier is plenty for dev /
-   staging). Pick the region nearest your Railway services.
-2. Copy the connection string from the Neon dashboard. Format:
-   `postgres://user:password@ep-xxx-xxx.region.neon.tech/dbname?sslmode=require`
-3. On each Casa Segura service in Railway (`web`, `worker`, `beat`) →
-   **Variables** → set `DATABASE_URL` to that string. **Plain text**, not
-   a reference variable (Neon isn't a Railway plugin).
-4. If you previously added a Railway Postgres service, delete it.
-5. Verify pgvector in Neon's SQL Editor:
+1. **+ New** → **Database** → **Add PostgreSQL**. Leave the image alone.
+2. Wait for the deploy to go green.
+3. Open the **Data** tab and run:
    ```sql
    CREATE EXTENSION IF NOT EXISTS vector;
    CREATE EXTENSION IF NOT EXISTS pgcrypto;
    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+   SELECT extname, extversion FROM pg_extension
+   WHERE extname IN ('vector', 'pgcrypto', 'uuid-ossp');
    ```
+   Expect three rows. If `vector` is missing with "extension not
+   available", Railway has rolled back the bundle — fall through to §3.B.
+4. On `web` / `worker` / `beat` → **Variables** → set
+   `DATABASE_URL = ${{Postgres.DATABASE_URL}}` (reference variable —
+   autocompleted by Railway).
 
-### 3.B Railway-native Postgres (if Neon is not an option)
+### 3.B Fallback: external Postgres on Neon
 
-Try Railway's default image **first** — they may have started bundling
-pgvector since this guide was written.
+Use this when Railway's default image doesn't ship pgvector (or when you
+hit a crash loop like §3.C and want to bail).
 
-1. **+ New** → **Database** → **Add PostgreSQL** — do NOT touch the
-   image.
-2. After deploy goes green, open the **Data** tab and run
-   `CREATE EXTENSION IF NOT EXISTS vector;`.
-   - **Works** → you're done. Add the other two extensions
-     (`pgcrypto`, `uuid-ossp`) the same way.
-   - **Fails** with "extension not available" → continue to step 3.
-3. Delete the service entirely (not just the volume — the whole
-   service). This is the cleanest reset.
-4. Recreate **+ New** → **Database** → **Add PostgreSQL**. Immediately
-   open **Settings** → **Volumes** → delete the auto-created volume.
-5. **Settings** → **Source Image** → `pgvector/pgvector:pg17`. Deploy.
-6. Verify the three extensions as in 3.A step 5.
+1. Create a project at https://neon.tech (free tier is plenty for dev /
+   staging). Pick the region nearest your Railway services.
+2. Copy the connection string. Format:
+   `postgres://user:password@ep-xxx-xxx.region.neon.tech/dbname?sslmode=require`
+3. On each Casa Segura service in Railway (`web`, `worker`, `beat`) →
+   **Variables** → set `DATABASE_URL` to that string. **Plain text** (not
+   a reference variable — Neon isn't a Railway plugin).
+4. Delete any half-broken Railway Postgres service.
+5. Verify the three extensions in Neon's SQL Editor as in §3.A step 3.
 
-> **Why pg17 and not pg18 / pg16?** pg17 is the most recent fully-GA
-> Postgres with a stable pgvector image and no risk of pre-release GUCs.
-> pg18 may work but Railway's bundled config can leak experimental knobs
-> that even pg18 binaries reject. pg16 is fine too if you have a reason
-> to pin it.
-
-### 3.C If Postgres is already in a crash loop
+### 3.C If you already broke Postgres by image-swapping
 
 Symptom in logs (repeats every restart):
 
@@ -101,15 +92,20 @@ FATAL: configuration file ".../postgresql.conf" contains errors
 LOG: unrecognized configuration parameter "autovacuum_worker_slots"
 ```
 
-The data directory was initialized by a newer/forked PG that wrote GUCs
-your current image doesn't recognize. The data format may also be
-incompatible — config edits alone don't reliably recover it, and Railway
-makes editing files inside the volume operationally awkward.
+Cause: Railway's default Postgres ships with pre-release GUCs (e.g.
+`autovacuum_worker_slots`, a PG 19 dev parameter) that older
+`pgvector/pgvector:pgNN` images don't recognize. Once the volume was
+initialized by Railway's image, no stable pgvector image can read it.
 
-**Fix (destructive — only safe because no real data exists yet):** follow
-3.A (move to Neon) or 3.B step 3 onward (delete + recreate the Railway
-service). Do NOT try to edit `postgresql.conf` in place — even if the
-service comes up, you'll hit the same problem on the next image bump.
+**Do NOT** try to edit `postgresql.conf` in the volume (Railway's own
+suggestion) — even if the service comes up, the next image bump will
+break it again. Instead:
+
+1. Delete the broken Postgres service entirely (not just the volume).
+2. Either:
+   - Restart from §3.A with Railway's default image (now known to bundle
+     pgvector), **without** touching the Source Image field, OR
+   - Move to Neon per §3.B.
 
 ---
 
