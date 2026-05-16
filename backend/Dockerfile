@@ -84,10 +84,13 @@ FROM runtime-base AS web
 
 EXPOSE 8000
 
+# $PORT is set by Railway/most PaaS; default to 8000 for local `docker run`.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-    CMD curl --fail --silent --show-error http://localhost:8000/api/health/ || exit 1
+    CMD curl --fail --silent --show-error "http://localhost:${PORT:-8000}/api/health/" || exit 1
 
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--access-logfile", "-"]
+# Shell form so $PORT expands. Railway overrides this via railway.toml startCommand
+# (which also binds to $PORT). Local `docker run` falls back to 8000.
+CMD gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 3 --access-logfile -
 
 # ---------------------------------------------------------------------------
 # Stage 3b: worker — Celery worker with OCR/PDF/HEIC native deps.

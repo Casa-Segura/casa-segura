@@ -1,0 +1,30 @@
+# Railway service config for the Casa Segura backend.
+#
+# Layout: one project on Railway with multiple services that share this
+# directory as their Root Directory (`/backend`). The Dockerfile here ships
+# three targets (`web`, `worker`, `beat`); each Railway service selects its
+# target via the dashboard (Settings → Build → Dockerfile Target).
+#
+# Defaults in this file are tuned for the `web` service (Gunicorn + Django).
+# The `worker` and `beat` services override `startCommand` in the dashboard
+# (see RAILWAY.md at the repo root for the exact commands).
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Run migrations + collectstatic on every deploy before traffic shifts.
+# Idempotent; safe to run repeatedly.
+preDeployCommand = "python manage.py migrate --noinput && python manage.py collectstatic --noinput"
+
+# Default start command — `web` service. Bind to $PORT (Railway sets this).
+startCommand = "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -"
+
+# Healthcheck — DRF health endpoint wired in CS-008. Returns 200 if Django boots.
+healthcheckPath = "/api/health/"
+healthcheckTimeout = 30
+
+# Restart on crash, with a cap to avoid loops on misconfigured deploys.
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5

@@ -20,6 +20,24 @@ DEBUG = env.bool("DEBUG", default=True)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 LOG_LEVEL = env("LOG_LEVEL", default="INFO")
 
+# Railway exposes the public service domain via RAILWAY_PUBLIC_DOMAIN.
+# Append it to ALLOWED_HOSTS so deploys don't 400 before someone remembers
+# to set ALLOWED_HOSTS manually.
+_RAILWAY_DOMAIN = env("RAILWAY_PUBLIC_DOMAIN", default="")
+if _RAILWAY_DOMAIN and _RAILWAY_DOMAIN not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS = [*ALLOWED_HOSTS, _RAILWAY_DOMAIN]
+
+# Trust Railway's reverse proxy for HTTPS detection. Without this, request.is_secure()
+# returns False on Railway and Django emits insecure cookies / refuses CSRF posts.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# CSRF needs the scheme + host for cross-origin POSTs (admin, DRF browsable API).
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+if _RAILWAY_DOMAIN:
+    _railway_csrf = f"https://{_RAILWAY_DOMAIN}"
+    if _railway_csrf not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS = [*CSRF_TRUSTED_ORIGINS, _railway_csrf]
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -53,6 +71,10 @@ MIDDLEWARE = [
     "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "shared.observability.middleware.CorrelationIdMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    # WhiteNoise serves collected static files (admin, drf-spectacular UI)
+    # without needing nginx/CDN in front. Must sit immediately after
+    # SecurityMiddleware per WhiteNoise docs.
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -93,7 +115,14 @@ AUTHENTICATION_BACKENDS = [
 
 
 DB_ENGINE = env("DB_ENGINE", default="postgresql")
-if DB_ENGINE == "sqlite":
+# Railway (and most PaaS) expose Postgres as a single DATABASE_URL.
+# When present it wins over the discrete DB_* knobs.
+DATABASE_URL = env("DATABASE_URL", default="")
+if DATABASE_URL:
+    DATABASES = {"default": env.db_url("DATABASE_URL")}
+    DATABASES["default"]["CONN_MAX_AGE"] = env.int("DB_CONN_MAX_AGE", default=60)
+    DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+elif DB_ENGINE == "sqlite":
     # NOTE: SQLite is only suitable for `manage.py check` / `makemigrations` validation.
     # Casa Segura models use Postgres-only field types (ArrayField, VectorField, GinIndex);
     # `migrate` requires Postgres 15+ with pgvector (CS-020).
@@ -219,5 +248,12 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+# `collectstatic` target. Required for the Railway preDeployCommand and any
+# CDN/WhiteNoise serving path. Path is gitignored.
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
 
 configure_logging(debug=DEBUG, log_level=LOG_LEVEL)
