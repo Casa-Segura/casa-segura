@@ -43,7 +43,7 @@ RUN pip install "poetry==${POETRY_VERSION}"
 COPY pyproject.toml poetry.lock* ./
 
 # Install runtime dependencies only (no dev) into ./.venv
-RUN poetry install --without dev --no-root --no-ansi
+RUN poetry install --no-root --no-ansi
 
 # ---------------------------------------------------------------------------
 # Stage 2: runtime-base — minimal image, copies the prebuilt venv.
