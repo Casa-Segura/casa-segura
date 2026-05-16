@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional, Type
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -15,7 +15,7 @@ class Annotation(BaseModel, ABC):
 
     field: str
     alias: str
-    output_field: Optional[Any] = None
+    output_field: Any | None = None
 
     model_config = {"arbitrary_types_allowed": True}
 
@@ -26,7 +26,7 @@ class Annotation(BaseModel, ABC):
 
 class CountAnnotation(Annotation):
     distinct: bool = False
-    filter_spec: Optional[Specification] = None
+    filter_spec: Specification | None = None
 
     def get_annotation(self) -> dict:
         from django.db.models import Count
@@ -42,7 +42,7 @@ class CountAnnotation(Annotation):
 
 
 class SumAnnotation(Annotation):
-    filter_spec: Optional[Specification] = None
+    filter_spec: Specification | None = None
 
     def get_annotation(self) -> dict:
         from django.db.models import Sum
@@ -56,7 +56,7 @@ class SumAnnotation(Annotation):
 
 
 class AvgAnnotation(Annotation):
-    filter_spec: Optional[Specification] = None
+    filter_spec: Specification | None = None
 
     def get_annotation(self) -> dict:
         from django.db.models import Avg
@@ -90,8 +90,8 @@ class MinAnnotation(Annotation):
 
 
 class ExistsAnnotation(Annotation):
-    related_model: Optional[str] = None
-    filter_spec: Optional[Specification] = None
+    related_model: str | None = None
+    filter_spec: Specification | None = None
 
     def get_annotation(self) -> dict:
         return {
@@ -113,7 +113,7 @@ class ExpressionAnnotation(Annotation):
 
 
 class CaseAnnotation(Annotation):
-    cases: List[tuple]
+    cases: list[tuple]
     default: Any = None
 
     def get_annotation(self) -> dict:
@@ -128,8 +128,8 @@ class CaseAnnotation(Annotation):
 
 class SubqueryAnnotation(Annotation):
     subquery_field: str
-    filter_spec: Optional[Specification] = None
-    order_by: Optional[List[str]] = None
+    filter_spec: Specification | None = None
+    order_by: list[str] | None = None
 
     def get_annotation(self) -> dict:
         return {
@@ -174,7 +174,7 @@ class RawAnnotation(Annotation):
 class DjangoORMAnnotationBuilder:
     """Builder that converts domain annotations to Django ORM annotations."""
 
-    def build(self, annotations: Optional[List[Annotation]]) -> dict:
+    def build(self, annotations: list[Annotation] | None) -> dict:
         if not annotations:
             return {}
         result: dict = {}
@@ -182,7 +182,7 @@ class DjangoORMAnnotationBuilder:
             result.update(annotation.get_annotation())
         return result
 
-    def build_with_model(self, annotations: Optional[List[Annotation]], model: Type[Model]) -> dict:
+    def build_with_model(self, annotations: list[Annotation] | None, model: type[Model]) -> dict:
         from django.db.models import Exists, OuterRef, Subquery
 
         if not annotations:
@@ -196,9 +196,7 @@ class DjangoORMAnnotationBuilder:
                     filter_spec = value.get("filter_spec")
                     related_field = model._meta.get_field(related_name)
                     related_model = related_field.related_model
-                    subquery = related_model.objects.filter(
-                        **{f"{related_field.field.name}": OuterRef("pk")}
-                    )
+                    subquery = related_model.objects.filter(**{f"{related_field.field.name}": OuterRef("pk")})
                     if filter_spec:
                         subquery = subquery.filter(filter_spec.to_q())
                     result[alias] = Exists(subquery)
@@ -209,9 +207,7 @@ class DjangoORMAnnotationBuilder:
                     order_by = value.get("order_by", [])
                     related_field = model._meta.get_field(related_name)
                     related_model = related_field.related_model
-                    subquery = related_model.objects.filter(
-                        **{f"{related_field.field.name}": OuterRef("pk")}
-                    )
+                    subquery = related_model.objects.filter(**{f"{related_field.field.name}": OuterRef("pk")})
                     if filter_spec:
                         subquery = subquery.filter(filter_spec.to_q())
                     if order_by:

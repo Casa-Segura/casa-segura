@@ -54,9 +54,7 @@ class Command(BaseCommand):
                     "is_active": False,
                 },
             )
-            self.stdout.write(
-                self.style.SUCCESS(f"{'created' if created else 'exists'}: CorpusVersion {obj.version}")
-            )
+            self.stdout.write(self.style.SUCCESS(f"{'created' if created else 'exists'}: CorpusVersion {obj.version}"))
 
             if activate:
                 CorpusVersion.objects.exclude(version=version).filter(is_active=True).update(is_active=False)

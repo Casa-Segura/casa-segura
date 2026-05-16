@@ -93,6 +93,7 @@ def expire_in(delta: timedelta, *, on, field: str = "expires_at") -> None:
 
 # ─── Catalog factories (versioned, is_active singletons) ─────────────────────
 
+
 class RubricVersionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = RubricVersion
@@ -130,9 +131,7 @@ class CriterionFactory(factory.django.DjangoModelFactory):
     legal_anchor = factory.LazyFunction(list)
     override_code = None
     evaluation_prompt = "Evaluate the criterion: {{contract_text}}"
-    scoring_scale = factory.LazyFunction(
-        lambda: {"10": "perfect", "5": "neutral", "0": "broken"}
-    )
+    scoring_scale = factory.LazyFunction(lambda: {"10": "perfect", "5": "neutral", "0": "broken"})
     worst_case_when_unverifiable = Decimal("4.0")
 
 
@@ -210,10 +209,11 @@ class EconomicBenchmarkFactory(factory.django.DjangoModelFactory):
     source = "Test source citation"
     source_url = ""
     last_updated = factory.LazyFunction(lambda: timezone.now().date())
-    next_review_due = factory.LazyFunction(lambda: (timezone.now() + timedelta(days=90)).date())
+    next_review_due = factory.LazyFunction(lambda: (timezone.now() + timedelta(days=90)).date())  # noqa: PLW0108
 
 
 # ─── Persistent factories (platform_core) ────────────────────────────────────
+
 
 class ProjectFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -263,6 +263,7 @@ class ContractAnalysisFactory(factory.django.DjangoModelFactory):
 
 
 # ─── Transient factories ─────────────────────────────────────────────────────
+
 
 class ContractSubmissionFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -319,20 +320,20 @@ class DeliveryRequestFactory(factory.django.DjangoModelFactory):
 
 
 __all__ = [
-    "random_vector_384",
-    "make_public_short_id",
-    "age_to",
-    "expire_in",
-    "RubricVersionFactory",
-    "CriterionFactory",
-    "CorpusVersionFactory",
-    "LegalDocumentFactory",
-    "LegalChunkFactory",
     "BenchmarkVersionFactory",
-    "EconomicBenchmarkFactory",
-    "ProjectFactory",
     "ContractAnalysisFactory",
     "ContractSubmissionFactory",
-    "OcrJobFactory",
+    "CorpusVersionFactory",
+    "CriterionFactory",
     "DeliveryRequestFactory",
+    "EconomicBenchmarkFactory",
+    "LegalChunkFactory",
+    "LegalDocumentFactory",
+    "OcrJobFactory",
+    "ProjectFactory",
+    "RubricVersionFactory",
+    "age_to",
+    "expire_in",
+    "make_public_short_id",
+    "random_vector_384",
 ]

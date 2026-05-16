@@ -65,9 +65,7 @@ class Command(BaseCommand):
                     "is_active": False,
                 },
             )
-            self.stdout.write(
-                self.style.SUCCESS(f"{'created' if created else 'exists'}: RubricVersion {obj.version}")
-            )
+            self.stdout.write(self.style.SUCCESS(f"{'created' if created else 'exists'}: RubricVersion {obj.version}"))
 
             if activate:
                 # is_active is the only field allowed to flip post-publish.

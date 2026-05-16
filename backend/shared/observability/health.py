@@ -50,7 +50,7 @@ def _check_database() -> tuple[bool, str | None]:
         return True, None
     except OperationalError as exc:
         return False, f"db_unreachable: {exc.__class__.__name__}"
-    except Exception as exc:  # noqa: BLE001 — readiness must never crash
+    except Exception as exc:
         return False, f"db_error: {exc.__class__.__name__}"
 
 
@@ -69,7 +69,7 @@ def _check_redis() -> tuple[bool, str | None]:
         )
         client.ping()
         return True, None
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         return False, f"redis_unreachable: {exc.__class__.__name__}"
 
 

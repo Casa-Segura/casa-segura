@@ -2,11 +2,10 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from contextlib import contextmanager
-from typing import Generic, List, Optional, Type, TypeVar
+from typing import Generic, TypeVar
 
 from django.db import transaction
-from django.db.models import F, Model, OrderBy
-from django.db.models import QuerySet as DjangoQuerySet
+from django.db.models import F, Model, OrderBy, QuerySet as DjangoQuerySet
 
 from shared.domain.entities.annotations import Annotation, DjangoORMAnnotationBuilder
 from shared.domain.entities.pagination import QuerySet, QuerySetPagination
@@ -43,7 +42,7 @@ class MultipleEntitiesFoundError(Exception):
 class DjangoReadRepository(Generic[T, K], ReadOnlyRepository[T]):
     """Read repository implementation for Django ORM."""
 
-    __model__: Type[K]
+    __model__: type[K]
 
     def __init__(self):
         self.spec_builder = DjangoORMSpecificationBuilder()
@@ -58,8 +57,8 @@ class DjangoReadRepository(Generic[T, K], ReadOnlyRepository[T]):
 
     def get(
         self,
-        criteria: List[Specification],
-        annotations: Optional[List[Annotation]] = None,
+        criteria: list[Specification],
+        annotations: list[Annotation] | None = None,
     ) -> T:
         q = self.spec_builder.build(criteria)
         queryset = self._optimize_queryset(self.__model__.objects.filter(q))
@@ -70,16 +69,16 @@ class DjangoReadRepository(Generic[T, K], ReadOnlyRepository[T]):
 
         try:
             return self.to_entity(queryset.get())
-        except self.__model__.DoesNotExist:
-            raise EntityNotFoundError(self.__model__.__name__, {str(c): True for c in criteria})
-        except self.__model__.MultipleObjectsReturned:
-            raise MultipleEntitiesFoundError(self.__model__.__name__, queryset.count())
+        except self.__model__.DoesNotExist as exc:
+            raise EntityNotFoundError(self.__model__.__name__, {str(c): True for c in criteria}) from exc
+        except self.__model__.MultipleObjectsReturned as exc:
+            raise MultipleEntitiesFoundError(self.__model__.__name__, queryset.count()) from exc
 
     def find(
         self,
-        criteria: List[Specification],
-        annotations: Optional[List[Annotation]] = None,
-    ) -> Optional[T]:
+        criteria: list[Specification],
+        annotations: list[Annotation] | None = None,
+    ) -> T | None:
         q = self.spec_builder.build(criteria)
         queryset = self._optimize_queryset(self.__model__.objects.filter(q))
 
@@ -94,10 +93,10 @@ class DjangoReadRepository(Generic[T, K], ReadOnlyRepository[T]):
 
     def filter(
         self,
-        criteria: List[Specification],
-        pagination: Optional[QuerySetPagination] = None,
-        order_by: Optional[List[str]] = None,
-        annotations: Optional[List[Annotation]] = None,
+        criteria: list[Specification],
+        pagination: QuerySetPagination | None = None,
+        order_by: list[str] | None = None,
+        annotations: list[Annotation] | None = None,
         distinct: bool = False,
     ) -> QuerySet[T]:
         annotated_fields = [ann.alias for ann in annotations] if annotations else []
@@ -120,10 +119,8 @@ class DjangoReadRepository(Generic[T, K], ReadOnlyRepository[T]):
             queryset = queryset.distinct()
 
         if order_by:
-            processed_order_by: List[OrderBy] = [
-                F(field.lstrip("-")).desc(nulls_last=True)
-                if field.startswith("-")
-                else F(field).asc(nulls_last=True)
+            processed_order_by: list[OrderBy] = [
+                F(field.lstrip("-")).desc(nulls_last=True) if field.startswith("-") else F(field).asc(nulls_last=True)
                 for field in order_by
             ]
             queryset = queryset.order_by(*processed_order_by)
@@ -136,7 +133,7 @@ class DjangoReadRepository(Generic[T, K], ReadOnlyRepository[T]):
         entities = [self.to_entity(obj) for obj in queryset]
         return QuerySet(data=entities, count=count)
 
-    def _is_annotated_field(self, spec: Specification, annotated_fields: List[str]) -> bool:
+    def _is_annotated_field(self, spec: Specification, annotated_fields: list[str]) -> bool:
         if isinstance(spec, FieldSpec):
             return spec.field in annotated_fields
         elif isinstance(spec, CompositeSpec):
@@ -148,20 +145,20 @@ class DjangoReadRepository(Generic[T, K], ReadOnlyRepository[T]):
         entities = [self.to_entity(obj) for obj in queryset]
         return QuerySet(data=entities)
 
-    def count(self, criteria: Optional[List[Specification]] = None) -> int:
+    def count(self, criteria: list[Specification] | None = None) -> int:
         if criteria:
             q = self.spec_builder.build(criteria)
             return self.__model__.objects.filter(q).count()
         return self.__model__.objects.count()
 
-    def exists(self, criteria: List[Specification]) -> bool:
+    def exists(self, criteria: list[Specification]) -> bool:
         q = self.spec_builder.build(criteria)
         return self.__model__.objects.filter(q).exists()
 
     def aggregate(
         self,
-        criteria: Optional[List[Specification]] = None,
-        annotations: Optional[List[Annotation]] = None,
+        criteria: list[Specification] | None = None,
+        annotations: list[Annotation] | None = None,
     ) -> dict:
         queryset = self.__model__.objects.all()
         if criteria:
@@ -176,7 +173,7 @@ class DjangoReadRepository(Generic[T, K], ReadOnlyRepository[T]):
 class DjangoWriteRepository(Generic[T, K], WriteOnlyRepository[T]):
     """Write repository implementation for Django ORM."""
 
-    __model__: Type[K]
+    __model__: type[K]
 
     @abstractmethod
     def to_entity(self, model: K) -> T:
@@ -195,17 +192,17 @@ class DjangoWriteRepository(Generic[T, K], WriteOnlyRepository[T]):
         model = self.to_orm_model(entity)
         model.delete()
 
-    def bulk_create(self, entities: List[T]) -> List[T]:
+    def bulk_create(self, entities: list[T]) -> list[T]:
         models = [self.to_orm_model(e) for e in entities]
         created = self.__model__.objects.bulk_create(models)
         return [self.to_entity(m) for m in created]
 
-    def bulk_update(self, entities: List[T], *, fields: List[str]) -> None:
+    def bulk_update(self, entities: list[T], *, fields: list[str]) -> None:
         models = [self.to_orm_model(e) for e in entities]
         self.__model__.objects.bulk_update(models, fields)
 
-    def bulk_delete(self, entities: List[T]) -> None:
-        ids = [getattr(e, "id") for e in entities if getattr(e, "id", None)]
+    def bulk_delete(self, entities: list[T]) -> None:
+        ids = [e.id for e in entities if getattr(e, "id", None)]
         if ids:
             self.__model__.objects.filter(id__in=ids).delete()
 
@@ -217,13 +214,13 @@ class DjangoFullRepository(
 ):
     """Full repository combining read and write operations."""
 
-    __model__: Type[K]
+    __model__: type[K]
 
     @contextmanager
     def atomic(self):
         with transaction.atomic():
             yield self
 
-    def save_all(self, entities: List[T]) -> List[T]:
+    def save_all(self, entities: list[T]) -> list[T]:
         with self.atomic():
             return [self.save(e) for e in entities]
