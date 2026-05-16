@@ -43,12 +43,12 @@ Use this lane to create the web app foundation. Once `apps/web` exists, pick fro
 
 ## BE WORK
 
-- ◐ [CS-002](../tickets/CS-002.md) - Django 5.2 LTS + DRF scaffold with pyproject, ruff, mypy, pytest. *(Dockerfile multi-stage + ruff.toml + mypy.ini + .python-version + smoke pytest landed; `ruff` / `django-stubs` still missing from pyproject deps; no `api` service in docker-compose.)*
-- ☑ [CS-007](../tickets/CS-007.md) - Structured logging with correlation IDs. *(All 5 ACs ticked; structlog + middleware + X-Request-ID + error-path correlation + version fields verified.)*
+- ◐ [CS-002](../tickets/CS-002.md) - Django 5.2 LTS + DRF scaffold with pyproject, ruff, mypy, pytest. *(Dockerfile multi-stage web/worker/beat + ruff.toml + mypy.ini + .python-version 3.11.9 + smoke pytest landed; `ruff` / `django-stubs` still missing from `[dependency-groups].dev`; no `api` service in docker-compose. 3/7 ACs.)*
+- ☑ [CS-007](../tickets/CS-007.md) - Structured logging with correlation IDs. *(All 5 ACs ticked and re-verified; structlog + middleware + X-Request-ID + error-path correlation + default `rubric_version`/`corpus_version` keys.)*
 - ☑ [CS-008](../tickets/CS-008.md) - Health and readiness endpoints. *(`/api/health/` liveness + `/api/ready/` with DB + Redis ping; 503 with reason codes.)*
-- ◐ [CS-009](../tickets/CS-009.md) - Standard error envelope schema. *(`DomainException` hierarchy + DRF handler emitting `{error_code, message, details, correlation_id, schema_version}`; README example pending.)*
-- ◐ [CS-021](../tickets/CS-021.md) - Initial Django migration framework. *(`migrate` clean on Postgres + Makefile targets + reverse-migrate CI; README DB cheatsheet + naming convention doc pending.)*
-- ◐ [CS-022](../tickets/CS-022.md) - Django ORM / DB wiring for DRF and workers. *(Postgres `psycopg2-binary` + `CONN_MAX_AGE` + `CONN_HEALTH_CHECKS`; `django-stubs` missing from deps so mypy strict pass blocked.)*
+- ◐ [CS-009](../tickets/CS-009.md) - Standard error envelope schema. *(`DomainException` hierarchy + DRF handler emitting `{error_code, message, details, correlation_id, schema_version}`; README "Error contract" example still missing. 4/5 ACs.)*
+- ◐ [CS-021](../tickets/CS-021.md) - Initial Django migration framework. *(`backend/Makefile` targets + reverse-migrate CI sequence live; README DB cheatsheet + naming convention doc pending. 3/5 ACs.)*
+- ◐ [CS-022](../tickets/CS-022.md) - Django ORM / DB wiring for DRF and workers. *(Postgres `psycopg2-binary` + `CONN_MAX_AGE` + `CONN_HEALTH_CHECKS`; `django-stubs` missing from deps so mypy strict pass blocked; no `ATOMIC_REQUESTS` demo. 2/5 ACs.)*
 - ☑ [CS-023](../tickets/CS-023.md) - Schema: Project entity. *(All 5 ACs ticked; `assert_no_pii` walks metadata, `Project.clean()` raises ValidationError, `Project.save()` defaults `last_analyzed`.)*
 - ◐ [CS-024](../tickets/CS-024.md) - Schema: ContractAnalysis entity. *(All 5 ACs satisfied; verification tests pending CS-032.)*
 - ☑ [CS-025](../tickets/CS-025.md) - Schema: ContractSubmission and OcrJob. *(All ACs met; no `extracted_text` column; file_count 1-50 CHECK.)*
@@ -60,19 +60,19 @@ Use this lane to create the web app foundation. Once `apps/web` exists, pick fro
 
 ## INFRA WORK
 
-- ☐ [CS-004](../tickets/CS-004.md) - CI pipeline on PR. *(Not started; blocks CS-035.)*
+- ◐ [CS-004](../tickets/CS-004.md) - CI pipeline on PR. *(`.github/workflows/ci.yml` with lint/test/migration-smoke/frontend-build jobs landed; ruff + django-stubs missing from backend deps so lint job will fail; no Vitest in frontend yet. 2/5 ACs.)*
 - ☐ [CS-005](../tickets/CS-005.md) - Pre-commit hooks for API and web. *(Not started.)*
-- ☐ [CS-006](../tickets/CS-006.md) - Secrets baseline and env surface. *(`backend/.env` exists for local dev; no `.env.example`, no secrets ADR.)*
-- ☐ [CS-010](../tickets/CS-010.md) - Versioning ADR. *(Not authored; `schema_version="1.0.0"` is hard-coded in `shared/observability/logging.py` pending ADR.)*
+- ◐ [CS-006](../tickets/CS-006.md) - Secrets baseline and env surface. *(`backend/.env.example` scrubbed mirror landed; still missing OCR/RAG/retention/link-TTL keys required by `BE-SERVICES §9` + `PRD F8 §6.3`. 0/5 ACs but scaffolded.)*
+- ◐ [CS-010](../tickets/CS-010.md) - Versioning ADR. *(`docs/adr/ADR-0004-versioning.md` Accepted with `schema_version` + rubric/corpus/benchmark bump rules; root README ADR index does not yet list ADR-0004. 4/5 ACs.)*
 - ◐ [CS-020](../tickets/CS-020.md) - Provision Postgres 15+ with pgvector. *(Local stack via `docker-compose.dev.yml` with `pgvector/pgvector:pg16`; staging/prod provisioning pending.)*
-- ◐ [CS-030](../tickets/CS-030.md) - DB invariants, checks, enums, indexes. *(Enum CHECKs, GIN, partial uniques live; HNSW on `legal_chunk.embedding`, `reject_catalog_mutation` trigger, and `v_system_health` / `v_retention_status` views pending.)*
-- ☐ [CS-032](../tickets/CS-032.md) - Test fixture infrastructure. *(No `tests/`, no `conftest.py`, no factories; blocks invariant tests for CS-023/CS-024/CS-026 and seeds for CS-033/CS-034.)*
-- ☐ [CS-035](../tickets/CS-035.md) - Migration smoke test in CI. *(Blocked by CS-004.)*
+- ◐ [CS-030](../tickets/CS-030.md) - DB invariants, checks, enums, indexes. *(HNSW + `idx_criterion_types` GIN + `reject_catalog_mutation` function + 3 triggers + `v_system_health`/`v_retention_status` views live in `casasegura`; views return finite integers; EXPLAIN-on-seeded-chunks + overdue-fixture ACs still need fixtures. 3/5 ACs.)*
+- ◐ [CS-032](../tickets/CS-032.md) - Test fixture infrastructure. *(`conftest.py` + `tests/factories.py` for all 12 entities + `random_vector_384`/`make_public_short_id`/`age_to`/`expire_in` helpers + smoke test landed; negative FK-order example + CI runtime budget pending. 3/5 ACs.)*
+- ◐ [CS-035](../tickets/CS-035.md) - Migration smoke test in CI. *(`backend-migration-smoke` job runs forward → all-app zero → forward against `pgvector/pgvector:pg16`; required-status / negative-test / timing / EPIC link pending. 1/5 ACs.)*
 
 ## API / AI CONNECTIONS
 
-- ☐ [CS-033](../tickets/CS-033.md) - Seed RubricVersion catalog. *(`rubric_version` + `criterion` tables empty.)*
-- ☐ [CS-034](../tickets/CS-034.md) - Seed CorpusVersion placeholder. *(`corpus_version` empty.)*
+- ◐ [CS-033](../tickets/CS-033.md) - Seed RubricVersion catalog. *(`seed_rubric_version` command idempotent; `rubric_version 1.0.0 is_active=true` live; 38-criterion YAML loader deferred so `criterion` count still 0. 2/5 ACs.)*
+- ◐ [CS-034](../tickets/CS-034.md) - Seed CorpusVersion placeholder. *(`seed_corpus_version` command idempotent; `corpus_version 2026-05-16 is_active=true` live with zero counts + placeholder manifest; `corpus/README.md` doc note pending. 4/5 ACs.)*
 
 Use this lane for the early contracts that later OCR, RAG, rubric, and report work depend on. Keep seed data versioned and traceable to the PRDs and rubric source.
 
