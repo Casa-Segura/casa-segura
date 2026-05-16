@@ -94,6 +94,29 @@ SQL: `vector`, `pgcrypto`, `uuid-ossp`.
 - For rollback during local dev: `make rollback APP=<module> TO=<migration_name>`.
 - For a clean slate during local dev: `make fresh-db`.
 
+## Transactions
+
+`ATOMIC_REQUESTS` is **off** by default (`DB_ATOMIC_REQUESTS=False`) so wrapping a
+view in a transaction is an **explicit, intentional** decision rather than a
+silent per-request cost. Wrap the unit of work that must commit-or-rollback as
+a whole:
+
+```python
+from django.db import transaction
+
+@transaction.atomic
+def submit_analysis(payload):
+    submission = ContractSubmission.objects.create(**payload)
+    OcrJob.objects.create(submission=submission, status="queued")
+    return submission  # if this view raises, both rows roll back
+```
+
+Use `select_for_update()` inside an `atomic` block when you need to read-modify-write
+a row without losing the update to a concurrent worker (e.g. claiming an `OcrJob`).
+Set `DB_ATOMIC_REQUESTS=True` only when an environment genuinely needs every
+request wrapped (rare; usually preferable to keep transactions scoped to the
+service call).
+
 ## Environment
 
 Copy `.env.example` to `.env` and fill in secrets. `backend/.env` is

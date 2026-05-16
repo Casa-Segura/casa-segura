@@ -144,6 +144,11 @@ else:
             "PORT": env("DB_PORT", default="5432"),
             "CONN_MAX_AGE": env.int("DB_CONN_MAX_AGE", default=60),
             "CONN_HEALTH_CHECKS": True,
+            # CS-022 AC2: default off so per-view `transaction.atomic()` is the
+            # explicit, intentional choice (cheaper + matches Django 5.2 guidance).
+            # Flip via DB_ATOMIC_REQUESTS=True to wrap every request in an
+            # implicit transaction.
+            "ATOMIC_REQUESTS": env.bool("DB_ATOMIC_REQUESTS", default=False),
         }
     }
 
