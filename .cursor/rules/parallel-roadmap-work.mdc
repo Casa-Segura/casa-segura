@@ -1,6 +1,6 @@
 ---
 description: Coordinate parallel roadmap work across BE, FE, and Infra lanes
-globs: docs/Roadmap/**,docs/adr/**,apps/**,.github/**,*.toml,*.json,*.yml,*.yaml,*.md
+globs: docs/Roadmap/**,docs/adr/**,frontend/**,apps/**,.github/**,*.toml,*.json,*.yml,*.yaml,*.md
 alwaysApply: false
 ---
 
@@ -12,7 +12,7 @@ Use ticket frontmatter as the dependency contract:
 
 - Respect `depends_on`; do not implement blocked work without documenting the temporary assumption in the PR.
 - Keep one ticket to one PR when practical.
-- Prefer folder ownership lanes: BE in `apps/api`, FE in `apps/web`, Infra/Config in `.github`, `docs/adr`, root config, env, and Docker files.
+- Prefer folder ownership lanes: Django BE in `backend/` (canonical), FE Next.js in **`frontend/`**. Infra/Config lives in `.github`, `docs/adr`, Docker, and repo-root env files.
 - If work crosses lanes, call out the cross-domain files and reviewer expectations.
 - Do not rewrite roadmap phase order unless the PR explicitly updates the dependency rationale.
 
