@@ -2,7 +2,9 @@
 
 import type { DragEvent } from "react";
 import { useCallback, useId, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { submitContractUploadFlow } from "@/actions/contract-flow";
+import { ContractAnalysisLoadingPanel } from "@/components/contract-analysis-loading-panel";
 import { DisclaimerCallout } from "@/components/disclaimer-callout";
 import { DeliveryChannelFields } from "@/components/delivery-channel-fields";
 import {
@@ -54,6 +56,7 @@ function classifyClientFileReject(file: File): string | null {
 }
 
 export function ContractUploadFlow() {
+  const router = useRouter();
   const baseId = useId();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const disclaimerScrollRef = useRef<HTMLDivElement | null>(null);
@@ -66,6 +69,7 @@ export function ContractUploadFlow() {
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
   const [phase, setPhase] = useState<Phase>("empty");
   const [busy, setBusy] = useState(false);
+  const [loadingSession, setLoadingSession] = useState(0);
 
   const [globalError, setGlobalError] = useState("");
   const [disclaimerReminder, setDisclaimerReminder] = useState(false);
@@ -173,6 +177,7 @@ export function ContractUploadFlow() {
     });
 
     setBusy(true);
+    setLoadingSession((s) => s + 1);
 
     try {
       const outcome = await submitContractUploadFlow(fd);
@@ -190,6 +195,13 @@ export function ContractUploadFlow() {
           return;
         case "success":
           setGlobalError("");
+          if (delivery.channel === "web_link" && outcome.publicShortId) {
+            const q = outcome.linkExpiresAt
+              ? `?expires=${encodeURIComponent(outcome.linkExpiresAt)}`
+              : "";
+            router.push(`/r/${encodeURIComponent(outcome.publicShortId)}${q}`);
+            return;
+          }
           setResult({
             kind: "success",
             submissionId: outcome.submissionId,
@@ -219,6 +231,7 @@ export function ContractUploadFlow() {
 
   return (
     <div className="flex flex-col gap-6">
+      {busy ? <ContractAnalysisLoadingPanel key={loadingSession} /> : null}
       <header className="flex flex-col gap-2">
         <h1 id={`${baseId}-h1`} className="text-xl font-semibold text-text-primary">
           Sube tu contrato

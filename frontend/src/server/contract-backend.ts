@@ -71,9 +71,49 @@ function extractSubmissionId(body: Record<string, unknown>): string | null {
 }
 
 export type PollTerminal =
-  | { kind: "completed"; analysisHint?: unknown }
+  | {
+      kind: "completed";
+      analysisHint?: unknown;
+      /** Present when BE surfaces `public_short_id` for `web_link` handoff (CS-294). */
+      publicShortId?: string;
+      linkExpiresAt?: string;
+    }
   | { kind: "not_analyzable"; reasons: string[] }
   | { kind: "failed"; message: string };
+
+function readExpiresAt(payload: Record<string, unknown>): string | undefined {
+  const keys = ["link_expires_at", "linkExpiresAt", "expires_at", "expiresAt"] as const;
+  for (const k of keys) {
+    const v = payload[k];
+    if (typeof v === "string" && v.trim()) return v.trim();
+  }
+  return undefined;
+}
+
+function readPublicShortIdFromRecord(obj: Record<string, unknown>): string | undefined {
+  const raw = obj["public_short_id"] ?? obj["publicShortId"];
+  if (typeof raw !== "string") return undefined;
+  const s = raw.trim();
+  return s.length ? s : undefined;
+}
+
+/** Pulls capability token + optional expiry from poll payloads (tolerant shapes until OpenAPI is final). */
+export function extractCompletedHandoffMeta(payload: Record<string, unknown>): {
+  publicShortId?: string;
+  linkExpiresAt?: string;
+} {
+  let publicShortId = readPublicShortIdFromRecord(payload);
+  let linkExpiresAt = readExpiresAt(payload);
+
+  const analysis = payload["analysis"];
+  if (typeof analysis === "object" && analysis !== null) {
+    const arec = analysis as Record<string, unknown>;
+    if (!publicShortId) publicShortId = readPublicShortIdFromRecord(arec);
+    if (!linkExpiresAt) linkExpiresAt = readExpiresAt(arec);
+  }
+
+  return { publicShortId, linkExpiresAt };
+}
 
 function processingStatus(payload: Record<string, unknown>): string {
   const raw = payload["processing_status"] ?? payload["processingStatus"] ?? "";
@@ -116,7 +156,13 @@ export function classifyPollPayload(payload: Record<string, unknown>):
   const band = typeof payload["band"] === "string" ? payload["band"].trim().toLowerCase() : "";
 
   if (st === "completed") {
-    return { kind: "completed", analysisHint: payload["analysis"] };
+    const { publicShortId, linkExpiresAt } = extractCompletedHandoffMeta(payload);
+    return {
+      kind: "completed",
+      analysisHint: payload["analysis"],
+      publicShortId,
+      linkExpiresAt,
+    };
   }
 
   if (band === "not_analyzable") {
@@ -212,6 +258,8 @@ export type FlowResult =
       submissionId: string;
       analysisHint?: unknown;
       channelSummary: string;
+      publicShortId?: string;
+      linkExpiresAt?: string;
     }
   | {
       outcome: "not_analyzable";
@@ -272,6 +320,8 @@ export async function runContractSubmissionServerFlow(formData: FormData): Promi
       submissionId: post.submissionId,
       analysisHint: terminal.analysisHint,
       channelSummary: channelHuman,
+      publicShortId: terminal.publicShortId,
+      linkExpiresAt: terminal.linkExpiresAt,
     };
 
   if (terminal.kind === "not_analyzable")
