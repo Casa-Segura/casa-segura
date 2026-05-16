@@ -1,0 +1,70 @@
+# syntax=docker/dockerfile:1.6
+#
+# Casa Segura backend — `beat` target (Celery beat scheduler, DB-backed).
+#
+# Stages 1 (`base`) and 2 (`runtime-base`) MUST stay byte-identical to
+# Dockerfile.web and Dockerfile.worker. If you touch them here, mirror the
+# change in the other two files.
+#
+# Build:  docker build -f Dockerfile.beat -t casa-segura/beat .
+
+# ---------------------------------------------------------------------------
+# Stage 1: base — install Python deps with Poetry into an in-project venv.
+# ---------------------------------------------------------------------------
+FROM python:3.11-slim AS base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    POETRY_VERSION=2.2.1 \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_VIRTUALENVS_CREATE=true
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        libpq-dev \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+RUN pip install "poetry==${POETRY_VERSION}"
+
+COPY pyproject.toml poetry.lock* ./
+
+RUN poetry install --no-root --no-ansi
+
+# ---------------------------------------------------------------------------
+# Stage 2: runtime-base — minimal image, copies the prebuilt venv.
+# ---------------------------------------------------------------------------
+FROM python:3.11-slim AS runtime-base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/app/.venv/bin:$PATH" \
+    VIRTUAL_ENV="/app/.venv"
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libpq5 \
+        curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 1000 appuser \
+    && useradd --uid 1000 --gid appuser --shell /bin/bash --create-home appuser
+
+WORKDIR /app
+
+COPY --from=base --chown=appuser:appuser /app/.venv /app/.venv
+COPY --chown=appuser:appuser . /app
+
+USER appuser
+
+# ---------------------------------------------------------------------------
+# Stage 3: beat — Celery beat scheduler (DB-backed schedule).
+# ---------------------------------------------------------------------------
+FROM runtime-base AS beat
+
+CMD ["celery", "-A", "shared.infrastructure.celery", "beat", "-l", "INFO", "--scheduler", "django_celery_beat.schedulers:DatabaseScheduler"]

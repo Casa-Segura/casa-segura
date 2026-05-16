@@ -2,7 +2,7 @@
 
 This is the concrete, code-aligned setup guide. It supersedes the generic
 Railway guide draft for any conflict — the values below match what
-`backend/config/settings.py`, `backend/Dockerfile`, and
+`backend/config/settings.py`, `backend/Dockerfile.*`, and
 `backend/railway.toml` actually expect.
 
 > Frontend (Next.js) is deployed to Vercel, not Railway. Not covered here.
@@ -131,24 +131,26 @@ For each of `web`, `worker`, `beat`:
      the dashboard — railpack, Railway's new default, can ignore the
      `[build].builder = "DOCKERFILE"` line in `railway.toml` and
      autodetect Python instead, which fails on the monorepo layout).
-   - **Build → Dockerfile Path**: leave blank (defaults to `Dockerfile`
-     relative to Root Directory) or `Dockerfile`.
-   - **Build → Dockerfile Target**: see table below.
+   - **Build → Dockerfile Path**: see table below (one Dockerfile per
+     service; do not leave blank — the default `Dockerfile` no longer
+     exists).
    - **Deploy → Start Command**: see table below (overrides
      `railway.toml`).
    - **Deploy → Healthcheck Path**: `/api/health/` (web only; blank for
      worker/beat).
 
-| Service | Dockerfile Target | Start Command |
+| Service | Dockerfile Path | Start Command |
 |---|---|---|
-| `web` | `web` | *(default from `railway.toml`)* `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -` |
-| `worker` | `worker` | `celery -A shared.infrastructure.celery worker -l INFO --concurrency=2` |
-| `beat` | `beat` | `celery -A shared.infrastructure.celery beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler` |
+| `web` | `Dockerfile.web` *(default from `railway.toml`)* | `sh -c 'gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -'` |
+| `worker` | `Dockerfile.worker` | `celery -A shared.infrastructure.celery worker -l INFO --concurrency=2` |
+| `beat` | `Dockerfile.beat` | `celery -A shared.infrastructure.celery beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler` |
 
-> **Why three services share one Dockerfile.** The multi-stage `Dockerfile`
-> at `backend/Dockerfile` builds a base venv once and produces three
-> runtime targets. The `worker` target adds Tesseract + Poppler + libheif
-> for OCR; `web` and `beat` skip those layers for a smaller image.
+> **Why one Dockerfile per service.** Railway's dashboard does not expose
+> `--target` for multi-stage builds reliably, so each process ships its own
+> `backend/Dockerfile.<service>`. The three files share identical `base` +
+> `runtime-base` stages (edits to those stages must be mirrored across all
+> three). The `worker` image adds Tesseract + Poppler + libheif for OCR;
+> `web` and `beat` skip those layers for a smaller image.
 
 > **Why `web` needs `preDeployCommand`.** `railway.toml` runs
 > `python manage.py migrate && collectstatic` before traffic shifts.
@@ -233,7 +235,9 @@ After all three services + Postgres + Redis are wired:
 ## 9. Files involved (for code review)
 
 - `backend/railway.toml` — Build config + `web` defaults + preDeploy.
-- `backend/Dockerfile` — Multi-stage `web` / `worker` / `beat` targets.
+- `backend/Dockerfile.web` / `Dockerfile.worker` / `Dockerfile.beat` —
+  One image per process. Stages `base` and `runtime-base` are shared
+  byte-for-byte across the three files.
 - `backend/config/settings.py` — `DATABASE_URL` parsing,
   `RAILWAY_PUBLIC_DOMAIN` auto-host, WhiteNoise, `SECURE_PROXY_SSL_HEADER`.
 - `backend/.env.example` — Documents Railway-only env vars in its tail

@@ -55,7 +55,7 @@ services:
     profiles: ["full"]
     build:
       context: ./backend
-      target: web
+      dockerfile: Dockerfile.web
     container_name: casasegura-api
     restart: unless-stopped
     depends_on:

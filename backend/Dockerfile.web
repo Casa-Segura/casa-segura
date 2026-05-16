@@ -1,0 +1,75 @@
+# syntax=docker/dockerfile:1.6
+#
+# Casa Segura backend — `web` target (Django + Gunicorn).
+#
+# Stages 1 (`base`) and 2 (`runtime-base`) MUST stay byte-identical to
+# Dockerfile.worker and Dockerfile.beat. If you touch them here, mirror
+# the change in the other two files.
+#
+# Build:  docker build -f Dockerfile.web -t casa-segura/web .
+
+# ---------------------------------------------------------------------------
+# Stage 1: base — install Python deps with Poetry into an in-project venv.
+# ---------------------------------------------------------------------------
+FROM python:3.11-slim AS base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    POETRY_VERSION=2.2.1 \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_VIRTUALENVS_CREATE=true
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        libpq-dev \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+RUN pip install "poetry==${POETRY_VERSION}"
+
+COPY pyproject.toml poetry.lock* ./
+
+RUN poetry install --no-root --no-ansi
+
+# ---------------------------------------------------------------------------
+# Stage 2: runtime-base — minimal image, copies the prebuilt venv.
+# ---------------------------------------------------------------------------
+FROM python:3.11-slim AS runtime-base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/app/.venv/bin:$PATH" \
+    VIRTUAL_ENV="/app/.venv"
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libpq5 \
+        curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 1000 appuser \
+    && useradd --uid 1000 --gid appuser --shell /bin/bash --create-home appuser
+
+WORKDIR /app
+
+COPY --from=base --chown=appuser:appuser /app/.venv /app/.venv
+COPY --chown=appuser:appuser . /app
+
+USER appuser
+
+# ---------------------------------------------------------------------------
+# Stage 3: web — Gunicorn serving Django.
+# ---------------------------------------------------------------------------
+FROM runtime-base AS web
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD curl --fail --silent --show-error "http://localhost:${PORT:-8000}/api/health/" || exit 1
+
+CMD gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 3 --access-logfile -

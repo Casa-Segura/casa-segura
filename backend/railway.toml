@@ -1,17 +1,18 @@
 # Railway service config for the Casa Segura backend.
 #
 # Layout: one project on Railway with multiple services that share this
-# directory as their Root Directory (`/backend`). The Dockerfile here ships
-# three targets (`web`, `worker`, `beat`); each Railway service selects its
-# target via the dashboard (Settings → Build → Dockerfile Target).
+# directory as their Root Directory (`/backend`). There is one Dockerfile
+# per process (`Dockerfile.web`, `Dockerfile.worker`, `Dockerfile.beat`);
+# each Railway service selects its image via the dashboard
+# (Settings → Build → Dockerfile Path).
 #
 # Defaults in this file are tuned for the `web` service (Gunicorn + Django).
-# The `worker` and `beat` services override `startCommand` in the dashboard
-# (see RAILWAY.md at the repo root for the exact commands).
+# The `worker` and `beat` services override `dockerfilePath` and
+# `startCommand` in the dashboard (see RAILWAY.md at the repo root).
 
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
+dockerfilePath = "Dockerfile.web"
 
 [deploy]
 # Run migrations + collectstatic on every deploy before traffic shifts.
