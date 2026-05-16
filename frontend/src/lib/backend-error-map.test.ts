@@ -20,4 +20,12 @@ describe("mapBackendError", () => {
     const m = mapBackendError({}, 0);
     expect(m.category).toBe("network");
   });
+  it("maps project_verification_disabled on 403", () => {
+    const m = mapBackendError(
+      { error_code: "project_verification_disabled" },
+      403,
+    );
+    expect(m.category).toBe("business");
+    expect(m.uiMessage).toMatch(/verificación de proyecto/i);
+  });
 });

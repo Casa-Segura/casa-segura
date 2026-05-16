@@ -33,7 +33,8 @@ export function ContractAnalysisLoadingPanel() {
   }, []);
 
   const rotationIndex =
-    Math.floor(elapsedMs / ANALYSIS_LOADING_ROTATION_MS) % ANALYSIS_LOADING_LINES.length;
+    Math.floor(elapsedMs / ANALYSIS_LOADING_ROTATION_MS) %
+    ANALYSIS_LOADING_LINES.length;
   const longWait = elapsedMs >= ANALYSIS_LOADING_LONG_WAIT_THRESHOLD_MS;
   const line = longWait
     ? ANALYSIS_LOADING_LONG_WAIT_LINE
@@ -51,7 +52,9 @@ export function ContractAnalysisLoadingPanel() {
             aria-hidden
           />
           <div className="min-w-0 flex-1">
-            <p className="text-base font-semibold text-text-primary">Analizando tu contrato</p>
+            <p className="text-base font-semibold text-text-primary">
+              Analizando tu contrato
+            </p>
             <p
               className="mt-2 text-sm leading-relaxed text-text-secondary"
               key={longWait ? "long" : `line-${rotationIndex}`}
@@ -63,7 +66,9 @@ export function ContractAnalysisLoadingPanel() {
           </div>
         </div>
         {reducedMotion ? (
-          <p className="text-xs text-text-secondary">Preferencias de movimiento reducido activas.</p>
+          <p className="text-xs text-text-secondary">
+            Preferencias de movimiento reducido activas.
+          </p>
         ) : null}
       </div>
     </div>

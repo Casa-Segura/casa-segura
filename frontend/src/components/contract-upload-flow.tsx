@@ -46,7 +46,8 @@ function classifyClientFileReject(file: File): string | null {
     return "Sólo aceptamos PDF, JPEG/PNG/HEIC y WEBP. Convertí o exportá antes de intentar.";
   }
   let mimeOk = CONTRACT_ACCEPTABLE_MIME_TYPES.some((t) => file.type === t);
-  if (!mimeOk && file.type === "") mimeOk = Boolean(mimeFromFilename(file.name));
+  if (!mimeOk && file.type === "")
+    mimeOk = Boolean(mimeFromFilename(file.name));
   if (!mimeOk)
     return "Uno de los archivos no coincide con ningún formato que podamos revisar desde el móvil.";
   if (file.size > CONTRACT_MAX_FILE_BYTES) {
@@ -62,8 +63,12 @@ export function ContractUploadFlow() {
   const disclaimerScrollRef = useRef<HTMLDivElement | null>(null);
 
   const [files, setFiles] = useState<File[]>([]);
-  const [delivery, setDelivery] = useState<DeliveryDraft>(() => defaultDeliveryDraft());
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<"email" | "phone", string>>>({});
+  const [delivery, setDelivery] = useState<DeliveryDraft>(() =>
+    defaultDeliveryDraft(),
+  );
+  const [fieldErrors, setFieldErrors] = useState<
+    Partial<Record<"email" | "phone", string>>
+  >({});
   const [deliveryBanner, setDeliveryBanner] = useState<string>("");
 
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
@@ -97,7 +102,9 @@ export function ContractUploadFlow() {
         next.push(raw);
       }
       if (next.length > CONTRACT_MAX_FILE_COUNT) {
-        setGlobalError("Sólo podés subir hasta 50 archivos a la vez. Quitá algunos para continuar.");
+        setGlobalError(
+          "Sólo podés subir hasta 50 archivos a la vez. Quitá algunos para continuar.",
+        );
         return;
       }
       const accum = next.reduce((a, b) => a + b.size, 0);
@@ -148,7 +155,10 @@ export function ContractUploadFlow() {
     if (!disclaimerAccepted) {
       setDisclaimerReminder(true);
       setGlobalError("");
-      disclaimerScrollRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      disclaimerScrollRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       return;
     }
 
@@ -233,12 +243,15 @@ export function ContractUploadFlow() {
     <div className="flex flex-col gap-6">
       {busy ? <ContractAnalysisLoadingPanel key={loadingSession} /> : null}
       <header className="flex flex-col gap-2">
-        <h1 id={`${baseId}-h1`} className="text-xl font-semibold text-text-primary">
+        <h1
+          id={`${baseId}-h1`}
+          className="text-xl font-semibold text-text-primary"
+        >
           Subí tu contrato
         </h1>
         <p className="text-base leading-relaxed text-text-secondary">
-          Podés combinar páginas en PDF y fotos nítidas. Te avisamos en el canal que elijas cuando el
-          análisis quede listo.
+          Podés combinar páginas en PDF y fotos nítidas. Te avisamos en el canal
+          que elijas cuando el análisis quede listo.
         </p>
       </header>
 
@@ -265,14 +278,20 @@ export function ContractUploadFlow() {
         />
       </div>
 
-      <section aria-labelledby={`${baseId}-zone-title`} className="flex flex-col gap-3">
-        <h2 id={`${baseId}-zone-title`} className="text-base font-semibold text-text-primary">
+      <section
+        aria-labelledby={`${baseId}-zone-title`}
+        className="flex flex-col gap-3"
+      >
+        <h2
+          id={`${baseId}-zone-title`}
+          className="text-base font-semibold text-text-primary"
+        >
           Archivos
         </h2>
         {!disclaimerAccepted ? (
           <p className="text-sm leading-relaxed text-text-secondary">
-            Marcá la casilla de aviso legal del bloque de arriba para habilitar la subida y evitar tratamiento sin tu
-            consentimiento explícito.
+            Marcá la casilla de aviso legal del bloque de arriba para habilitar
+            la subida y evitar tratamiento sin tu consentimiento explícito.
           </p>
         ) : null}
 
@@ -286,7 +305,9 @@ export function ContractUploadFlow() {
           onDrop={disclaimerAccepted ? onDrop : undefined}
           aria-disabled={!disclaimerAccepted}
           className={`rounded-[var(--radius-card)] border border-dashed ${
-            disclaimerAccepted ? "border-border bg-surface" : "cursor-not-allowed border-border opacity-55"
+            disclaimerAccepted
+              ? "border-border bg-surface"
+              : "cursor-not-allowed border-border opacity-55"
           } px-4 py-6`}
         >
           <div className="flex flex-col items-center gap-3 text-center">
@@ -300,7 +321,9 @@ export function ContractUploadFlow() {
             >
               Elegí tus archivos
             </button>
-            <span className="text-sm text-text-secondary">o dejalos caer dentro de este recuadro.</span>
+            <span className="text-sm text-text-secondary">
+              o dejalos caer dentro de este recuadro.
+            </span>
             <input
               ref={fileInputRef}
               id={`${baseId}-file-input`}
@@ -324,10 +347,18 @@ export function ContractUploadFlow() {
         </div>
 
         {files.length > 0 ? (
-          <ul className="flex flex-col divide-y divide-border rounded-[var(--radius-input)] border border-border bg-surface" aria-label="Archivos listos para enviar">
+          <ul
+            className="flex flex-col divide-y divide-border rounded-[var(--radius-input)] border border-border bg-surface"
+            aria-label="Archivos listos para enviar"
+          >
             {files.map((f, i) => (
-              <li key={`${f.name}-${f.lastModified}-${i}`} className="flex items-start justify-between gap-3 px-3 py-3">
-                <span className="min-w-0 flex-1 break-words text-sm text-text-primary">{f.name}</span>
+              <li
+                key={`${f.name}-${f.lastModified}-${i}`}
+                className="flex items-start justify-between gap-3 px-3 py-3"
+              >
+                <span className="min-w-0 flex-1 break-words text-sm text-text-primary">
+                  {f.name}
+                </span>
                 <button
                   type="button"
                   onClick={() => removeAt(i)}
@@ -348,7 +379,8 @@ export function ContractUploadFlow() {
       <div aria-live="assertive" className="min-h-[2.5rem]">
         {disclaimerReminder ? (
           <p role="alert" className="text-sm font-semibold text-verdict-red">
-            Confirmá primero la casilla de aviso legal; sin eso tu envío puede ser rechazado por el servidor.
+            Confirmá primero la casilla de aviso legal; sin eso tu envío puede
+            ser rechazado por el servidor.
           </p>
         ) : null}
         {globalError ? (
@@ -364,15 +396,22 @@ export function ContractUploadFlow() {
           role="status"
           aria-labelledby={`${baseId}-ok`}
         >
-          <p id={`${baseId}-ok`} className="text-base font-semibold text-text-primary">
+          <p
+            id={`${baseId}-ok`}
+            className="text-base font-semibold text-text-primary"
+          >
             Recibimos tu envío para analizarlo
           </p>
           <p className="mt-2 text-sm text-text-secondary">
             Seguimos el proceso en segundo plano. Referencia rápida:{" "}
-            <span className="font-mono text-xs text-text-primary select-all">{result.submissionId}</span>.
+            <span className="font-mono text-xs text-text-primary select-all">
+              {result.submissionId}
+            </span>
+            .
           </p>
           <p className="mt-2 text-sm text-text-secondary">
-            Canal elegido: {result.hint}. Si no ves nada, revisá filtros del correo o conversaciones en WhatsApp según cómo lo configuraste.
+            Canal elegido: {result.hint}. Si no ves nada, revisá filtros del
+            correo o conversaciones en WhatsApp según cómo lo configuraste.
           </p>
         </aside>
       ) : null}
@@ -383,7 +422,10 @@ export function ContractUploadFlow() {
           role="alert"
           aria-labelledby={`${baseId}-rej`}
         >
-          <p id={`${baseId}-rej`} className="text-base font-semibold text-text-primary">
+          <p
+            id={`${baseId}-rej`}
+            className="text-base font-semibold text-text-primary"
+          >
             No pudimos producir tu informe a partir del material que mandaste.
           </p>
           <p className="mt-3 text-sm text-text-secondary">
@@ -395,7 +437,8 @@ export function ContractUploadFlow() {
             ))}
           </ul>
           <p className="mt-4 text-sm text-text-secondary">
-            Podés probar fotos más contrastadas y con buena luz o un PDF nuevo exportado con texto seleccionable.
+            Podés probar fotos más contrastadas y con buena luz o un PDF nuevo
+            exportado con texto seleccionable.
           </p>
         </aside>
       ) : null}

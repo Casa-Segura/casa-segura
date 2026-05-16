@@ -3,7 +3,9 @@ import { classifyPollPayload } from "./contract-backend";
 
 describe("classifyPollPayload", () => {
   it("reports completed terminal", () => {
-    expect(classifyPollPayload({ processing_status: "completed", analysis: {} })).toMatchObject({
+    expect(
+      classifyPollPayload({ processing_status: "completed", analysis: {} }),
+    ).toMatchObject({
       kind: "completed",
       analysisHint: {},
     });
@@ -49,8 +51,8 @@ describe("classifyPollPayload", () => {
   });
 
   it("does not treat failed extraction as not analyzeable outcome", () => {
-    expect(classifyPollPayload({ processing_status: "failed_extraction" }).kind).toBe(
-      "failed",
-    );
+    expect(
+      classifyPollPayload({ processing_status: "failed_extraction" }).kind,
+    ).toBe("failed");
   });
 });

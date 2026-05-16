@@ -45,11 +45,15 @@ export function DeliveryChannelFields(props: Props) {
     <fieldset className="flex flex-col gap-4 rounded-[var(--radius-input)] border-0 p-0">
       <legend className="sr-only">¿Cómo querés recibir el resultado?</legend>
       <div>
-        <h2 id={`${idPrefix}-delivery-heading`} className="text-lg font-semibold text-text-primary">
+        <h2
+          id={`${idPrefix}-delivery-heading`}
+          className="text-lg font-semibold text-text-primary"
+        >
           ¿Cómo te envío el resultado?
         </h2>
         <p className="mt-1 text-sm leading-relaxed text-text-secondary">
-          Elegí uno. Para email o WhatsApp usaremos el dato sólo para entregarte el informe.
+          Elegí uno. Para email o WhatsApp usaremos el dato sólo para entregarte
+          el informe.
         </p>
       </div>
       <div
@@ -114,7 +118,10 @@ export function DeliveryChannelFields(props: Props) {
 
       {value.channel === "email_pdf" ? (
         <div className="flex flex-col gap-2">
-          <label htmlFor={`${idPrefix}-email`} className="text-sm font-medium text-text-primary">
+          <label
+            htmlFor={`${idPrefix}-email`}
+            className="text-sm font-medium text-text-primary"
+          >
             Tu correo
           </label>
           <input
@@ -125,14 +132,20 @@ export function DeliveryChannelFields(props: Props) {
             autoComplete="email"
             value={value.email}
             aria-invalid={fieldErrors.email ? true : undefined}
-            aria-describedby={fieldErrors.email ? `${idPrefix}-email-err` : undefined}
+            aria-describedby={
+              fieldErrors.email ? `${idPrefix}-email-err` : undefined
+            }
             onChange={(e) => onChange({ ...value, email: e.target.value })}
             onBlur={() => props.onBlurField?.("email")}
             className={`min-h-[44px] rounded-[var(--radius-input)] border border-border px-4 py-2 text-base text-text-primary outline-none placeholder:text-text-secondary ${focusRing}`}
             placeholder="correo@ejemplo.com"
           />
           {fieldErrors.email ? (
-            <p role="alert" id={`${idPrefix}-email-err`} className="text-sm text-verdict-red">
+            <p
+              role="alert"
+              id={`${idPrefix}-email-err`}
+              className="text-sm text-verdict-red"
+            >
               {fieldErrors.email}
             </p>
           ) : (
@@ -145,7 +158,10 @@ export function DeliveryChannelFields(props: Props) {
 
       {value.channel === "whatsapp_summary" ? (
         <div className="flex flex-col gap-2">
-          <label htmlFor={`${idPrefix}-wa`} className="text-sm font-medium text-text-primary">
+          <label
+            htmlFor={`${idPrefix}-wa`}
+            className="text-sm font-medium text-text-primary"
+          >
             Tu WhatsApp (E.164)
           </label>
           <input
@@ -156,14 +172,22 @@ export function DeliveryChannelFields(props: Props) {
             autoComplete="tel"
             value={value.whatsappPhone}
             aria-invalid={fieldErrors.phone ? true : undefined}
-            aria-describedby={fieldErrors.phone ? `${idPrefix}-wa-err` : undefined}
-            onChange={(e) => onChange({ ...value, whatsappPhone: e.target.value })}
+            aria-describedby={
+              fieldErrors.phone ? `${idPrefix}-wa-err` : undefined
+            }
+            onChange={(e) =>
+              onChange({ ...value, whatsappPhone: e.target.value })
+            }
             onBlur={() => props.onBlurField?.("phone")}
             className={`min-h-[44px] rounded-[var(--radius-input)] border border-border px-4 py-2 text-base font-mono text-text-primary outline-none placeholder:text-text-secondary ${focusRing}`}
             placeholder="+503XXXXXXXX"
           />
           {fieldErrors.phone ? (
-            <p role="alert" id={`${idPrefix}-wa-err`} className="text-sm text-verdict-red">
+            <p
+              role="alert"
+              id={`${idPrefix}-wa-err`}
+              className="text-sm text-verdict-red"
+            >
               {fieldErrors.phone}
             </p>
           ) : (
@@ -177,7 +201,9 @@ export function DeliveryChannelFields(props: Props) {
   );
 }
 
-export function summarizeDelivery(parts: Exclude<DeliverySubmitParts, { invalid: true }>): string {
+export function summarizeDelivery(
+  parts: Exclude<DeliverySubmitParts, { invalid: true }>,
+): string {
   if ("delivery_target_omitted" in parts) return "Enlace web";
   return parts.delivery_channel === "email_pdf" ? "PDF al correo" : "WhatsApp";
 }

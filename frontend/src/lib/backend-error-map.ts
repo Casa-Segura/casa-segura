@@ -29,7 +29,8 @@ const TABLE = {
   INVALID_DELIVERY_CHANNEL: "Elegí de nuevo cómo querés recibir el resultado.",
   INVALID_DELIVERY_TARGET:
     "Revisá el correo o el número (formato internacional con +); el servidor lo rechazó.",
-  FILE_EMPTY: "Uno de los archivos está vacío. Exportá otro archivo e intentá otra vez.",
+  FILE_EMPTY:
+    "Uno de los archivos está vacío. Exportá otro archivo e intentá otra vez.",
   PDF_NOT_SAFE:
     "Ese PDF no se puede procesar de forma segura ahora mismo. Exportá uno nuevo o fotografiá las páginas.",
   VALIDATION_ERROR:
@@ -38,6 +39,8 @@ const TABLE = {
     "Llegamos al cupo temporal de envíos. Esperá un momento antes de volver a intentarlo.",
   THROTTLED:
     "Llegamos al cupo temporal de envíos. Esperá un momento antes de volver a intentarlo.",
+  PROJECT_VERIFICATION_DISABLED:
+    "La verificación de proyecto no está disponible en este servidor. Si estás probando en local, activala en la configuración del backend y volvé a intentar.",
 } as const satisfies Record<string, string>;
 
 export type ApiErrorEnvelope = {
@@ -58,18 +61,29 @@ function canonicalCode(raw?: string): keyof typeof TABLE | null {
 }
 
 export type MappedUserFacingError = {
-  category: "disclaimer" | "business" | "server" | "network" | "not_found" | "unknown" | "configuration";
+  category:
+    | "disclaimer"
+    | "business"
+    | "server"
+    | "network"
+    | "not_found"
+    | "unknown"
+    | "configuration";
   code?: string;
   uiMessage: string;
 };
 
 function looksUnsafeInternalCopy(msg: string): boolean {
-  if (/ENOTFOUND|EAI_AGAIN|ECONNREFUSED|fetch failed|AxiosError/i.test(msg)) return true;
+  if (/ENOTFOUND|EAI_AGAIN|ECONNREFUSED|fetch failed|AxiosError/i.test(msg))
+    return true;
   if (/\sat\s\S+\(.*:\d+:\d+\)/.test(msg)) return true;
   return msg.length > 240;
 }
 
-export function mapBackendError(body: unknown, httpStatus: number): MappedUserFacingError {
+export function mapBackendError(
+  body: unknown,
+  httpStatus: number,
+): MappedUserFacingError {
   if (httpStatus === 0 || Number.isNaN(httpStatus))
     return { category: "network", uiMessage: SPANISH_NETWORK };
   if (httpStatus >= 500) return { category: "server", uiMessage: SPANISH_5XX };
@@ -81,7 +95,8 @@ export function mapBackendError(body: unknown, httpStatus: number): MappedUserFa
   }
 
   const key = canonicalCode(rawCode ?? "");
-  if (httpStatus === 404) return { category: "not_found", uiMessage: SPANISH_DEFAULT, code: rawCode };
+  if (httpStatus === 404)
+    return { category: "not_found", uiMessage: SPANISH_DEFAULT, code: rawCode };
 
   if (key) {
     return {
@@ -97,21 +112,39 @@ export function mapBackendError(body: unknown, httpStatus: number): MappedUserFa
     if (!looksUnsafeInternalCopy(pick) && pick.length > 3) {
       if (pick.toLowerCase().includes("disclaimer"))
         return { category: "disclaimer", uiMessage: TABLE.DISCLAIMER_REQUIRED };
-      return { category: "business", code: rawCode, uiMessage: localizeDevEnglish(pick) };
+      return {
+        category: "business",
+        code: rawCode,
+        uiMessage: localizeDevEnglish(pick),
+      };
     }
   }
 
   if (httpStatus === 413)
-    return { category: "business", code: rawCode ?? "payload_too_large", uiMessage: TABLE.FILE_TOO_LARGE };
+    return {
+      category: "business",
+      code: rawCode ?? "payload_too_large",
+      uiMessage: TABLE.FILE_TOO_LARGE,
+    };
 
-  if (httpStatus === 429) return { category: "business", code: rawCode ?? "RATE_LIMITED", uiMessage: TABLE.RATE_LIMITED };
+  if (httpStatus === 429)
+    return {
+      category: "business",
+      code: rawCode ?? "RATE_LIMITED",
+      uiMessage: TABLE.RATE_LIMITED,
+    };
 
-  return { category: httpStatus >= 400 ? "business" : "unknown", uiMessage: SPANISH_DEFAULT, code: rawCode };
+  return {
+    category: httpStatus >= 400 ? "business" : "unknown",
+    uiMessage: SPANISH_DEFAULT,
+    code: rawCode,
+  };
 }
 
 function localizeDevEnglish(pick: string): string {
   const l = pick.toLowerCase();
-  if (l.includes("request payload failed validation")) return TABLE.VALIDATION_ERROR;
+  if (l.includes("request payload failed validation"))
+    return TABLE.VALIDATION_ERROR;
   /** Default: fall back rather than exposing unknown English verbatim */
   return SPANISH_DEFAULT;
 }
