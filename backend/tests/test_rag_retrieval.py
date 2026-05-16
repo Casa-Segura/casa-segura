@@ -35,7 +35,7 @@ def _unit_vector(direction: int) -> list[float]:
 
 @pytest.fixture
 def seeded_corpus(db):
-    from django.utils import timezone  # noqa: PLC0415
+    from django.utils import timezone
 
     version = CorpusVersion.objects.create(
         version="test-v1",

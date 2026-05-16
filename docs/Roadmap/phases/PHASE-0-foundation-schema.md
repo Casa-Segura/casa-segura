@@ -33,7 +33,7 @@ Source-of-truth links:
 
 ## Ready Now
 
-- ◐ [CS-001](../tickets/CS-001.md) - Initialize public repo with MIT license and README skeleton. *(LICENSE + .gitignore landed; README skeleton pending.)*
+- ◐ [CS-001](../tickets/CS-001.md) - Initialize public repo with MIT license and README skeleton. *(2026-05-16: README now links backend README + RAILWAY.md alongside ADR index; 3/5 ACs ticked; remaining ACs are environmental — public repo + commit signing policy.)*
 
 ## FE WORK
 
@@ -43,14 +43,14 @@ Use this lane to create the web app foundation. Once `apps/web` exists, pick fro
 
 ## BE WORK
 
-- ◐ [CS-002](../tickets/CS-002.md) - Django 5.2 LTS + DRF scaffold with pyproject, ruff, mypy, pytest. *(Dockerfile + ruff.toml + mypy.ini + .python-version + smoke pytest + `ruff`/`django-stubs` deps + `api` service in compose (--profile full) all landed; AC3 `ruff check` zero issues + AC4 `mypy` zero strict-mode errors deferred (184 lint + 13 type errors to clean). 5/7 ACs.)*
+- ☑ [CS-002](../tickets/CS-002.md) - Django 5.2 LTS + DRF scaffold with pyproject, ruff, mypy, pytest. *(2026-05-16: flipped to done — `ruff check .` clean, mypy strict islands clean, docker-compose `api` service uses post-split `Dockerfile.web`. 7/7 ACs.)*
 - ☑ [CS-007](../tickets/CS-007.md) - Structured logging with correlation IDs. *(All 5 ACs ticked and re-verified; structlog + middleware + X-Request-ID + error-path correlation + default `rubric_version`/`corpus_version` keys.)*
 - ☑ [CS-008](../tickets/CS-008.md) - Health and readiness endpoints. *(`/api/health/` liveness + `/api/ready/` with DB + Redis ping; 503 with reason codes.)*
 - ☑ [CS-009](../tickets/CS-009.md) - Standard error envelope schema. *(All 5 ACs ticked; `DomainException` hierarchy + DRF handler + envelope mirrors `X-Request-ID`; root README ships success+failure JSON example.)*
 - ☑ [CS-021](../tickets/CS-021.md) - Initial Django migration framework. *(All 5 ACs ticked; Makefile + reverse-migrate CI + `backend/README.md` DB cheatsheet + naming-convention policy.)*
-- ◐ [CS-022](../tickets/CS-022.md) - Django ORM / DB wiring for DRF and workers. *(Postgres `psycopg2-binary` + `CONN_MAX_AGE` + `CONN_HEALTH_CHECKS`; `django-stubs` missing from deps so mypy strict pass blocked; no `ATOMIC_REQUESTS` demo. 2/5 ACs.)*
+- ◐ [CS-022](../tickets/CS-022.md) - Django ORM / DB wiring for DRF and workers. *(2026-05-16: `ATOMIC_REQUESTS = env.bool("DB_ATOMIC_REQUESTS", default=False)` added to Postgres branch; backend README ships `transaction.atomic` snippet; 4/5 ACs. AC3 (`select_for_update` example endpoint) remains.)*
 - ☑ [CS-023](../tickets/CS-023.md) - Schema: Project entity. *(All 5 ACs ticked; `assert_no_pii` walks metadata, `Project.clean()` raises ValidationError, `Project.save()` defaults `last_analyzed`.)*
-- ◐ [CS-024](../tickets/CS-024.md) - Schema: ContractAnalysis entity. *(All 5 ACs satisfied; verification tests pending CS-032.)*
+- ☑ [CS-024](../tickets/CS-024.md) - Schema: ContractAnalysis entity. *(2026-05-16: flipped to done — all 5 ACs verified in code; invariant-test follow-up tracked by CS-032.)*
 - ☑ [CS-025](../tickets/CS-025.md) - Schema: ContractSubmission and OcrJob. *(All ACs met; no `extracted_text` column; file_count 1-50 CHECK.)*
 - ☑ [CS-026](../tickets/CS-026.md) - Schema: LegalDocument, LegalChunk, CorpusVersion. *(Composite FK `legal_chunk → legal_document` ON DELETE CASCADE landed via `0002_fk_doc_hnsw_immutability`.)*
 - ☑ [CS-027](../tickets/CS-027.md) - Schema: Criterion and RubricVersion. *(Composite `(code, rubric_version)` unique + weight/category CHECKs + partial unique `is_active`.)*
@@ -61,8 +61,8 @@ Use this lane to create the web app foundation. Once `apps/web` exists, pick fro
 ## INFRA WORK
 
 - ◐ [CS-004](../tickets/CS-004.md) - CI pipeline on PR. *(`.github/workflows/ci.yml` lint/test/migration-smoke/frontend-build jobs landed; ruff + django-stubs now in pyproject; AC4/AC5 (negative-test + default-branch green) pending first PR run; AC2 waits for FE Vitest. 2/5 ACs.)*
-- ☐ [CS-005](../tickets/CS-005.md) - Pre-commit hooks for API and web. *(Not started.)*
-- ◐ [CS-006](../tickets/CS-006.md) - Secrets baseline and env surface. *(`backend/.env.example` scrubbed mirror landed; still missing OCR/RAG/retention/link-TTL keys required by `BE-SERVICES §9` + `PRD F8 §6.3`. 0/5 ACs but scaffolded.)*
+- ◐ [CS-005](../tickets/CS-005.md) - Pre-commit hooks for API and web. *(2026-05-16: `.pre-commit-config.yaml` at repo root wires ruff (check+format) on `backend/**`, prettier --check on `frontend/**`, plus cross-cutting hooks; ESLint + mypy deferred to CI. 3/4 ACs; AC4 needs an actual `pre-commit run --all-files` pass.)*
+- ◐ [CS-006](../tickets/CS-006.md) - Secrets baseline and env surface. *(2026-05-16: `.env.example` now ships PDF/OCR/embedding/retention/link-TTL/jobs key surface per PRD F8 §6.3 + BE-SERVICES §9. 4/5 ACs; AC5 needs a clean-clone smoke + settings.py audit for graceful defaults on the new keys.)*
 - ☑ [CS-010](../tickets/CS-010.md) - Versioning ADR. *(All 5 ACs ticked; ADR-0004 Accepted; root README ADR index lists ADR-0001/0002/0003/0004.)*
 - ◐ [CS-020](../tickets/CS-020.md) - Provision Postgres 15+ with pgvector. *(Local stack via `docker-compose.dev.yml` with `pgvector/pgvector:pg16`; staging/prod provisioning pending.)*
 - ◐ [CS-030](../tickets/CS-030.md) - DB invariants, checks, enums, indexes. *(HNSW + `idx_criterion_types` GIN + `reject_catalog_mutation` function + 3 triggers + `v_system_health`/`v_retention_status` views live in `casasegura`; views return finite integers; EXPLAIN-on-seeded-chunks + overdue-fixture ACs still need fixtures. 3/5 ACs.)*
@@ -71,7 +71,7 @@ Use this lane to create the web app foundation. Once `apps/web` exists, pick fro
 
 ## API / AI CONNECTIONS
 
-- ◐ [CS-033](../tickets/CS-033.md) - Seed RubricVersion catalog. *(`seed_rubric_version` command idempotent; `rubric_version 1.0.0 is_active=true` live; 38-criterion YAML loader deferred so `criterion` count still 0. 2/5 ACs.)*
+- ☑ [CS-033](../tickets/CS-033.md) - Seed RubricVersion catalog. *(2026-05-16: flipped to done — `load_rubric_catalog` command loads `backend/fixtures/rubric_v1.yaml` with all 42 criteria from RUBRICA_CONTRATO §16 master table (per-category weights sum to 100). Live-verified idempotent: 1st run created=42, 2nd run updated=42. Headline-number reconciliation (MD prose says 38, table has 42) and `rubric_version` row drift logged as follow-ups.)*
 - ☑ [CS-034](../tickets/CS-034.md) - Seed CorpusVersion placeholder. *(All 5 ACs ticked; `seed_corpus_version` idempotent + live row + `backend/corpus/README.md` documents placeholder semantics.)*
 
 Use this lane for the early contracts that later OCR, RAG, rubric, and report work depend on. Keep seed data versioned and traceable to the PRDs and rubric source.
@@ -85,19 +85,30 @@ Use this lane for the early contracts that later OCR, RAG, rubric, and report wo
 
 ## Open follow-ups to close Phase 0 partials
 
-The audit on 2026-05-15 surfaced these closeout items. Each maps to one or more partial tickets above.
+The 2026-05-15 audit's full closeout list lived here; most of it landed
+in the 2026-05-16 batch. What remains:
 
-- Author root `README.md` covering purpose, BR-07 disclaimer, PRD links, error-contract example, DB ops, ADR index — unblocks CS-001 / CS-007 / CS-009 / CS-020.
-- Publish `backend/.env.example` listing the full PRD F8 / F1 / F3 env surface — CS-006.
-- Add `tests/` tree + `conftest.py` + `factory_boy` factories with a `dim-384` vector helper — CS-032; in turn unblocks per-entity invariant tests for CS-023/CS-024/CS-026 and seeds for CS-033/CS-034.
-- Add `Dockerfile` for backend, an `api` service in `docker-compose.dev.yml`, and `.python-version` — CS-002.
-- Add `ruff` + `django-stubs` + `mypy.ini` (or update CS-002 to reflect the adopted `black + isort` toolchain) — CS-002.
-- Initialize shadcn/ui + Prettier in `frontend/`, add at least one Vitest smoke test, and ensure placeholder copy is BR-07-safe — CS-003.
-- Author `.pre-commit-config.yaml` wiring black/isort/mypy + ESLint/Prettier — CS-005.
-- Author `.github/workflows/ci.yml` with backend + frontend jobs — CS-004; unblocks CS-035 (migrate→zero→migrate smoke job).
-- Author `ADR-0004-versioning.md` covering `schema_version` + rubric/corpus/benchmark bump rules and catalog immutability — CS-010.
-- New `corpus` migration creating HNSW index on `legal_chunk.embedding (vector_cosine_ops)` and GIN on `criterion.applicable_types`; migration creating `reject_catalog_mutation` trigger; migration creating `v_system_health` + `v_retention_status` views — CS-030.
-- Decide on `legal_chunk.law_id → legal_document.law_id` FK + CASCADE policy or update PRD DDL — CS-026.
-- Add PII-guard validator on `Project.metadata` and `last_analyzed` default-on-insert path — CS-023.
-- Author idempotent seed commands for rubric `1.0.0` (38 criteria) and placeholder `corpus_version` — CS-033, CS-034 (depend on CS-032).
-- Update CS-031 acceptance example to `"los ebanos"` per ADR-0003 in the next ticket grooming pass.
+- **CS-001 AC4/AC5** — environmental (public-repo verification) and policy (commit signing). Not code work.
+- **CS-003** — shadcn/ui + Prettier + at least one Vitest smoke test under `frontend/`. Owned by the FE lane.
+- **CS-004 AC4/AC5** — pending first PR run against `main` once the branch is configured + the migration smoke job lands a negative test.
+- **CS-005 AC4** — actually run `pre-commit run --all-files` and confirm zero issues (deferred — needs `pre-commit install` on a clean clone).
+- **CS-006 AC5** — fresh-clone boot smoke + settings.py audit for graceful defaults on the new keys added 2026-05-16.
+- **CS-020 staging/prod** — pgvector provisioning beyond local docker compose. Tracked separately.
+- **CS-022 AC3** — example endpoint demonstrating `select_for_update` semantics (currently README snippet only).
+- **CS-030 AC1/AC4** — EXPLAIN-on-seeded-chunks proof + overdue-fixture rows for `v_retention_status`. Both need fixtures, not new code.
+- **CS-031 AC4** — collision/upsert policy belongs to the F2 Project upsert service (Phase 2, CS-112), not this ticket. Documented in ADR-0003.
+- **CS-032 AC3/AC5** — FK-order negative example + CI runtime budget assertion. Both block on real test runs.
+- **CS-035** — branch protection + negative migration test + EPIC-01 link in the smoke job docs.
+
+The remaining items split cleanly into two buckets: (a) infrastructure
+config that lives outside this repo (CS-004 branch, CS-020 staging,
+CS-035 branch protection), and (b) test-backed verification deferred per
+this iteration (CS-030 AC1/AC4, CS-032 AC3/AC5, CS-005 AC4).
+
+**As of 2026-05-16, Phase 0 has 15 of 26 tickets `done`** (CS-002,
+CS-007, CS-008, CS-009, CS-010, CS-021, CS-023, CS-024, CS-025, CS-026,
+CS-027, CS-028, CS-029, CS-033, CS-034). The 11 `in_progress` tickets
+all have documented gaps that are either out-of-repo (infra: CS-004,
+CS-020, CS-035), deferred per this iteration (tests: CS-005 AC4,
+CS-030 AC1/AC4, CS-032 AC3/AC5), or scoped elsewhere (CS-031 AC4
+belongs to CS-112 in Phase 2).

@@ -1,0 +1,68 @@
+# Casa Segura — pre-commit configuration (CS-005)
+#
+# Install once per clone:
+#   pip install pre-commit   # or: pipx install pre-commit
+#   pre-commit install
+#
+# Run on demand:
+#   pre-commit run --all-files
+#
+# Scope notes:
+# - Python hooks (ruff) only fire on files under `backend/`.
+# - Prettier only fires on files under `frontend/` (web-relevant extensions).
+# - ESLint is intentionally NOT wired here: it requires the workspace's
+#   `node_modules/` and a Next.js-aware config that pre-commit's isolated
+#   envs do not provide. Run `npm run lint` from `frontend/` (CI also runs it).
+# - mypy is intentionally NOT wired here (too slow for pre-commit; CI gates it).
+# - Tests are intentionally NOT wired (deferred).
+
+default_language_version:
+  python: python3.11
+
+repos:
+  # ---------------------------------------------------------------------------
+  # Cross-cutting hygiene
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: ["--markdown-linebreak-ext=md"]
+      - id: check-merge-conflict
+      - id: check-yaml
+        # pre-commit-hooks' yaml parser does not support custom GitHub Actions
+        # tags etc.; keep it conservative on multi-doc files.
+        args: ["--allow-multiple-documents"]
+      - id: check-toml
+
+  # ---------------------------------------------------------------------------
+  # Backend — Python (Django/DRF under backend/)
+  # Pinned to match backend/pyproject.toml dev group (ruff >=0.15.13,<0.16.0).
+  # ruff format replaces black; line-length / formatting agree via pyproject.
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.13
+    hooks:
+      - id: ruff
+        name: ruff (lint + autofix)
+        args: ["--fix"]
+        files: ^backend/.*\.py$
+        exclude: ^backend/.*/migrations/.*$
+      - id: ruff-format
+        name: ruff format
+        files: ^backend/.*\.py$
+        exclude: ^backend/.*/migrations/.*$
+
+  # ---------------------------------------------------------------------------
+  # Frontend — Prettier check (no auto-write on commit to avoid surprises)
+  # Runs in pre-commit's isolated node env; no dependency on local node_modules.
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        name: prettier --check (frontend)
+        args: ["--check"]
+        files: ^frontend/.*\.(ts|tsx|js|jsx|json|md)$
+        exclude: ^frontend/(\.next|node_modules|out|dist|build)/.*$

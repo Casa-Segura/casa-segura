@@ -9,10 +9,10 @@ parsing free-form messages. The codes are also persisted on
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 
-class NotAnalyzableReason(str, Enum):
+class NotAnalyzableReason(StrEnum):
     """Why a submission could not be analysed.
 
     Values are persisted in `error_code`; keep them stable.

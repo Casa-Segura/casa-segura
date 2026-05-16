@@ -44,7 +44,7 @@ def test_no_model_persists_extracted_text():
 def test_contract_submission_has_no_text_column():
     """Spot-check: ContractSubmission only carries token_count + language."""
 
-    from ingestion.infrastructure.django.models import ContractSubmission  # noqa: PLC0415
+    from ingestion.infrastructure.django.models import ContractSubmission
 
     field_names = {f.name for f in ContractSubmission._meta.get_fields()}
     assert "extracted_text" not in field_names

@@ -7,8 +7,11 @@ includes it, and mirrors it back as `X-Request-ID` on the response."""
 from __future__ import annotations
 
 import uuid
+from collections.abc import Callable
 
 import structlog
+
+from django.http import HttpRequest, HttpResponse
 
 CORRELATION_HEADER = "X-Request-ID"
 _MAX_HEADER_LEN = 128
@@ -27,10 +30,10 @@ def _coerce_correlation_id(raw: str | None) -> str:
 class CorrelationIdMiddleware:
     """Bind correlation_id into structlog contextvars for the duration of one request."""
 
-    def __init__(self, get_response):
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request: HttpRequest) -> HttpResponse:
         raw = request.META.get(f"HTTP_{CORRELATION_HEADER.upper().replace('-', '_')}")
         correlation_id = _coerce_correlation_id(raw)
 
@@ -40,7 +43,10 @@ class CorrelationIdMiddleware:
             http_method=request.method,
             http_path=request.path,
         )
-        request.correlation_id = correlation_id
+        # Stash on the request for downstream code (settings.SECURE_PROXY_SSL_HEADER
+        # exposure, error handlers); typing-wise this is an ad-hoc attribute on
+        # Django's HttpRequest, hence the ignore.
+        request.correlation_id = correlation_id  # type: ignore[attr-defined]
 
         try:
             response = self.get_response(request)

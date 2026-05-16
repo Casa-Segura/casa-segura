@@ -34,7 +34,9 @@ Supporting references: [Feature map](docs/Casa%20Segura%20Formal%20PRDs/FEATURES
 | **Database** | PostgreSQL 16 + **pgvector** (vectors + relational data per PRDs) |
 | **Local dependencies** | [Docker Compose](docker-compose.dev.yml) — Postgres + Redis for development |
 
-Backend stack decisions: [ADR-0001 — Django backend](docs/adr/ADR-0001-django-backend-stack.md) · [ADR-0002 — `platform_core` rename](docs/adr/ADR-0002-rename-platform-module-to-platform_core.md) · [ADR-0003 — CS-031 normalization](docs/adr/ADR-0003-cs031-project-name-normalization-divergence.md) · [ADR-0004 — Versioning strategy](docs/adr/ADR-0004-versioning.md).
+Backend stack decisions live in [`docs/adr/`](docs/adr/): [ADR-0001 — Django backend](docs/adr/ADR-0001-django-backend-stack.md) · [ADR-0002 — `platform_core` rename](docs/adr/ADR-0002-rename-platform-module-to-platform_core.md) · [ADR-0003 — CS-031 normalization](docs/adr/ADR-0003-cs031-project-name-normalization-divergence.md) · [ADR-0004 — Versioning strategy](docs/adr/ADR-0004-versioning.md).
+
+Service-level guides: [backend/README.md](backend/README.md) (Django/DRF API, ORM conventions, migrations, transactions) · [frontend/README.md](frontend/README.md) (Next.js app) · [RAILWAY.md](RAILWAY.md) (Railway deployment for `web` / `worker` / `beat` services).
 
 Design tokens and UX references: [`docs/Design/casa-segura.pen`](docs/Design/casa-segura.pen) (Pencil), formal UI notes under PRDs / `docs/`.
 
@@ -70,6 +72,16 @@ infra/       # Local dev helpers (e.g. Postgres init)
    ```
 
    Open [http://localhost:3000](http://localhost:3000). More detail: [frontend/README.md](frontend/README.md).
+
+### Pre-commit hooks (CS-005)
+
+Local hooks defined in [`.pre-commit-config.yaml`](.pre-commit-config.yaml) run `ruff` (lint + format) on `backend/**/*.py`, `prettier --check` on `frontend/**/*.{ts,tsx,js,jsx,json,md}`, plus generic hygiene (end-of-file, trailing whitespace, YAML/TOML/merge-conflict checks). All hook versions are pinned to match `backend/pyproject.toml`. ESLint and mypy are deferred to CI for speed/path reasons (notes inline in the config). Install once per clone:
+
+```bash
+pip install pre-commit          # or: pipx install pre-commit
+pre-commit install              # registers the git hook
+pre-commit run --all-files      # one-time sweep, optional
+```
 
 > [!CAUTION]
 > **Privacy:** Treat OCR payloads, delivery targets (email, WhatsApp), report text, prompts, logs, and error bodies as **sensitive**. Do not log PII or raw files beyond what the API needs.
