@@ -19,7 +19,8 @@ dockerfilePath = "Dockerfile"
 preDeployCommand = "python manage.py migrate --noinput && python manage.py collectstatic --noinput"
 
 # Default start command — `web` service. Bind to $PORT (Railway sets this).
-startCommand = "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -"
+# `sh -c` is required so $PORT expands; Railway runs startCommand as exec form.
+startCommand = "sh -c 'gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -'"
 
 # Healthcheck — DRF health endpoint wired in CS-008. Returns 200 if Django boots.
 healthcheckPath = "/api/health/"
