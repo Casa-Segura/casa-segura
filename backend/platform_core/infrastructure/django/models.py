@@ -27,6 +27,7 @@ from platform_core.domain.enums import (
     JobExecutionStatus,
     PrivacyAuditEvent,
 )
+from platform_core.domain.pii import PIIDetected, assert_no_pii
 
 
 def _audit_default_expiry() -> timezone.datetime:
@@ -93,6 +94,26 @@ class Project(ModelWithTimeStamps):
 
     def __str__(self) -> str:
         return f"Project({self.normalized_name})"
+
+    def clean(self) -> None:
+        """Reject any metadata payload that contains PII (CS-023, DOMAIN §3.1).
+
+        Raises ValidationError so DRF / forms surface a clean 400 instead
+        of a 500. The underlying PIIDetected carries the offending path."""
+        super().clean()
+        try:
+            assert_no_pii(self.metadata)
+        except PIIDetected as exc:
+            from django.core.exceptions import ValidationError
+
+            raise ValidationError({"metadata": str(exc)}) from exc
+
+    def save(self, *args, **kwargs) -> None:
+        """Default `last_analyzed` to `first_seen` (or now()) on insert path."""
+        if self.last_analyzed is None:
+            self.last_analyzed = self.first_seen or timezone.now()
+        self.full_clean(exclude={"first_seen"})
+        return super().save(*args, **kwargs)
 
 
 class ContractAnalysis(ModelWithTimeStamps):

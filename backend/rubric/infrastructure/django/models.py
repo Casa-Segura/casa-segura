@@ -9,6 +9,7 @@ from __future__ import annotations
 import uuid
 
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.db.models import Q
 
@@ -128,6 +129,7 @@ class Criterion(ModelWithTimeStamps):
         ]
         indexes = [
             models.Index(fields=["rubric_version"], name="idx_criterion_rubric"),
+            GinIndex(fields=["applicable_types"], name="idx_criterion_types"),
         ]
 
     def __str__(self) -> str:

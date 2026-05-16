@@ -1,0 +1,40 @@
+# Ruff configuration — LINTER ONLY.
+# Formatting is owned by black + isort (see pyproject.toml).
+# Do not enable ruff's formatter or its isort (`I`) rules here.
+
+target-version = "py311"
+line-length = 119
+
+extend-exclude = [
+    ".venv",
+    "venv",
+    "**/migrations/**",
+    "**/__pycache__/**",
+]
+
+[lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "W",    # pycodestyle warnings
+    "B",    # flake8-bugbear
+    "UP",   # pyupgrade
+    "S",    # flake8-bandit (security)
+    "DJ",   # flake8-django
+    "PL",   # pylint
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "E501",     # line too long — black owns line length
+    "PLR0913",  # too many args — common in Django views/serializers
+    "PLR2004",  # magic value — common in domain code / constants
+    "S101",     # assert used — fine in tests
+]
+
+[lint.per-file-ignores]
+"**/tests/**" = ["S", "PLR"]
+"**/migrations/**" = ["E", "F", "S", "PLR", "RUF"]
+"conftest.py" = ["S", "PLR"]
+
+[lint.flake8-django]
+django-settings-module = "config.settings"
