@@ -32,7 +32,7 @@ describe("validateDeliveryForSubmit", () => {
     const r = validateDeliveryForSubmit({
       channel: "web_link",
       email: "",
-      whatsappPhone: "",
+      phone: "",
     });
     expect(
       "delivery_target_omitted" in r && r.delivery_channel === "web_link",
@@ -42,15 +42,15 @@ describe("validateDeliveryForSubmit", () => {
     const r = validateDeliveryForSubmit({
       channel: "email_pdf",
       email: "bad",
-      whatsappPhone: "",
+      phone: "",
     });
     expect("invalid" in r && r.field === "email").toBe(true);
   });
-  it("rejects invalid E.164 for whatsapp_summary", () => {
+  it("rejects invalid E.164 for sms_summary", () => {
     const r = validateDeliveryForSubmit({
-      channel: "whatsapp_summary",
+      channel: "sms_summary",
       email: "",
-      whatsappPhone: "+abc",
+      phone: "+abc",
     });
     expect("invalid" in r && r.field === "phone").toBe(true);
   });

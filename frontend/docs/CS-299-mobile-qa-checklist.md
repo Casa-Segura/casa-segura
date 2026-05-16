@@ -35,7 +35,7 @@ Record date, device model, Chrome version, reviewer name, deployment URL below.
 ### B. Upload + disclaimer + channels (CS-291 / CS-292)
 
 - [ ] Disclaimer gate clears before submission
-- [ ] Email / WhatsApp / link pathways: labels readable; validation errors near fields
+- [ ] SMS / email / link pathways: labels readable; validation errors near fields
 - [ ] Submit starts loading state
 
 ### C. Loading (CS-293)

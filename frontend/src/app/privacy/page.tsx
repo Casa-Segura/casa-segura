@@ -65,7 +65,7 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   Datos de contacto que elijas para la entrega del informe
-                  (correo o número de WhatsApp), solo para enviar el enlace o
+                  (correo o número de teléfono), solo para enviar el enlace o
                   mensaje acordado.
                 </li>
                 <li>
@@ -83,15 +83,15 @@ export default function PrivacyPage() {
               </p>
             </section>
 
-            <section className="space-y-3" aria-labelledby="privacy-whatsapp">
+            <section className="space-y-3" aria-labelledby="privacy-channels">
               <h2
-                id="privacy-whatsapp"
+                id="privacy-channels"
                 className="text-lg font-semibold text-text-primary"
               >
-                WhatsApp y otros canales
+                SMS, correo y otros canales
               </h2>
               <p>
-                Si elegís recibir el resultado por WhatsApp u otro proveedor,
+                Si elegís recibir el resultado por SMS, correo u otro proveedor,
                 ese canal procesa la entrega según sus propias condiciones.
                 Nosotros usamos el destinatario solo para completar el envío que
                 pedís; no usamos esos mensajes para entrenar modelos propios.

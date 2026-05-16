@@ -1,24 +1,24 @@
 /** DOMAIN_MODEL §2 / platform_core.enums.DeliveryChannel string values — must match backend. */
 
-export type DeliveryChannel = "email_pdf" | "whatsapp_summary" | "web_link";
+export type DeliveryChannel = "sms_summary" | "email_pdf" | "web_link";
 
 export const DELIVERY_CHANNELS: DeliveryChannel[] = [
+  "sms_summary",
   "email_pdf",
-  "whatsapp_summary",
   "web_link",
 ];
 
 export type DeliveryDraft = {
   channel: DeliveryChannel;
   email: string;
-  whatsappPhone: string;
+  phone: string;
 };
 
 export function defaultDeliveryDraft(): DeliveryDraft {
   return {
-    channel: "web_link",
+    channel: "sms_summary",
     email: "",
-    whatsappPhone: "",
+    phone: "",
   };
 }
 
@@ -50,6 +50,21 @@ export function validateDeliveryForSubmit(
         delivery_channel: "web_link",
         delivery_target_omitted: true,
       };
+    case "sms_summary": {
+      const raw = draft.phone.trim();
+      if (!isValidE164Phone(raw)) {
+        return {
+          invalid: true,
+          field: "phone",
+          message:
+            "Ingresá tu número en formato internacional E.164, por ejemplo +503XXXXXXXX.",
+        };
+      }
+      return {
+        delivery_channel: "sms_summary",
+        delivery_target: raw,
+      };
+    }
     case "email_pdf": {
       const email = draft.email.trim();
       if (!isValidEmailFormat(email)) {
@@ -63,21 +78,6 @@ export function validateDeliveryForSubmit(
       return {
         delivery_channel: "email_pdf",
         delivery_target: email,
-      };
-    }
-    case "whatsapp_summary": {
-      const raw = draft.whatsappPhone.trim();
-      if (!isValidE164Phone(raw)) {
-        return {
-          invalid: true,
-          field: "phone",
-          message:
-            "Ingresá tu número en formato internacional E.164, por ejemplo +503XXXXXXX.",
-        };
-      }
-      return {
-        delivery_channel: "whatsapp_summary",
-        delivery_target: raw,
       };
     }
   }
@@ -94,6 +94,6 @@ export type DeliverySubmitParts =
       delivery_target_omitted: true;
     }
   | {
-      delivery_channel: "email_pdf" | "whatsapp_summary";
+      delivery_channel: "sms_summary" | "email_pdf";
       delivery_target: string;
     };

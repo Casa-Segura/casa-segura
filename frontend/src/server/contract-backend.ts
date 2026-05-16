@@ -384,10 +384,10 @@ export async function runContractSubmissionServerFlow(
 function summarizeChannelFromFd(fd: FormData): string {
   const ch = `${fd.get("delivery_channel") ?? ""}`;
   switch (ch) {
+    case "sms_summary":
+      return "Te enviamos un SMS con un breve resumen y enlace cuando esté.";
     case "email_pdf":
       return "Recibirás un PDF si el proceso termina bien.";
-    case "whatsapp_summary":
-      return "Te escribimos por WhatsApp con un breve resumen cuando esté.";
     default:
       return "Podrás abrir tu informe desde un enlace cuando esté listo.";
   }

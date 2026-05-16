@@ -8,5 +8,5 @@ alwaysApply: false
 
 - **Ownership:** Casa Segura app surface lives under `frontend/` (App Router).
 - **Server Actions:** multipart upload + backoff polling proxied via `CASASEGURA_API_BASE_URL` (`submitContractUploadFlow` in `src/actions/contract-flow.ts`). Secrets stay server-only — never mirror into `NEXT_PUBLIC_*`.
-- **Delivery channels:** enums are exactly `email_pdf` | `whatsapp_summary` | `web_link`; `web_link` omits `delivery_target` fields in `FormData`. Map PRD/error codes via `backend-error-map.ts` (Spanish UX, no stack traces).
+- **Delivery channels:** enums are exactly `sms_summary` | `email_pdf` | `web_link`; `web_link` omits `delivery_target` fields in `FormData`. Map PRD/error codes via `backend-error-map.ts` (Spanish UX, no stack traces).
 - **PRD-aligned limits:** 15 MB/file, 50 files, ≤100 MB total (see `contract-upload-constants.ts`); disclaim copy only from `@/legal/disclaimer.ts` (CS-297).
