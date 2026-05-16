@@ -1,0 +1,594 @@
+# Classification evaluation set (CS-115).
+#
+# Curated synthetic contract excerpts spanning the eight covered types
+# (CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV) plus NOT_CLASSIFIABLE
+# negatives drawn from PRD_F2_CLASIFICACION US-06's exclusion list.
+#
+# Every `contract_text` is synthetic. Per BR-07 / PRD_GENERAL §10 the
+# corpus MUST NOT contain real names, addresses, DUI, IBAN, phone
+# numbers, or emails. Use obvious placeholders (JUAN PÉREZ, MARÍA
+# GARCÍA, Calle Falsa 123, $185,000.00). Maintainers MUST keep this rule
+# when adding cases — review with grep before merge.
+#
+# Schema:
+#   - id:              stable identifier (string, lowercase, dash-sep).
+#   - contract_type:   gold label (one of the nine ContractType values).
+#   - description:     one-sentence Spanish summary of the scenario.
+#   - contract_text:   synthetic excerpt (~300-500 chars).
+#   - expected:
+#       contract_type:   gold post-classification ContractType.
+#       min_confidence:  float in [0, 1]; harness asserts >=.
+#       leasing_indicators (optional, purchase types only):
+#         expected_count:           int 0..6 of Art. 2 LAF flags.
+#         expected_recommendation:  final type after CS-111 (CVC|CVP|APV|LEA).
+#   - tags:            free-form labels (happy_path, bva, borderline, ...).
+#
+# Thresholds (declared once here; the harness reads them at runtime):
+#
+thresholds:
+  # PRD F2 §9: ≥95% success on in-scope documents.
+  macro_accuracy_min: 0.95
+  # PRD F2 §9: NOT_CLASSIFIABLE precision floor (low FP into in-scope).
+  not_classifiable_precision_min: 0.90
+  # PRD F2 §9: reclassification false-positive budget (<2%).
+  reclassification_false_positive_max: 0.02
+  # PRD F2 §9: reclassification false-negative budget (<10%).
+  reclassification_false_negative_max: 0.10
+
+cases:
+  # ----------------------------------------------------------------------
+  # CVC — Compraventa al contado (3 cases).
+  # ----------------------------------------------------------------------
+  - id: cls-cvc-001
+    contract_type: CVC
+    description: "Compraventa al contado canónica — pago único en efectivo."
+    contract_text: |
+      CONTRATO DE COMPRAVENTA AL CONTADO. JUAN PÉREZ, vendedor, transfiere
+      a MARÍA GARCÍA, compradora, el inmueble situado en Calle Falsa 123,
+      San Salvador. El precio total es de CIENTO OCHENTA Y CINCO MIL
+      DÓLARES (USD 185,000.00) que la compradora entrega en este acto, en
+      su totalidad, mediante cheque de caja a la firma de la presente
+      escritura. No queda saldo pendiente ni se acuerdan cuotas. La
+      tradición se hace de inmediato.
+    expected:
+      contract_type: CVC
+      min_confidence: 0.85
+      leasing_indicators:
+        expected_count: 0
+        expected_recommendation: CVC
+    tags: [happy_path, cash_payment, no_leasing_indicators]
+
+  - id: cls-cvc-002
+    contract_type: CVC
+    description: "Compraventa al contado con cláusula de saneamiento."
+    contract_text: |
+      Compareció JUAN PÉREZ y vendió a MARÍA GARCÍA el lote número 7 del
+      Residencial Sintético por el precio único de NOVENTA Y CINCO MIL
+      DÓLARES (USD 95,000.00), pagado íntegramente en este acto por
+      transferencia bancaria. El vendedor responde por saneamiento por
+      evicción y vicios ocultos conforme los artículos 1639 y 1660 del
+      Código Civil. No hay financiamiento, prima ni cuotas.
+    expected:
+      contract_type: CVC
+      min_confidence: 0.85
+      leasing_indicators:
+        expected_count: 0
+        expected_recommendation: CVC
+    tags: [happy_path, warranty_clause]
+
+  - id: cls-cvc-003
+    contract_type: CVC
+    description: "Compraventa al contado por escritura pública, pago total recibido."
+    contract_text: |
+      ESCRITURA PÚBLICA DE COMPRAVENTA. Ante notario, JUAN PÉREZ vende a
+      MARÍA GARCÍA la casa de habitación situada en Calle Falsa 123. El
+      precio convenido es de DOSCIENTOS DIEZ MIL DÓLARES (USD 210,000.00)
+      pagaderos al contado a la firma del presente instrumento. El
+      vendedor declara haber recibido la totalidad del precio a entera
+      satisfacción y otorga la más amplia carta de pago. No hay opción de
+      compra futura ni saldo pendiente.
+    expected:
+      contract_type: CVC
+      min_confidence: 0.85
+      leasing_indicators:
+        expected_count: 0
+        expected_recommendation: CVC
+    tags: [happy_path, public_deed]
+
+  # ----------------------------------------------------------------------
+  # CVP — Compraventa a plazos (3 cases + BVA variants below).
+  # ----------------------------------------------------------------------
+  - id: cls-cvp-001
+    contract_type: CVP
+    description: "Compraventa a plazos canónica — prima + cuotas con desarrollador."
+    contract_text: |
+      CONTRATO DE COMPRAVENTA A PLAZOS. La desarrolladora SINTÉTICA S.A.,
+      vendedora, transfiere a MARÍA GARCÍA, compradora, el lote 12 del
+      Residencial Sintético. Precio total: CIENTO CUARENTA MIL DÓLARES
+      (USD 140,000.00). Prima: CATORCE MIL DÓLARES al firmar.
+      Financiamiento directo del vendedor: CIENTO VEINTISÉIS MIL DÓLARES a
+      pagar en CIENTO VEINTE cuotas mensuales de UN MIL DOSCIENTOS DÓLARES
+      cada una, con tasa anual del 9%. La propiedad se transfiere al
+      firmar.
+    expected:
+      contract_type: CVP
+      min_confidence: 0.85
+      leasing_indicators:
+        expected_count: 0
+        expected_recommendation: CVP
+    tags: [happy_path, developer_financing]
+
+  - id: cls-cvp-002
+    contract_type: CVP
+    description: "Compraventa a plazos sin intereses, cuotas iguales."
+    contract_text: |
+      JUAN PÉREZ vende a MARÍA GARCÍA el inmueble inscrito en el Registro
+      bajo la matrícula 9999, ubicado en Calle Falsa 123. Precio: SESENTA
+      MIL DÓLARES (USD 60,000.00). Forma de pago: prima de DIEZ MIL
+      DÓLARES y CUARENTA Y OCHO cuotas mensuales de MIL CUARENTA Y UN
+      DÓLARES sin intereses pagaderas el primer día de cada mes. El
+      vendedor entrega la posesión y dominio en este acto.
+    expected:
+      contract_type: CVP
+      min_confidence: 0.85
+      leasing_indicators:
+        expected_count: 0
+        expected_recommendation: CVP
+    tags: [happy_path, zero_interest]
+
+  - id: cls-cvp-003
+    contract_type: CVP
+    description: "Compraventa a plazos con tasa mensual y mora."
+    contract_text: |
+      Contrato de compraventa a plazos del apartamento 4-B del
+      Residencial Sintético. Vendedor: JUAN PÉREZ. Comprador: MARÍA
+      GARCÍA. Precio: NOVENTA Y OCHO MIL DÓLARES. Prima de DIEZ por
+      ciento al firmar. Saldo financiado: OCHENTA Y OCHO MIL DÓLARES en
+      OCHENTA Y CUATRO cuotas mensuales, con interés del 1% mensual sobre
+      saldos pendientes. La mora devenga interés adicional del 2% mensual.
+      La propiedad se inscribe a nombre de la compradora al firmar.
+    expected:
+      contract_type: CVP
+      min_confidence: 0.85
+      leasing_indicators:
+        expected_count: 0
+        expected_recommendation: CVP
+    tags: [happy_path, late_interest]
+
+  # ----------------------------------------------------------------------
+  # ARV — Arrendamiento de vivienda (3 cases).
+  # ----------------------------------------------------------------------
+  - id: cls-arv-001
+    contract_type: ARV
+    description: "Arrendamiento residencial canónico, sin opción de compra."
+    contract_text: |
+      CONTRATO DE ARRENDAMIENTO DE VIVIENDA. MARÍA GARCÍA, arrendadora,
+      da en arrendamiento a JUAN PÉREZ, arrendatario, la casa de
+      habitación situada en Calle Falsa 123. Canon mensual: CUATROCIENTOS
+      CINCUENTA DÓLARES (USD 450.00). Plazo: doce meses prorrogables.
+      Depósito: un mes de renta. El presente contrato no confiere opción
+      de compra ni promesa de venta alguna. El uso es exclusivamente
+      habitacional.
+    expected:
+      contract_type: ARV
+      min_confidence: 0.85
+    tags: [happy_path, residential_lease]
+
+  - id: cls-arv-002
+    contract_type: ARV
+    description: "Arrendamiento de apartamento con prórroga automática."
+    contract_text: |
+      Arrendamiento del apartamento 3-A del Edificio Sintético. Renta
+      mensual: TRESCIENTOS OCHENTA DÓLARES pagaderos los primeros cinco
+      días de cada mes. Plazo inicial: un año, con prórroga automática
+      por iguales períodos salvo aviso con sesenta días de antelación. La
+      arrendataria MARÍA GARCÍA se obliga a destinar el inmueble
+      únicamente a habitación familiar. No hay promesa de venta.
+    expected:
+      contract_type: ARV
+      min_confidence: 0.85
+    tags: [happy_path, auto_renewal]
+
+  - id: cls-arv-003
+    contract_type: ARV
+    description: "Arrendamiento de mesón para vivienda con fiador."
+    contract_text: |
+      JUAN PÉREZ entrega en arrendamiento a MARÍA GARCÍA el mesón ubicado
+      en Calle Falsa 123, destinado exclusivamente a habitación. Canon
+      mensual: DOSCIENTOS CINCUENTA DÓLARES. Plazo: seis meses
+      prorrogables. La arrendataria entrega fiador solidario. El
+      arrendamiento se rige por la Ley de Inquilinato. No se otorga
+      opción de adquisición ni promesa alguna de venta.
+    expected:
+      contract_type: ARV
+      min_confidence: 0.85
+    tags: [happy_path, with_fiador]
+
+  # ----------------------------------------------------------------------
+  # ARC — Arrendamiento de local comercial pequeño (3 cases).
+  # ----------------------------------------------------------------------
+  - id: cls-arc-001
+    contract_type: ARC
+    description: "Arrendamiento de local comercial pequeño canónico."
+    contract_text: |
+      CONTRATO DE ARRENDAMIENTO DE LOCAL COMERCIAL PEQUEÑO. MARÍA GARCÍA,
+      arrendadora, cede a JUAN PÉREZ, arrendatario, el local número 2 del
+      Centro Comercial Sintético, destinado al giro de pequeño comercio
+      (pupusería) cuyo activo no excede el límite legal. Canon mensual:
+      TRESCIENTOS VEINTE DÓLARES. Plazo: un año. El uso comercial es
+      exclusivo; no se autoriza giro distinto sin consentimiento.
+    expected:
+      contract_type: ARC
+      min_confidence: 0.85
+    tags: [happy_path, small_business]
+
+  - id: cls-arc-002
+    contract_type: ARC
+    description: "Arrendamiento de local con habitación adjunta."
+    contract_text: |
+      Arrendamiento del local comercial número 5 con habitación adjunta
+      en Calle Falsa 123. El arrendatario JUAN PÉREZ explotará una
+      panadería de pequeña escala y residirá en la habitación adyacente.
+      Canon mensual: DOSCIENTOS OCHENTA DÓLARES. Plazo: dos años con
+      prórroga tácita. El activo del negocio no excede el límite legal
+      del régimen de pequeño comercio.
+    expected:
+      contract_type: ARC
+      min_confidence: 0.80
+    tags: [happy_path, mixed_use]
+
+  - id: cls-arc-003
+    contract_type: ARC
+    description: "Local comercial pequeño con cláusula de uso restringido."
+    contract_text: |
+      MARÍA GARCÍA arrienda a JUAN PÉREZ el local comercial número 7 del
+      Mercado Sintético, destinado exclusivamente a la venta de productos
+      de abarrotes (pequeño comercio). Renta mensual: CIENTO NOVENTA
+      DÓLARES. Plazo: doce meses. Prohibido sub-arrendar o cambiar el
+      giro. El arrendatario no podrá utilizar el local para fines
+      industriales ni residenciales permanentes.
+    expected:
+      contract_type: ARC
+      min_confidence: 0.80
+    tags: [happy_path, restricted_use]
+
+  # ----------------------------------------------------------------------
+  # APV — Arrendamiento con promesa de venta (3 cases + BVA below).
+  # ----------------------------------------------------------------------
+  - id: cls-apv-001
+    contract_type: APV
+    description: "APV canónico — cánones se imputan al precio final."
+    contract_text: |
+      CONTRATO DE ARRENDAMIENTO CON PROMESA DE VENTA. JUAN PÉREZ otorga a
+      MARÍA GARCÍA el arrendamiento del inmueble situado en Calle Falsa
+      123, por canon mensual de QUINIENTOS DÓLARES durante SESENTA meses.
+      Al término del plazo, la arrendataria podrá ejercer la promesa de
+      venta pagando un saldo de DIEZ MIL DÓLARES, imputándose el monto
+      total de cánones pagados al precio final convenido de CUARENTA MIL
+      DÓLARES. No hay traslado de dominio durante el arrendamiento.
+    expected:
+      contract_type: APV
+      min_confidence: 0.85
+      leasing_indicators:
+        expected_count: 2
+        expected_recommendation: APV
+    tags: [happy_path, rent_credits_price]
+
+  - id: cls-apv-002
+    contract_type: APV
+    description: "APV con plazo de tres años y opción de compra al saldo."
+    contract_text: |
+      MARÍA GARCÍA da en arrendamiento a JUAN PÉREZ la vivienda del
+      Residencial Sintético por canon mensual de TRESCIENTOS CINCUENTA
+      DÓLARES durante TREINTA Y SEIS meses. Al vencimiento, el
+      arrendatario tiene la opción —no la obligación— de adquirir el
+      inmueble pagando el saldo de QUINCE MIL DÓLARES. Los cánones
+      pagados se acreditan parcialmente al precio. La propietaria
+      conserva el dominio hasta el ejercicio de la opción.
+    expected:
+      contract_type: APV
+      min_confidence: 0.80
+      leasing_indicators:
+        expected_count: 2
+        expected_recommendation: APV
+    tags: [happy_path, optional_purchase]
+
+  - id: cls-apv-003
+    contract_type: APV
+    description: "APV con promesa de venta explícita y precio final fijado."
+    contract_text: |
+      Contrato de arrendamiento con promesa de venta sobre el lote 18 del
+      Residencial Sintético. Arrendador-promitente: JUAN PÉREZ.
+      Arrendataria-promisaria: MARÍA GARCÍA. Canon mensual: CUATROCIENTOS
+      DÓLARES por CUARENTA Y OCHO meses. Precio prometido: CINCUENTA MIL
+      DÓLARES. Al final del plazo, MARÍA GARCÍA podrá comprar el inmueble
+      pagando el saldo, imputándose los cánones al precio.
+    expected:
+      contract_type: APV
+      min_confidence: 0.85
+      leasing_indicators:
+        expected_count: 2
+        expected_recommendation: APV
+    tags: [happy_path, promise_to_sell]
+
+  # ----------------------------------------------------------------------
+  # LEA — Leasing financiero (3 cases).
+  # ----------------------------------------------------------------------
+  - id: cls-lea-001
+    contract_type: LEA
+    description: "Leasing financiero canónico — financiera dueña, canon mensual, opción simbólica."
+    contract_text: |
+      CONTRATO DE ARRENDAMIENTO FINANCIERO. LEASING SINTÉTICO S.A.,
+      arrendadora financiera, propietaria del inmueble situado en Calle
+      Falsa 123, lo entrega a JUAN PÉREZ, arrendatario financiero, por
+      PLAZO FORZOSO de DOSCIENTOS CUARENTA meses mediante canon mensual
+      de UN MIL DÓLARES. Al término del plazo, el arrendatario podrá
+      ejercer la opción de compra por la suma simbólica de CIEN DÓLARES.
+      La propiedad permanece en LEASING SINTÉTICO hasta el ejercicio de
+      la opción. Todos los riesgos e impuestos son del arrendatario.
+    expected:
+      contract_type: LEA
+      min_confidence: 0.85
+    tags: [happy_path, financial_leasing]
+
+  - id: cls-lea-002
+    contract_type: LEA
+    description: "Leasing inmobiliario tripartito proveedor-arrendador-arrendatario."
+    contract_text: |
+      Contrato tripartito de leasing inmobiliario: el proveedor MARÍA
+      GARCÍA vende el inmueble a LEASING SINTÉTICO S.A., quien lo
+      entrega en arrendamiento financiero a JUAN PÉREZ por CIENTO OCHENTA
+      meses, canon mensual de OCHOCIENTOS DÓLARES. Opción de compra al
+      final del plazo por CIEN DÓLARES. El arrendatario asume todos los
+      tributos, multas y riesgos del bien. Cancelación anticipada exige
+      el pago del saldo total adeudado.
+    expected:
+      contract_type: LEA
+      min_confidence: 0.85
+    tags: [happy_path, tripartite]
+
+  - id: cls-lea-003
+    contract_type: LEA
+    description: "Leasing financiero con cláusula explícita de Art. 2 LAF."
+    contract_text: |
+      Conforme al Art. 2 de la Ley de Arrendamiento Financiero, FINANCIERA
+      SINTÉTICA S.A. arrienda financieramente a JUAN PÉREZ el inmueble
+      ubicado en Calle Falsa 123 por PLAZO FORZOSO de CIENTO VEINTE meses,
+      con canon mensual de NOVECIENTOS DÓLARES. La propiedad se mantiene
+      en la arrendadora hasta el ejercicio de la opción de compra al
+      final del plazo, por valor de CIEN DÓLARES. Los riesgos asegurables
+      y no asegurables corren por cuenta del arrendatario.
+    expected:
+      contract_type: LEA
+      min_confidence: 0.90
+    tags: [happy_path, explicit_laf_reference]
+
+  # ----------------------------------------------------------------------
+  # IVU — Contrato institucional del Instituto de Vivienda Urbana (3 cases).
+  # ----------------------------------------------------------------------
+  - id: cls-ivu-001
+    contract_type: IVU
+    description: "Adjudicación IVU canónica bajo régimen Bien de Familia."
+    contract_text: |
+      ADJUDICACIÓN DEL INSTITUTO DE VIVIENDA URBANA. El IVU adjudica a
+      JUAN PÉREZ la vivienda número 7 del Bloque B del proyecto
+      institucional Sintético, bajo el régimen de Bien de Familia
+      institucional. Cuota mensual: CIENTO CINCUENTA DÓLARES por el plazo
+      institucional vigente. La presente adjudicación se rige por la Ley
+      del IVU y normativa interna del Instituto.
+    expected:
+      contract_type: IVU
+      min_confidence: 0.85
+    tags: [happy_path, institutional]
+
+  - id: cls-ivu-002
+    contract_type: IVU
+    description: "Contrato IVU de arrendamiento institucional con Bien de Familia."
+    contract_text: |
+      EL INSTITUTO DE VIVIENDA URBANA, IVU, otorga a MARÍA GARCÍA, en
+      calidad de adjudicataria institucional, el uso y goce de la vivienda
+      número 12 del proyecto Sintético, conforme el régimen de Bien de
+      Familia. Cuota institucional mensual: CIENTO TREINTA DÓLARES. La
+      vivienda no puede ser enajenada sin autorización expresa del IVU
+      durante el plazo de protección institucional.
+    expected:
+      contract_type: IVU
+      min_confidence: 0.85
+    tags: [happy_path, bien_de_familia]
+
+  - id: cls-ivu-003
+    contract_type: IVU
+    description: "Adjudicación IVU con cuota subsidiada."
+    contract_text: |
+      Contrato de adjudicación del Instituto de Vivienda Urbana al
+      beneficiario JUAN PÉREZ por la vivienda 4 del Bloque C del
+      proyecto institucional Sintético. Cuota mensual subsidiada de
+      CIENTO VEINTE DÓLARES por DOSCIENTOS CUARENTA meses. Régimen
+      institucional aplicable: Bien de Familia. El beneficiario se
+      obliga a destinar la vivienda exclusivamente a habitación
+      familiar.
+    expected:
+      contract_type: IVU
+      min_confidence: 0.85
+    tags: [happy_path, subsidized]
+
+  # ----------------------------------------------------------------------
+  # FSV — Compraventa financiada por el Fondo Social para la Vivienda (3).
+  # ----------------------------------------------------------------------
+  - id: cls-fsv-001
+    contract_type: FSV
+    description: "Compraventa con financiamiento FSV canónica."
+    contract_text: |
+      CONTRATO DE COMPRAVENTA CON FINANCIAMIENTO DEL FONDO SOCIAL PARA LA
+      VIVIENDA. JUAN PÉREZ adquiere la vivienda situada en Residencial
+      Sintético por SESENTA MIL DÓLARES, de los cuales el Fondo Social
+      para la Vivienda financia CINCUENTA Y CUATRO MIL DÓLARES a CIENTO
+      OCHENTA meses plazo, conforme la normativa del FSV. La prima de
+      SEIS MIL DÓLARES es aportada por el comprador. Tasa de interés
+      conforme tabla institucional del FSV.
+    expected:
+      contract_type: FSV
+      min_confidence: 0.85
+    tags: [happy_path, fsv_financing]
+
+  - id: cls-fsv-002
+    contract_type: FSV
+    description: "FSV con cuota institucional y tabla de pagos."
+    contract_text: |
+      El Fondo Social para la Vivienda otorga a MARÍA GARCÍA el
+      financiamiento de CUARENTA Y OCHO MIL DÓLARES para la adquisición
+      de la vivienda número 9 del Residencial Sintético. Plazo: DOSCIENTOS
+      CUARENTA meses. Cuota mensual conforme tabla FSV. La operación se
+      rige por la Ley del Fondo Social para la Vivienda y por la
+      normativa institucional vigente. La vivienda queda hipotecada a
+      favor del FSV hasta la cancelación total.
+    expected:
+      contract_type: FSV
+      min_confidence: 0.85
+    tags: [happy_path, fsv_mortgage]
+
+  - id: cls-fsv-003
+    contract_type: FSV
+    description: "Compraventa FSV con seguro de deuda."
+    contract_text: |
+      JUAN PÉREZ adquiere por compraventa con financiamiento del FONDO
+      SOCIAL PARA LA VIVIENDA (FSV) la vivienda situada en Calle Falsa
+      123. Precio: CINCUENTA Y CINCO MIL DÓLARES. El FSV financia
+      CUARENTA Y NUEVE MIL DÓLARES a CIENTO OCHENTA meses, con seguro de
+      deuda contratado por el FSV. Las cuotas se descuentan por planilla
+      conforme la normativa institucional. La hipoteca queda inscrita a
+      favor del FSV.
+    expected:
+      contract_type: FSV
+      min_confidence: 0.85
+    tags: [happy_path, payroll_deduction]
+
+  # ----------------------------------------------------------------------
+  # NOT_CLASSIFIABLE — PRD US-06 exclusion list (4 cases).
+  # ----------------------------------------------------------------------
+  - id: cls-not-001
+    contract_type: NOT_CLASSIFIABLE
+    description: "Contrato laboral — fuera de scope (PRD US-06)."
+    contract_text: |
+      CONTRATO INDIVIDUAL DE TRABAJO. La empresa SINTÉTICA S.A. contrata
+      a JUAN PÉREZ como auxiliar contable por tiempo indefinido, con
+      jornada ordinaria de cuarenta y cuatro horas semanales y salario
+      mensual de QUINIENTOS DÓLARES. Se rige por el Código de Trabajo.
+      No es un contrato inmobiliario, no hay transferencia de bienes
+      raíces ni arrendamiento de vivienda o local comercial.
+    expected:
+      contract_type: NOT_CLASSIFIABLE
+      min_confidence: 0.50
+    tags: [out_of_scope, prd_us_06, employment_contract]
+
+  - id: cls-not-002
+    contract_type: NOT_CLASSIFIABLE
+    description: "Donación de inmueble — excluida por PRD US-06."
+    contract_text: |
+      ESCRITURA DE DONACIÓN PURA Y SIMPLE. JUAN PÉREZ dona, pura, simple
+      e irrevocablemente, a MARÍA GARCÍA el inmueble situado en Calle
+      Falsa 123, sin contraprestación alguna y por el solo afecto que le
+      tiene. La donataria acepta. No hay precio, ni cuotas, ni canon, ni
+      financiamiento. Se trata de una transferencia gratuita conforme al
+      Código Civil.
+    expected:
+      contract_type: NOT_CLASSIFIABLE
+      min_confidence: 0.50
+    tags: [out_of_scope, prd_us_06, donation]
+
+  - id: cls-not-003
+    contract_type: NOT_CLASSIFIABLE
+    description: "Permuta de bienes muebles — fuera de scope inmobiliario."
+    contract_text: |
+      CONTRATO DE PERMUTA DE BIENES MUEBLES. JUAN PÉREZ entrega a MARÍA
+      GARCÍA un vehículo automotor marca SINTÉTICO, año 2022, y MARÍA
+      GARCÍA entrega a cambio maquinaria industrial de panadería. No hay
+      pago en dinero entre las partes. La operación es de bienes muebles;
+      no involucra inmuebles, no es compraventa ni arrendamiento ni
+      leasing inmobiliario.
+    expected:
+      contract_type: NOT_CLASSIFIABLE
+      min_confidence: 0.50
+    tags: [out_of_scope, prd_us_06, barter_movables]
+
+  - id: cls-not-004
+    contract_type: NOT_CLASSIFIABLE
+    description: "Carta de intención (MOU) — no constituye contrato vinculante."
+    contract_text: |
+      CARTA DE INTENCIÓN (MEMORANDUM OF UNDERSTANDING). JUAN PÉREZ y
+      MARÍA GARCÍA manifiestan su interés mutuo en negociar a futuro la
+      eventual compraventa del inmueble de Calle Falsa 123. La presente
+      carta NO constituye obligación de comprar ni de vender; es
+      meramente declarativa. Las partes acuerdan iniciar conversaciones
+      sin precio ni plazo definidos. Documento pre-contractual.
+    expected:
+      contract_type: NOT_CLASSIFIABLE
+      min_confidence: 0.50
+    tags: [out_of_scope, prd_us_06, mou]
+
+  # ----------------------------------------------------------------------
+  # BVA — Leasing-edge scenarios (PRD §8.4 / BR-03 boundary: 3 vs 4 of 6).
+  # ----------------------------------------------------------------------
+  - id: cls-cvp-bva-003-of-6
+    contract_type: CVP
+    description: "CVP con exactamente 3-de-6 indicadores LAF (BVA: NO reclasifica)."
+    contract_text: |
+      Compraventa a plazos del inmueble situado en Calle Falsa 123. La
+      vendedora SINTÉTICA S.A. transfiere el dominio a JUAN PÉREZ al
+      firmar. Precio: CIENTO VEINTE MIL DÓLARES, prima de DOCE MIL más
+      OCHENTA Y CUATRO cuotas mensuales de UN MIL DOSCIENTOS DÓLARES.
+      Cláusulas: (a) PLAZO FORZOSO, cancelación anticipada exige pago del
+      saldo total; (b) TODOS LOS IMPUESTOS Y TASAS sobre el inmueble
+      corren por cuenta del comprador; (c) TODOS LOS RIESGOS asegurables y
+      no asegurables son por cuenta del comprador. No hay opción de
+      compra (la propiedad ya se transfirió); no hay pagos denominados
+      canon; el vendedor NO retiene la propiedad.
+    expected:
+      contract_type: CVP
+      min_confidence: 0.70
+      leasing_indicators:
+        expected_count: 3
+        expected_recommendation: CVP
+    tags: [bva, leasing_boundary, three_of_six]
+
+  - id: cls-cvp-bva-004-of-6
+    contract_type: CVP
+    description: "CVP con exactamente 4-de-6 indicadores LAF (BVA: SÍ reclasifica a LEA)."
+    contract_text: |
+      Contrato denominado "compraventa a plazos" del inmueble en Calle
+      Falsa 123 entre SINTÉTICA S.A. (vendedor) y JUAN PÉREZ (comprador).
+      Precio: CIENTO CINCUENTA MIL DÓLARES en CIENTO OCHENTA cuotas
+      mensuales. Cláusulas: (a) PLAZO FORZOSO de CIENTO OCHENTA meses,
+      cancelación anticipada exige pago del saldo restante; (b) OPCIÓN
+      DE COMPRA al final del plazo por valor predefinido de CIEN
+      DÓLARES; (c) la PROPIEDAD SE MANTIENE en el vendedor hasta el
+      ejercicio de la opción de compra; (d) TODOS LOS IMPUESTOS, tasas y
+      multas sobre el inmueble corren por cuenta del comprador. No se
+      transfieren riesgos al comprador. Los pagos se denominan "cuotas",
+      no canon.
+    expected:
+      contract_type: CVP
+      min_confidence: 0.70
+      leasing_indicators:
+        expected_count: 4
+        expected_recommendation: LEA
+    tags: [bva, leasing_boundary, four_of_six, disguised_leasing]
+
+  # ----------------------------------------------------------------------
+  # Borderline confidence scenario (~0.65 — PRD F2 US-01 validation band).
+  # ----------------------------------------------------------------------
+  - id: cls-borderline-001
+    contract_type: ARV
+    description: "Texto ambiguo entre ARV y ARC — debería rondar 0.65 de confianza."
+    contract_text: |
+      Acuerdo entre MARÍA GARCÍA y JUAN PÉREZ sobre el inmueble de Calle
+      Falsa 123. El usuario pagará la suma de TRESCIENTOS DÓLARES
+      mensuales por el uso de las dos primeras habitaciones del inmueble
+      a partir del próximo mes. El inmueble tiene además un pequeño
+      espacio frontal que podría usarse para una pequeña venta de comida,
+      a discreción del usuario. Plazo: doce meses. No se define
+      expresamente el uso como vivienda ni como local comercial.
+    expected:
+      contract_type: ARV
+      min_confidence: 0.50
+    tags: [borderline, validation_band, ambiguous_use]
