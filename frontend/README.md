@@ -18,21 +18,23 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the landing route by modifying [`src/app/page.tsx`](src/app/page.tsx). Public legal copy lives at [`src/app/privacy/page.tsx`](src/app/privacy/page.tsx). The page auto-updates as you edit the file.
 
+Format: `npm run format` (writes) or `npm run format:check` (CI-style).
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to load **Inter** (design token `font-body` from `docs/Design/casa-segura.pen`).
 
 ## BVA — landing (CS-290)
 
 Manual or automated checks should cover boundary cases from the ticket:
 
-| Input | Boundary | Expected |
-|-------|-----------|----------|
-| Viewport width | **360px** | No horizontal scroll; headline, CTA, footer disclaimer visible; primary CTA height **≥44px** |
-| Viewport width | **768px+** | Stays single-column until a future breakpoint ticket adds a desktop grid |
-| CTA target | `/subir` | Upload + analysis route |
-| Public `/privacy` | 200, Spanish copy | Privacy policy for crawlers (e.g. Meta) + footer link from `/` |
-| Skip link | Tab from top of document | Reaches `#main-content` on each route’s `<main>` |
-| Copy | Spanish **tú** | No mixed-language UI; no implication that billboard/project verification is required before upload |
-| Contrast | Body vs background | WCAG **AA** spot-check (e.g. Lighthouse or axe) on primary text |
+| Input             | Boundary                 | Expected                                                                                           |
+| ----------------- | ------------------------ | -------------------------------------------------------------------------------------------------- |
+| Viewport width    | **360px**                | No horizontal scroll; headline, CTA, footer disclaimer visible; primary CTA height **≥44px**       |
+| Viewport width    | **768px+**               | Stays single-column until a future breakpoint ticket adds a desktop grid                           |
+| CTA target        | `/subir`                 | Upload + analysis route                                                                            |
+| Public `/privacy` | 200, Spanish copy        | Privacy policy for crawlers (e.g. Meta) + footer link from `/`                                     |
+| Skip link         | Tab from top of document | Reaches `#main-content` on each route’s `<main>`                                                   |
+| Copy              | Spanish **tú**           | No mixed-language UI; no implication that billboard/project verification is required before upload |
+| Contrast          | Body vs background       | WCAG **AA** spot-check (e.g. Lighthouse or axe) on primary text                                    |
 
 Future work: add Playwright (or similar) viewport matrix and optional axe CI step.
 
@@ -51,13 +53,25 @@ Goal: **`main`** → Production, Pull Requests → Preview. Never put API secret
 
 ### Required environment variables (Vercel)
 
-| Variable | Production | Preview |
-|----------|-------------|---------|
+| Variable                  | Production                             | Preview                                                                                                     |
+| ------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `CASASEGURA_API_BASE_URL` | Django/DRF base URL, no trailing slash | Point at staging or a dedicated Preview backend (**never** unintended prod bleed without explicit approval) |
 
 `next.config.ts` aborts **`next build`** on Vercel when `VERCEL=1` and `CASASEGURA_API_BASE_URL` is unset, so Preview/Production cannot silently ship without a backend target.
 
 Additional optional toggles mirror [`frontend/src/server/contract-env.ts`](src/server/contract-env.ts) (poll timeouts, path templates).
+
+### Optional project verification UI (CS-356 / EPIC-12)
+
+| Variable                       | When set                                | Behavior                                                                                                   |
+| ------------------------------ | --------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `PROJECT_VERIFICATION_ENABLED` | `true` / `1` / `yes` (case-insensitive) | Exposes `/verificacion-proyecto` (stub hub, manual form shell, demo result page) and a footer link on `/`. |
+
+**Default:** unset → off. Half-enabled flows are avoided: disabled builds return **404** for those routes with a friendly [`not-found`](src/app/verificacion-proyecto/not-found.tsx) message. Stub pages validate the manual form on the server but do not call Django yet.
+
+**Backend (optional):** Django mirrors this flag as `PROJECT_VERIFICATION_ENABLED` (`backend/.env`). Stub JSON API under `/api/v1/project-verification/…` — see [`backend/.env.example`](../../backend/.env.example) and **CS-356** repo notes. Point a server action at `CASASEGURA_API_BASE_URL` + `/api/v1/project-verification/manual/` when FE–BE integration is ready.
+
+**Backend (optional):** Django mirrors this flag as `PROJECT_VERIFICATION_ENABLED` (`backend/.env`). Stub JSON API under `POST/GET /api/v1/project-verification/...` — see [`backend/.env.example`](../backend/.env.example) and ticket **CS-356** repo notes. Point a server action at `CASASEGURA_API_BASE_URL` + `/api/v1/project-verification/manual/` when FE–BE integration is ready.
 
 ### Placeholder `CASASEGURA_API_BASE_URL` (backend not deployed yet)
 

@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DisclaimerFooter } from "@/components/disclaimer-footer";
-import { EXPIRED_ANALYSIS_PRIVACY_LINE, EXPIRED_ANALYSIS_UNAVAILABLE } from "@/legal/expired-link-copy";
+import {
+  EXPIRED_ANALYSIS_PRIVACY_LINE,
+  EXPIRED_ANALYSIS_UNAVAILABLE,
+} from "@/legal/expired-link-copy";
 
 /** PRD_GENERAL US-05 — expired delivery link UX (CS-295). No third-party telemetry on this route. */
 
@@ -25,13 +28,16 @@ export default function EnlaceExpiradoPage() {
           tabIndex={-1}
           className="flex min-w-0 flex-1 flex-col gap-4 rounded-[var(--radius-card)] border border-border bg-surface p-6 shadow-sm outline-none"
         >
-          <h1 className="break-words text-xl font-semibold text-text-primary">{EXPIRED_ANALYSIS_UNAVAILABLE}</h1>
+          <h1 className="break-words text-xl font-semibold text-text-primary">
+            {EXPIRED_ANALYSIS_UNAVAILABLE}
+          </h1>
           <p className="break-words text-base leading-relaxed text-text-secondary">
             {EXPIRED_ANALYSIS_PRIVACY_LINE}
           </p>
           <p className="break-words text-base leading-relaxed text-text-secondary">
-            Si acabás de abrir el enlace y ves este mensaje, puede haber un retraso puntual: intentá de nuevo en unos minutos o
-            iniciá un análisis nuevo.
+            Si acabás de abrir el enlace y ves este mensaje, puede haber un
+            retraso puntual: intentá de nuevo en unos minutos o iniciá un
+            análisis nuevo.
           </p>
           <Link
             href="/subir"

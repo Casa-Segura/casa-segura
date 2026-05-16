@@ -34,7 +34,9 @@ describe("validateDeliveryForSubmit", () => {
       email: "",
       whatsappPhone: "",
     });
-    expect("delivery_target_omitted" in r && r.delivery_channel === "web_link").toBe(true);
+    expect(
+      "delivery_target_omitted" in r && r.delivery_channel === "web_link",
+    ).toBe(true);
   });
   it("rejects invalid email for email_pdf", () => {
     const r = validateDeliveryForSubmit({

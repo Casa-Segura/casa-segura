@@ -34,8 +34,7 @@ export const DisclaimerCallout = forwardRef<
   const baseId = useId();
   const checkboxId = `${baseId}-disclaimer-accept`;
 
-  const accepted =
-    props.variant === "gate" ? props.accepted : true;
+  const accepted = props.variant === "gate" ? props.accepted : true;
 
   useImperativeHandle(ref, () => ({ accepted }), [accepted]);
 
@@ -43,7 +42,9 @@ export const DisclaimerCallout = forwardRef<
     case "footer":
       return (
         <p className="text-center text-sm leading-snug text-text-secondary">
-          <span className="font-medium text-text-primary">{DISCLAIMER_SHORT}</span>
+          <span className="font-medium text-text-primary">
+            {DISCLAIMER_SHORT}
+          </span>
           {". "}
           {DISCLAIMER_EXTENDED_FOOTER}
         </p>

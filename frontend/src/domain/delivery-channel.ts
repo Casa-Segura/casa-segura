@@ -34,15 +34,16 @@ export function isValidE164Phone(input: string): boolean {
 /** Pragmatic client-side email check; authoritative validation stays on BE. */
 export function isValidEmailFormat(email: string): boolean {
   const s = email.trim();
-  const re =
-    /^[^\s@]+@[^\s@][^\s.@]*(?:\.[^\s.@]+)+$/;
+  const re = /^[^\s@]+@[^\s@][^\s.@]*(?:\.[^\s.@]+)+$/;
   return s.length <= 254 && re.test(s);
 }
 
 /**
  * Validates draft and builds the subset sent with multipart + Server Actions / CS‑296 JSON body.
  */
-export function validateDeliveryForSubmit(draft: DeliveryDraft): DeliverySubmitParts {
+export function validateDeliveryForSubmit(
+  draft: DeliveryDraft,
+): DeliverySubmitParts {
   switch (draft.channel) {
     case "web_link":
       return {

@@ -3,7 +3,10 @@
  * Do not console.log buffers, multipart bodies, or delivery targets — only sanitized codes/status.
  */
 
-import { mapBackendError, missingBaseUrlFallback } from "@/lib/backend-error-map";
+import {
+  mapBackendError,
+  missingBaseUrlFallback,
+} from "@/lib/backend-error-map";
 import {
   readContractApiBase,
   readPollBackoffMsSeries,
@@ -27,7 +30,11 @@ export async function forwardContractSubmissionMultipart(
 ): Promise<SubmissionPostResult> {
   const base = readContractApiBase();
   if (!base)
-    return { ok: false, status: 0, body: { error_code: "configuration_missing" } };
+    return {
+      ok: false,
+      status: 0,
+      body: { error_code: "configuration_missing" },
+    };
 
   const path = readSubmitPath();
   const url = `${base}${path.startsWith("/") ? path : `/${path}`}`;
@@ -50,11 +57,16 @@ export async function forwardContractSubmissionMultipart(
     } catch {
       jsonBody = null;
     }
-    if (!upstream.ok) return { ok: false, status: upstream.status, body: jsonBody };
+    if (!upstream.ok)
+      return { ok: false, status: upstream.status, body: jsonBody };
 
     const id = extractSubmissionId(jsonBody as Record<string, unknown>);
     if (!id)
-      return { ok: false, status: upstream.status || 502, body: { error_code: "invalid_submit_response" } };
+      return {
+        ok: false,
+        status: upstream.status || 502,
+        body: { error_code: "invalid_submit_response" },
+      };
     return { ok: true, submissionId: id };
   } catch {
     clearTimeout(t);
@@ -82,7 +94,12 @@ export type PollTerminal =
   | { kind: "failed"; message: string };
 
 function readExpiresAt(payload: Record<string, unknown>): string | undefined {
-  const keys = ["link_expires_at", "linkExpiresAt", "expires_at", "expiresAt"] as const;
+  const keys = [
+    "link_expires_at",
+    "linkExpiresAt",
+    "expires_at",
+    "expiresAt",
+  ] as const;
   for (const k of keys) {
     const v = payload[k];
     if (typeof v === "string" && v.trim()) return v.trim();
@@ -90,7 +107,9 @@ function readExpiresAt(payload: Record<string, unknown>): string | undefined {
   return undefined;
 }
 
-function readPublicShortIdFromRecord(obj: Record<string, unknown>): string | undefined {
+function readPublicShortIdFromRecord(
+  obj: Record<string, unknown>,
+): string | undefined {
   const raw = obj["public_short_id"] ?? obj["publicShortId"];
   if (typeof raw !== "string") return undefined;
   const s = raw.trim();
@@ -133,11 +152,18 @@ function rejectionReasons(payload: Record<string, unknown>): string[] {
     }
   }
   const msg =
-    typeof payload["error_reason"] === "string" ? payload["error_reason"].trim() : "";
-  const code = typeof payload["error_code"] === "string" ? payload["error_code"].trim() : "";
+    typeof payload["error_reason"] === "string"
+      ? payload["error_reason"].trim()
+      : "";
+  const code =
+    typeof payload["error_code"] === "string"
+      ? payload["error_code"].trim()
+      : "";
   if (msg) return [msg];
   if (code) return [code.replace(/_/g, " ").toUpperCase()];
-  return ["Este contrato entró como no analizable. Prueba otro archivo o fotografía más legible."];
+  return [
+    "Este contrato entró como no analizable. Prueba otro archivo o fotografía más legible.",
+  ];
 }
 
 const IN_PROGRESS = new Set([
@@ -149,14 +175,18 @@ const IN_PROGRESS = new Set([
 ]);
 
 /** Interprets a single poll JSON blob and returns terminal outcome or tells caller to retry. */
-export function classifyPollPayload(payload: Record<string, unknown>):
-  | PollTerminal
-  | { kind: "continue" } {
+export function classifyPollPayload(
+  payload: Record<string, unknown>,
+): PollTerminal | { kind: "continue" } {
   const st = processingStatus(payload);
-  const band = typeof payload["band"] === "string" ? payload["band"].trim().toLowerCase() : "";
+  const band =
+    typeof payload["band"] === "string"
+      ? payload["band"].trim().toLowerCase()
+      : "";
 
   if (st === "completed") {
-    const { publicShortId, linkExpiresAt } = extractCompletedHandoffMeta(payload);
+    const { publicShortId, linkExpiresAt } =
+      extractCompletedHandoffMeta(payload);
     return {
       kind: "completed",
       analysisHint: payload["analysis"],
@@ -175,7 +205,9 @@ export function classifyPollPayload(payload: Record<string, unknown>):
     const reasons = rejectionReasons(payload);
     return {
       kind: "failed",
-      message: reasons[0] ?? "Tu envío terminó antes de obtener un informe. Prueba otro formato.",
+      message:
+        reasons[0] ??
+        "Tu envío terminó antes de obtener un informe. Prueba otro formato.",
     };
   }
 
@@ -190,7 +222,11 @@ export function classifyPollPayload(payload: Record<string, unknown>):
   };
 }
 
-async function pollOnce(base: string, template: string, submissionId: string): Promise<unknown | null> {
+async function pollOnce(
+  base: string,
+  template: string,
+  submissionId: string,
+): Promise<unknown | null> {
   const tail = template.replace("{{id}}", encodeURIComponent(submissionId));
   const url = `${base}${tail.startsWith("/") ? tail : `/${tail}`}`;
   const controller = new AbortController();
@@ -232,11 +268,16 @@ export async function pollSubmissionUntilTerminal(
   const deadlineMs = Date.now() + readPollBudgetMs();
 
   for (let i = 0; Date.now() < deadlineMs; i++) {
-    const waitMs = Math.min(series[Math.min(i, series.length - 1)] ?? 5000, 10_000);
+    const waitMs = Math.min(
+      series[Math.min(i, series.length - 1)] ?? 5000,
+      10_000,
+    );
     await delay(waitMs);
     const raw = await pollOnce(base, template, submissionId);
     const payload =
-      typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : {};
+      typeof raw === "object" && raw !== null
+        ? (raw as Record<string, unknown>)
+        : {};
 
     /** Non-JSON / proxy status — soften and continue briefly */
     if ("status_proxy" in payload && typeof payload.status_proxy === "number") {
@@ -275,7 +316,9 @@ export type FlowResult =
     };
 
 /** Joins multipart forward + backoff polling inside the Server Action (single client round-trip). */
-export async function runContractSubmissionServerFlow(formData: FormData): Promise<FlowResult> {
+export async function runContractSubmissionServerFlow(
+  formData: FormData,
+): Promise<FlowResult> {
   if (!readUploadEnabled())
     return {
       outcome: "error",

@@ -43,7 +43,10 @@ export function readPollBackoffMsSeries(): readonly number[] {
 
 /** Canonical Django upload path: POST `/api/v1/submissions/`. Override via env only if BE mounts elsewhere. */
 export function readSubmitPath(): string {
-  return process.env.CASASEGURA_CONTRACT_SUBMIT_PATH?.trim() || "/api/v1/submissions/";
+  return (
+    process.env.CASASEGURA_CONTRACT_SUBMIT_PATH?.trim() ||
+    "/api/v1/submissions/"
+  );
 }
 
 /** Use `{{id}}` placeholder for submission UUID string. */
@@ -64,7 +67,9 @@ export function readUploadEnabled(): boolean {
  * Placeholder `{{id}}` is replaced with `public_short_id` (URL-encoded).
  */
 export function readPublicReportPathTemplate(): string {
-  return process.env.CASASEGURA_PUBLIC_REPORT_PATH_TEMPLATE?.trim() || "/r/{{id}}";
+  return (
+    process.env.CASASEGURA_PUBLIC_REPORT_PATH_TEMPLATE?.trim() || "/r/{{id}}"
+  );
 }
 
 /** Builds absolute report URL; `null` when API base is unset (CS-294 stub-friendly). */
@@ -73,6 +78,9 @@ export function buildPublicReportUrl(publicShortId: string): string | null {
   if (!base) return null;
   const id = publicShortId.trim();
   if (!id) return null;
-  const tail = readPublicReportPathTemplate().replace("{{id}}", encodeURIComponent(id));
+  const tail = readPublicReportPathTemplate().replace(
+    "{{id}}",
+    encodeURIComponent(id),
+  );
   return `${base}${tail.startsWith("/") ? tail : `/${tail}`}`;
 }

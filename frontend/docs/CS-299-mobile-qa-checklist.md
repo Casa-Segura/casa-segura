@@ -10,20 +10,20 @@ Record date, device model, Chrome version, reviewer name, deployment URL below.
 
 ## Preconditions
 
-| # | Gate |
-|---|------|
-| 1 | Backend reachable from phone (same network/VPN acceptable) |
-| 2 | CASASEGURA env set on Preview for staging API |
-| 3 | Zoom / text size: capture default + note if scaled |
+| #   | Gate                                                       |
+| --- | ---------------------------------------------------------- |
+| 1   | Backend reachable from phone (same network/VPN acceptable) |
+| 2   | CASASEGURA env set on Preview for staging API              |
+| 3   | Zoom / text size: capture default + note if scaled         |
 
 ## Evidence header (fill before session)
 
-| Field | Value |
-|-------|-------|
-| Date | |
-| Deploy URL | |
-| Device | e.g. ~360 CSS px wide |
-| Network | Wi‑Fi vs throttled **4G** (run one happy path with 4G profile) |
+| Field      | Value                                                          |
+| ---------- | -------------------------------------------------------------- |
+| Date       |                                                                |
+| Deploy URL |                                                                |
+| Device     | e.g. ~360 CSS px wide                                          |
+| Network    | Wi‑Fi vs throttled **4G** (run one happy path with 4G profile) |
 
 ## Flows — tick when passed
 
@@ -66,8 +66,8 @@ Force via backend fixture / known-expired stub / dev toggle so `/r/<id>` or BE r
 List **P0/P1** defects with filed ticket IDs before marking CS-299 `done`:
 
 | Severity | Brief | Ticket |
-|----------|-------|--------|
-| | | |
+| -------- | ----- | ------ |
+|          |       |        |
 
 ---
 
