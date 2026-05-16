@@ -30,20 +30,20 @@ Source-of-truth links:
 
 ## Ready Now
 
-- `CS-290` is ready now; see `FE WORK`.
+- **EPIC-10 FE closure:** **`CS-298`** (operator: connect Vercel + env), then **`CS-299`** (physical device QA checklist). **`CS-295`** is **`done`**; core upload flow tickets **291–297** are **`done`** (see epic).
 
 ## FE WORK
 
-- [CS-290](../tickets/CS-290.md) - Landing page.
-- [CS-291](../tickets/CS-291.md) - Upload page with disclaimer gate.
-- [CS-292](../tickets/CS-292.md) - Channel selector component.
-- [CS-293](../tickets/CS-293.md) - Loading state with rotating copy.
-- [CS-294](../tickets/CS-294.md) - Result page with HTML report viewer.
-- [CS-295](../tickets/CS-295.md) - Expired-link page.
-- [CS-296](../tickets/CS-296.md) - Server actions to call backend.
-- [CS-297](../tickets/CS-297.md) - Disclaimer module.
-- [CS-298](../tickets/CS-298.md) - Vercel deploy.
-- [CS-299](../tickets/CS-299.md) - Mobile QA pass at 360px.
+- [CS-290](../tickets/CS-290.md) - Landing page — **done**.
+- [CS-291](../tickets/CS-291.md) - Upload page with disclaimer gate — **done**.
+- [CS-292](../tickets/CS-292.md) - Channel selector component — **done**.
+- [CS-293](../tickets/CS-293.md) - Loading state with rotating copy — **done**.
+- [CS-294](../tickets/CS-294.md) - Result page with HTML report viewer — **done**.
+- [CS-295](../tickets/CS-295.md) - Expired-link page — **done**.
+- [CS-296](../tickets/CS-296.md) - Server actions to call backend — **done**.
+- [CS-297](../tickets/CS-297.md) - Disclaimer module — **done**.
+- [CS-298](../tickets/CS-298.md) - Vercel deploy — **ready** (`frontend/README.md` + `robots`/headers/next.config env gate).
+- [CS-299](../tickets/CS-299.md) - Mobile QA pass at 360px — **ready** (`frontend/docs/CS-299-mobile-qa-checklist.md`).
 
 ## BE WORK
 

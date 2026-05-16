@@ -35,7 +35,9 @@ Use this folder as a phase-first pick list for parallel work:
 
 ## Current Ready Picks
 
-- [CS-270](../tickets/CS-270.md) - retention scheduler ADR (currently the only ticket marked `ready` with no dependencies).
+- [CS-270](../tickets/CS-270.md) - retention scheduler ADR (`ready`; no deps).
+- [CS-298](../tickets/CS-298.md) - **Vercel frontend deploy** (`ready`; infra operator connects GitHub → sets `CASASEGURA_API_BASE_URL`; see [`frontend/README.md`](../../frontend/README.md)).
+- [CS-299](../tickets/CS-299.md) - physical Android QA at 360px (`ready`; run after Preview/Production URL exists; checklist in `frontend/docs/CS-299-mobile-qa-checklist.md`).
 
 **In flight:** [CS-001](../tickets/CS-001.md) (repo posture and README skeleton) is **`in_progress`**; completing it unblocks **`CS-002`** and **`CS-003`**.
 

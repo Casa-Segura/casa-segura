@@ -17,9 +17,11 @@ Use this plan to decide who owns which folder, which tickets are safe to start, 
 
 ## Current Ready Picks
 
-Only **`CS-270`** — Choose retention job scheduler and document ADR — is marked `ready` with no dependencies right now (`docs/Roadmap/tickets/CS-270.md`).
+- **`CS-270`** — retention scheduler ADR ([`CS-270.md`](tickets/CS-270.md)) — `ready`.
+- **`CS-298`** — Vercel frontend deploy ([`CS-298.md`](tickets/CS-298.md)) — `ready`; connect repo → set `CASASEGURA_API_BASE_URL` on Preview + Production ([`frontend/README.md`](../../frontend/README.md)); README runbook landed.
+- **`CS-299`** — physical Android QA at 360px ([`CS-299.md`](tickets/CS-299.md)) — `ready` **after** a preview/production URL exists; checklist [`frontend/docs/CS-299-mobile-qa-checklist.md`](../../frontend/docs/CS-299-mobile-qa-checklist.md).
 
-**`CS-001`** (repo posture and README skeleton) is **`in_progress`**, not `ready`. Completing **`CS-001`** unblocks both scaffolds. Most practical implementation work then flows through **`CS-002`** (backend Django / DRF) and **`CS-003`** (Next.js).
+**`CS-001`** (repo posture and README skeleton) is **`in_progress`**, not `ready`. Completing **`CS-001`** unblocks both scaffolds. Backend/FE foundation work flows through **`CS-002`** and **`CS-003`**.
 
 Keep this list synchronized with `docs/Roadmap/phases/README.md`.
 
@@ -71,12 +73,15 @@ Start here:
 
 Next picks after `CS-003`:
 
-- `CS-290` - Mobile-first landing page - **done** (see `frontend/` `/`).
-- `CS-291` - Upload page with disclaimer gate.
-- `CS-292` - Delivery channel selector.
+- `CS-290` - Mobile-first landing page — **done** (`frontend/` `/`).
+- `CS-291` - Upload page with disclaimer gate — **done**.
+- `CS-292` - Delivery channel selector — **done**.
 - `CS-293` - Loading state with rotating Spanish reassurance copy — **done** (`frontend/` upload flow).
 - `CS-294` - Result page (HTML report embed) — **done** (`frontend/` `/r/[publicShortId]`).
-- `CS-297` - Single-source disclaimer module.
+- `CS-295` - Expired-link UX (`/enlace-expirado`, PRD US-05) — **done**.
+- `CS-297` - Single-source disclaimer module — **done** (`frontend/src/legal`).
+- **`CS-298`** - Vercel deploy (`frontend/README.md`, headers/`robots`, env gate) — **ready** for operator verification (ticket AC¹–²).
+- **`CS-299`** - Physical Android QA (360px / 4G) — **ready**; checklist `frontend/docs/CS-299-mobile-qa-checklist.md` (**after** Preview/Prod URL).
 
 Constraints:
 
@@ -145,7 +150,7 @@ Start this lane when its backing BE or Infra foundation exists. Early API / AI w
 ### Round 2 - Stabilize Shared Contracts
 
 - Backend continues with `CS-007`, `CS-008`, and `CS-009`.
-- Frontend continues EPIC-10 follow-ons (deploy, QA, CS-295) in `frontend/`.
+- Frontend continues EPIC-10 closure (operator **CS-298** deploy wiring, then **CS-299** device QA checklist) in `frontend/`.
 - Infra starts `CS-006` after `CS-002` chooses env loading and app boot conventions.
 
 ### Round 3 - Make CI and Data Work Real
