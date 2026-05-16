@@ -2,7 +2,7 @@
 id: EPIC-01
 name: Persistence & Schema
 phase: 0
-status: backlog
+status: in_progress
 depends_on:
   - EPIC-00
 prd_refs:
@@ -28,14 +28,14 @@ This epic does NOT implement retention/anonymization cron jobs — those are [[E
 
 ## Definition of done
 
-- [ ] Postgres 15+ with `vector` extension running locally via docker-compose and on the chosen managed host (Supabase or Railway)
-- [ ] Django migrations configured; `python manage.py migrate` builds a fresh DB from zero
-- [ ] Every entity from [[FEATURES_MAP]] §4 has an ORM model and a migration
-- [ ] CHECK constraints, ENUMs, and indexes enforce the invariants in [[RUBRICA_CONTRATO]] §12 and [[PRD_GENERAL]] BR-04, BR-05, BR-08, BR-16
-- [ ] Project normalization (`canonical_name` → `normalized_name`) is implemented and tested with accent/case edge cases
-- [ ] Test fixtures exist for every entity and the test DB resets cleanly between tests
-- [ ] Seed: `RubricVersion` 0.1 loaded with the 38 criteria catalog from [[RUBRICA_CONTRATO]] §16
-- [ ] Seed: `CorpusVersion` placeholder row exists; actual chunks loaded by [[EPIC-03-corpus-rag]]
+- [x] Postgres 15+ with `vector` extension running locally via docker-compose (`pgvector/pgvector:pg16`) — managed host pending deployment phase
+- [x] Django migrations configured; `python manage.py migrate` builds a fresh DB from zero (CS-021)
+- [x] Every entity from [[FEATURES_MAP]] §4 has an ORM model and a migration (CS-025, CS-026, CS-027, CS-028, CS-029)
+- [x] CHECK constraints, ENUMs, and indexes enforce the invariants in [[RUBRICA_CONTRATO]] §12 and [[PRD_GENERAL]] BR-04, BR-05, BR-08, BR-16 (CS-026, CS-030 — composite FK, HNSW, GIN, immutability triggers, view checks)
+- [/] Project normalization (`canonical_name` → `normalized_name`) is implemented (CS-031 in_progress — function shipped; AC4 service-layer upsert belongs to F2/EPIC-04)
+- [/] Test fixtures exist for every entity and the test DB resets cleanly between tests (CS-032 in_progress — factories for 12 entities shipped; per-invariant tests against the factories still pending)
+- [/] Seed: `RubricVersion` 0.1 loaded with the 38 criteria catalog from [[RUBRICA_CONTRATO]] §16 (CS-033 in_progress — `seed_rubric_version --activate` loads RubricVersion 1.0.0 with 6 categories A–F; the 38-criterion YAML loader is the remaining gap)
+- [x] Seed: `CorpusVersion` placeholder row exists; actual chunks loaded by [[EPIC-03-corpus-rag]] (CS-034)
 
 ## In scope
 

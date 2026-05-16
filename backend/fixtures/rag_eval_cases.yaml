@@ -1,0 +1,155 @@
+# RAG retrieval evaluation set (CS-088).
+#
+# 30 curated finding ↔ article pairs across the six Casa Segura rubric
+# categories (5 per category). Each entry names the finding text that
+# would be produced by the rubric engine, plus the (law_id, anchor) pair
+# the retrieval engine should rank in the top-K.
+#
+# Categories follow the rubric in docs/RAG Legal context/01-ley-inquilinato.md
+# §"Application to Casa Segura". When CS-033 ships the full 38-criterion
+# catalog this file should grow to cover all of them.
+
+categories:
+  required_clauses:
+    description: Cláusulas mínimas exigidas por ley.
+    cases:
+      - finding: "El contrato no establece el nombre completo del arrendatario."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-4
+      - finding: "Falta la dirección exacta del inmueble en el contrato."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-4
+      - finding: "No se indica la forma de pago acordada entre las partes."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-4
+      - finding: "El contrato es verbal y supera los seis meses de vigencia."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-4
+      - finding: "El contrato carece de monto de renta mensual identificable."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-4
+
+  tenant_rights:
+    description: Renuncias prohibidas y derechos irrenunciables del arrendatario.
+    cases:
+      - finding: "El arrendatario renuncia a sus derechos bajo la Ley de Inquilinato."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-2
+      - finding: "Cláusula que obliga al inquilino a aceptar futuras modificaciones unilaterales."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-2
+      - finding: "El inquilino acepta renunciar al derecho de prelación en caso de venta."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-2
+      - finding: "Se incluye una cláusula de renuncia a notificación previa de aumento de renta."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-2
+      - finding: "El contrato establece que el inquilino no podrá recurrir a tribunales en caso de desalojo."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-2
+
+  payments_and_receipts:
+    description: Recibos, comprobantes y consignación judicial.
+    cases:
+      - finding: "El arrendador no está obligado a entregar recibo de pago."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-9
+      - finding: "No se establece quién entrega el comprobante de pago mensual."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-9
+      - finding: "El contrato no permite la consignación judicial cuando el arrendador rehúsa cobrar."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-10
+      - finding: "Cláusula que impide al inquilino depositar la renta en el juzgado."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-10
+      - finding: "El arrendatario debe pagar incluso si no se le emite recibo, sin derecho a sanción."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-9
+
+  termination:
+    description: Causales de terminación y sucesión.
+    cases:
+      - finding: "El contrato permite al propietario terminar el arrendamiento sin justificación."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-24
+      - finding: "Cláusula que faculta al arrendador a desalojar al inquilino por su mera voluntad."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-24
+      - finding: "La muerte del inquilino termina automáticamente el contrato sin posibilidad de sucesión."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-27
+      - finding: "El arrendamiento termina si el inmueble cambia de dueño durante su vigencia."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-28
+      - finding: "El contrato no reconoce el derecho de los familiares a continuar el arrendamiento tras la muerte del inquilino."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-27
+
+  rent_increase:
+    description: Aumentos de renta y plazos.
+    cases:
+      - finding: "El arrendador puede aumentar la renta mensual hasta en 30% anual."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-8
+      - finding: "Cláusula que permite ajustes de renta sin tope ni notificación judicial."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-8
+      - finding: "El plazo del contrato obliga al inquilino aun cuando paga puntualmente la renta."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-6
+      - finding: "El propietario puede recuperar el inmueble al vencer el plazo sin importar el pago."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-6
+      - finding: "El contrato impone un aumento anual de 20% sin justificación."
+        expected:
+          law_id: ley-inquilinato
+          anchor: art-8
+
+  ivu_special:
+    description: Reglas especiales aplicables a contratos del IVU y arrendamiento financiero.
+    cases:
+      - finding: "El contrato es del Instituto de Vivienda Urbana y omite la cláusula de bien de familia."
+        expected:
+          law_id: ley-ivu
+          anchor: art-2
+      - finding: "Contrato IVU sin las garantías procesales especiales del instituto."
+        expected:
+          law_id: ley-ivu
+          anchor: art-1
+      - finding: "Arrendamiento financiero sin previsión expresa para liquidación anticipada."
+        expected:
+          law_id: ley-arrendamiento-financiero
+          anchor: art-4
+      - finding: "El contrato IVU permite ejecución sin respetar las causales legales propias."
+        expected:
+          law_id: ley-ivu
+          anchor: art-1
+      - finding: "Arrendamiento financiero que no respeta los plazos mínimos legales."
+        expected:
+          law_id: ley-arrendamiento-financiero
+          anchor: art-4

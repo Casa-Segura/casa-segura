@@ -2,7 +2,7 @@
 id: EPIC-03
 name: Legal Corpus & RAG
 phase: 1
-status: backlog
+status: in_progress
 depends_on:
   - EPIC-01
 prd_refs:
@@ -17,12 +17,9 @@ tags:
   - casa-segura
   - epic
   - epic-03
-  - stub
 ---
 
 # EPIC-03 — Legal Corpus & RAG
-
-> **Stub.** Epic-level only. Tickets fleshed out in second pass.
 
 ## Goal
 
@@ -30,12 +27,14 @@ Ingest the curated Salvadoran legal corpus from `Casa Segura/RAG Legal context/`
 
 ## Definition of done
 
-- [ ] Ingestion script chunks by article and persists `legal_chunk` rows with embeddings
-- [ ] Corpus version stamped on every ingestion; analyses record which version they used
-- [ ] `retrieve_for_finding(text, pattern_code, top_k)` returns chunks above similarity threshold, empty list otherwise
-- [ ] Threshold and `top_k` are config (`RAG_SIMILARITY_THRESHOLD`, `RAG_TOP_K`)
-- [ ] Eval set of ≥30 (finding, expected article) pairs spans the 6 rubric categories
-- [ ] Tag inference per chunk supports pre-filtering before vector search
+- [x] Ingestion script chunks by article and persists `legal_chunk` rows with embeddings (`manage.py ingest_corpus`, CS-080/081/083/084)
+- [x] Corpus version stamped on every ingestion; activation flow respects `is_active` singleton (CS-090)
+- [x] `retrieve_for_finding(text, pattern_code, top_k)` returns chunks above similarity threshold, empty list otherwise (CS-085 — `LegalCitationService.retrieve_legal_basis`)
+- [x] Threshold and `top_k` are config (`RAG_SIMILARITY_THRESHOLD`, `RAG_TOP_K`)
+- [x] Eval set of ≥30 (finding, expected article) pairs spans the 6 rubric categories (CS-088 — `backend/fixtures/rag_eval_cases.yaml`)
+- [x] Tag inference per chunk supports pre-filtering before vector search (CS-082 — `normalize_tag`, GIN index already in place)
+
+> Tickets remain `in_progress` rather than `done` because the **live** end-to-end verification (ingestion → embedding download → pgvector retrieval → eval harness sweep) hasn't been run against the production-equivalent environment yet. The code path and tests are in place; the next step is invoking `python manage.py ingest_corpus --version <date> --activate` in a worker with credentials and confirming `LegalCitationService` returns >=0.85 Top-1 precision against the eval set.
 
 ## In scope
 

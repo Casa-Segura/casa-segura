@@ -3,7 +3,8 @@ project: Casa Segura
 doc_type: phase_index
 phase: 1
 status: living
-last_updated: 2026-05-15
+last_updated: 2026-05-16
+# Phase 1 implementation pass (Pixtral OCR architecture) committed in d613c2d.
 tags:
   - casa-segura
   - roadmap
@@ -21,6 +22,7 @@ Source epics:
 
 Source-of-truth links:
 
+- [PHASE-1 configuration checklist](PHASE-1-config-checklist.md) - everything the operator must configure (`.env`, OS deps, Python, docker compose, seeds, smoke checks) for the Phase 1 implementation to run end-to-end.
 - [PRD_F1_INGESTA_Y_OCR](../../Casa%20Segura%20Formal%20PRDs/PRD_F1_INGESTA_Y_OCR.md) - upload, OCR, disclaimer gate, and retention expectations.
 - [PRD_F3_CORPUS_Y_RAG](../../Casa%20Segura%20Formal%20PRDs/PRD_F3_CORPUS_Y_RAG.md) - legal corpus and retrieval behavior.
 - [DOMAIN_MODEL](../../Casa%20Segura%20Formal%20PRDs/DOMAIN_MODEL.md) - `ContractSubmission`, `OcrJob`, `LegalDocument`, `LegalChunk`, and `CorpusVersion`.
@@ -29,7 +31,17 @@ Source-of-truth links:
 
 ## Ready Now
 
-No Phase 1 tickets are ready yet. Start after the Phase 0 app and persistence foundations land.
+Phase 1 backend lane is in implementation (commit `d613c2d`):
+
+- ✅ `done`: CS-057 (discard-after-extract invariant).
+- 🟡 `in_progress` (code shipped, AC closure pending a live end-to-end run with `OPENROUTER_API_KEY` + an ingested corpus): CS-050/051/052/053/054/055/056/059/060 (EPIC-02) and CS-080/081/082/083/084/085/086/087/088/089/090 (EPIC-03).
+
+The next backend-blocking pickup on this phase is the **live verification pass** — run `python manage.py ingest_corpus --version <date> --activate`, then exercise the `POST /api/v1/submissions/` + `POST /api/v1/corpus/retrieve/` endpoints with a real `OPENROUTER_API_KEY` to flip the `in_progress` tickets to `done`. See [PHASE-1-config-checklist.md](PHASE-1-config-checklist.md).
+
+Out-of-phase pickups still pending:
+
+- CS-058 — Disclaimer acceptance gate (FE lane).
+- CS-033 — 38-criterion YAML loader for RubricVersion (Phase 0 → unblocks CS-086 pattern shortcut against real rubric).
 
 ## FE WORK
 

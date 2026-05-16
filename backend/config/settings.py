@@ -174,6 +174,44 @@ CELERY_TIMEZONE = "UTC"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 
+# ─── OpenRouter (LLM gateway, CS-006) ───
+OPENROUTER_API_KEY = env("OPENROUTER_API_KEY", default="")
+OPENROUTER_BASE_URL = env("OPENROUTER_BASE_URL", default="https://openrouter.ai/api/v1")
+OPENROUTER_OCR_MODEL = env("OPENROUTER_OCR_MODEL", default="mistralai/pixtral-large-2411")
+OPENROUTER_PDF_PLUGIN_ENGINE = env("OPENROUTER_PDF_PLUGIN_ENGINE", default="mistral-ocr")
+OPENROUTER_DEFAULT_TEXT_MODEL = env("OPENROUTER_DEFAULT_TEXT_MODEL", default="mistralai/pixtral-large-2411")
+OPENROUTER_HTTP_REFERER = env("OPENROUTER_HTTP_REFERER", default="https://casa-segura.local")
+OPENROUTER_X_TITLE = env("OPENROUTER_X_TITLE", default="Casa Segura OCR")
+OPENROUTER_TIMEOUT_SECONDS = env.int("OPENROUTER_TIMEOUT_SECONDS", default=60)
+OPENROUTER_MAX_RETRIES = env.int("OPENROUTER_MAX_RETRIES", default=3)
+
+
+# ─── OCR pipeline (Phase 1, EPIC-02) ───
+OCR_MAX_PAGES = env.int("OCR_MAX_PAGES", default=50)
+OCR_MAX_BYTES = env.int("OCR_MAX_BYTES", default=10 * 1024 * 1024)
+OCR_VISION_LLM_TIMEOUT = env.int("OCR_VISION_LLM_TIMEOUT", default=60)
+OCR_TESSERACT_ENABLED = env.bool("OCR_TESSERACT_ENABLED", default=True)
+OCR_TESSERACT_LANG = env("OCR_TESSERACT_LANG", default="spa")
+OCR_TESSERACT_MIN_CONFIDENCE = env.int("OCR_TESSERACT_MIN_CONFIDENCE", default=60)
+
+
+# ─── RAG retrieval (Phase 1, EPIC-03) ───
+RAG_SIMILARITY_THRESHOLD = env.float("RAG_SIMILARITY_THRESHOLD", default=0.65)
+RAG_TOP_K = env.int("RAG_TOP_K", default=5)
+EMBEDDING_MODEL = env("EMBEDDING_MODEL", default="paraphrase-multilingual-MiniLM-L12-v2")
+EMBEDDING_DEVICE = env("EMBEDDING_DEVICE", default="cpu")
+EMBEDDING_BATCH_SIZE = env.int("EMBEDDING_BATCH_SIZE", default=32)
+
+
+# ─── Active catalog versions ───
+# Note: ACTIVE_CORPUSF_VERSION carries a legacy typo. Phase 1 honours
+# both spellings (preferring the typo to match the live `.env`), and a
+# follow-up will rename when the live secrets are updated.
+ACTIVE_RUBRIC_VERSION = env("ACTIVE_RUBRIC_VERSION", default="")
+ACTIVE_CORPUS_VERSION = env("ACTIVE_CORPUS_VERSION", default=env("ACTIVE_CORPUSF_VERSION", default=""))
+ACTIVE_BENCHMARK_VERSION = env("ACTIVE_BENCHMARK_VERSION", default="")
+
+
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
