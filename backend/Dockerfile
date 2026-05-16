@@ -37,16 +37,13 @@ RUN apt-get update \
 WORKDIR /app
 
 # Install Poetry into an isolated location.
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install "poetry==${POETRY_VERSION}"
+RUN pip install "poetry==${POETRY_VERSION}"
 
 # Copy dependency manifests first to maximize layer cache hits.
 COPY pyproject.toml poetry.lock* ./
 
 # Install runtime dependencies only (no dev) into ./.venv
-RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=cache,target=/root/.cache/pypoetry \
-    poetry install --only main --no-root --no-ansi
+RUN poetry install --only main --no-root --no-ansi
 
 # ---------------------------------------------------------------------------
 # Stage 2: runtime-base — minimal image, copies the prebuilt venv.
