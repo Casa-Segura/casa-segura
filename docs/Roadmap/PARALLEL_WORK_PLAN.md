@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: parallel_work_plan
 status: living
-last_updated: 2026-05-15
+last_updated: 2026-05-16
 tags:
   - casa-segura
   - roadmap
@@ -20,6 +20,7 @@ Use this plan to decide who owns which folder, which tickets are safe to start, 
 - **`CS-270`** — retention scheduler ADR ([`CS-270.md`](tickets/CS-270.md)) — `ready`.
 - **`CS-298`** — Vercel frontend deploy ([`CS-298.md`](tickets/CS-298.md)) — `ready`; connect repo → set `CASASEGURA_API_BASE_URL` on Preview + Production ([`frontend/README.md`](../../frontend/README.md)); README runbook landed.
 - **`CS-299`** — physical Android QA at 360px ([`CS-299.md`](tickets/CS-299.md)) — `ready` **after** a preview/production URL exists; checklist [`frontend/docs/CS-299-mobile-qa-checklist.md`](../../frontend/docs/CS-299-mobile-qa-checklist.md).
+- **EPIC-12 (FE)** — Optional project verification shells: [`CS-356`](tickets/CS-356.md) / [`CS-351`](tickets/CS-351.md) / [`CS-355`](tickets/CS-355.md) are **`in_progress`**; enable locally with `PROJECT_VERIFICATION_ENABLED=true` ([`frontend/README.md`](../../frontend/README.md)).
 
 **`CS-001`** (repo posture and README skeleton) is **`in_progress`**, not `ready`. Completing **`CS-001`** unblocks both scaffolds. Backend/FE foundation work flows through **`CS-002`** and **`CS-003`**.
 
@@ -82,6 +83,7 @@ Next picks after `CS-003`:
 - `CS-297` - Single-source disclaimer module — **done** (`frontend/src/legal`).
 - **`CS-298`** - Vercel deploy (`frontend/README.md`, headers/`robots`, env gate) — **ready** for operator verification (ticket AC¹–²).
 - **`CS-299`** - Physical Android QA (360px / 4G) — **ready**; checklist `frontend/docs/CS-299-mobile-qa-checklist.md` (**after** Preview/Prod URL).
+- **EPIC-12 (optional)** - Project verification shells — **`CS-356` / `CS-351` / `CS-355`** are **`in_progress`** (`frontend/src/app/verificacion-proyecto/`; `PROJECT_VERIFICATION_ENABLED` — `frontend/README.md`). Backend OCR/verdict tickets still open.
 
 Constraints:
 
