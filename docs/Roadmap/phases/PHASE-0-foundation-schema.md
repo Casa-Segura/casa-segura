@@ -3,7 +3,7 @@ project: Casa Segura
 doc_type: phase_index
 phase: 0
 status: living
-last_updated: 2026-05-15
+last_updated: 2026-05-16
 tags:
   - casa-segura
   - roadmap
@@ -43,16 +43,16 @@ Use this lane to create the web app foundation. Once `apps/web` exists, pick fro
 
 ## BE WORK
 
-- ◐ [CS-002](../tickets/CS-002.md) - Django 5.2 LTS + DRF scaffold with pyproject, ruff, mypy, pytest. *(Project boots on Postgres; missing Dockerfile, ruff, mypy/django-stubs, smoke pytest.)*
-- ◐ [CS-007](../tickets/CS-007.md) - Structured logging with correlation IDs. *(structlog + `CorrelationIdMiddleware` + X-Request-ID echo wired; README snippet pending.)*
+- ◐ [CS-002](../tickets/CS-002.md) - Django 5.2 LTS + DRF scaffold with pyproject, ruff, mypy, pytest. *(Dockerfile multi-stage + ruff.toml + mypy.ini + .python-version + smoke pytest landed; `ruff` / `django-stubs` still missing from pyproject deps; no `api` service in docker-compose.)*
+- ☑ [CS-007](../tickets/CS-007.md) - Structured logging with correlation IDs. *(All 5 ACs ticked; structlog + middleware + X-Request-ID + error-path correlation + version fields verified.)*
 - ☑ [CS-008](../tickets/CS-008.md) - Health and readiness endpoints. *(`/api/health/` liveness + `/api/ready/` with DB + Redis ping; 503 with reason codes.)*
 - ◐ [CS-009](../tickets/CS-009.md) - Standard error envelope schema. *(`DomainException` hierarchy + DRF handler emitting `{error_code, message, details, correlation_id, schema_version}`; README example pending.)*
-- ◐ [CS-021](../tickets/CS-021.md) - Initial Django migration framework. *(`makemigrations` + `migrate` clean on Postgres; rollback recipe + Makefile pending.)*
-- ◐ [CS-022](../tickets/CS-022.md) - Django ORM / DB wiring for DRF and workers. *(Postgres `psycopg2-binary` + `CONN_MAX_AGE` + `CONN_HEALTH_CHECKS`; django-stubs/mypy strict pass pending.)*
-- ◐ [CS-023](../tickets/CS-023.md) - Schema: Project entity. *(Model + indexes `idx_project_normalized` / `idx_project_last_analyzed` + JSON defaults landed; PII guard on `metadata` pending.)*
+- ◐ [CS-021](../tickets/CS-021.md) - Initial Django migration framework. *(`migrate` clean on Postgres + Makefile targets + reverse-migrate CI; README DB cheatsheet + naming convention doc pending.)*
+- ◐ [CS-022](../tickets/CS-022.md) - Django ORM / DB wiring for DRF and workers. *(Postgres `psycopg2-binary` + `CONN_MAX_AGE` + `CONN_HEALTH_CHECKS`; `django-stubs` missing from deps so mypy strict pass blocked.)*
+- ☑ [CS-023](../tickets/CS-023.md) - Schema: Project entity. *(All 5 ACs ticked; `assert_no_pii` walks metadata, `Project.clean()` raises ValidationError, `Project.save()` defaults `last_analyzed`.)*
 - ◐ [CS-024](../tickets/CS-024.md) - Schema: ContractAnalysis entity. *(All 5 ACs satisfied; verification tests pending CS-032.)*
 - ☑ [CS-025](../tickets/CS-025.md) - Schema: ContractSubmission and OcrJob. *(All ACs met; no `extracted_text` column; file_count 1-50 CHECK.)*
-- ◐ [CS-026](../tickets/CS-026.md) - Schema: LegalDocument, LegalChunk, CorpusVersion. *(Models + composite uniques + `vector(384)` column + GIN indexes; `legal_chunk.law_id → legal_document` CASCADE FK decision pending.)*
+- ☑ [CS-026](../tickets/CS-026.md) - Schema: LegalDocument, LegalChunk, CorpusVersion. *(Composite FK `legal_chunk → legal_document` ON DELETE CASCADE landed via `0002_fk_doc_hnsw_immutability`.)*
 - ☑ [CS-027](../tickets/CS-027.md) - Schema: Criterion and RubricVersion. *(Composite `(code, rubric_version)` unique + weight/category CHECKs + partial unique `is_active`.)*
 - ☑ [CS-028](../tickets/CS-028.md) - Schema: EconomicBenchmark. *(`BenchmarkVersion` + `EconomicBenchmark` with unit CHECK including `ratio` per PRD DDL.)*
 - ☑ [CS-029](../tickets/CS-029.md) - Schema: DeliveryRequest. *(All fields, status/channel CHECKs, partial index on `next_attempt_not_before`, target_value_encrypted nullable for purge.)*
