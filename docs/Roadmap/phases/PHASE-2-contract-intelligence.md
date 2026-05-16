@@ -4,6 +4,7 @@ doc_type: phase_index
 phase: 2
 status: living
 last_updated: 2026-05-16
+# Phase 2 BE/API kickoff: CS-110 + CS-114 first-pass shipped in 2026-05-16 batch.
 tags:
   - casa-segura
   - roadmap
@@ -13,6 +14,8 @@ tags:
 # Phase 2 - Contract Intelligence
 
 Goal: classify the contract, extract key fields, normalize project identity, and produce confidence/unverifiable metadata for downstream economics and rubric work.
+
+Status legend: ☑ done · ◐ in progress · ☐ backlog · ✗ blocked/cut.
 
 Source epic:
 
@@ -33,17 +36,21 @@ Phase 1 ingestion + corpus retrieval contracts are in place (commit `d613c2d`):
 - `POST /api/v1/submissions/` returns `extracted_text_language` + `extracted_text_token_count` per submission, with the text held only in-memory through the extractor (CS-057 invariant — never persisted).
 - `LegalCitationService.retrieve_legal_basis(finding=…)` returns ≥0 citations via `POST /api/v1/corpus/retrieve/`.
 
-Phase 2 BE+API tickets are therefore unblocked. The minimum dependency chain is:
+**2026-05-16 — Phase 2 has started:**
 
-1. **CS-110** (classification prompt + few-shot anchors) — entry point; no upstream Phase-2 deps.
-2. **CS-114** (classification confidence + extraction field schema) — defines the DTO shape downstream tickets persist.
-3. **CS-111** (leasing reclassification detector) — depends on CS-110.
-4. **CS-112** (project name normalization + linkage) — depends on CS-031 (Phase-0 in_progress, function shipped) + CS-110.
-5. **CS-113** (economic field extraction prompt) — depends on CS-110 + CS-114.
-6. **CS-116** (unverifiable bookkeeping for missing fields) — depends on CS-113 + CS-114.
+- **CS-110** (classification prompt) and **CS-114** (confidence + extraction schema) both have first-pass code under `backend/classification/`. They were the parallel-safe first picks per the dependency chain.
+
+Remaining dependency chain (in pickup order):
+
+1. ☑ **CS-110** entry point shipped (prompt + few-shot anchors + classifier wired to OpenRouter client).
+2. ☑ **CS-114** DTO shape shipped (`ExtractedFields`, `ConfidenceBand`, `ContractExtraction`, `REQUIRED_FIELDS_BY_TYPE`).
+3. **CS-111** (leasing reclassification detector) — unblocked by CS-110.
+4. **CS-112** (project name normalization + linkage) — unblocked by CS-110 + CS-031's normalize function.
+5. **CS-113** (economic field extraction prompt) — unblocked by CS-110 + CS-114.
+6. **CS-116** (unverifiable bookkeeping for missing fields) — unblocked by CS-113 + CS-114.
 7. **CS-115** (classification eval set) — depends on all five above; ships once they stabilise.
 
-Parallel-safe first picks: **CS-110 + CS-114** (no inter-dep). Once they land, **CS-111**, **CS-112**, **CS-113** can run in parallel.
+Parallel-safe next picks: **CS-111**, **CS-112**, **CS-113** (no inter-dep).
 
 Upstream notes:
 
@@ -56,21 +63,21 @@ No primary FE tickets live in this phase. FE depends on the API contract outputs
 
 ## BE WORK
 
-- [CS-112](../tickets/CS-112.md) - Project name extraction and normalization.
-- [CS-114](../tickets/CS-114.md) - Classification confidence and extraction field schema.
-- [CS-116](../tickets/CS-116.md) - Unverifiable bookkeeping for missing fields.
+- ◐ [CS-112](../tickets/CS-112.md) - Project name extraction and normalization.
+- ◐ [CS-114](../tickets/CS-114.md) - Classification confidence and extraction field schema. *(2026-05-16: `ExtractedFields` (20 optional fields), `ConfidenceLevel`/`ConfidenceBand`, `ContractExtraction`, `REQUIRED_FIELDS_BY_TYPE` policy table covering all 9 ContractType values shipped under `backend/classification/domain/` + `backend/classification/application/extraction_policy.py`. 3/4 ACs; AC4 `elements_detected` flag map pending.)*
+- ☐ [CS-116](../tickets/CS-116.md) - Unverifiable bookkeeping for missing fields.
 
 ## INFRA WORK
 
-- [CS-115](../tickets/CS-115.md) - Classification eval set.
+- ☐ [CS-115](../tickets/CS-115.md) - Classification eval set.
 
 Keep eval fixtures versioned and privacy-safe. Coordinate with CI conventions from Phase 0 before adding expensive model-backed checks.
 
 ## API / AI CONNECTIONS
 
-- [CS-110](../tickets/CS-110.md) - Classification prompt and few-shot anchors.
-- [CS-111](../tickets/CS-111.md) - Leasing reclassification detector.
-- [CS-113](../tickets/CS-113.md) - Economic field extraction prompt.
+- ◐ [CS-110](../tickets/CS-110.md) - Classification prompt and few-shot anchors. *(2026-05-16: `ContractType` enum (9 values from PRD §8.1), Spanish system prompt + `FEW_SHOT_ANCHORS` (one synthetic BR-07-safe anchor per type), `ContractClassifier.classify()` wired to `shared.llm.openrouter.OpenRouterClient` at `temperature=0.1`. 2/N ACs ticked; live eval blocked by CS-115; persistence by CS-114 confidence orchestration.)*
+- ☐ [CS-111](../tickets/CS-111.md) - Leasing reclassification detector.
+- ☐ [CS-113](../tickets/CS-113.md) - Economic field extraction prompt.
 
 ## Parallel Pick Guidance
 
