@@ -40,60 +40,76 @@ Dockerfile target plus an overridden `startCommand`.
 
 ## 3. Postgres with pgvector
 
-Railway's default Postgres image does **not** ship pgvector. Casa Segura's
-schema requires it (CS-026 `legal_chunk.embedding`, CS-030 HNSW index).
+Casa Segura's schema requires pgvector (CS-026 `legal_chunk.embedding`,
+CS-030 HNSW index). Choose ONE of the two paths below.
 
-> **CRITICAL ORDERING.** Change the Source Image **before** the first
-> deploy. Railway's current default Postgres is **version 18**, and the
-> volume gets initialized with PG 18's on-disk format + `postgresql.conf`.
-> Switching to a *lower* pgvector tag afterwards will fail with
-> `unrecognized configuration parameter "autovacuum_worker_slots"` (PG 18-
-> only knob) and the data directory cannot be downgraded — only a volume
-> wipe recovers.
+### 3.A (Recommended) External Postgres on Neon
 
-1. **+ New** → **Database** → **Add PostgreSQL**. Do NOT deploy yet.
-2. Immediately open the Postgres service → **Settings** → **Source Image**
-   → set to `pgvector/pgvector:pg18` (matches Railway's PG default).
-   - If you specifically need an older PG version, you must delete the
-     auto-created volume first (Settings → Volumes), THEN set the image to
-     `pgvector/pgvector:pg17` (or `pg16`), THEN deploy. Otherwise see the
-     recovery path in §3.1 below.
-3. Deploy. Verify in the **Data** tab:
+Railway's custom Postgres image ships with pre-release GUCs (e.g.
+`autovacuum_worker_slots`, a PG 19 dev parameter) that no stable pgvector
+image accepts. Image-swapping inside Railway is fragile and breaks on
+every PG version bump. **Neon decouples the DB from Railway entirely and
+ships pgvector enabled by default.**
+
+1. Create a project at https://neon.tech (free tier is plenty for dev /
+   staging). Pick the region nearest your Railway services.
+2. Copy the connection string from the Neon dashboard. Format:
+   `postgres://user:password@ep-xxx-xxx.region.neon.tech/dbname?sslmode=require`
+3. On each Casa Segura service in Railway (`web`, `worker`, `beat`) →
+   **Variables** → set `DATABASE_URL` to that string. **Plain text**, not
+   a reference variable (Neon isn't a Railway plugin).
+4. If you previously added a Railway Postgres service, delete it.
+5. Verify pgvector in Neon's SQL Editor:
    ```sql
    CREATE EXTENSION IF NOT EXISTS vector;
    CREATE EXTENSION IF NOT EXISTS pgcrypto;
    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-   SELECT extversion FROM pg_extension WHERE extname = 'vector';
    ```
-   All three extensions must succeed. Casa Segura migrations assume they
-   already exist (CS-021 status note: extensions are bootstrapped outside
-   migrations).
 
-If you cannot use that image (e.g. Railway enterprise restriction),
-provision Postgres on Neon or Supabase instead and point `DATABASE_URL`
-at it.
+### 3.B Railway-native Postgres (if Neon is not an option)
 
-### 3.1 Recovery: Postgres won't start after image change
+Try Railway's default image **first** — they may have started bundling
+pgvector since this guide was written.
+
+1. **+ New** → **Database** → **Add PostgreSQL** — do NOT touch the
+   image.
+2. After deploy goes green, open the **Data** tab and run
+   `CREATE EXTENSION IF NOT EXISTS vector;`.
+   - **Works** → you're done. Add the other two extensions
+     (`pgcrypto`, `uuid-ossp`) the same way.
+   - **Fails** with "extension not available" → continue to step 3.
+3. Delete the service entirely (not just the volume — the whole
+   service). This is the cleanest reset.
+4. Recreate **+ New** → **Database** → **Add PostgreSQL**. Immediately
+   open **Settings** → **Volumes** → delete the auto-created volume.
+5. **Settings** → **Source Image** → `pgvector/pgvector:pg17`. Deploy.
+6. Verify the three extensions as in 3.A step 5.
+
+> **Why pg17 and not pg18 / pg16?** pg17 is the most recent fully-GA
+> Postgres with a stable pgvector image and no risk of pre-release GUCs.
+> pg18 may work but Railway's bundled config can leak experimental knobs
+> that even pg18 binaries reject. pg16 is fine too if you have a reason
+> to pin it.
+
+### 3.C If Postgres is already in a crash loop
 
 Symptom in logs (repeats every restart):
 
 ```
 PostgreSQL Database directory appears to contain a database; Skipping initialization
-FATAL: configuration file "/var/lib/postgresql/data/pgdata/postgresql.conf" contains errors
+FATAL: configuration file ".../postgresql.conf" contains errors
 LOG: unrecognized configuration parameter "autovacuum_worker_slots"
 ```
 
-This means the volume was initialized by a newer PG (18) and you pointed
-it at an older PG binary that doesn't understand PG 18's config. The data
-format itself is also incompatible — no config fix recovers it.
+The data directory was initialized by a newer/forked PG that wrote GUCs
+your current image doesn't recognize. The data format may also be
+incompatible — config edits alone don't reliably recover it, and Railway
+makes editing files inside the volume operationally awkward.
 
-**Fix (destructive, no real data yet):**
-
-1. Postgres service → **Settings** → **Volumes** → delete the existing
-   volume.
-2. Verify the Source Image is what you actually want (`pgvector/pgvector:pg18`
-   is the safest match for Railway's current default).
-3. Redeploy. Railway creates a fresh volume; PG initializes from scratch.
+**Fix (destructive — only safe because no real data exists yet):** follow
+3.A (move to Neon) or 3.B step 3 onward (delete + recreate the Railway
+service). Do NOT try to edit `postgresql.conf` in place — even if the
+service comes up, you'll hit the same problem on the next image bump.
 
 ---
 
