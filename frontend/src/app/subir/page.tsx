@@ -14,7 +14,11 @@ export default function SubirContratoPage() {
         >
           Volver al inicio
         </Link>
-        <main className="flex flex-1 flex-col rounded-[var(--radius-card)] border border-border bg-surface p-6 shadow-sm">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex flex-1 flex-col rounded-[var(--radius-card)] border border-border bg-surface p-6 shadow-sm outline-none"
+        >
           <ContractUploadFlow />
         </main>
         <footer className="mt-auto border-t border-border pt-6 pb-2">

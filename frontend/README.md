@@ -16,7 +16,7 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start editing the landing route by modifying [`src/app/page.tsx`](src/app/page.tsx). Public legal copy lives at [`src/app/privacy/page.tsx`](src/app/privacy/page.tsx). The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to load **Inter** (design token `font-body` from `docs/Design/casa-segura.pen`).
 
@@ -28,7 +28,9 @@ Manual or automated checks should cover boundary cases from the ticket:
 |-------|-----------|----------|
 | Viewport width | **360px** | No horizontal scroll; headline, CTA, footer disclaimer visible; primary CTA height **≥44px** |
 | Viewport width | **768px+** | Stays single-column until a future breakpoint ticket adds a desktop grid |
-| CTA target | `/subir` | Placeholder upload route (CS-291 replaces content) |
+| CTA target | `/subir` | Upload + analysis route |
+| Public `/privacy` | 200, Spanish copy | Privacy policy for crawlers (e.g. Meta) + footer link from `/` |
+| Skip link | Tab from top of document | Reaches `#main-content` on each route’s `<main>` |
 | Copy | Spanish **tú** | No mixed-language UI; no implication that billboard/project verification is required before upload |
 | Contrast | Body vs background | WCAG **AA** spot-check (e.g. Lighthouse or axe) on primary text |
 

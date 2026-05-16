@@ -22,7 +22,8 @@ export default function EnlaceExpiradoPage() {
         </Link>
         <main
           id="main-content"
-          className="flex min-w-0 flex-1 flex-col gap-4 rounded-[var(--radius-card)] border border-border bg-surface p-6 shadow-sm"
+          tabIndex={-1}
+          className="flex min-w-0 flex-1 flex-col gap-4 rounded-[var(--radius-card)] border border-border bg-surface p-6 shadow-sm outline-none"
         >
           <h1 className="break-words text-xl font-semibold text-text-primary">{EXPIRED_ANALYSIS_UNAVAILABLE}</h1>
           <p className="break-words text-base leading-relaxed text-text-secondary">

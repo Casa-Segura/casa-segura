@@ -78,26 +78,32 @@ export default async function PublicReportPage({ params, searchParams }: PagePro
           Volver al inicio
         </Link>
 
-        <header className="shrink-0 print:shrink">
-          <h1 className="text-xl font-semibold text-text-primary">Tu informe</h1>
-          <p className="mt-2 break-words font-mono text-sm text-text-secondary">
-            ID corto: {publicShortId}
-          </p>
-          {expiresLabel ? (
-            <p className="mt-2 text-sm text-text-secondary">
-              Enlace vence aproximadamente el {expiresLabel} (hora local).
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex min-w-0 flex-1 flex-col gap-5 outline-none print:gap-4"
+        >
+          <header className="shrink-0 print:shrink">
+            <h1 className="text-xl font-semibold text-text-primary">Tu informe</h1>
+            <p className="mt-2 break-words font-mono text-sm text-text-secondary">
+              ID corto: {publicShortId}
             </p>
-          ) : null}
-          {anonymized ? (
-            <p className="mt-2 rounded-[var(--radius-input)] border border-border bg-verdict-yellow-bg px-3 py-2 text-sm text-text-primary">
-              Estás viendo la versión anonimizada del informe (puede omitir datos sensibles a propósito).
-            </p>
-          ) : null}
-        </header>
+            {expiresLabel ? (
+              <p className="mt-2 text-sm text-text-secondary">
+                Enlace vence aproximadamente el {expiresLabel} (hora local).
+              </p>
+            ) : null}
+            {anonymized ? (
+              <p className="mt-2 rounded-[var(--radius-input)] border border-border bg-verdict-yellow-bg px-3 py-2 text-sm text-text-primary">
+                Estás viendo la versión anonimizada del informe (puede omitir datos sensibles a propósito).
+              </p>
+            ) : null}
+          </header>
 
-        <div className="min-w-0 flex-1 overflow-x-auto print:overflow-visible print:max-w-none">
-          <ReportPublicFrame src={url} title={`Informe de análisis ${publicShortId}`} />
-        </div>
+          <div className="min-w-0 flex-1 overflow-x-auto print:overflow-visible print:max-w-none">
+            <ReportPublicFrame src={url} title={`Informe de análisis ${publicShortId}`} />
+          </div>
+        </main>
 
         <footer className="mt-auto shrink-0 border-t border-border pt-6 print:pt-4">
           <DisclaimerFooter />

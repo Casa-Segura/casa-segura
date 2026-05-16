@@ -1,0 +1,14 @@
+---
+description: Marketing/legal surfaces — design tokens, disclaimers, Meta-facing URLs
+globs: frontend/src/app/page.tsx,frontend/src/app/privacy/**/*.tsx,frontend/src/app/layout.tsx
+alwaysApply: false
+---
+
+# Frontend public pages (`/` and `/privacy`)
+
+- **Tokens:** Use semantic Tailwind tokens from `globals.css` (`bg-bg`, `text-text-primary`, `border-border`, `bg-accent`, `--radius-card`, `--spacing-section`). Do not introduce ad-hoc hex in these routes unless extending `@theme` for the whole app.
+- **Disclaimer (BR-07):** User-visible legal copy must include the exact phrase **«Esto no es asesoría legal»** (Unicode í). Reuse `DisclaimerFooter` / `@/legal/disclaimer` constants — do not duplicate the literal elsewhere.
+- **Spanish register:** Informal **tú** / voseo salvadoreño coherente con el resto del frontend (ver CS-290).
+- **Product truth:** Contract analysis ships at **`/subir`**. Do not imply billboard/project verification is required before upload; future roadmap capabilities belong in muted/educational copy, not primary gates or dead links.
+- **Meta / crawlers:** Keep **`/`** and **`/privacy`** as real Server Component pages (200 HTML). Surface **contact** via footer links (repo + privacy policy).
+- **Accessibility:** Root layout provides a skip link to **`#main-content`**. Top-level pages must expose exactly one **`main`** with `id="main-content"` (and `tabIndex={-1}` where focus targets skip navigation).
