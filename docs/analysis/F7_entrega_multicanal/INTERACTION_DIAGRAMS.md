@@ -14,7 +14,7 @@ graph TD
     Svc[DeliveryService]
     R[F6 ReportService]
     SMTP[SmtpClient]
-    Zavu[ZavuClient]
+    Sms[SmsClient]
     KMS[KmsClient]
     Redis[(Redis target blob)]
     PG[(Postgres)]
@@ -23,7 +23,7 @@ graph TD
 
     F4Chain --> Task --> Svc --> R
     Svc --> SMTP
-    Svc --> Zavu
+    Svc --> Sms
     Svc --> KMS
     Svc --> Redis
     Svc --> PG
@@ -88,14 +88,14 @@ sequenceDiagram
 
 ---
 
-## Flow: US-03 WhatsApp delivery
+## Flow: US-03 SMS delivery
 
 ```mermaid
 sequenceDiagram
     participant Svc as DeliveryService
     participant Redis as Redis
     participant KMS as KmsClient
-    participant Zavu as ZavuClient
+    participant Sms as SmsClient
     participant DR as DeliveryRequestRepository
     participant AR as ContractAnalysisRepository
 
@@ -103,12 +103,12 @@ sequenceDiagram
     Redis-->>Svc: phone +503XXX
     Svc->>KMS: encrypt(phone)
     KMS-->>Svc: ciphertext
-    Svc->>DR: create(status=queued, channel=whatsapp_summary, ciphertext, target_hash)
+    Svc->>DR: create(status=queued, channel=sms_summary, ciphertext, target_hash)
     Svc->>DR: update(status=sending)
-    Svc->>Zavu: send_template(to=phone, template="casa_segura_report_delivery", params=[score, band_label, finding1, finding2, finding3, link_url, expiry])
-    Zavu-->>Svc: ProviderResult
+    Svc->>Sms: send_sms(to=phone, body=summary + link)
+    Sms-->>Svc: ProviderResult
     Svc->>DR: update(status=delivered, target_value_encrypted=NULL)
-    Svc->>AR: update(delivery_status="sent_whatsapp")
+    Svc->>AR: update(delivery_status="sent_sms")
 ```
 
 ---
@@ -230,11 +230,11 @@ sequenceDiagram
 classDiagram
     class DeliveryService
     class EmailSender
-    class WhatsappSender
+    class SmsSender
     class WebLinkServer
     class KmsClient
     class SmtpClient
-    class ZavuClient
+    class SmsClient
     class DeliveryRequestRepository
     class ContractAnalysisRepository
     class DeliverTask
@@ -245,12 +245,12 @@ classDiagram
     class InternalRetryView
 
     DeliveryService *-- EmailSender
-    DeliveryService *-- WhatsappSender
+    DeliveryService *-- SmsSender
     DeliveryService *-- KmsClient
     DeliveryService o-- DeliveryRequestRepository
     DeliveryService o-- ContractAnalysisRepository
     EmailSender o-- SmtpClient
-    WhatsappSender o-- ZavuClient
+    SmsSender o-- SmsClient
     DeliverTask ..> DeliveryService
     RetryDeliveryTask ..> DeliveryService
     PublicLinkView ..> DeliveryService

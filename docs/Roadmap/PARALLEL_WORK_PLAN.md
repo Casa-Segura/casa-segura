@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: parallel_work_plan
 status: living
-last_updated: 2026-05-15
+last_updated: 2026-05-16
 tags:
   - casa-segura
   - roadmap
@@ -20,6 +20,7 @@ Use this plan to decide who owns which folder, which tickets are safe to start, 
 - **`CS-270`** — retention scheduler ADR ([`CS-270.md`](tickets/CS-270.md)) — `ready`.
 - **`CS-298`** — Vercel frontend deploy ([`CS-298.md`](tickets/CS-298.md)) — `ready`; connect repo → set `CASASEGURA_API_BASE_URL` on Preview + Production ([`frontend/README.md`](../../frontend/README.md)); README runbook landed.
 - **`CS-299`** — physical Android QA at 360px ([`CS-299.md`](tickets/CS-299.md)) — `ready` **after** a preview/production URL exists; checklist [`frontend/docs/CS-299-mobile-qa-checklist.md`](../../frontend/docs/CS-299-mobile-qa-checklist.md).
+- **EPIC-12 (FE)** — Optional project verification shells: [`CS-356`](tickets/CS-356.md) / [`CS-351`](tickets/CS-351.md) / [`CS-355`](tickets/CS-355.md) are **`in_progress`**; enable locally with `PROJECT_VERIFICATION_ENABLED=true` ([`frontend/README.md`](../../frontend/README.md)).
 
 **`CS-001`** (repo posture and README skeleton) is **`in_progress`**, not `ready`. Completing **`CS-001`** unblocks both scaffolds. Backend/FE foundation work flows through **`CS-002`** and **`CS-003`**.
 
@@ -82,6 +83,7 @@ Next picks after `CS-003`:
 - `CS-297` - Single-source disclaimer module — **done** (`frontend/src/legal`).
 - **`CS-298`** - Vercel deploy (`frontend/README.md`, headers/`robots`, env gate) — **ready** for operator verification (ticket AC¹–²).
 - **`CS-299`** - Physical Android QA (360px / 4G) — **ready**; checklist `frontend/docs/CS-299-mobile-qa-checklist.md` (**after** Preview/Prod URL).
+- **EPIC-12 (optional)** - Project verification shells — **`CS-356` / `CS-351` / `CS-355`** are **`in_progress`** (`frontend/src/app/verificacion-proyecto/`; `PROJECT_VERIFICATION_ENABLED` — `frontend/README.md`). Backend OCR/verdict tickets still open.
 
 Constraints:
 
@@ -134,7 +136,7 @@ Primary folders and contracts:
 
 - `backend/` service boundaries that call OCR, RAG, delivery, or external providers
 - prompt, retrieval, eval, and integration fixtures
-- webhook, Zavu, SMTP, model, and vector-search contracts
+- webhook, SMS, SMTP, model, and vector-search contracts
 
 Start this lane when its backing BE or Infra foundation exists. Early API / AI work is concentrated in Phase 1 input pipelines, Phase 2 extraction, Phase 4 synthesis/citation wiring, Phase 5 delivery integrations, and optional project verification.
 
@@ -239,8 +241,8 @@ Recommended split:
 
 - `BE WORK`: Jinja shell, report sections, PDF rendering, delivery schemas, dispatcher, email, public link route, resend, and regeneration.
 - `FE WORK`: result page, upload/delivery surface, mobile report behavior, and expired-link UX.
-- `INFRA WORK`: queue, retry policy, dead-letter handling, and Zavu secrets.
-- `API / AI CONNECTIONS`: Zavu, SMTP normalization, webhook contracts, and external delivery behavior.
+- `INFRA WORK`: queue, retry policy, dead-letter handling, and SMS secrets.
+- `API / AI CONNECTIONS`: SMS, SMTP normalization, webhook contracts, and external delivery behavior.
 
 ### Phase 6 - Privacy Closure
 
@@ -324,7 +326,7 @@ The roadmap standardizes on a **Django 5.2 LTS** + **DRF** Python backend ([ADR-
 - sentence-transformers MiniLM embeddings and pgvector retrieval in `CS-083` through `CS-085`.
 - Jinja and WeasyPrint for report generation in `CS-200` through `CS-210`.
 - **Celery** workers on **Redis** for delivery and async tasks (`CS-233` and dependents).
-- Zavu outbound WhatsApp integration in `CS-238` through `CS-244`.
+- SMS outbound integration in `CS-238` through `CS-244`.
 
-When starting BE work, search for Python, Django, DRF, **Pydantic v2**, Django ORM, Postgres/pgvector, **Redis**/Celery, OCR, RAG, and Zavu skills before implementation.
+When starting BE work, search for Python, Django, DRF, **Pydantic v2**, Django ORM, Postgres/pgvector, **Redis**/Celery, OCR, RAG, and SMS provider skills before implementation.
 

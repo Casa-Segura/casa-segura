@@ -24,7 +24,7 @@ delivery/
 │   └── services/
 │       ├── delivery_service.py
 │       ├── email_sender.py
-│       ├── whatsapp_sender.py
+│       ├── sms_sender.py
 │       └── backoff_calculator.py
 └── infrastructure/
     ├── django/
@@ -46,7 +46,7 @@ delivery/
     ├── smtp/
     │   └── smtp_client.py
     └── external/
-        └── (zavu_client.py is reused from F1)
+        └── sms_client.py
 ```
 
 ---
@@ -142,7 +142,7 @@ from django.db import models
 
 class DeliveryChannel(models.TextChoices):
     EMAIL_PDF = "email_pdf"
-    WHATSAPP_SUMMARY = "whatsapp_summary"
+    SMS_SUMMARY = "sms_summary"
     WEB_LINK = "web_link"
 
 
@@ -270,16 +270,16 @@ class EmailSender:
 - [ ] PDF generation fails → fallback HTML or fail clean
 - [ ] Provider quota exceeded → permanent
 
-## Story: US-03 WhatsApp send
+## Story: US-03 SMS send
 
-`WhatsappSender.send(dr, cleartext_phone, ctx)` calls `ZavuClient.send_template(to, template_name, params, idempotency_key)`.
+`SmsSender.send(dr, cleartext_phone, ctx)` calls `SmsClient.send_sms(to, body, idempotency_key)`.
 
 ### Tests
 
-- [ ] Phone valid + WhatsApp → 200 OK → delivered
-- [ ] Number not on WhatsApp → permanent
+- [ ] Phone valid + SMS provider → 200 OK → delivered
+- [ ] Invalid/unreachable number → permanent
 - [ ] Template name unknown → permanent + ops alert
-- [ ] Zavu transient → retry
+- [ ] SMS provider transient → retry
 
 ## Story: US-04 Public link
 
@@ -385,8 +385,8 @@ Prometheus alert rule:
 - alert: F7DeliveryFailureRateHighEmail
   expr: rate(f7_delivery_outcome_total{channel="email_pdf",outcome="failed"}[1h]) > 0.05
   for: 5m
-- alert: F7DeliveryFailureRateHighWhatsapp
-  expr: rate(f7_delivery_outcome_total{channel="whatsapp_summary",outcome="failed"}[1h]) > 0.10
+- alert: F7DeliveryFailureRateHighSms
+  expr: rate(f7_delivery_outcome_total{channel="sms_summary",outcome="failed"}[1h]) > 0.10
   for: 5m
 ```
 
@@ -401,7 +401,7 @@ Prometheus alert rule:
 | 1 | Domain entities/enums/exceptions/protocols | Pydantic + TextChoices |
 | 2 | Commands/queries | CQRS |
 | 3 | Handlers | Plain functions |
-| 4 | Service classes | DeliveryService, EmailSender, WhatsappSender |
+| 4 | Service classes | DeliveryService, SmsSender, EmailSender |
 | 5 | KMS clients | AWS, GCP, Local libsodium |
 | 6 | Django model + migration + audit view | DeliveryRequestModel |
 | 7 | Repository | DeliveryRequestRepository + ContractAnalysisRepository augment |
@@ -451,7 +451,7 @@ class DeliveryRequestModel(models.Model):
         ]
         constraints = [
             models.CheckConstraint(
-                check=models.Q(channel__in=["email_pdf","whatsapp_summary","web_link"]),
+                check=models.Q(channel__in=["sms_summary","email_pdf","web_link"]),
                 name="dr_channel_valid",
             ),
         ]
@@ -495,7 +495,7 @@ operations = [
 | `f7_link_views_total` | Counter | — | Public link traffic |
 | `f7_link_expired_marked_total` | Counter | — | Expiration job throughput |
 | `f7_target_cleared_total` | Counter | `reason` | KMS hygiene |
-| `f7_circuit_breaker_state` | Gauge | `target` (`smtp`, `zavu`) | Resilience |
+| `f7_circuit_breaker_state` | Gauge | `target` (`smtp`, `sms`) | Resilience |
 
 ---
 
@@ -511,8 +511,8 @@ operations = [
 | `KMS_UNAVAILABLE` | — | Internal; surfaced as 500 |
 | `SMTP_TRANSIENT_FAILURE` | — | Internal; triggers retry |
 | `SMTP_PERMANENT_FAILURE` | — | Internal; mark failed |
-| `ZAVU_TRANSIENT_FAILURE` | — | Internal; triggers retry |
-| `ZAVU_NUMBER_NOT_WHATSAPP` | — | Permanent |
+| `SMS_TRANSIENT_FAILURE` | — | Internal; triggers retry |
+| `SMS_INVALID_PHONE_NUMBER` | — | Permanent |
 | `EXTRACTION_TARGET_GONE` | — | Cleartext target missing from Redis (rare) |
 
 ---
@@ -533,10 +533,10 @@ operations = [
 | `SMTP_FROM_NAME` | `Casa Segura` | — |
 | `SMTP_REPLY_TO` | `reportes@casasegura.sv` | — |
 | `SMTP_TIMEOUT_SECONDS` | 30 | — |
-| `ZAVU_API_BASE_URL` | `https://api.zavu.com/v1` | (shared with F1) |
-| `ZAVU_API_KEY` | — | — |
-| `ZAVU_PHONE_NUMBER_ID` | — | — |
-| `ZAVU_TEMPLATE_NAME_REPORT_DELIVERY` | `casa_segura_report_delivery` | — |
+| `SMS_PROVIDER` | `local` | Provider adapter id |
+| `SMS_API_BASE_URL` | — | Provider base URL when required |
+| `SMS_API_KEY` | — | Provider credential |
+| `SMS_FROM` | — | Registered sender or phone number |
 | `DELIVERY_MAX_RESENDS` | 3 | — |
 | `DELIVERY_BACKOFF_BASE_SECONDS` | 30 | — |
 | `DELIVERY_BACKOFF_JITTER_PCT` | 0.20 | — |

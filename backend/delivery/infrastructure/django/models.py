@@ -1,4 +1,4 @@
-"""Delivery: transient delivery requests (email/WhatsApp/web link).
+"""Delivery: transient delivery requests (SMS/email/web link).
 
 DOMAIN_MODEL §4.3. Auto-purges after `expires_at` (7d) via the
 `platform.cleanup_delivery_targets` (target value only, +5m) and the

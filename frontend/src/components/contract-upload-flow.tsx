@@ -410,8 +410,8 @@ export function ContractUploadFlow() {
             .
           </p>
           <p className="mt-2 text-sm text-text-secondary">
-            Canal elegido: {result.hint}. Si no ves nada, revisá filtros del
-            correo o conversaciones en WhatsApp según cómo lo configuraste.
+            Canal elegido: {result.hint}. Si no ves nada, revisá el SMS, filtros
+            del correo o abrí el enlace web según cómo lo configuraste.
           </p>
         </aside>
       ) : null}

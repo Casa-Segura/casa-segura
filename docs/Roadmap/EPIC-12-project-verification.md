@@ -2,7 +2,7 @@
 id: EPIC-12
 name: Project Verification (Billboard OCR + Form Fallback)
 phase: cross
-status: backlog
+status: in_progress
 depends_on:
   - EPIC-00
   - EPIC-01
@@ -18,12 +18,11 @@ tags:
   - casa-segura
   - epic
   - epic-12
-  - stub
 ---
 
-# EPIC-12 — Project Verification (Billboard OCR + Form Fallback)
+> **In progress.** [[CS-356]] / [[CS-351]] / [[CS-355]] have **partial** frontend shells under `frontend/src/app/verificacion-proyecto/` (feature-flagged; stubs until OCR/verdict backend lands). Remaining tickets carry OCR, validation, reputation, and synthesis scope.
 
-> **Stub.** Epic-level only. Tickets fleshed out in second pass.
+Notes (2026-05-16): Route hub + manual form shell + demo result page are mergeable without backend; photograph entry and real verdict DTO remain open.
 
 ## Goal
 
@@ -61,7 +60,7 @@ The formal PRDs ([[PRD_GENERAL]], [[FEATURES_MAP]]) do not include billboard/pro
 - Persistent storage of billboard images
 - Reputation API integration if no provider configured
 
-## Tickets (titles only — stubs)
+## Tickets
 
 - [[CS-350]] — Billboard OCR with vision LLM
 - [[CS-351]] — Form fallback UI/route

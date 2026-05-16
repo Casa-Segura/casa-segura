@@ -12,7 +12,7 @@ tags:
 
 # Phase 5 - User Output
 
-Goal: render analysis results into reusable HTML/PDF reports and deliver them through email, WhatsApp/Zavu, or public web links.
+Goal: render analysis results into reusable HTML/PDF reports and deliver them through SMS, email, or public web links.
 
 Source epics:
 
@@ -64,18 +64,18 @@ Coordinate visible report and delivery UI with [CS-291](../tickets/CS-291.md) th
 
 - [CS-233](../tickets/CS-233.md) - Worker/queue scaffolding ADR and implementation.
 - [CS-234](../tickets/CS-234.md) - Retry/backoff and dead-letter handling.
-- [CS-244](../tickets/CS-244.md) - Zavu secrets wiring.
+- [CS-244](../tickets/CS-244.md) - SMS secrets wiring.
 
 Delivery targets, report content, logs, and webhook payloads are privacy-sensitive. Keep queue, retry, dead-letter, and secrets behavior reviewable.
 
 ## API / AI CONNECTIONS
 
-- [CS-238](../tickets/CS-238.md) - Zavu HTTP client.
-- [CS-239](../tickets/CS-239.md) - Zavu template registry.
-- [CS-240](../tickets/CS-240.md) - WhatsApp summary composer.
-- [CS-241](../tickets/CS-241.md) - WhatsApp/Zavu dispatch handler.
-- [CS-242](../tickets/CS-242.md) - Zavu webhook endpoint.
-- [CS-243](../tickets/CS-243.md) - Zavu/SMTP error normalization.
+- [CS-238](../tickets/CS-238.md) - SMS provider client.
+- [CS-239](../tickets/CS-239.md) - SMS message registry.
+- [CS-240](../tickets/CS-240.md) - SMS summary composer.
+- [CS-241](../tickets/CS-241.md) - SMS dispatch handler.
+- [CS-242](../tickets/CS-242.md) - SMS provider callback endpoint.
+- [CS-243](../tickets/CS-243.md) - SMS/SMTP error normalization.
 
 This lane owns external delivery contracts and webhook surfaces. BE still owns persistence and service boundaries around those integrations.
 
@@ -84,5 +84,5 @@ This lane owns external delivery contracts and webhook surfaces. BE still owns p
 - BE owns report rendering, PDF generation, delivery schemas, dispatching, public links, and resend/regeneration paths.
 - FE owns user-visible report behavior and delivery surfaces through the cross-cutting frontend tickets.
 - Infra owns queues, retries, secrets, and operational safety for delivery.
-- API / AI owns Zavu, SMTP normalization, webhooks, and externally visible delivery contracts.
+- API / AI owns SMS, SMTP normalization, webhooks, and externally visible delivery contracts.
 

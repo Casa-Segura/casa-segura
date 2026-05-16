@@ -1,7 +1,7 @@
 """Stable error envelope for the ingestion pipeline (CS-056).
 
 Each failure carries an `error_code` that survives across versions so
-clients (frontend, WhatsApp bot, retry queues) can branch on it without
+clients (frontend, retry queues, provider callbacks) can branch on it without
 parsing free-form messages. The codes are also persisted on
 `ContractSubmission.error_code` / `OcrJob.error_code`.
 """

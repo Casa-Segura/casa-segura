@@ -17,7 +17,7 @@ The system decomposes into eight programmable features. Each will have its own d
 | **F4** | Rubric Engine & Score Calculation | Apply the 38 criteria to the classified contract, generate findings, compute category scores, detect overrides, compute final score |
 | **F5** | Economic Analysis & Benchmarks | Compute derived economic figures, compare against configurable benchmarks, generate `EconomicSummary` |
 | **F6** | Report Generation | Compose the HTML report with all pieces, render to PDF, manage versioning |
-| **F7** | Multi-Channel Delivery & Link Management | Send via email, WhatsApp through Zavu, or serve via web link with TTL; manage redeliveries |
+| **F7** | Multi-Channel Delivery & Link Management | Send via SMS, email, or serve via web link with TTL; manage redeliveries |
 | **F8** | Persistence, Project Entity & Retention | Complete database schema, Project-matching logic, anonymization and cleanup jobs |
 
 ---
@@ -97,7 +97,7 @@ The system decomposes into eight programmable features. Each will have its own d
 
 ### Phase 5 — User output
 - **F6:** HTML + PDF report generation. Depends on F4 and F5.
-- **F7:** multi-channel delivery (email first, then WhatsApp, then web link). Depends on F6.
+- **F7:** multi-channel delivery (SMS, email, then web link). Depends on F6.
 
 ### Phase 6 — Privacy closure
 - **F8 complete:** 90-day anonymization jobs, cleanup of transients, link expiration.
@@ -226,7 +226,7 @@ Qualitative estimate for prioritization, not a schedule commitment.
 | F4 | High | 38 criteria, each with its own prompt and scale |
 | F5 | Medium | Economic computations are deterministic; the challenge is field-extraction robustness |
 | F6 | Low-medium | HTML + WeasyPrint are straightforward; the challenge is the report's visual design |
-| F7 | Medium | Zavu and SMTP integration; error handling and retries |
+| F7 | Medium | SMS provider and SMTP integration; error handling and retries |
 | F8 | Medium | Schema + cron jobs are straightforward; the challenge is transactionality and consistency |
 
 ---

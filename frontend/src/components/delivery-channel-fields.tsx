@@ -5,14 +5,14 @@ import type {
 } from "@/domain/delivery-channel";
 
 const LABEL_BY_CHANNEL: Record<DeliveryChannel, string> = {
+  sms_summary: "Te mandaré un SMS breve con el resultado y el enlace.",
   email_pdf: "Te enviaré por email un PDF descargable con el resultado.",
-  whatsapp_summary: "Te mandaré un resumen corto por WhatsApp.",
   web_link: "Te daré un enlace web para revisar aquí mismo (caduca en tiempo).",
 };
 
 const SUBLABEL_BY_CHANNEL: Record<DeliveryChannel, string> = {
+  sms_summary: "Usamos tu número sólo para este envío.",
   email_pdf: "Necesitamos tu dirección para el envío.",
-  whatsapp_summary: "Usamos tu número sólo para este envío.",
   web_link: "No hace falta correo ni teléfono en este momento.",
 };
 
@@ -37,7 +37,7 @@ export function DeliveryChannelFields(props: Props) {
       ...value,
       channel: c,
       ...(c !== "email_pdf" ? { email: "" } : {}),
-      ...(c !== "whatsapp_summary" ? { whatsappPhone: "" } : {}),
+      ...(c !== "sms_summary" ? { phone: "" } : {}),
     });
   }
 
@@ -52,8 +52,8 @@ export function DeliveryChannelFields(props: Props) {
           ¿Cómo te envío el resultado?
         </h2>
         <p className="mt-1 text-sm leading-relaxed text-text-secondary">
-          Elegí uno. Para email o WhatsApp usaremos el dato sólo para entregarte
-          el informe.
+          Elegí uno. Para SMS o email usaremos el dato sólo para entregarte el
+          informe.
         </p>
       </div>
       <div
@@ -89,10 +89,10 @@ export function DeliveryChannelFields(props: Props) {
                 />
                 <span className="min-w-0 flex-1 text-base leading-snug text-text-primary">
                   <span className="font-medium">
-                    {ch === "email_pdf"
-                      ? "Correo (PDF)"
-                      : ch === "whatsapp_summary"
-                        ? "WhatsApp (resumen)"
+                    {ch === "sms_summary"
+                      ? "SMS (resumen)"
+                      : ch === "email_pdf"
+                        ? "Correo (PDF)"
                         : "Sólo enlace web"}
                   </span>
                   <span className="mt-1 block text-sm font-normal text-text-secondary">
@@ -156,27 +156,27 @@ export function DeliveryChannelFields(props: Props) {
         </div>
       ) : null}
 
-      {value.channel === "whatsapp_summary" ? (
+      {value.channel === "sms_summary" ? (
         <div className="flex flex-col gap-2">
           <label
-            htmlFor={`${idPrefix}-wa`}
+            htmlFor={`${idPrefix}-phone`}
             className="text-sm font-medium text-text-primary"
           >
-            Tu WhatsApp (E.164)
+            Tu teléfono (E.164)
           </label>
           <input
-            id={`${idPrefix}-wa`}
+            id={`${idPrefix}-phone`}
             type="tel"
-            name="delivery_whatsapp"
+            name="delivery_phone"
             inputMode="tel"
             autoComplete="tel"
-            value={value.whatsappPhone}
+            value={value.phone}
             aria-invalid={fieldErrors.phone ? true : undefined}
             aria-describedby={
-              fieldErrors.phone ? `${idPrefix}-wa-err` : undefined
+              fieldErrors.phone ? `${idPrefix}-phone-err` : undefined
             }
             onChange={(e) =>
-              onChange({ ...value, whatsappPhone: e.target.value })
+              onChange({ ...value, phone: e.target.value })
             }
             onBlur={() => props.onBlurField?.("phone")}
             className={`min-h-[44px] rounded-[var(--radius-input)] border border-border px-4 py-2 text-base font-mono text-text-primary outline-none placeholder:text-text-secondary ${focusRing}`}
@@ -185,14 +185,14 @@ export function DeliveryChannelFields(props: Props) {
           {fieldErrors.phone ? (
             <p
               role="alert"
-              id={`${idPrefix}-wa-err`}
+              id={`${idPrefix}-phone-err`}
               className="text-sm text-verdict-red"
             >
               {fieldErrors.phone}
             </p>
           ) : (
             <p className="text-xs text-text-secondary">
-              Incluye el prefijo país con + — por ejemplo número de El Salvador.
+              Incluye el prefijo país con +. Ejemplo: +503XXXXXXXX.
             </p>
           )}
         </div>
@@ -205,5 +205,5 @@ export function summarizeDelivery(
   parts: Exclude<DeliverySubmitParts, { invalid: true }>,
 ): string {
   if ("delivery_target_omitted" in parts) return "Enlace web";
-  return parts.delivery_channel === "email_pdf" ? "PDF al correo" : "WhatsApp";
+  return parts.delivery_channel === "sms_summary" ? "SMS" : "PDF al correo";
 }

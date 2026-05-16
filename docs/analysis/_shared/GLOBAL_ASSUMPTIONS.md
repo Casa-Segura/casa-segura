@@ -20,10 +20,10 @@ The backend stack for Casa Segura is **Django 5.2 LTS + Django REST Framework + 
 | Persistence | Django ORM on Postgres 15+ | Native to Django; supports JSONB and ArrayField via `django.contrib.postgres`; works with `pgvector` via `pgvector-python` + `pgvector.django` |
 | Vector search | `pgvector` extension + `pgvector.django.VectorField` | Required by F3; mature integration |
 | Async tasks | Celery 5.4+ (Redis broker) + `django-celery-beat` for scheduled tasks | Mandated by skill `@shared_task` pattern |
-| Sessions / queues | Redis 7+ | Streams for F1→F2→F4 pipeline; key-expiry notifications for WhatsApp sessions; rate limiting |
+| Sessions / queues | Redis 7+ | Streams for F1→F2→F4 pipeline, Celery broker, rate limiting |
 | Migrations | Django migrations (no Alembic) | Native; per-module `migrations/` directories |
 | Test framework | `pytest-django` + `pytest-asyncio` | DB savepoint fixtures, factory-boy |
-| HTTP client (outgoing) | `httpx` (sync + async) | OpenRouter, Zavu, SMTP-providers via HTTP transactional APIs |
+| HTTP client (outgoing) | `httpx` (sync + async) | OpenRouter, SMS providers, SMTP-providers via HTTP transactional APIs |
 | LLM | OpenRouter (HTTP); abstracted in adapters | Idempotency keys per call |
 | OCR | `pypdf`, `pdf2image`+`poppler-utils`, `pytesseract`+`tesseract-ocr-spa`, `pillow-heif`+`libheif` | Per F1 PRD |
 | Reporting | `Jinja2`+`WeasyPrint` | Per F6 PRD (DRF templating is not the right tool for PDF; we keep DRF for JSON only) |
@@ -74,7 +74,7 @@ Per the skill's `architecture-conventions.md` exactly:
     │   └── {module}_tasks.py    # @shared_task functions
     ├── llm/                     # OpenRouter clients (when needed)
     │   └── openrouter_client.py
-    ├── external/                # External adapters: Zavu, SMTP, KMS
+    ├── external/                # External adapters: SMS, SMTP, KMS
     │   └── ...
     ├── redis/                   # Redis Streams publishers/consumers, session stores
     │   └── ...
@@ -99,7 +99,7 @@ casa_segura/                # repository root (Django project)
 ├── rubric/                   # F4: criteria evaluation, scoring
 ├── economics/                # F5: derivations, benchmarks
 ├── reports/                  # F6: HTML+PDF generation
-├── delivery/                 # F7: email, WhatsApp, web link
+├── delivery/                 # F7: SMS, email, web link
 └── shared/                   # Common: repositories ABC, exceptions, pagination, settings, KMS, circuit breaker
 ```
 
@@ -130,7 +130,7 @@ Casa Segura **has no user accounts** (`PRD_GENERAL` §2 lists this out of scope)
 |---|---|
 | `AllowAny` | Reuse DRF's built-in for public endpoints (`/v1/contracts/submit`, `/r/{short_id}`, status polling) |
 | `HasInternalAuthHeader` | Requires header `X-Internal-Auth` matching the env-configured shared secret; used for `/v1/internal/...` debug endpoints |
-| `ValidatesZavuSignature` | Custom permission that verifies the `X-Zavu-Signature` HMAC before the view body runs; used on the webhook |
+| `ValidatesProviderSignature` | Custom permission that verifies provider callback HMAC before the view body runs; used on callback/webhook endpoints |
 | `IsCapabilityHolder` | Used on resend endpoints: receives the `public_short_id` from the URL and the destination from the body; validates `salt+sha256(destination) == delivery_target_hash` |
 
 `combine_with_|` is not used because there is no role overlap to compose. Every endpoint explicitly states its single permission class.
@@ -158,7 +158,7 @@ These ship in the `shared/` module; every feature module imports from them and d
 | `infrastructure/django/serializers.py` | unchanged |
 | `infrastructure/django/urls.py` | unchanged |
 | `infrastructure/celery/{module}_tasks.py` | unchanged |
-| `IsExpertelStaff | IsClientAdministrator | IsViewer` | Replaced by `AllowAny`, `HasInternalAuthHeader`, `ValidatesZavuSignature`, `IsCapabilityHolder` (above) |
+| `IsExpertelStaff | IsClientAdministrator | IsViewer` | Replaced by `AllowAny`, `HasInternalAuthHeader`, `ValidatesProviderSignature`, `IsCapabilityHolder` (above) |
 | `drf-spectacular @extend_schema` | unchanged |
 | Existing Casa Segura model base classes | New `shared/infrastructure/django/mixins.py` adds `SoftDeleteObject` (re-export from `softdelete`) and `ModelWithTimeStamps` (provides `created_at` auto_now_add, `updated_at` auto_now) — matching the skill's expected base |
 
@@ -182,8 +182,8 @@ These ship in the `shared/` module; every feature module imports from them and d
 
 Two PRDs publish overlapping but **incompatible** enumerations for `contract_analysis.delivery_status`:
 
-- **PRD_F8 §5.1** (canonical): `'pending', 'queued', 'sent_email', 'sent_whatsapp', 'available_link', 'expired', 'failed'`
-- **`RUBRICA_CONTRATO.md` §12.2**: `'pending', 'sent_email', 'sent_whatsapp', 'available_link', 'expired'` (missing `queued`, `failed`)
+- **PRD_F8 §5.1** (canonical): `'pending', 'queued', 'sent_sms', 'sent_email', 'available_link', 'expired', 'failed'`
+- **`RUBRICA_CONTRATO.md` §12.2**: `'pending', 'sent_sms', 'sent_email', 'available_link', 'expired'` (missing `queued`, `failed`)
 - **PRD_F1 §5.1** (`contract_submission.processing_status`, distinct column with overlap): `'received', 'extracting', 'extracted', 'classifying', 'analyzing', 'completed', 'failed_extraction', 'failed_classification', 'failed_analysis', 'rejected_language', 'rejected_type', 'rejected_size', 'expired'`
 - **PRD_F7 §3 US-01** narrative: the system creates a `DeliveryRequest` with `status='queued'`, then `sending`, `delivered`, `failed`, `expired` (for the **delivery_request** table, not `contract_analysis`).
 
@@ -297,7 +297,7 @@ Entities owned by `platform` (Project, ContractAnalysis) have their Django model
 | **CQRS** | Every module's `application/commands.py` + `queries.py` + `handlers/` | Separates write intent from read intent |
 | **Pipes & Filters** | F1→F2→F4/F5→F6→F7 pipeline | Each feature is a stage; Redis Streams or Celery chord links them |
 | **Strategy** | F1 OCR routing (`pypdf` / `vision_llm` / `tesseract`) | Pluggable extraction strategies |
-| **Circuit breaker** | F1 OpenRouter calls, F7 SMTP/Zavu calls | Resilience against external provider failures |
+| **Circuit breaker** | F1 OpenRouter calls, F7 SMTP/SMS calls | Resilience against external provider failures |
 | **Idempotency key** | F1 LLM calls, F7 deliveries | Avoid duplicate cost/messages on retry |
 | **Periodic task (Celery Beat)** | F8 retention jobs | Time-driven cleanup |
 | **Anti-corruption layer** | `infrastructure/external/*` and `infrastructure/llm/*` | Translates external models to domain entities |
@@ -388,7 +388,7 @@ Casa Segura has **no user accounts** (PRD_GENERAL §2 "User accounts, login, or 
 | **Anonymous public** | `AllowAny` | `POST /v1/contracts/submit`, `GET /v1/contracts/{id}/status`, `GET /r/{short_id}` |
 | **Capability-token** | `IsCapabilityHolder` (validates the destination hash against `delivery_target_hash`) | `POST /v1/contracts/{short_id}/resend`, `GET /v1/contracts/{short_id}/delivery-status` |
 | **Internal ops** | `HasInternalAuthHeader` (header `X-Internal-Auth` matches shared secret) | `POST /v1/internal/...` debug endpoints, `POST /v1/internal/jobs/trigger/{name}` |
-| **Webhook** | `ValidatesZavuSignature` (HMAC-SHA256 of body) | `POST /v1/zavu/webhook` |
+| **Webhook / callback** | `ValidatesProviderSignature` (HMAC-SHA256 of body) | Provider-specific callback routes such as SMS delivery status |
 
 `public_short_id` entropy is 30+ bits (`CS-{YYYY}-{6 chars base32}`). A rate-limiter (5 reqs/hour/IP) — implemented as a custom DRF throttle class `BurstSubmitThrottle` — is the principal abuse defense for `POST /v1/contracts/submit`.
 

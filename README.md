@@ -7,7 +7,7 @@
 
 ## What this project is (and is not)
 
-**In scope:** ingestion + OCR, classification, rubric-driven evaluation, report generation, and multichannel delivery (e.g. web link, email, WhatsApp) aligned with the formal PRDs — focused on **understanding the contract text**, not on validating people or projects against government registries.
+**In scope:** ingestion + OCR, classification, rubric-driven evaluation, report generation, and multichannel delivery (SMS summary, email PDF, web link) aligned with the formal PRDs — focused on **understanding the contract text**, not on validating people or projects against government registries.
 
 **Explicitly out of scope for MVP:** material registry checks, billboard / “valla” verification as a gate, blacklists, user accounts as a primary model, personalized legal advice, permanent storage of raw contract blobs, and non-Salvadoran contracts. Details: [PRD General](docs/Casa%20Segura%20Formal%20PRDs/PRD_GENERAL.md).
 
@@ -84,7 +84,7 @@ pre-commit run --all-files      # one-time sweep, optional
 ```
 
 > [!CAUTION]
-> **Privacy:** Treat OCR payloads, delivery targets (email, WhatsApp), report text, prompts, logs, and error bodies as **sensitive**. Do not log PII or raw files beyond what the API needs.
+> **Privacy:** Treat OCR payloads, delivery targets (SMS/email/link), report text, prompts, logs, and error bodies as **sensitive**. Do not log PII or raw files beyond what the API needs.
 
 ## Backend API contract
 

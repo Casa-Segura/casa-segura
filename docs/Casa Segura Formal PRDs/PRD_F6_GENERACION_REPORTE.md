@@ -40,7 +40,7 @@ The disclaimer "Esto no es asesoría legal" is not decoration, it is structural:
 - Persisting the generated HTML or PDF
 - Allowing edit or annotation of the report
 - Serving the report via public link (that is F7)
-- Sending the report via email or WhatsApp (that is F7)
+- Sending the report via SMS or email (that is F7)
 - Internationalization to English or another language
 - Alternative templates chosen by the user (single format)
 - Export to formats other than HTML and PDF (no .docx, no .json for the user)

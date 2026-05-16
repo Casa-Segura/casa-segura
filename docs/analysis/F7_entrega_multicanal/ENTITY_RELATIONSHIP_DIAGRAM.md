@@ -69,7 +69,7 @@ erDiagram
 |---|---|---|---|---|---|
 | `id` | UUID | No | `gen_random_uuid()` | PK | — |
 | `analysis_id` | UUID | No | — | FK→`contract_analysis(id)` ON DELETE CASCADE, INDEX | Owning analysis |
-| `channel` | TEXT | No | — | CHECK `email_pdf|whatsapp_summary|web_link` | Channel |
+| `channel` | TEXT | No | — | CHECK `sms_summary|email_pdf|web_link` | Channel |
 | `target_hash` | TEXT | YES | — | — | salt+SHA-256 of destination (NULL for `web_link`) |
 | `target_value_encrypted` | TEXT | YES | — | — | KMS-encrypted destination; cleared on delivery |
 | `target_value_encrypted_kms_key_id` | TEXT | YES | — | — | KMS key id used |
@@ -84,7 +84,7 @@ erDiagram
 | `last_error_code` | TEXT | YES | — | — | Provider-specific code |
 | `last_error_message` | TEXT | YES | — | — | — |
 | `last_error_classification` | TEXT | YES | — | CHECK `transient|permanent` | — |
-| `provider_message_id` | TEXT | YES | — | — | SMTP message id or Zavu msg id |
+| `provider_message_id` | TEXT | YES | — | — | SMS provider or SMTP message id |
 | `expires_at` | TIMESTAMPTZ | No | `NOW() + 7 days` | INDEX | Cleanup |
 
 #### Domain Entity
@@ -117,8 +117,8 @@ class DeliveryRequest(BaseModel):
 
 | Field | Type | Description |
 |---|---|---|
-| `delivery_status` | TEXT | `pending|queued|sent_email|sent_whatsapp|available_link|expired|failed` |
-| `delivery_channel` | TEXT | `email_pdf|whatsapp_summary|web_link` |
+| `delivery_status` | TEXT | `pending|queued|sent_sms|sent_email|available_link|expired|failed` |
+| `delivery_channel` | TEXT | `sms_summary|email_pdf|web_link` |
 | `delivery_target_hash` | TEXT | Preserved until anonymization |
 | `link_expires_at` | TIMESTAMPTZ | `created_at + TTL` |
 | `resend_count` | INT | 0..3 |

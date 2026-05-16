@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: phase_index
 status: living
-last_updated: 2026-05-15
+last_updated: 2026-05-16
 tags:
   - casa-segura
   - roadmap
@@ -31,7 +31,7 @@ Use this folder as a phase-first pick list for parallel work:
 - `FE WORK` - Next.js App Router, mobile UI, Spanish `tú` copy, accessibility, and result/upload surfaces.
 - `BE WORK` - Django 5.2 LTS, DRF, Django ORM, domain models, services, workers, report rendering, and tests.
 - `INFRA WORK` - CI, env, secrets, deployment, queues, schedulers, observability, security runbooks, and operational ADRs.
-- `API / AI CONNECTIONS` - OCR, RAG, prompts, evals, backend/frontend contracts, Zavu, webhooks, and external integrations.
+- `API / AI CONNECTIONS` - OCR, RAG, prompts, evals, backend/frontend contracts, SMS/email providers, webhooks, and external integrations.
 
 ## Current Ready Picks
 
@@ -39,7 +39,7 @@ Use this folder as a phase-first pick list for parallel work:
 - [CS-298](../tickets/CS-298.md) - **Vercel frontend deploy** (`ready`; infra operator connects GitHub → sets `CASASEGURA_API_BASE_URL`; see [`frontend/README.md`](../../frontend/README.md)).
 - [CS-299](../tickets/CS-299.md) - physical Android QA at 360px (`ready`; run after Preview/Production URL exists; checklist in `frontend/docs/CS-299-mobile-qa-checklist.md`).
 
-**In flight:** [CS-001](../tickets/CS-001.md) (repo posture and README skeleton) is **`in_progress`**; completing it unblocks **`CS-002`** and **`CS-003`**.
+**In flight:** [CS-001](../tickets/CS-001.md) (repo posture and README skeleton) is **`in_progress`**; completing it unblocks **`CS-002`** and **`CS-003`**. EPIC-12 optional verification shells: [CS-356](../tickets/CS-356.md), [CS-351](../tickets/CS-351.md), [CS-355](../tickets/CS-355.md) are **`in_progress`** on the frontend (`PROJECT_VERIFICATION_ENABLED` — see [`frontend/README.md`](../../frontend/README.md)).
 
 Phase pages also include phase-local `Ready Now` notes so engineers can see whether their phase has work available. If the global list changes, update this file and [Parallel Work Plan](../PARALLEL_WORK_PLAN.md) in the same documentation pass.
 

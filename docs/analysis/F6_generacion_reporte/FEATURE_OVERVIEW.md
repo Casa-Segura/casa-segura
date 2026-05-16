@@ -78,7 +78,7 @@ The report uses versioned templates (`v1`), Spanish "tú", color-coded bands (gr
 
 - Persist the report (privacy contract)
 - Serve the report via public link (F7)
-- Send via email/WhatsApp (F7)
+- Send via SMS/email/link (F7)
 - Internationalize beyond Spanish
 - Customize per project/brand (no white-labeling)
 - Export JSON/DOCX (Spanish HTML + PDF only)

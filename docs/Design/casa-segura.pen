@@ -184,7 +184,7 @@
           "id": "A9OhC",
           "name": "stepText",
           "fill": "$accent",
-          "content": "Paso 1 de 2 · Verificar proyecto",
+          "content": "Paso 1 de 4 · Subir contrato",
           "fontFamily": "$font-body",
           "fontSize": 13,
           "fontWeight": "500"
@@ -235,7 +235,7 @@
       "id": "Rg0ey",
       "x": 0,
       "y": 530,
-      "name": "Component/Upload Zone",
+      "name": "Component/Unified Upload Zone",
       "reusable": true,
       "width": 358,
       "fill": "$surface",
@@ -257,7 +257,7 @@
           "name": "uploadIcon",
           "width": 40,
           "height": 40,
-          "iconFontName": "camera",
+          "iconFontName": "file-up",
           "iconFontFamily": "lucide",
           "fill": "$text-secondary"
         },
@@ -291,7 +291,7 @@
           "y": 149,
           "descendants": {
             "C1V6bT": {
-              "content": "Subir desde galería"
+              "content": "Subir PDF"
             }
           }
         }
@@ -435,7 +435,7 @@
               "fill": "$text-primary",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "Antes de comprar\ntu casa, revísala.",
+              "content": "Revisa tu contrato\nantes de firmar.",
               "lineHeight": 1.2,
               "textAlign": "center",
               "fontFamily": "$font-body",
@@ -456,7 +456,7 @@
               "fill": "$text-secondary",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "Sube una foto del proyecto.\nTe decimos si es legítimo.",
+              "content": "Toma fotos o sube un PDF. Te damos hallazgos, reporte y base legal.",
               "lineHeight": 1.5,
               "textAlign": "center",
               "fontFamily": "$font-body",
@@ -679,7 +679,7 @@
               "id": "ZS9GX",
               "name": "uploadTitle",
               "fill": "$text-primary",
-              "content": "Sube la foto del cartel",
+              "content": "Sube foto o PDF del contrato",
               "fontFamily": "$font-body",
               "fontSize": 24,
               "fontWeight": "600"
@@ -724,7 +724,7 @@
                   "fill": "$text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Apunta al cartel del proyecto. Asegúrate de ver el nombre del desarrollador y el número de permiso.",
+                  "content": "Puedes tomar fotos de cada página o subir un PDF. Asegúrate de que nombres, montos y firmas se lean claramente.",
                   "lineHeight": 1.5,
                   "fontFamily": "$font-body",
                   "fontSize": 14,
@@ -863,7 +863,7 @@
               "id": "EBqJM",
               "name": "loadingText",
               "fill": "$text-primary",
-              "content": "Leyendo el cartel...",
+              "content": "Analizando tu documento...",
               "textAlign": "center",
               "fontFamily": "$font-body",
               "fontSize": 16,
@@ -874,7 +874,7 @@
               "id": "IXAT4",
               "name": "loadingSub",
               "fill": "$text-secondary",
-              "content": "Esto puede tomar unos segundos",
+              "content": "Leyendo texto, aplicando rúbrica y buscando base legal",
               "textAlign": "center",
               "fontFamily": "$font-body",
               "fontSize": 14,
@@ -2317,7 +2317,7 @@
               "id": "GsPl9",
               "name": "cTitle",
               "fill": "$text-primary",
-              "content": "Sube el contrato",
+              "content": "Sube foto o PDF del contrato",
               "fontFamily": "$font-body",
               "fontSize": 24,
               "fontWeight": "600"
@@ -2346,7 +2346,7 @@
                   "name": "cUploadIcon",
                   "width": 40,
                   "height": 40,
-                  "iconFontName": "file-text",
+                  "iconFontName": "file-up",
                   "iconFontFamily": "lucide",
                   "fill": "$text-secondary"
                 },
@@ -2358,7 +2358,7 @@
                   "name": "cUploadBtn",
                   "descendants": {
                     "DG4de": {
-                      "content": "Seleccionar PDF"
+                      "content": "Seleccionar archivo"
                     }
                   }
                 }
@@ -2397,7 +2397,7 @@
                   "fill": "$text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Sube el contrato en PDF. Lo leemos y te marcamos lo riesgoso. Máximo 15 MB.",
+                  "content": "Aceptamos PDF o fotos por página. Lo leemos, aplicamos la rúbrica y marcamos cláusulas de riesgo. Máximo 15 MB.",
                   "lineHeight": 1.5,
                   "fontFamily": "$font-body",
                   "fontSize": 14,
@@ -2433,7 +2433,7 @@
                   "fill": "$accent",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Proyecto verificado: Residencial Las Brisas",
+                  "content": "Proyecto opcional: puedes verificarlo después",
                   "fontFamily": "$font-body",
                   "fontSize": 13,
                   "fontWeight": "500"
@@ -2572,7 +2572,7 @@
               "id": "PvJQB",
               "name": "clText",
               "fill": "$text-primary",
-              "content": "Buscando cláusulas riesgosas...",
+              "content": "Analizando contrato...",
               "textAlign": "center",
               "fontFamily": "$font-body",
               "fontSize": 16,
@@ -2583,7 +2583,7 @@
               "id": "gHHdb",
               "name": "clSub",
               "fill": "$text-secondary",
-              "content": "Comparando con el proyecto verificado",
+              "content": "OCR, rúbrica, recuperación legal y reporte",
               "textAlign": "center",
               "fontFamily": "$font-body",
               "fontSize": 14,
@@ -3048,7 +3048,7 @@
                   "id": "uH35d",
                   "name": "crDlText",
                   "fill": "#FFFFFF",
-                  "content": "Descargar resumen",
+                  "content": "Descargar PDF",
                   "fontFamily": "$font-body",
                   "fontSize": 16,
                   "fontWeight": "600"
@@ -3091,7 +3091,7 @@
                   "id": "hSBDs",
                   "name": "crShareText",
                   "fill": "$accent",
-                  "content": "Compartir resultado",
+                  "content": "Compartir por SMS, correo o enlace",
                   "fontFamily": "$font-body",
                   "fontSize": 14,
                   "fontWeight": "500"
@@ -3654,7 +3654,7 @@
               "type": "text",
               "id": "v2mN7u",
               "fill": "$text-primary",
-              "content": "¿Cómo recibir tu análisis?",
+              "content": "¿Cómo recibir tu reporte?",
               "fontFamily": "Inter",
               "fontSize": 22,
               "fontWeight": "700"
@@ -3665,7 +3665,7 @@
               "fill": "$text-secondary",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "Elige cómo quieres recibir el análisis detallado de tu contrato.",
+              "content": "Elige SMS, PDF por correo o enlace web. Siempre podrás abrir el reporte completo con su contexto legal.",
               "fontFamily": "Inter",
               "fontSize": 14,
               "fontWeight": "normal"
@@ -3699,7 +3699,7 @@
                       "id": "pWkv1",
                       "width": 24,
                       "height": 24,
-                      "iconFontName": "mail",
+                      "iconFontName": "message-square",
                       "iconFontFamily": "lucide",
                       "fill": "$accent"
                     },
@@ -3714,7 +3714,7 @@
                           "type": "text",
                           "id": "retuX",
                           "fill": "$text-primary",
-                          "content": "Correo electrónico",
+                          "content": "SMS resumen",
                           "fontFamily": "Inter",
                           "fontSize": 14,
                           "fontWeight": "600"
@@ -3725,7 +3725,7 @@
                           "fill": "$text-secondary",
                           "textGrowth": "fixed-width",
                           "width": 240,
-                          "content": "Recibe el PDF completo en tu bandeja de entrada",
+                          "content": "Recibe score, alerta principal y enlace al reporte",
                           "fontFamily": "Inter",
                           "fontSize": 12,
                           "fontWeight": "normal"
@@ -3774,7 +3774,7 @@
                       "id": "sWGLj",
                       "width": 24,
                       "height": 24,
-                      "iconFontName": "message-circle",
+                      "iconFontName": "mail",
                       "iconFontFamily": "lucide",
                       "fill": "$text-secondary"
                     },
@@ -3789,7 +3789,7 @@
                           "type": "text",
                           "id": "qzt9X",
                           "fill": "$text-primary",
-                          "content": "WhatsApp",
+                          "content": "Correo + PDF",
                           "fontFamily": "Inter",
                           "fontSize": 14,
                           "fontWeight": "600"
@@ -3800,7 +3800,7 @@
                           "fill": "$text-secondary",
                           "textGrowth": "fixed-width",
                           "width": 240,
-                          "content": "Resumen por mensaje con los puntos clave",
+                          "content": "Recibe el PDF completo en tu bandeja de entrada",
                           "fontFamily": "Inter",
                           "fontSize": 12,
                           "fontWeight": "normal"
@@ -3875,7 +3875,7 @@
                           "fill": "$text-secondary",
                           "textGrowth": "fixed-width",
                           "width": 240,
-                          "content": "Accede al reporte en línea por 30 días",
+                          "content": "Abre el reporte HTML con citas legales por 30 días",
                           "fontFamily": "Inter",
                           "fontSize": 12,
                           "fontWeight": "normal"
@@ -4025,7 +4025,7 @@
               "type": "text",
               "id": "faE1r",
               "fill": "$text-primary",
-              "content": "¿A qué correo enviamos?",
+              "content": "¿A qué número enviamos?",
               "fontFamily": "Inter",
               "fontSize": 22,
               "fontWeight": "700"
@@ -4036,7 +4036,7 @@
               "fill": "$text-secondary",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "Ingresa tu correo para recibir el análisis en PDF.",
+              "content": "Ingresa tu teléfono para recibir un SMS con resumen y enlace. Usa formato internacional.",
               "fontFamily": "Inter",
               "fontSize": 14,
               "fontWeight": "normal"
@@ -4053,7 +4053,7 @@
                   "type": "text",
                   "id": "gC6iK",
                   "fill": "$text-primary",
-                  "content": "Correo electrónico",
+                  "content": "Teléfono",
                   "fontFamily": "Inter",
                   "fontSize": 13,
                   "fontWeight": "500"
@@ -4083,7 +4083,7 @@
                       "id": "HI2Fs",
                       "width": 18,
                       "height": 18,
-                      "iconFontName": "mail",
+                      "iconFontName": "phone",
                       "iconFontFamily": "lucide",
                       "fill": "$text-secondary"
                     },
@@ -4091,7 +4091,7 @@
                       "type": "text",
                       "id": "tCMiw",
                       "fill": "$text-secondary",
-                      "content": "tu@correo.com",
+                      "content": "+503 7000 0000",
                       "fontFamily": "Inter",
                       "fontSize": 14,
                       "fontWeight": "normal"
@@ -4123,7 +4123,7 @@
                   "fill": "$text-secondary",
                   "textGrowth": "fixed-width",
                   "width": 310,
-                  "content": "Tu correo no se comparte con terceros ni se usa para publicidad.",
+                  "content": "Tu número solo se usa para este reporte. No enviamos publicidad.",
                   "fontFamily": "Inter",
                   "fontSize": 12,
                   "fontWeight": "normal"
@@ -4283,7 +4283,7 @@
                   "fill": "$text-primary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "¡Análisis enviado!",
+                  "content": "¡Reporte listo!",
                   "textAlign": "center",
                   "fontFamily": "Inter",
                   "fontSize": 24,
@@ -4295,7 +4295,7 @@
                   "fill": "$text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Tu análisis de contrato está listo y en camino.",
+                  "content": "Tu análisis está listo. Ya puedes abrir el enlace, descargar PDF o compartirlo.",
                   "textAlign": "center",
                   "fontFamily": "Inter",
                   "fontSize": 14,
@@ -4387,7 +4387,7 @@
                       "type": "text",
                       "id": "tpez4",
                       "fill": "$text-secondary",
-                      "content": "Enviado a",
+                      "content": "SMS enviado a",
                       "fontFamily": "Inter",
                       "fontSize": 13,
                       "fontWeight": "normal"
@@ -4396,7 +4396,7 @@
                       "type": "text",
                       "id": "Qyhbi",
                       "fill": "$text-primary",
-                      "content": "tu@correo.com",
+                      "content": "+503 7000 0000",
                       "fontFamily": "Inter",
                       "fontSize": 13,
                       "fontWeight": "500"
@@ -4423,7 +4423,7 @@
                       "type": "text",
                       "id": "QLj09",
                       "fill": "$text-secondary",
-                      "content": "Disponible por",
+                      "content": "PDF y enlace",
                       "fontFamily": "Inter",
                       "fontSize": 13,
                       "fontWeight": "normal"
@@ -4432,7 +4432,7 @@
                       "type": "text",
                       "id": "pG5Am",
                       "fill": "$text-primary",
-                      "content": "30 días",
+                      "content": "disponibles 30 días",
                       "fontFamily": "Inter",
                       "fontSize": 13,
                       "fontWeight": "500"
@@ -5332,6 +5332,210 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "pJdog",
+      "x": 420,
+      "y": 0,
+      "name": "Component/Delivery Option",
+      "reusable": true,
+      "width": 358,
+      "fill": "$surface",
+      "cornerRadius": "$radius-card",
+      "stroke": {
+        "align": "inside",
+        "thickness": 1,
+        "fill": "$border"
+      },
+      "gap": 12,
+      "padding": 16,
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "icon_font",
+          "id": "U9Mlkh",
+          "name": "deliveryIcon",
+          "width": 24,
+          "height": 24,
+          "iconFontName": "message-square",
+          "iconFontFamily": "lucide",
+          "fill": "$accent"
+        },
+        {
+          "type": "frame",
+          "id": "wtvu0",
+          "name": "deliveryOptionCopy",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 2,
+          "children": [
+            {
+              "type": "text",
+              "id": "kkGQI",
+              "name": "deliveryTitle",
+              "fill": "$text-primary",
+              "content": "SMS resumen",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "M4gGO",
+              "name": "deliveryDesc",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Score, alerta principal y enlace al reporte",
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "icon_font",
+          "id": "Ae29U",
+          "name": "deliveryCheck",
+          "width": 20,
+          "height": 20,
+          "iconFontName": "circle",
+          "iconFontFamily": "lucide",
+          "fill": "$border"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "i5uS8",
+      "x": 420,
+      "y": 104,
+      "name": "Component/Processing State",
+      "reusable": true,
+      "width": 358,
+      "fill": "$surface",
+      "cornerRadius": "$radius-card",
+      "stroke": {
+        "align": "inside",
+        "thickness": 1,
+        "fill": "$border"
+      },
+      "layout": "vertical",
+      "gap": 16,
+      "padding": 32,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "ellipse",
+          "id": "NuIvA",
+          "name": "procOuter",
+          "fill": "#00000000",
+          "width": 56,
+          "height": 56,
+          "stroke": {
+            "align": "center",
+            "thickness": 4,
+            "fill": "$border"
+          }
+        },
+        {
+          "type": "ellipse",
+          "id": "MSuR2",
+          "name": "procArc",
+          "sweepAngle": 90,
+          "fill": "#00000000",
+          "width": 56,
+          "height": 56,
+          "stroke": {
+            "align": "center",
+            "thickness": 4,
+            "fill": "$accent"
+          }
+        },
+        {
+          "type": "text",
+          "id": "lP7gu",
+          "name": "procTitle",
+          "fill": "$text-primary",
+          "content": "Analizando contrato...",
+          "textAlign": "center",
+          "fontFamily": "$font-body",
+          "fontSize": 16,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "tHLnP",
+          "name": "procSub",
+          "fill": "$text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "OCR, rúbrica, base legal y reporte",
+          "textAlign": "center",
+          "fontFamily": "$font-body",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Cc8It",
+      "x": 420,
+      "y": 332,
+      "name": "Component/Report Actions",
+      "reusable": true,
+      "width": 358,
+      "fill": "$surface",
+      "cornerRadius": "$radius-card",
+      "stroke": {
+        "align": "inside",
+        "thickness": 1,
+        "fill": "$border"
+      },
+      "layout": "vertical",
+      "gap": 12,
+      "padding": 16,
+      "children": [
+        {
+          "id": "Pu84N",
+          "type": "ref",
+          "ref": "WpIN5",
+          "width": "fill_container",
+          "name": "actPrimary",
+          "descendants": {
+            "DG4de": {
+              "content": "Descargar PDF"
+            }
+          }
+        },
+        {
+          "id": "RpjrG",
+          "type": "ref",
+          "ref": "j3HtJ",
+          "width": "fill_container",
+          "name": "actSecondary",
+          "descendants": {
+            "C1V6bT": {
+              "content": "Copiar enlace web"
+            }
+          }
+        },
+        {
+          "id": "iMJn4",
+          "type": "ref",
+          "ref": "OI7jl",
+          "width": "fill_container",
+          "name": "actLink",
+          "descendants": {
+            "fnKWq": {
+              "content": "Enviar resumen por SMS"
+            }
+          }
         }
       ]
     }
