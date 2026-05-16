@@ -129,7 +129,7 @@ Represents the result of the analysis applied to a specific contract. It is the 
 **Lifecycle:**
 
 - State `pending` at creation
-- Transitions to `sent_email`, `sent_whatsapp`, or `available_link` after successful delivery
+- Transitions to `sent_sms`, `sent_email`, or `available_link` after successful delivery
 - Transitions to `expired` when `link_expires_at < NOW()`
 - At 90 days the anonymization job runs and:
   - Erases `delivery_target_hash`
@@ -560,8 +560,8 @@ UNVERIFIABLE       // not extractable from the contract
 ### 6.4 DeliveryChannel
 
 ```
+SMS_SUMMARY
 EMAIL_PDF
-WHATSAPP_SUMMARY
 WEB_LINK
 ```
 

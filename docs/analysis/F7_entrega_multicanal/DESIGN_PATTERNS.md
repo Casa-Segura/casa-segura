@@ -8,11 +8,11 @@
 
 ### Strategy (Channel sender)
 
-**Why it fits:** Three channels with very different protocols (SMTP, Zavu/WhatsApp, web link served on demand) but the same upstream contract: `(DeliveryRequest, ReportBuildContext) → ProviderResult`. Encapsulating each channel as a class implementing the same `Protocol` keeps `DeliveryService.dispatch` linear.
+**Why it fits:** Three channels with very different protocols (SMS provider, SMTP, web link served on demand) but the same upstream contract: `(DeliveryRequest, ReportBuildContext) → ProviderResult`. Encapsulating each channel as a class implementing the same `Protocol` keeps `DeliveryService.dispatch` linear.
 
-**What it covers:** `EmailSender`, `WhatsappSender`. The `web_link` channel does not need a proactive sender — it's served by `PublicLinkView`.
+**What it covers:** `SmsSender`, `EmailSender`. The `web_link` channel does not need a proactive sender — it's served by `PublicLinkView`.
 
-**Implementation location:** `delivery/infrastructure/channels/{email,whatsapp}_sender.py`; common `ChannelSender` `Protocol` in `delivery/domain/protocols.py`.
+**Implementation location:** `delivery/infrastructure/channels/{sms,email}_sender.py`; common `ChannelSender` `Protocol` in `delivery/domain/protocols.py`.
 
 ---
 
@@ -20,7 +20,7 @@
 
 **Why it fits:** If the provider accepts the message but the network reply is lost, retrying produces a duplicate. Two defenses: (1) idempotency key derived from `dr_id` passed to the provider when supported; (2) before sending on retry, check the provider for a pre-existing message id via `provider_message_id` lookup (when the provider supports it).
 
-**Implementation location:** `SmtpClient.send_email(idempotency_key=dr_id)`; `ZavuClient.send_template(idempotency_key=dr_id)`.
+**Implementation location:** `SmtpClient.send_email(idempotency_key=dr_id)`; `SmsClient.send_sms(idempotency_key=dr_id)`.
 
 ---
 
@@ -67,9 +67,9 @@
 
 ---
 
-### Circuit breaker for SMTP / Zavu
+### Circuit breaker for SMTP / SMS
 
-**Why it fits:** Same rationale as F1's OpenRouter. If SMTP or Zavu fails consistently, fail-fast the next requests so they go straight to retry without blocking workers.
+**Why it fits:** Same rationale as F1's OpenRouter. If SMTP or SMS fails consistently, fail-fast the next requests so they go straight to retry without blocking workers.
 
 **Implementation:** Reused `shared.infrastructure.resilience.circuit_breaker`.
 

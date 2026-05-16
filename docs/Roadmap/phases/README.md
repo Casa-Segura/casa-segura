@@ -31,7 +31,7 @@ Use this folder as a phase-first pick list for parallel work:
 - `FE WORK` - Next.js App Router, mobile UI, Spanish `tú` copy, accessibility, and result/upload surfaces.
 - `BE WORK` - Django 5.2 LTS, DRF, Django ORM, domain models, services, workers, report rendering, and tests.
 - `INFRA WORK` - CI, env, secrets, deployment, queues, schedulers, observability, security runbooks, and operational ADRs.
-- `API / AI CONNECTIONS` - OCR, RAG, prompts, evals, backend/frontend contracts, Zavu, webhooks, and external integrations.
+- `API / AI CONNECTIONS` - OCR, RAG, prompts, evals, backend/frontend contracts, SMS/email providers, webhooks, and external integrations.
 
 ## Current Ready Picks
 

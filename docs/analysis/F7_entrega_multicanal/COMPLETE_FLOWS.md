@@ -9,7 +9,7 @@
 | # | Flow |
 |---|---|
 | 1 | Email delivery — happy path |
-| 2 | WhatsApp delivery — happy path |
+| 2 | SMS delivery — happy path |
 | 3 | Public web link served |
 | 4 | Resend (user-initiated) |
 | 5 | Retry with exponential backoff |
@@ -60,26 +60,26 @@ Celery chain step `delivery.deliver_to_user(analysis_id)`.
 
 ---
 
-## Flow 2: WhatsApp delivery — happy path
+## Flow 2: SMS delivery — happy path
 
 ### Pre-conditions
-- `delivery_channel='whatsapp_summary'`, phone in Redis blob, target_hash set.
+- `delivery_channel='sms_summary'`, phone in Redis blob, target_hash set.
 
 ### Happy Path
 
 1. KMS-decrypt cleartext phone (or use Redis blob directly + encrypt for persistence).
-2. Build template params: `{score, band_label, finding1, finding2, finding3, link_url, expiry_date}`.
-3. POST to Zavu `/messages` with `template={name: "casa_segura_report_delivery", language: "es", components: [...]}`.
-4. Zavu accepts → status `delivered`, provider_message_id stored.
-5. `contract_analysis.delivery_status='sent_whatsapp'`.
+2. Build SMS body with `{score, band_label, link_url, expiry_date, public_short_id}`.
+3. POST to SMS provider `/messages` with the approved Casa Segura body.
+4. Provider accepts → status `delivered`, provider_message_id stored.
+5. `contract_analysis.delivery_status='sent_sms'`.
 
 ### Error Scenarios
 
 | ID | Condition | Outcome |
 |---|---|---|
-| E-1 | Phone not on WhatsApp | Permanent failure; offer email alternative (UI concern) |
-| E-2 | Template not approved by Meta | Permanent failure; ops alert |
-| E-3 | Zavu rate limit | Transient retry |
+| E-1 | Invalid/unreachable phone | Permanent failure; offer email alternative (UI concern) |
+| E-2 | SMS body/template invalid | Permanent failure; ops alert |
+| E-3 | SMS provider rate limit | Transient retry |
 
 ---
 

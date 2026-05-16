@@ -148,44 +148,19 @@ Same shape as Screen 3, different text:
 
 Same verdict structure as Screen 4. Findings are contract-specific (no escrow, vague delivery, etc.). At the bottom there's a "Descargar resumen" button (PDF of findings) — generated client-side from the JSON, no server storage.
 
-## 4. WhatsApp message templates
+## 4. SMS / Email / Link delivery templates
 
-**On first message:**
-> ¡Hola! Soy Casa Segura. Mándame una foto del cartel del proyecto que estás considerando y te digo si tiene alertas. *Esto no es asesoría legal.*
+**SMS report-ready message:**
+> Casa Segura: análisis listo. Resultado [band] ([score]/10). Ver reporte: [link]. Esto no es asesoría legal. ID [public_short_id].
 
-**On photo received:**
-> Recibí la foto. Dame unos segundos...
+**Email subject:**
+> Tu análisis de contrato — Casa Segura — [contract type]
 
-**Result green:**
-> ✅ *Sin alertas públicas*
->
-> No encontramos señales de fraude para [Proyecto X].
->
-> Cuando tengas el contrato, mándamelo en PDF y lo reviso.
->
-> _Esto no es asesoría legal._
+**Email body summary:**
+> Tu análisis está listo. Adjuntamos el PDF y también puedes abrir el reporte web aquí: [link]. Esto no es asesoría legal. Antes de firmar, consulta a un abogado.
 
-**Result yellow:**
-> ⚠️ *Hay algo que revisar*
->
-> Encontramos esto:
-> • [finding 1]
-> • [finding 2]
->
-> Si tienes el contrato, mándamelo en PDF.
->
-> _Esto no es asesoría legal._
-
-**Result red:**
-> 🛑 *Procede con cuidado*
->
-> Encontramos señales serias:
-> • [finding 1]
-> • [finding 2]
->
-> Considera buscar asesoría antes de avanzar.
->
-> _Esto no es asesoría legal._
+**Web-link confirmation:**
+> Tu reporte está listo y disponible por 30 días. Guarda este enlace: [link]. Esto no es asesoría legal.
 
 **On contract sent without Flow 1:**
 > Antes del contrato, mándame primero una foto del cartel del proyecto. Eso me ayuda a revisar mejor.

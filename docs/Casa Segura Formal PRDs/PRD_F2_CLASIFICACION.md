@@ -252,7 +252,7 @@ The feature must execute these four tasks with a single LLM step when possible, 
 - If the LLM responds with `contract_type='NOT_CLASSIFIABLE'`, it is accepted directly
 - The system notifies the user with a specific message depending on the channel:
   - Web: "No pudimos clasificar tu documento como un contrato inmobiliario cubierto por Casa Segura. Cubrimos compraventa, arrendamiento, leasing, y contratos institucionales IVU/FSV de inmuebles en El Salvador."
-  - WhatsApp: the same message, more concise
+  - SMS: the same message, more concise
 - The specific reason is logged: the candidate `contract_type` with lowest confidence, detected elements, and the LLM's textual justification
 - The system does NOT return a partial analysis or "try anyway"
 - The user can resubmit another document without penalty

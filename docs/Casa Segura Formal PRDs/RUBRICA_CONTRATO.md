@@ -1035,7 +1035,7 @@ CREATE TABLE contract_analysis (
 
     -- Delivery
     delivery_status TEXT NOT NULL DEFAULT 'pending' CHECK (delivery_status IN (
-        'pending', 'sent_email', 'sent_whatsapp', 'available_link', 'expired'
+        'pending', 'sent_sms', 'sent_email', 'available_link', 'expired'
     )),
     delivery_target_hash TEXT, -- hash of the email or phone, not the real data
     link_expires_at TIMESTAMPTZ,
@@ -1078,30 +1078,14 @@ The report is generated once and served in up to three channels per user prefere
 - Attachment: report PDF.
 - The user's email is only saved as a hash for retry; discarded after sending.
 
-### 13.2 WhatsApp (via Zavu)
+### 13.2 SMS summary
 
-- The user provides a phone number.
-- The system sends a message with:
-  - Large score
-  - 2–3 critical findings in short bullets
-  - Link to the full HTML report
-  - Disclaimer
+- The user provides a phone number in international format.
+- The system sends a concise SMS with score/band, link to the full HTML report, short analysis ID, expiration hint, and disclaimer.
 - Template (delivered in Spanish):
 
 ```
-Casa Segura — Análisis listo
-
-[band icon] Score: 4.2/10 — 🔴 Procede con cuidado
-
-Encontramos esto:
-• Tasa de 18% anual, 9 puntos sobre el promedio
-• Sin mecanismo de fideicomiso para tu prima
-• Cláusula que limita la responsabilidad del vendedor
-
-Reporte completo: casasegura.sv/r/CS-2026-A1B2C3
-(válido por 30 días)
-
-Esto no es asesoría legal.
+Casa Segura: análisis listo. Resultado Procede con cuidado (4.2/10). Ver reporte: casasegura.sv/r/CS-2026-A1B2C3. Esto no es asesoría legal. ID CS-2026-A1B2C3.
 ```
 
 ### 13.3 Public web link with TTL

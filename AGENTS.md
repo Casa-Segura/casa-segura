@@ -39,4 +39,4 @@ If you change process, update **both** this file and those rules so Cursor and C
 
 ## Product / privacy
 
-Treat OCR payloads, delivery targets (email/WhatsApp), report text, prompts, logs, and error bodies as **sensitive**. Do not log PII/raw files in frontend server actions beyond what APIs require.
+Treat OCR payloads, delivery targets (SMS/email/link), report text, prompts, logs, and error bodies as **sensitive**. Do not log PII/raw files in frontend server actions beyond what APIs require.

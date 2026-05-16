@@ -188,8 +188,8 @@ replaced — type `${{` in the value field and Railway autocompletes.
 | `OPENROUTER_DEFAULT_TEXT_MODEL` | `mistralai/pixtral-large-2411` | |
 | `OPENROUTER_HTTP_REFERER` | `https://<web>.up.railway.app` | Set after `web` has a domain |
 | `OPENROUTER_X_TITLE` | `Casa Segura` | |
-| `ZAVU_API_KEY` | secret | If integration is live |
-| `ZAVU_WEBHOOK_SECRET` | secret | For verifying inbound WhatsApp |
+| `SMS_API_KEY` | secret | If SMS delivery is live |
+| `SMS_WEBHOOK_SECRET` | secret | Optional, for verifying SMS provider callbacks |
 | `INTERNAL_AUTH_SECRET` | random 50-char string | |
 | `KMS_PROVIDER` | `local` | Until KMS epic ships |
 | `ACTIVE_RUBRIC_VERSION` | `1.0.0` | The seeded value from CS-033 |
@@ -226,8 +226,8 @@ After all three services + Postgres + Redis are wired:
 - **PR preview environments.** Not configured.
 - **Custom domain / SSL.** Railway gives `*.up.railway.app` by default.
 - **Backups.** Default daily snapshots; revisit before real user data.
-- **Zavu webhook URL configuration on Zavu's side.** Once `web` has a
-  domain, hand that URL to whoever owns the Zavu integration.
+- **SMS provider callback URL configuration.** If the selected SMS provider
+  supports status callbacks, configure it after `web` has a domain.
 - **Frontend on Vercel.** Separate doc (TBD).
 
 ---

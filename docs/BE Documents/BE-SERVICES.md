@@ -6,7 +6,7 @@
 
 - **New: persistent data layer.** Postgres + pgvector. Used **only** for curated content (legal corpus, fraud patterns, blacklist) and aggregate metrics. *Never* for user-uploaded photos, PDFs, or contract text.
 - **New: explicit OCR service.** Routes by document type. Vision LLM for billboards and scanned PDFs; pypdf for text PDFs; Tesseract as a free fallback if OpenRouter is throttled.
-- **New: RAG service.** Each finding can cite a Salvadoran legal article. Retrieval lives in pgvector. Citations are surfaced in both web and WhatsApp.
+- **New: RAG service.** Each finding can cite a Salvadoran legal article. Retrieval lives in pgvector. Citations are surfaced in the web report and linked from SMS/email delivery.
 - **Updated: `Finding` schema** now carries an optional `legal_reference`.
 - **Updated: verdict synthesis** consumes retrieved legal context and is required to cite, not paraphrase.
 
@@ -23,7 +23,7 @@
 | OCR fallback | Tesseract + `pdf2image` | Free, offline, used only if vision LLM fails |
 | Hosting DB | Supabase or Railway Postgres | Free tier, pgvector available |
 
-Everything else (**Django REST Framework** for the HTTP API, Celery + **Redis**, OpenRouter, Zavu) follows the stack in `docs/ARCHITECTURE.md` and [ADR-0001](../adr/ADR-0001-django-backend-stack.md).
+Everything else (**Django REST Framework** for the HTTP API, Celery + **Redis**, OpenRouter, SMS/email delivery providers) follows the stack in `docs/ARCHITECTURE.md` and [ADR-0001](../adr/ADR-0001-django-backend-stack.md).
 
 ---
 
@@ -320,11 +320,11 @@ class Finding(BaseModel):
     legal_reference: LegalReference | None   # NEW
 ```
 
-WhatsApp formatting includes the citation when present:
+SMS links to the full report instead of fitting citations inline. The web report shows the citation when present:
 ```
-⚠️ Fecha de entrega vaga
+Fecha de entrega vaga
 El contrato dice "aproximadamente 18 meses" sin fecha cierta.
-📖 Código Civil, Art. 1605
+Código Civil, Art. 1605
 ```
 
 Web rendering: the legal reference is a collapsible card under each finding.
@@ -413,8 +413,8 @@ In addition to v1 risks:
 OPENROUTER_API_KEY=
 OPENROUTER_VISION_MODEL=
 OPENROUTER_TEXT_MODEL=
-ZAVU_API_KEY=
-ZAVU_WEBHOOK_SECRET=
+SMS_API_KEY=
+SMS_WEBHOOK_SECRET=
 REDIS_URL=
 SEARCH_PROVIDER=serpapi
 SERPAPI_KEY=

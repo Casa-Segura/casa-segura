@@ -29,7 +29,7 @@ Copy `backend/.env.example` to `backend/.env` and fill in:
 | `OPENROUTER_PDF_PLUGIN_ENGINE` | Leave as `mistral-ocr`. |
 | `OPENROUTER_DEFAULT_TEXT_MODEL` | Leave as `mistralai/pixtral-large-2411` for Phase 1 (separate text model decision deferred). |
 | `OPENROUTER_HTTP_REFERER`, `OPENROUTER_X_TITLE` | Already filled with sensible defaults; adjust if you want them in the OpenRouter dashboard. |
-| `ZAVU_API_KEY`, `ZAVU_WEBHOOK_SECRET`, `ZAVU_BASE_URL` | Phase 2. Leave placeholder values for now. |
+| `SMS_PROVIDER`, `SMS_API_KEY`, `SMS_FROM`, optional `SMS_WEBHOOK_SECRET` | Phase 2. Leave placeholder values for now. |
 | `KMS_KEY_ID`, `INTERNAL_AUTH_SECRET` | Generate or leave defaults — not exercised by Phase 1 flows. |
 | `ACTIVE_RUBRIC_VERSION` | Set to `1.0.0` after running `seed_rubric_version --activate`. |
 | `ACTIVE_CORPUSF_VERSION` | Set to the date tag you pass to `ingest_corpus`, e.g. `2026-05-15`. The typo (`CORPUSF` vs `CORPUS`) is deliberate — `settings.py` reads both spellings, with `CORPUSF` taking precedence to stay aligned with the live `.env`. |

@@ -11,11 +11,11 @@
 
 ## 1. Problem Statement
 
-The analysis is done and the report can be generated. Now it has to land in the user's hands via one of three channels: email with PDF attachment, WhatsApp message with a short summary plus link to the full report, or public web link with configurable expiration. The three channels have different constraints: email is asynchronous and supports attachments but requires a reliable SMTP provider; WhatsApp has character limits in templates and requires Zavu integration; the web link is synchronous but requires expiration management and ID privacy.
+The analysis is done and the report can be generated. Now it has to land in the user's hands via one of three channels: email with PDF attachment, SMS message with a short summary plus link to the full report, or public web link with configurable expiration. The three channels have different constraints: email is asynchronous and supports attachments but requires a reliable SMTP provider; SMS has strict character limits and provider deliverability constraints; the web link is synchronous but requires expiration management and ID privacy.
 
-The feature has four challenges. First, the privacy contract: the user's email or phone is stored only as a hash and as a temporary encrypted value until delivery; after successful delivery the original value is discarded. Second, resends: a user who lost the email can request a resend with the short analysis ID, but the system can only resend to the same original destination (no destination change). Third, link TTL: 30 days by default, expires automatically, and after expiration the link shows a specific message explaining the product's retention policy. Fourth, delivery failures must not block the user: if email bounces or WhatsApp fails, exponential retry is attempted, and an alternative channel is offered at the end.
+The feature has four challenges. First, the privacy contract: the user's email or phone is stored only as a hash and as a temporary encrypted value until delivery; after successful delivery the original value is discarded. Second, resends: a user who lost the email or SMS can request a resend with the short analysis ID, but the system can only resend to the same original destination (no destination change). Third, link TTL: 30 days by default, expires automatically, and after expiration the link shows a specific message explaining the product's retention policy. Fourth, delivery failures must not block the user: if email bounces or SMS fails, exponential retry is attempted, and an alternative channel is offered at the end.
 
-The disclaimer "Esto no es asesoría legal" appears in the email body, in the first WhatsApp message, and in the report itself. It is invariant.
+The disclaimer "Esto no es asesoría legal" appears in the email body, in the first SMS message, and in the report itself. It is invariant.
 
 ---
 
@@ -23,16 +23,16 @@ The disclaimer "Esto no es asesoría legal" appears in the email body, in the fi
 
 **In scope:**
 
-- Three delivery channels: email with PDF attachment, WhatsApp with summary + link, public web link with TTL
+- Three delivery channels: email with PDF attachment, SMS with summary + link, public web link with TTL
 - Composition and sending of emails via SMTP provider (configurable)
-- Composition and sending of WhatsApp messages via Zavu API
+- Composition and sending of SMS messages via configured SMS provider
 - Public web-link service that renders the HTML report on demand by invoking F6
 - Link expiration management (configurable TTL, default 30 days)
 - Secure hashing of user email/phone for later resends
 - Temporary encryption of email/phone while delivery is in progress (discardable on success)
 - Retry policy for failures: exponential backoff with a maximum number of attempts
 - Authorized on-demand resend: user with the `public_short_id` and the original address can request resend
-- Generation of WhatsApp message with a Zavu-approved template
+- Generation of short SMS message with summary + link
 - User notification when delivery permanently fails, with suggestion of alternative channel
 - Operational metrics: successful delivery rate, per-channel latency, per-provider failures
 
@@ -42,7 +42,7 @@ The disclaimer "Esto no es asesoría legal" appears in the email body, in the fi
 - Modifying the report after generation (it is static to the analysis)
 - Allowing the user to change destination after the original request (limits phishing surface)
 - Delivery to multiple simultaneous destinations (one channel, one destination per analysis)
-- SMS as a channel (not in MVP)
+- WhatsApp/Zavu as a channel (not in MVP)
 - Webhooks to the user's system (does not apply to a consumer product)
 - Push notifications (no installed app)
 - Email read receipts (no open or click tracking)
@@ -56,16 +56,15 @@ The disclaimer "Esto no es asesoría legal" appears in the email body, in the fi
 ### US-01: User chooses channel and destination when uploading the contract
 
 **As a** user uploading a contract,
-**I want to** choose how to receive my report (email, WhatsApp, or link),
+**I want to** choose how to receive my report (email, SMS, or link),
 **So that** I receive it where it is most convenient.
 
 **Acceptance criteria:**
 
 - The upload interface offers the three channels with a brief explanation of each
 - If the user chooses email: prompts for email, validates format, does not send until the analysis is ready
-- If they choose WhatsApp: prompts for phone in international format, validates (preferably with explicit country code), confirms they will receive the summary there
+- If they choose SMS: prompts for phone in international format, validates (preferably with explicit country code), confirms they will receive the summary there
 - If they choose web link: does not prompt for destination; the system delivers the link on the status page
-- For WhatsApp, if the user arrived through a WhatsApp conversation, the destination is inferred from the `from_number` that arrived via Zavu
 - The system creates a `DeliveryRequest` with `status=queued` when the analysis closes
 - The email or phone is encrypted with a KMS key and persisted in `target_value_encrypted`; the salt+SHA-256 hash is also generated and persisted in `target_hash`
 
@@ -128,76 +127,32 @@ Para reportar problemas: errores@casasegura.sv
 
 ---
 
-### US-03: System delivers the report by WhatsApp
+### US-03: System delivers the report by SMS
 
 **As the** system,
-**I want to** send a WhatsApp message to the user with summary and link,
+**I want to** send an SMS message to the user with summary and link,
 **So that** they receive the information quickly without opening email.
 
 **Acceptance criteria:**
 
-- F7 invokes the Zavu client with the destination number and the message template
-- The WhatsApp message template must be pre-approved in Zavu (templates require Meta approval for transactional use)
-- The message includes:
-  - Brief greeting
-  - Score with icon per band
-  - Up to 3 critical findings summarized in bullets
-  - Link to the full report
-  - Link expiration date
-  - Disclaimer
-- The full message does not exceed Zavu limits (typically 4096 characters)
+- F7 invokes the configured SMS provider with the destination number and message body
+- The SMS message includes a brief Casa Segura label, band/score summary, link to the full report, link expiration hint, and disclaimer shorthand
+- The message fits the configured SMS segment budget; long finding details stay in the web report
 - F7 marks `DeliveryRequest.status='sending'` before sending
 - After success, marks `status='delivered'` and erases `target_value_encrypted`
-- If Zavu fails, retry policy BR-04
-- If Zavu reports that the number does not receive messages (no WhatsApp installed, blocked), marks `failed` and emits operational notification
+- If the SMS provider fails transiently, retry policy BR-04 applies
+- If the SMS provider rejects the number permanently, marks `failed` and emits operational notification
 
-**WhatsApp message template (delivered in Spanish):**
+**SMS message template (delivered in Spanish):**
 
 ```
-🏠 *Casa Segura — Tu análisis está listo*
-
-Score: *{score}/10* {band_icon} {band_label}
-
-{executive_summary_2_sentences}
-
-{if there are critical findings:}
-Hallazgos importantes:
-• {finding_1_short_title}
-• {finding_2_short_title}
-• {finding_3_short_title}
-
-Reporte completo:
-{link_url}
-
-⚠️ Esto NO es asesoría legal.
-Antes de firmar, consulta a un abogado.
-
-ID: {public_short_id}
-El enlace expira el {expiration_date}.
+Casa Segura: análisis listo. Resultado {band_label} ({score}/10). Ver reporte: {link_url}. Esto no es asesoría legal. ID {public_short_id}. Expira {expiration_date}.
 ```
 
 **Concrete example:**
 
 ```
-🏠 *Casa Segura — Tu análisis está listo*
-
-Score: *4.2/10* 🔴 Procede con cuidado
-
-Este contrato te expone a riesgo serio. La tasa está muy por encima del mercado y hay cláusulas que la ley salvadoreña considera nulas.
-
-Hallazgos importantes:
-• Tasa de 18% anual, 9 puntos sobre el promedio
-• Sin mecanismo de fideicomiso para tu prima
-• Cláusula que limita la responsabilidad del vendedor
-
-Reporte completo:
-https://casasegura.sv/r/CS-2026-A1B2C3
-
-⚠️ Esto NO es asesoría legal.
-Antes de firmar, consulta a un abogado.
-
-ID: CS-2026-A1B2C3
-El enlace expira el 9 de junio de 2026.
+Casa Segura: análisis listo. Resultado Procede con cuidado (4.2/10). Ver reporte: https://casasegura.sv/r/CS-2026-A1B2C3. Esto no es asesoría legal. ID CS-2026-A1B2C3. Expira 9 de junio de 2026.
 ```
 
 ---
@@ -280,7 +235,7 @@ Si necesitas el análisis nuevamente, sube tu contrato otra vez.
 - Each `DeliveryRequest` has `attempt_count` and `max_attempts` (default 3)
 - Retry policy: 30 seconds, 5 minutes, 30 minutes (exponential backoff with jitter)
 - If after `max_attempts` delivery still fails, `status='failed'` and operational notification is emitted
-- If the error is clearly definitive (invalid address, non-existent domain, blocked WhatsApp number), no retry; it goes straight to `failed`
+- If the error is clearly definitive (invalid address, non-existent domain, unreachable phone number), no retry; it goes straight to `failed`
 - Retries are queued with `not_before` timestamp
 - Worker processes the queue by priority and `not_before`
 - If the system crashes during a retry, the worker restarts and resumes
@@ -288,7 +243,7 @@ Si necesitas el análisis nuevamente, sube tu contrato otra vez.
 **Error classification:**
 
 - Transient (retry): timeout, provider 5xx, rate limit
-- Permanent (no retry): 4xx with invalid address, non-existent domain, number that rejects WhatsApp
+- Permanent (no retry): 4xx with invalid address, non-existent domain, number rejected by the SMS provider
 
 ---
 
@@ -330,13 +285,13 @@ Si necesitas el análisis nuevamente, sube tu contrato otra vez.
 
 **As an** operator,
 **I want to** be notified when there are persistent delivery failures,
-**So that** I can investigate problems with the SMTP provider or Zavu.
+**So that** I can investigate problems with the SMTP provider or SMS provider.
 
 **Acceptance criteria:**
 
 - When a `DeliveryRequest` transitions to `status='failed'` after exhausting retries, a Prometheus metric is emitted with the reason
 - If the email channel failure rate exceeds 5% in an hour, an alert fires
-- If the WhatsApp failure rate exceeds 10% in an hour, an alert fires (higher threshold because WhatsApp has more legitimate failure reasons)
+- If the SMS failure rate exceeds 10% in an hour, an alert fires (higher threshold because SMS has more provider and carrier failure modes)
 - Alerts include no user-identifying information
 - The operator can query `DeliveryRequest` with `status='failed'` for batch analysis
 
@@ -358,15 +313,15 @@ Si necesitas el análisis nuevamente, sube tu contrato otra vez.
 
 **BR-07:** The public web link does not require authentication because `public_short_id` acts as a capability token. The short ID's entropy must be sufficient that guessing is infeasible (at least 36 bits of entropy).
 
-**BR-08:** The disclaimer "Esto no es asesoría legal" appears in email body, first WhatsApp message, and in the report itself. It is invariant.
+**BR-08:** The disclaimer "Esto no es asesoría legal" appears in email body, first SMS message, and in the report itself. It is invariant.
 
-**BR-09:** Casa Segura sends no emails or WhatsApp messages other than the transactional report. There is no newsletter, marketing, or reactivation. Each email/message is a direct response to an explicit user action.
+**BR-09:** Casa Segura sends no emails or SMS messages other than the transactional report. There is no newsletter, marketing, or reactivation. Each email/message is a direct response to an explicit user action.
 
-**BR-10:** WhatsApp messages use a Zavu pre-approved template. Ad-hoc messages are not allowed.
+**BR-10:** SMS messages must be transactional, concise, and generated from the approved Casa Segura template text. Ad-hoc promotional messages are not allowed.
 
 **BR-11:** The system does not track email open (no pixel tracking), does not track link clicks, and does not install cookies in the HTML report.
 
-**BR-12:** If the user originally chose WhatsApp channel, resends go via WhatsApp. Same for email. Channel change in resend is not allowed.
+**BR-12:** If the user originally chose SMS channel, resends go via SMS. Same for email. Channel change in resend is not allowed.
 
 **BR-13:** Resending the HTML report via link only requires entering the `public_short_id`, no destination validation, because the link itself is the capability. Accessing the valid link is enough.
 
@@ -385,7 +340,7 @@ CREATE TABLE delivery_request (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     analysis_id UUID NOT NULL REFERENCES contract_analysis(id) ON DELETE CASCADE,
 
-    channel TEXT NOT NULL CHECK (channel IN ('email_pdf', 'whatsapp_summary', 'web_link')),
+    channel TEXT NOT NULL CHECK (channel IN ('email_pdf', 'sms_summary', 'web_link')),
     target_hash TEXT,
     target_value_encrypted TEXT,
     target_value_encrypted_kms_key_id TEXT,
@@ -442,10 +397,10 @@ ORDER BY dr.requested_at DESC;
 -- delivery_status and delivery_channel reference the current delivery
 
 ALTER TABLE contract_analysis ADD COLUMN IF NOT EXISTS delivery_status TEXT DEFAULT 'pending' CHECK (
-    delivery_status IN ('pending', 'queued', 'sent_email', 'sent_whatsapp', 'available_link', 'expired', 'failed')
+    delivery_status IN ('pending', 'queued', 'sent_email', 'sent_sms', 'available_link', 'expired', 'failed')
 );
 ALTER TABLE contract_analysis ADD COLUMN IF NOT EXISTS delivery_channel TEXT CHECK (
-    delivery_channel IN ('email_pdf', 'whatsapp_summary', 'web_link')
+    delivery_channel IN ('email_pdf', 'sms_summary', 'web_link')
 );
 ALTER TABLE contract_analysis ADD COLUMN IF NOT EXISTS delivery_target_hash TEXT;
 ALTER TABLE contract_analysis ADD COLUMN IF NOT EXISTS link_expires_at TIMESTAMPTZ;
@@ -485,41 +440,29 @@ Configuration:
 
 Provider recommendation: SendGrid, Amazon SES, or Postmark. Any with good IP reputation.
 
-### 6.3 Zavu (WhatsApp)
+### 6.3 SMS provider
 
-F7 sends WhatsApp messages via the Zavu API.
+F7 sends SMS messages via the configured transactional SMS provider.
 
 Configuration:
 
-- `ZAVU_API_BASE_URL` env var (default `https://api.zavu.com/v1`)
-- `ZAVU_API_KEY` env var (secret)
-- `ZAVU_PHONE_NUMBER_ID` env var (WhatsApp Business number ID)
-- `ZAVU_TEMPLATE_NAME_REPORT_DELIVERY` env var (approved template name)
-- `ZAVU_WEBHOOK_SECRET` env var (to validate incoming webhooks; already configured in F1)
+- `SMS_PROVIDER` env var (provider adapter id, e.g. `twilio`, `sns`, or `local`)
+- `SMS_API_BASE_URL` env var when the adapter requires it
+- `SMS_API_KEY` / provider credential env vars (secret)
+- `SMS_FROM` env var (registered sender or phone number when supported)
+- `SMS_TIMEOUT_SECONDS` env var (default 30)
 
 Typical send endpoint:
 
 ```http
-POST https://api.zavu.com/v1/messages
-Authorization: Bearer {ZAVU_API_KEY}
+POST {SMS_API_BASE_URL}/messages
+Authorization: Bearer {SMS_API_KEY}
 Content-Type: application/json
 
 {
     "to": "+503XXXXXXXX",
-    "type": "template",
-    "template": {
-        "name": "casa_segura_report_delivery",
-        "language": "es",
-        "components": [
-            {
-                "type": "body",
-                "parameters": [
-                    {"type": "text", "text": "{score}"},
-                    {"type": "text", "text": "{band}"}
-                ]
-            }
-        ]
-    }
+    "from": "{SMS_FROM}",
+    "body": "Casa Segura: análisis listo. Resultado {band_label} ({score}/10). Ver reporte: {link_url}. Esto no es asesoría legal. ID {public_short_id}."
 }
 ```
 
@@ -644,11 +587,11 @@ F7 does not use an LLM. Message composition uses static templates.
 
 - **P50 latency for email send:** under 3 seconds from queue to SMTP accepted by provider.
 - **P95 latency:** under 10 seconds.
-- **P50 latency for WhatsApp send:** under 2 seconds from queue to Zavu accepted.
+- **P50 latency for SMS send:** under 2 seconds from queue to provider accepted.
 - **P50 latency for web link:** under 1 second TTFB on first load.
 - **Public endpoint availability:** over 99% (serving the link is critical).
 - **Email delivery success rate:** over 95% on first attempt, over 99% after retries.
-- **WhatsApp delivery success rate:** over 90% on first attempt (WhatsApp has more legitimate failure reasons).
+- **SMS delivery success rate:** over 90% on first attempt (SMS has more provider and carrier failure modes).
 - **Throughput:** support at least 200 concurrent deliveries in production.
 - **In-transit encryption:** TLS 1.2+ mandatory for all external communications.
 - **At-rest encryption:** `target_value_encrypted` protected by KMS; the rest of the database per infrastructure policy.
@@ -660,7 +603,7 @@ F7 does not use an LLM. Message composition uses static templates.
 
 1. What is the final SMTP provider? SendGrid is best known but its IP reputation fluctuates. Amazon SES requires leaving the sandbox. Postmark is premium. The decision affects cost and deliverability.
 
-2. Does the WhatsApp template in Zavu require prior approval by Meta? If so, the approval process takes days and limits message iteration. Product must submit the first approval with time to spare.
+2. What is the final SMS provider? The decision affects sender registration, regional deliverability, error taxonomy, and per-message cost.
 
 3. Should the web-link TTL be configurable per analysis or only global? For now it is global. Product might want 7 days for sensitive analyses and 90 days for relaxed ones, but it introduces complexity without clear need.
 
@@ -672,7 +615,7 @@ F7 does not use an LLM. Message composition uses static templates.
 
 7. Should the system record when someone opens the link to show the user that their report was viewed? This requires telemetry that goes against the no-tracking principle. Recommend no.
 
-8. What to do if the user on WhatsApp requests resend conversationally ("send me the report again")? The bot should respond with instructions, not process it directly. Needs logic in F1 (which is the WhatsApp handler).
+8. Should SMS replies be processed at all? MVP recommendation: no. Replies should receive at most a static support instruction, not trigger resend or analysis workflows.
 
 ---
 

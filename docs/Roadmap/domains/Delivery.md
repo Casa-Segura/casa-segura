@@ -7,7 +7,7 @@ domain_index: delivery
 
 # Delivery
 
-Email, WhatsApp/Zavu, public links, resend behavior, delivery queues, provider transports, message lifecycle, and channel-specific delivery constraints.
+SMS, email, public links, resend behavior, delivery queues, provider transports, message lifecycle, and channel-specific delivery constraints.
 
 ## Ownership Notes
 

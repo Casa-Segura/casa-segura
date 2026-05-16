@@ -136,7 +136,7 @@ Primary folders and contracts:
 
 - `backend/` service boundaries that call OCR, RAG, delivery, or external providers
 - prompt, retrieval, eval, and integration fixtures
-- webhook, Zavu, SMTP, model, and vector-search contracts
+- webhook, SMS, SMTP, model, and vector-search contracts
 
 Start this lane when its backing BE or Infra foundation exists. Early API / AI work is concentrated in Phase 1 input pipelines, Phase 2 extraction, Phase 4 synthesis/citation wiring, Phase 5 delivery integrations, and optional project verification.
 
@@ -241,8 +241,8 @@ Recommended split:
 
 - `BE WORK`: Jinja shell, report sections, PDF rendering, delivery schemas, dispatcher, email, public link route, resend, and regeneration.
 - `FE WORK`: result page, upload/delivery surface, mobile report behavior, and expired-link UX.
-- `INFRA WORK`: queue, retry policy, dead-letter handling, and Zavu secrets.
-- `API / AI CONNECTIONS`: Zavu, SMTP normalization, webhook contracts, and external delivery behavior.
+- `INFRA WORK`: queue, retry policy, dead-letter handling, and SMS secrets.
+- `API / AI CONNECTIONS`: SMS, SMTP normalization, webhook contracts, and external delivery behavior.
 
 ### Phase 6 - Privacy Closure
 
@@ -326,7 +326,7 @@ The roadmap standardizes on a **Django 5.2 LTS** + **DRF** Python backend ([ADR-
 - sentence-transformers MiniLM embeddings and pgvector retrieval in `CS-083` through `CS-085`.
 - Jinja and WeasyPrint for report generation in `CS-200` through `CS-210`.
 - **Celery** workers on **Redis** for delivery and async tasks (`CS-233` and dependents).
-- Zavu outbound WhatsApp integration in `CS-238` through `CS-244`.
+- SMS outbound integration in `CS-238` through `CS-244`.
 
-When starting BE work, search for Python, Django, DRF, **Pydantic v2**, Django ORM, Postgres/pgvector, **Redis**/Celery, OCR, RAG, and Zavu skills before implementation.
+When starting BE work, search for Python, Django, DRF, **Pydantic v2**, Django ORM, Postgres/pgvector, **Redis**/Celery, OCR, RAG, and SMS provider skills before implementation.
 

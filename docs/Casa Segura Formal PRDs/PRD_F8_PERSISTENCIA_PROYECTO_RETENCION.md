@@ -511,9 +511,9 @@ CREATE TABLE contract_analysis (
 
     -- Delivery state
     delivery_status TEXT NOT NULL DEFAULT 'pending' CHECK (
-        delivery_status IN ('pending', 'queued', 'sent_email', 'sent_whatsapp', 'available_link', 'expired', 'failed')
+        delivery_status IN ('pending', 'queued', 'sent_sms', 'sent_email', 'available_link', 'expired', 'failed')
     ),
-    delivery_channel TEXT CHECK (delivery_channel IN ('email_pdf', 'whatsapp_summary', 'web_link')),
+    delivery_channel TEXT CHECK (delivery_channel IN ('sms_summary', 'email_pdf', 'web_link')),
     delivery_target_hash TEXT,
     link_expires_at TIMESTAMPTZ,
     resend_count INTEGER NOT NULL DEFAULT 0,
@@ -543,7 +543,7 @@ CREATE TABLE contract_submission (
     total_size_bytes BIGINT NOT NULL,
     total_pages INTEGER,
     file_formats TEXT[] NOT NULL,
-    source TEXT NOT NULL CHECK (source IN ('web', 'whatsapp')),
+    source TEXT NOT NULL CHECK (source IN ('web')),
     source_metadata JSONB DEFAULT '{}'::jsonb,
     processing_status TEXT NOT NULL CHECK (processing_status IN (
         'received', 'extracting', 'extracted', 'classifying', 'analyzing',
@@ -597,7 +597,7 @@ CREATE INDEX idx_ocr_job_expires ON ocr_job(expires_at);
 CREATE TABLE delivery_request (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     analysis_id UUID NOT NULL REFERENCES contract_analysis(id) ON DELETE CASCADE,
-    channel TEXT NOT NULL CHECK (channel IN ('email_pdf', 'whatsapp_summary', 'web_link')),
+    channel TEXT NOT NULL CHECK (channel IN ('sms_summary', 'email_pdf', 'web_link')),
     target_hash TEXT,
     target_value_encrypted TEXT,
     target_value_encrypted_kms_key_id TEXT,

@@ -28,7 +28,7 @@ Public-facing surface for contract submission and report viewing on web. Spanish
 ## Definition of done
 
 - [x] Landing page with one-sentence value proposition and clear CTA
-- [x] Upload page with disclaimer gate, channel selector (email / WhatsApp / link), drag-drop + file picker
+- [x] Upload page with disclaimer gate, channel selector (SMS / email / link), drag-drop + file picker
 - [x] Loading state with rotating Spanish copy
 - [x] Result page (when channel = link) embeds the HTML report
 - [x] Expired-link friendly page ([[CS-295]] — PRD_US-05 copy + `noindex`; `/enlace-expirado` + documented 404/410 handling on `/r/...`)

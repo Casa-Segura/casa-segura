@@ -29,7 +29,7 @@ The product objective is to receive a real estate contract in PDF or image forma
 - Application of a fixed 38-criterion rubric across six categories (legal and formal validity, economic health, guarantees, property risks, abusive clauses, transparency)
 - Detection of "purchase disguised as leasing" reclassification per Art. 2 indicators of the Salvadoran Financial Leasing Law
 - Generation of a report with score, breakdown by category, critical findings, economic analysis compared against market benchmarks, and verbatim legal citations from the corpus
-- Delivery of the report via email (PDF), WhatsApp (summary + link) through Zavu, or a public web link with configurable expiration
+- Delivery of the report via SMS (summary + link), email (PDF), or a public web link with configurable expiration
 - Persistence of a real estate Project entity with aggregate metrics from associated analyses, without storing contract content or personal user data
 - Single language: Spanish, informal "tú" register
 
@@ -223,24 +223,24 @@ The product objective is to receive a real estate contract in PDF or image forma
 ### US-05: User receives the report via the chosen channel
 
 **As a** user who received their analysis,
-**I want to** receive the report by email, WhatsApp, or web link according to my preference,
+**I want to** receive the report by SMS, email, or web link according to my preference,
 **So that** I can consult it wherever it is most convenient.
 
 **Acceptance criteria:**
 
 - The user chooses the delivery channel at upload time
+- If SMS is chosen, the system sends a concise message with the score/band and a link to the full HTML report
 - If email is chosen, the system sends the PDF as an attachment with a descriptive subject and brief body
-- If WhatsApp is chosen, the system sends a message via Zavu with the score, summarized critical findings, and a link to the full HTML report
 - If a web link is chosen, the system delivers a public URL with configurable expiration
 - The web link serves the HTML report while it has not expired
 - After expiration, the link shows an explanatory message: "Este análisis ya no está disponible. Casa Segura no almacena reportes de forma permanente para proteger tu privacidad."
 - The user's email or phone number is stored only as a hash for delivery retries; the original value is discarded once delivery is confirmed
-- The email and WhatsApp message templates include the disclaimer "Esto no es asesoría legal"
+- The SMS and email message templates include the disclaimer "Esto no es asesoría legal"
 
 **Delivery channels:**
 
+- `sms_summary` — SMS message with summary and link to the full report
 - `email_pdf` — Email with PDF attachment
-- `whatsapp_summary` — WhatsApp message with summary and link to the full report
 - `web_link` — Public link with TTL
 
 ---
@@ -296,7 +296,7 @@ The product objective is to receive a real estate contract in PDF or image forma
 
 **BR-06:** The system does not ask the user for their income, salary, net worth, or any characteristic of their personal financial situation. Economic criteria are evaluated against market benchmarks, not against the user's ability to pay.
 
-**BR-07:** Every user-facing interaction (upload page, HTML report, PDF, email message, WhatsApp message) must include the disclaimer "Esto no es asesoría legal". The disclaimer appears in the header and footer of the report at minimum.
+**BR-07:** Every user-facing interaction (upload page, HTML report, PDF, SMS message, email message) must include the disclaimer "Esto no es asesoría legal". The disclaimer appears in the header and footer of the report at minimum.
 
 **BR-08:** The system operates only in Spanish. If the contract is in another language, the analysis is rejected with status `not_analyzable`.
 

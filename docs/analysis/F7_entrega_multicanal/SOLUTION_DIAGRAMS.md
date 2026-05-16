@@ -13,7 +13,7 @@ classDiagram
     class DeliveryChannel {
         <<TextChoices>>
         EMAIL_PDF
-        WHATSAPP_SUMMARY
+        SMS_SUMMARY
         WEB_LINK
     }
     class DeliveryStatus {
@@ -44,7 +44,7 @@ classDiagram
         -ContractAnalysisRepository analysis_repo
         -ReportService report_svc
         -EmailSender email_sender
-        -WhatsappSender whatsapp_sender
+        -SmsSender sms_sender
         -KmsClient kms
         +deliver_to_user(analysis_id) None
         +resend(short_id, target) DeliveryRequest
@@ -58,8 +58,8 @@ classDiagram
         -ReportService report_svc
         +send(dr, ctx) ProviderResult
     }
-    class WhatsappSender {
-        -ZavuClient zavu
+    class SmsSender {
+        -SmsClient sms
         -ReportService report_svc
         +send(dr, ctx) ProviderResult
     }
@@ -79,7 +79,7 @@ classDiagram
     delivery_handlers ..> MarkDelivered
     delivery_handlers ..> MarkFailed
     DeliveryService *-- EmailSender
-    DeliveryService *-- WhatsappSender
+    DeliveryService *-- SmsSender
     DeliveryService *-- KmsClient
     DeliveryService ..> delivery_handlers
 ```
@@ -94,7 +94,7 @@ classDiagram
         <<httpx wrapper or smtplib>>
         +send_email(from, to, subject, body_html, attachment_pdf) ProviderResult
     }
-    class ZavuClient {
+    class SmsClient {
         <<reused from F1>>
         +send_template(to, template_name, params) ProviderResult
     }
@@ -177,24 +177,24 @@ sequenceDiagram
     Svc->>DR: update(status=delivered, ...)
 ```
 
-### 2.3 WhatsApp delivery
+### 2.3 SMS delivery
 
 ```mermaid
 sequenceDiagram
     participant Svc as DeliveryService
-    participant Zavu as ZavuClient
-    participant Meta as WhatsApp/Meta
+    participant Sms as SmsClient
+    participant Provider as SMS Provider
     participant R as ReportService
     participant KMS as KmsClient
 
     Svc->>KMS: decrypt(ciphertext, key_id)
     KMS-->>Svc: phone +503XXX
     Svc->>R: generate_html (for params); also compute short URL
-    Svc->>Zavu: send_template(to=phone, template="casa_segura_report_delivery", params=[score, band_label, 3 findings, link_url, expiry])
-    Zavu->>Meta: API
-    Meta-->>Zavu: 200 OK + provider_message_id
-    Zavu-->>Svc: success
-    Svc->>Svc: DR.status=delivered; AR.delivery_status="sent_whatsapp"
+    Svc->>Sms: send_sms(to=phone, body=summary + link)
+    Sms->>Provider: API
+    Provider-->>Sms: 200 OK + provider_message_id
+    Sms-->>Svc: success
+    Svc->>Svc: DR.status=delivered; AR.delivery_status="sent_sms"
 ```
 
 ### 2.4 Public link view
@@ -285,7 +285,7 @@ flowchart TD
     A[F4 chain triggers delivery] --> B{channel}
     B -->|web_link| C[No proactive send; link is already valid]
     B -->|email_pdf| D[Decrypt target]
-    B -->|whatsapp_summary| D
+    B -->|sms_summary| D
     D --> E[Generate report PDF or summary via F6]
     E --> F[Dispatch via provider]
     F --> G{result}
@@ -315,10 +315,10 @@ graph TD
     DR[DeliveryRequestRepository]
     R[F6 ReportService]
     SMTP[SmtpClient]
-    Zavu[ZavuClient]
+    Sms[SmsClient]
     KMS[KmsClient]
     Provider1[SMTP provider]
-    Provider2[Zavu API → Meta WhatsApp]
+    Provider2[SMS Provider]
     Redis[(Redis: target blob 300s)]
     PG[(Postgres)]
     PubLink[PublicLinkView /r/{short_id}]
@@ -332,7 +332,7 @@ graph TD
     Svc --> DR --> PG
     Svc --> R
     Svc --> SMTP --> Provider1
-    Svc --> Zavu --> Provider2
+    Svc --> Sms --> Provider2
     Svc --> KMS
     Svc --> Redis
     PubLink --> Svc
