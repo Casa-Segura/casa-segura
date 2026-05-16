@@ -42,12 +42,23 @@ Dockerfile target plus an overridden `startCommand`.
 
 Railway's default Postgres image does **not** ship pgvector. Casa Segura's
 schema requires it (CS-026 `legal_chunk.embedding`, CS-030 HNSW index).
-Use the `pgvector/pgvector:pg16` image:
 
-1. **+ New** → **Database** → **Add PostgreSQL**.
-2. Open the Postgres service → **Settings** → **Source Image** → set to
-   `pgvector/pgvector:pg16`. Redeploy.
-3. Verify in the **Data** tab:
+> **CRITICAL ORDERING.** Change the Source Image **before** the first
+> deploy. Railway's current default Postgres is **version 18**, and the
+> volume gets initialized with PG 18's on-disk format + `postgresql.conf`.
+> Switching to a *lower* pgvector tag afterwards will fail with
+> `unrecognized configuration parameter "autovacuum_worker_slots"` (PG 18-
+> only knob) and the data directory cannot be downgraded — only a volume
+> wipe recovers.
+
+1. **+ New** → **Database** → **Add PostgreSQL**. Do NOT deploy yet.
+2. Immediately open the Postgres service → **Settings** → **Source Image**
+   → set to `pgvector/pgvector:pg18` (matches Railway's PG default).
+   - If you specifically need an older PG version, you must delete the
+     auto-created volume first (Settings → Volumes), THEN set the image to
+     `pgvector/pgvector:pg17` (or `pg16`), THEN deploy. Otherwise see the
+     recovery path in §3.1 below.
+3. Deploy. Verify in the **Data** tab:
    ```sql
    CREATE EXTENSION IF NOT EXISTS vector;
    CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -61,6 +72,28 @@ Use the `pgvector/pgvector:pg16` image:
 If you cannot use that image (e.g. Railway enterprise restriction),
 provision Postgres on Neon or Supabase instead and point `DATABASE_URL`
 at it.
+
+### 3.1 Recovery: Postgres won't start after image change
+
+Symptom in logs (repeats every restart):
+
+```
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+FATAL: configuration file "/var/lib/postgresql/data/pgdata/postgresql.conf" contains errors
+LOG: unrecognized configuration parameter "autovacuum_worker_slots"
+```
+
+This means the volume was initialized by a newer PG (18) and you pointed
+it at an older PG binary that doesn't understand PG 18's config. The data
+format itself is also incompatible — no config fix recovers it.
+
+**Fix (destructive, no real data yet):**
+
+1. Postgres service → **Settings** → **Volumes** → delete the existing
+   volume.
+2. Verify the Source Image is what you actually want (`pgvector/pgvector:pg18`
+   is the safest match for Railway's current default).
+3. Redeploy. Railway creates a fresh volume; PG initializes from scratch.
 
 ---
 
