@@ -34,7 +34,7 @@ Supporting references: [Feature map](docs/Casa%20Segura%20Formal%20PRDs/FEATURES
 | **Database** | PostgreSQL 16 + **pgvector** (vectors + relational data per PRDs) |
 | **Local dependencies** | [Docker Compose](docker-compose.dev.yml) — Postgres + Redis for development |
 
-Backend stack decision: [ADR-0001 — Django backend](docs/adr/ADR-0001-django-backend-stack.md).
+Backend stack decisions: [ADR-0001 — Django backend](docs/adr/ADR-0001-django-backend-stack.md) · [ADR-0002 — `platform_core` rename](docs/adr/ADR-0002-rename-platform-module-to-platform_core.md) · [ADR-0003 — CS-031 normalization](docs/adr/ADR-0003-cs031-project-name-normalization-divergence.md) · [ADR-0004 — Versioning strategy](docs/adr/ADR-0004-versioning.md).
 
 Design tokens and UX references: [`docs/Design/casa-segura.pen`](docs/Design/casa-segura.pen) (Pencil), formal UI notes under PRDs / `docs/`.
 
@@ -73,3 +73,67 @@ infra/       # Local dev helpers (e.g. Postgres init)
 
 > [!CAUTION]
 > **Privacy:** Treat OCR payloads, delivery targets (email, WhatsApp), report text, prompts, logs, and error bodies as **sensitive**. Do not log PII or raw files beyond what the API needs.
+
+## Backend API contract
+
+### Health and readiness
+
+```
+GET /api/health/   →  200 { "status": "ok", "service": "casa-segura-api", "schema_version": "1.0.0", "hostname": "..." }
+GET /api/ready/    →  200 { "status": "ok", "schema_version": "1.0.0", "checks": { "database": "ok", "redis": "ok" }, "reasons": [] }
+                   →  503 if DB or Redis unreachable, with `reasons` array of failure codes.
+```
+
+### Error envelope (CS-009)
+
+Every response — success or failure — mirrors the inbound `X-Request-ID` header (or generates a UUID4 fallback). Failures additionally return the same value in the body as `correlation_id`.
+
+**Success example:**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+X-Request-ID: 5e8f1f6c-23a1-4f3a-9c0e-1b2a3c4d5e6f
+
+{ ...domain payload... }
+```
+
+**Failure example** (canonical envelope from `backend/config/exception_handler.py`):
+
+```http
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+X-Request-ID: 5e8f1f6c-23a1-4f3a-9c0e-1b2a3c4d5e6f
+
+{
+  "error_code": "validation_error",
+  "message": "Request payload failed validation.",
+  "details": { "submission_hash": ["This field is required."] },
+  "correlation_id": "5e8f1f6c-23a1-4f3a-9c0e-1b2a3c4d5e6f",
+  "schema_version": "1.0.0"
+}
+```
+
+Public error codes registered in `backend/shared/domain/exceptions.py::PUBLIC_ERROR_CODES`. Feature modules may extend by adding to that registry (no shadowing).
+
+## Observability (CS-007)
+
+`backend/shared/observability/logging.py::configure_logging` ships structured JSON logs in production (one record per line) with a stable shape: `timestamp`, `level`, `service`, `correlation_id`, `schema_version`, `rubric_version`, `corpus_version`, plus event-specific fields the caller binds.
+
+`backend/shared/observability/middleware.py::CorrelationIdMiddleware` pulls `X-Request-ID` from the request (or generates UUID4), binds it to structlog contextvars for the request lifetime, and echoes it on the response header. Limit: 128 chars; empty/oversized values fall back to UUID4.
+
+Minimal usage:
+
+```python
+import structlog
+
+logger = structlog.get_logger(__name__)
+
+def handle_submission(submission_id):
+    logger.info("submission_received", submission_id=str(submission_id), strategy="pypdf")
+    # → {"timestamp": "...", "level": "info", "event": "submission_received",
+    #    "service": "casa-segura-api", "correlation_id": "...", "schema_version": "1.0.0",
+    #    "submission_id": "...", "strategy": "pypdf", "rubric_version": null, "corpus_version": null}
+```
+
+Metrics exposed at `/metrics/` via `django-prometheus`.

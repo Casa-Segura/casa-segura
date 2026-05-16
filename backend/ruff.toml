@@ -35,6 +35,3 @@ ignore = [
 "**/tests/**" = ["S", "PLR"]
 "**/migrations/**" = ["E", "F", "S", "PLR", "RUF"]
 "conftest.py" = ["S", "PLR"]
-
-[lint.flake8-django]
-django-settings-module = "config.settings"
