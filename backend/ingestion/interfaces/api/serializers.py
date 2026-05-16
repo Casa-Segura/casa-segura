@@ -12,7 +12,6 @@ class SubmissionUploadSerializer(serializers.Serializer):
     """Accepts a single multipart upload + disclaimer metadata."""
 
     file = serializers.FileField()
-    disclaimer_accepted_at = serializers.DateTimeField(required=False, allow_null=True)
     disclaimer_method = serializers.ChoiceField(
         choices=DisclaimerAcceptanceMethod.choices,
         default=DisclaimerAcceptanceMethod.CHECKBOX.value,

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime
-
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -15,6 +13,10 @@ from ingestion.application.ocr.errors import NotAnalyzableError
 from ingestion.application.upload_service import UploadRequest, ingest_upload
 from ingestion.domain.enums import DisclaimerAcceptanceMethod, SubmissionSource
 from ingestion.infrastructure.django.models import ContractSubmission
+from ingestion.interfaces.api.disclaimer_gate import (
+    merge_submission_upload_aliases,
+    require_disclaimer_accepted_or_raise,
+)
 from ingestion.interfaces.api.serializers import (
     SubmissionResponseSerializer,
     SubmissionUploadSerializer,
@@ -33,7 +35,10 @@ class SubmissionUploadView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request) -> Response:
-        serializer = SubmissionUploadSerializer(data=request.data)
+        merged = merge_submission_upload_aliases(request.data)
+        require_disclaimer_accepted_or_raise(merged)
+
+        serializer = SubmissionUploadSerializer(data=merged)
         serializer.is_valid(raise_exception=True)
 
         upload = serializer.validated_data["file"]
@@ -41,9 +46,7 @@ class SubmissionUploadView(APIView):
         content_type = (upload.content_type or "").lower()
         filename = upload.name or ""
 
-        disclaimer_at: datetime = (
-            serializer.validated_data.get("disclaimer_accepted_at") or timezone.now()
-        )
+        disclaimer_at = timezone.now()
         disclaimer_method = DisclaimerAcceptanceMethod(
             serializer.validated_data["disclaimer_method"]
         )

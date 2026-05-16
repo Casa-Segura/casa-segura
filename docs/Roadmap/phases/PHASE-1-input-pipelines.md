@@ -40,14 +40,14 @@ The next backend-blocking pickup on this phase is the **live verification pass**
 
 Out-of-phase pickups still pending:
 
-- CS-058 — Disclaimer acceptance gate (FE lane).
+- ~~CS-058~~ — **done** (BE disclaimer gate + persistence; FE multipart aliases + defaults aligned).
 - CS-033 — 38-criterion YAML loader for RubricVersion (Phase 0 → unblocks CS-086 pattern shortcut against real rubric).
 
 ## FE WORK
 
-- [CS-058](../tickets/CS-058.md) - Disclaimer acceptance gate.
+- ~~[CS-058](../tickets/CS-058.md)~~ — **done** (server-side disclaimer enforcement + `/subir` wiring; env defaults align with Django `/api/v1/submissions/`).
 
-FE should coordinate this lane with [CS-291](../tickets/CS-291.md) and [CS-297](../tickets/CS-297.md) in [Cross-Cutting Work](CROSS-cutting.md), keeping Spanish disclaimer copy centralized.
+FE should keep coordinating disclaimer copy with [CS-291](../tickets/CS-291.md) and [CS-297](../tickets/CS-297.md) in [Cross-Cutting Work](CROSS-cutting.md), keeping Spanish disclaimer copy centralized.
 
 ## BE WORK
 

@@ -79,6 +79,7 @@ class UpstreamDomainException(DomainException):
 # do NOT shadow existing keys — pick a new namespace.
 PUBLIC_ERROR_CODES: dict[str, str] = {
     "domain_error": "Generic domain error.",
+    "DISCLAIMER_REQUIRED": "Disclaimer must be explicitly accepted before ingestion.",
     "validation_error": "Request payload failed validation.",
     "not_found": "Resource not found.",
     "conflict": "Resource state conflict.",
