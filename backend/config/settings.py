@@ -5,6 +5,8 @@ from pathlib import Path
 
 import environ
 
+from shared.observability.logging import configure_logging
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(
@@ -16,6 +18,7 @@ environ.Env.read_env(BASE_DIR / ".env")
 SECRET_KEY = env("SECRET_KEY", default="django-insecure-change-me-in-production")
 DEBUG = env.bool("DEBUG", default=True)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
+LOG_LEVEL = env("LOG_LEVEL", default="INFO")
 
 
 INSTALLED_APPS = [
@@ -32,13 +35,23 @@ INSTALLED_APPS = [
     "softdelete",
     "django_celery_beat",
     "django_prometheus",
-    # Project
+    # Project — order matters for FK resolution at migration time:
+    #   rubric/corpus/economics declare PKs referenced by platform_core.ContractAnalysis.
     "common.infrastructure.django.apps.CommonConfig",
+    "rubric.infrastructure.django.apps.RubricConfig",
+    "corpus.infrastructure.django.apps.CorpusConfig",
+    "economics.infrastructure.django.apps.EconomicsConfig",
+    "platform_core.infrastructure.django.apps.PlatformCoreConfig",
+    "ingestion.infrastructure.django.apps.IngestionConfig",
+    "classification.infrastructure.django.apps.ClassificationConfig",
+    "reports.infrastructure.django.apps.ReportsConfig",
+    "delivery.infrastructure.django.apps.DeliveryConfig",
 ]
 
 
 MIDDLEWARE = [
     "django_prometheus.middleware.PrometheusBeforeMiddleware",
+    "shared.observability.middleware.CorrelationIdMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -81,6 +94,9 @@ AUTHENTICATION_BACKENDS = [
 
 DB_ENGINE = env("DB_ENGINE", default="postgresql")
 if DB_ENGINE == "sqlite":
+    # NOTE: SQLite is only suitable for `manage.py check` / `makemigrations` validation.
+    # Casa Segura models use Postgres-only field types (ArrayField, VectorField, GinIndex);
+    # `migrate` requires Postgres 15+ with pgvector (CS-020).
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -96,12 +112,22 @@ else:
             "PASSWORD": env("DB_PASSWORD", default="postgres"),
             "HOST": env("DB_HOST", default="localhost"),
             "PORT": env("DB_PORT", default="5432"),
+            "CONN_MAX_AGE": env.int("DB_CONN_MAX_AGE", default=60),
+            "CONN_HEALTH_CHECKS": True,
         }
     }
 
 
 MIGRATION_MODULES = {
     "common": "common.infrastructure.django.migrations",
+    "platform_core": "platform_core.infrastructure.django.migrations",
+    "ingestion": "ingestion.infrastructure.django.migrations",
+    "classification": "classification.infrastructure.django.migrations",
+    "corpus": "corpus.infrastructure.django.migrations",
+    "rubric": "rubric.infrastructure.django.migrations",
+    "economics": "economics.infrastructure.django.migrations",
+    "reports": "reports.infrastructure.django.migrations",
+    "delivery": "delivery.infrastructure.django.migrations",
 }
 
 
@@ -154,3 +180,5 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+
+configure_logging(debug=DEBUG, log_level=LOG_LEVEL)
