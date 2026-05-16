@@ -2,7 +2,7 @@
 id: EPIC-02
 name: Contract Ingestion & OCR
 phase: 1
-status: backlog
+status: in_progress
 depends_on:
   - EPIC-01
 prd_refs:
@@ -17,12 +17,9 @@ tags:
   - casa-segura
   - epic
   - epic-02
-  - stub
 ---
 
 # EPIC-02 — Contract Ingestion & OCR
-
-> **Stub.** Epic-level only. Tickets fleshed out in second pass.
 
 ## Goal
 
@@ -30,13 +27,13 @@ Receive contract uploads (PDF, JPG, PNG, HEIC, WEBP), detect document kind, extr
 
 ## Definition of done
 
-- [ ] `POST /contracts/submit` accepts the five formats listed in US-01
-- [ ] `ocr.detect_kind` correctly classifies BILLBOARD_IMAGE / TEXT_PDF / SCANNED_PDF / UNSUPPORTED
-- [ ] Text PDFs handled via pypdf; scanned PDFs via vision LLM; Tesseract Spanish as fallback
-- [ ] Disclaimer "Esto no es asesoría legal" presented and accepted before processing
-- [ ] Failure modes (unreadable, non-Spanish, oversized) return `not_analyzable` with reason
-- [ ] Original file discarded immediately after extraction ([[PRD_GENERAL]] BR-01)
-- [ ] P95 ingestion+OCR latency under the budget that leaves room for downstream stages (target: <30s of the 90s total in [[PRD_GENERAL]] §5)
+- [ ] `POST /api/v1/submissions/` accepts the five formats listed in US-01 (CS-050 — single-file MVP in place; multi-file 1–50, image dimension validator, `DISCLAIMER_REQUIRED` enforcement and PRD-canonical error codes pending)
+- [ ] `ocr.detect_kind` routes between pypdf / Pixtral / Tesseract per MIME + native-text probe (CS-052 — routing implemented; PRD-canonical 100-char first-page threshold and `force_strategy` override pending)
+- [ ] Text PDFs handled via pypdf; scanned PDFs and images via Pixtral Large 2411 (OpenRouter, single multimodal model + `file-parser` plugin with `mistral-ocr` engine for PDF); Tesseract Spanish as fallback (CS-053/054/055 — architectural pivot to Pixtral makes per-page rasterization unnecessary; retry/backoff/partial-failure AC need rewrite to fit new architecture before tickets close)
+- [ ] Disclaimer "Esto no es asesoría legal" presented and accepted before processing (CS-058 — FE lane, out of this epic's BE scope)
+- [ ] Failure modes (unreadable, non-Spanish, oversized) return `not_analyzable` with reason (CS-056 — `NotAnalyzableError` envelope present with stable error codes; PRD §US-08 first-2000-chars + 0.85 confidence policy pending)
+- [x] Original file discarded immediately after extraction ([[PRD_GENERAL]] BR-01); meta-test asserts no model exposes `extracted_text` (CS-057)
+- [ ] P95 ingestion+OCR latency instrumented per stage with Prometheus histograms against the 90s budget (CS-060 — stage histograms + outcome counters present; page-bucket labels + full SLA roll-up test still pending)
 
 ## In scope
 

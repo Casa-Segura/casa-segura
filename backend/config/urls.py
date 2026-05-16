@@ -10,7 +10,12 @@ swagger_url_patterns = [
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
 ]
 
-url_patterns: list = []
+# Phase 1 routers (EPIC-02 ingestion, EPIC-03 corpus). Each app exposes
+# its DRF urls under `<app>.interfaces.api.urls`.
+api_v1_url_patterns = [
+    path("", include("ingestion.interfaces.api.urls", namespace="ingestion")),
+    path("corpus/", include("corpus.interfaces.api.urls", namespace="corpus")),
+]
 
 
 urlpatterns = [
@@ -18,6 +23,6 @@ urlpatterns = [
     path("api/health/", health, name="health"),
     path("api/ready/", ready, name="ready"),
     path("api/v1/schema/", include(swagger_url_patterns)),
-    path("api/v1/", include(url_patterns)),
+    path("api/v1/", include((api_v1_url_patterns, "v1"))),
     path("metrics/", include("django_prometheus.urls")),
 ]

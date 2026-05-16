@@ -4,6 +4,7 @@ doc_type: phase_index
 phase: 1
 status: living
 last_updated: 2026-05-15
+# Phase 1 implementation pass (Pixtral OCR architecture) landed 2026-05-15.
 tags:
   - casa-segura
   - roadmap
@@ -21,6 +22,7 @@ Source epics:
 
 Source-of-truth links:
 
+- [PHASE-1 configuration checklist](PHASE-1-config-checklist.md) - everything the operator must configure (`.env`, OS deps, Python, docker compose, seeds, smoke checks) for the Phase 1 implementation to run end-to-end.
 - [PRD_F1_INGESTA_Y_OCR](../../Casa%20Segura%20Formal%20PRDs/PRD_F1_INGESTA_Y_OCR.md) - upload, OCR, disclaimer gate, and retention expectations.
 - [PRD_F3_CORPUS_Y_RAG](../../Casa%20Segura%20Formal%20PRDs/PRD_F3_CORPUS_Y_RAG.md) - legal corpus and retrieval behavior.
 - [DOMAIN_MODEL](../../Casa%20Segura%20Formal%20PRDs/DOMAIN_MODEL.md) - `ContractSubmission`, `OcrJob`, `LegalDocument`, `LegalChunk`, and `CorpusVersion`.
@@ -29,7 +31,9 @@ Source-of-truth links:
 
 ## Ready Now
 
-No Phase 1 tickets are ready yet. Start after the Phase 0 app and persistence foundations land.
+Phase 1 backend lane is in implementation. CS-057 fully closed; CS-050/051/052/053/054/055/056/059/060 and CS-080–090 + CS-087/088 are in `in_progress` (code shipped under `backend/ingestion/`, `backend/corpus/`, `backend/shared/llm/`; AC closure pending live end-to-end run with credentials).
+
+Next ready picks (FE/coord, not BE): CS-058 (disclaimer gate, FE).
 
 ## FE WORK
 

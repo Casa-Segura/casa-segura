@@ -6,6 +6,8 @@ index added in CS-030)."""
 
 from __future__ import annotations
 
+from typing import ClassVar
+
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.db import models
@@ -171,3 +173,84 @@ class LegalChunk(ModelWithTimeStamps):
 
     def __str__(self) -> str:
         return f"LegalChunk({self.law_id} {self.article_number}@{self.corpus_version_id})"
+
+
+class PatternLegalLink(models.Model):
+    """Rubric-finding → legal chunk shortcut (CS-086).
+
+    Lets retrieval skip vector search when a finding is already known to
+    map to a specific article in the corpus. Pre-populated from
+    `pattern_legal_link.yaml` (curated content; not in scope for Phase 1).
+
+    The link points at a specific `(law_id, anchor)` so it survives
+    re-chunking as long as anchors are stable (CS-081 keeps them stable
+    across same-version re-ingestions).
+    """
+
+    id = models.BigAutoField(primary_key=True)
+    finding_pattern = models.CharField(
+        max_length=128,
+        help_text="Finding category or rubric pattern key, e.g. 'tenant_rights_unwaivable'",
+    )
+    law_id = models.CharField(max_length=64)
+    anchor = models.CharField(max_length=64)
+    relevance = models.FloatField(
+        default=1.0,
+        help_text="Relative weight when several patterns match the same finding (default 1.0)",
+    )
+    notes = models.TextField(blank=True, default="")
+
+    class Meta:
+        db_table = "pattern_legal_link"
+        verbose_name = "Pattern → Legal Chunk Link"
+        constraints: ClassVar = [
+            models.UniqueConstraint(
+                fields=["finding_pattern", "law_id", "anchor"],
+                name="uq_pattern_legal_link_triple",
+            ),
+        ]
+        indexes: ClassVar = [
+            models.Index(fields=["finding_pattern"], name="idx_pattern_link_finding"),
+            models.Index(fields=["law_id", "anchor"], name="idx_pattern_link_chunk"),
+        ]
+
+    def __str__(self) -> str:
+        return f"PatternLegalLink({self.finding_pattern} → {self.law_id}#{self.anchor})"
+
+
+class RagQueryLog(models.Model):
+    """Audit log for RAG retrieval (CS-089).
+
+    Stores the hashed query, corpus version, top_k, threshold and the
+    number of chunks returned. The actual finding text is hashed (not
+    persisted) so the table is safe to keep across the 90-day TTL.
+
+    A Celery-beat job (`corpus.tasks.prune_rag_query_log`) purges rows
+    older than `RAG_QUERY_LOG_TTL_DAYS` (default 90).
+    """
+
+    id = models.BigAutoField(primary_key=True)
+    query_hash = models.CharField(max_length=64, help_text="SHA-256 of the normalised query string")
+    corpus_version = models.ForeignKey(
+        CorpusVersion,
+        on_delete=models.PROTECT,
+        related_name="rag_query_logs",
+    )
+    top_k = models.PositiveSmallIntegerField()
+    similarity_threshold = models.FloatField()
+    chunks_returned = models.PositiveSmallIntegerField()
+    pattern_shortcut_used = models.BooleanField(default=False)
+    latency_ms = models.PositiveIntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "rag_query_log"
+        verbose_name = "RAG Query Log"
+        verbose_name_plural = "RAG Query Logs"
+        indexes: ClassVar = [
+            models.Index(fields=["created_at"], name="idx_rag_log_created_at"),
+            models.Index(fields=["query_hash"], name="idx_rag_log_query_hash"),
+        ]
+
+    def __str__(self) -> str:
+        return f"RagQueryLog({self.query_hash[:8]}@{self.created_at:%Y-%m-%d})"
