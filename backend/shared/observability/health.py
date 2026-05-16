@@ -18,6 +18,7 @@ import structlog
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from django.conf import settings
@@ -30,7 +31,7 @@ logger = structlog.get_logger(__name__)
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def health(_request):
+def health(_request: Request) -> Response:
     """Liveness probe. No external dependencies; <50ms target."""
     return Response(
         {
@@ -75,7 +76,7 @@ def _check_redis() -> tuple[bool, str | None]:
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def ready(_request):
+def ready(_request: Request) -> Response:
     """Readiness probe. Returns 503 if any required dependency is unreachable."""
     db_ok, db_reason = _check_database()
     redis_ok, redis_reason = _check_redis()
