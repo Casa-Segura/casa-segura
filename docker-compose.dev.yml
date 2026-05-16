@@ -1,0 +1,55 @@
+# Casa Segura — local development stack.
+#
+# Brings up Postgres 16 (with pgvector + pgcrypto + uuid-ossp pre-baked via
+# init SQL) and Redis 7. Credentials match `backend/.env` defaults.
+#
+# Usage:
+#   docker compose -f docker-compose.dev.yml up -d
+#   docker compose -f docker-compose.dev.yml logs -f
+#   docker compose -f docker-compose.dev.yml down            # keeps data
+#   docker compose -f docker-compose.dev.yml down -v         # wipes data
+#
+# Data persists in named volumes (casasegura-pg-data, casasegura-redis-data)
+# so container restarts don't lose state.
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: casasegura-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: administrador
+      POSTGRES_DB: casasegura
+    ports:
+      - "5432:5432"
+    volumes:
+      - casasegura-pg-data:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d casasegura"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  redis:
+    image: redis:7-alpine
+    container_name: casasegura-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - casasegura-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  casasegura-pg-data:
+    name: casasegura-pg-data
+  casasegura-redis-data:
+    name: casasegura-redis-data
