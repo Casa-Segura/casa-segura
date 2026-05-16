@@ -57,14 +57,12 @@ class OcrJobStatus(models.TextChoices):
 
 
 class SubmissionSource(models.TextChoices):
-    """Where the submission came in from (web upload, WhatsApp, etc.)."""
+    """Where the submission came in from."""
 
     WEB = "web", "Web"
-    WHATSAPP = "whatsapp", "WhatsApp"
 
 
 class DisclaimerAcceptanceMethod(models.TextChoices):
     """How the user acknowledged the disclaimer before submission."""
 
     CHECKBOX = "checkbox", "Checkbox en UI"
-    WHATSAPP_REPLY = "whatsapp_reply", "Confirmación en WhatsApp"

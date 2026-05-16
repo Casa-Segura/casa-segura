@@ -47,8 +47,8 @@ class DeliveryChannel(models.TextChoices):
     See DOMAIN_MODEL §6.4. Stored lowercase per F8/CS-029 (lowercase at DB,
     uppercase mapping done at API boundary if needed)."""
 
+    SMS_SUMMARY = "sms_summary", "Resumen por SMS"
     EMAIL_PDF = "email_pdf", "PDF por email"
-    WHATSAPP_SUMMARY = "whatsapp_summary", "Resumen por WhatsApp"
     WEB_LINK = "web_link", "Enlace web"
 
 
@@ -59,8 +59,8 @@ class DeliveryStatus(models.TextChoices):
 
     PENDING = "pending", "Pendiente"
     QUEUED = "queued", "Encolada"
+    SENT_SMS = "sent_sms", "Enviado por SMS"
     SENT_EMAIL = "sent_email", "Enviado por email"
-    SENT_WHATSAPP = "sent_whatsapp", "Enviado por WhatsApp"
     AVAILABLE_LINK = "available_link", "Disponible vía enlace"
     EXPIRED = "expired", "Expirada"
     FAILED = "failed", "Fallida"

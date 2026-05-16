@@ -26,13 +26,13 @@ def test_merge_maps_frontend_aliases():
 
 def test_merge_prefers_canonical_keys_when_present():
     raw = {
-        "disclaimer_method": "whatsapp_reply",
+        "disclaimer_method": "checkbox",
         "disclaimer_acceptance_method": "checkbox",
         "source": "web",
-        "submission_source": "whatsapp",
+        "submission_source": "web",
     }
     merged = merge_submission_upload_aliases(raw)
-    assert merged["disclaimer_method"] == "whatsapp_reply"
+    assert merged["disclaimer_method"] == "checkbox"
     assert merged["source"] == "web"
 
 

@@ -69,7 +69,7 @@ class ForbiddenDomainException(DomainException):
 
 
 class UpstreamDomainException(DomainException):
-    """For OpenRouter / Zavu / SMTP / KMS failures that should bubble as 502."""
+    """For OpenRouter / SMS / SMTP / KMS failures that should bubble as 502."""
 
     default_code = "upstream_error"
     default_status = 502
