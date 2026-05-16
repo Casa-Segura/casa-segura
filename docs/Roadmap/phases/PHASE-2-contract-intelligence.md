@@ -3,7 +3,7 @@ project: Casa Segura
 doc_type: phase_index
 phase: 2
 status: living
-last_updated: 2026-05-15
+last_updated: 2026-05-16
 tags:
   - casa-segura
   - roadmap
@@ -28,7 +28,27 @@ Source-of-truth links:
 
 ## Ready Now
 
-No Phase 2 tickets are ready yet. Start after Phase 1 ingestion text and corpus retrieval contracts are available.
+Phase 1 ingestion + corpus retrieval contracts are in place (commit `d613c2d`):
+
+- `POST /api/v1/submissions/` returns `extracted_text_language` + `extracted_text_token_count` per submission, with the text held only in-memory through the extractor (CS-057 invariant — never persisted).
+- `LegalCitationService.retrieve_legal_basis(finding=…)` returns ≥0 citations via `POST /api/v1/corpus/retrieve/`.
+
+Phase 2 BE+API tickets are therefore unblocked. The minimum dependency chain is:
+
+1. **CS-110** (classification prompt + few-shot anchors) — entry point; no upstream Phase-2 deps.
+2. **CS-114** (classification confidence + extraction field schema) — defines the DTO shape downstream tickets persist.
+3. **CS-111** (leasing reclassification detector) — depends on CS-110.
+4. **CS-112** (project name normalization + linkage) — depends on CS-031 (Phase-0 in_progress, function shipped) + CS-110.
+5. **CS-113** (economic field extraction prompt) — depends on CS-110 + CS-114.
+6. **CS-116** (unverifiable bookkeeping for missing fields) — depends on CS-113 + CS-114.
+7. **CS-115** (classification eval set) — depends on all five above; ships once they stabilise.
+
+Parallel-safe first picks: **CS-110 + CS-114** (no inter-dep). Once they land, **CS-111**, **CS-112**, **CS-113** can run in parallel.
+
+Upstream notes:
+
+- CS-110 needs a working OpenRouter client + access to extracted text — both shipped in commit `d613c2d` (`shared/llm/openrouter.py`, in-memory text passed by `upload_service.ingest_upload`). The classifier should plug into the same client used by CS-054.
+- CS-112's accent/case normalization piggybacks on the function shipped under CS-031 (Phase-0 in_progress); the upsert AC explicitly belongs to this ticket.
 
 ## FE WORK
 

@@ -3,8 +3,8 @@ project: Casa Segura
 doc_type: phase_index
 phase: 1
 status: living
-last_updated: 2026-05-15
-# Phase 1 implementation pass (Pixtral OCR architecture) landed 2026-05-15.
+last_updated: 2026-05-16
+# Phase 1 implementation pass (Pixtral OCR architecture) committed in d613c2d.
 tags:
   - casa-segura
   - roadmap
@@ -31,9 +31,17 @@ Source-of-truth links:
 
 ## Ready Now
 
-Phase 1 backend lane is in implementation. CS-057 fully closed; CS-050/051/052/053/054/055/056/059/060 and CS-080–090 + CS-087/088 are in `in_progress` (code shipped under `backend/ingestion/`, `backend/corpus/`, `backend/shared/llm/`; AC closure pending live end-to-end run with credentials).
+Phase 1 backend lane is in implementation (commit `d613c2d`):
 
-Next ready picks (FE/coord, not BE): CS-058 (disclaimer gate, FE).
+- ✅ `done`: CS-057 (discard-after-extract invariant).
+- 🟡 `in_progress` (code shipped, AC closure pending a live end-to-end run with `OPENROUTER_API_KEY` + an ingested corpus): CS-050/051/052/053/054/055/056/059/060 (EPIC-02) and CS-080/081/082/083/084/085/086/087/088/089/090 (EPIC-03).
+
+The next backend-blocking pickup on this phase is the **live verification pass** — run `python manage.py ingest_corpus --version <date> --activate`, then exercise the `POST /api/v1/submissions/` + `POST /api/v1/corpus/retrieve/` endpoints with a real `OPENROUTER_API_KEY` to flip the `in_progress` tickets to `done`. See [PHASE-1-config-checklist.md](PHASE-1-config-checklist.md).
+
+Out-of-phase pickups still pending:
+
+- CS-058 — Disclaimer acceptance gate (FE lane).
+- CS-033 — 38-criterion YAML loader for RubricVersion (Phase 0 → unblocks CS-086 pattern shortcut against real rubric).
 
 ## FE WORK
 

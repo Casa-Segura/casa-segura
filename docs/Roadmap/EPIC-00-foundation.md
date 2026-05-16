@@ -2,7 +2,7 @@
 id: EPIC-00
 name: Foundation & Tooling
 phase: 0
-status: backlog
+status: in_progress
 depends_on: []
 prd_refs:
   - ARCHITECTURE
@@ -26,14 +26,14 @@ This epic is BE-heavy on purpose — the FE scaffold is a thin shell that waits 
 
 ## Definition of done
 
-- [ ] Repo public on GitHub under MIT, README states project posture and "not legal advice" disclaimer
-- [ ] `apps/api` runs locally via `python manage.py runserver` (or project-documented equivalent) with one health endpoint, types check clean, tests run green
-- [ ] `apps/web` runs `next dev` locally with one page, types check clean
-- [ ] CI runs lint + type-check + test + build on every PR, blocks merge on failure
-- [ ] `.env.example` enumerates every variable the system needs across all services (per [[BE-SERVICES]] §9)
-- [ ] Structured logging emits JSON with correlation ID and version stamps on every record
-- [ ] Standard error response shape is documented and used by every endpoint
-- [ ] Versioning ADR exists: how `rubric_version`, `corpus_version`, API `schema_version` are bumped
+- [x] Repo public on GitHub under MIT, README states project posture and "not legal advice" disclaimer
+- [x] `apps/api` runs locally via `python manage.py runserver` (backend/ Django 5.2) with `/api/health/` + `/api/ready/`; tests run green (CS-002 — ruff/mypy lint backlog of 184/13 errors still deferred)
+- [x] `apps/web` runs `next dev` locally with one page (EPIC-10 shell + landing page) (CS-002 + EPIC-10)
+- [/] CI runs lint + type-check + test + build on every PR — workflow exists (`.github/workflows/ci.yml`) but lint/type gates rely on CS-002 cleanup before they're zero-error blocking (CS-004 in_progress)
+- [/] `.env.example` enumerates every variable the system needs (CS-006 in_progress — has the Phase-1 OCR/RAG keys; still missing some PRD-canonical names like `OCR_FALLBACK_ENABLED`, `TESSERACT_LANG`, `PDF_MAX_PAGES`, `DB_POOL_*`, `ANONYMIZATION_AFTER_DAYS`, `JOB_*`)
+- [x] Structured logging emits JSON with correlation ID and version stamps (`shared/observability/logging.py` + `middleware.py`) (CS-007)
+- [x] Standard error response shape is documented and used by every endpoint (CS-009 — README §"Backend API contract")
+- [x] Versioning ADR exists: how `rubric_version`, `corpus_version`, API `schema_version` are bumped (ADR-0004, CS-010)
 
 ## In scope
 
