@@ -43,8 +43,31 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Vercel deployment (CS-298)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Goal: **`main`** → Production, Pull Requests → Preview. Never put API secrets in `NEXT_PUBLIC_*` variables (server-only for `CASASEGURA_*`).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Required environment variables (Vercel)
+
+| Variable | Production | Preview |
+|----------|-------------|---------|
+| `CASASEGURA_API_BASE_URL` | Django/DRF base URL, no trailing slash | Point at staging or a dedicated Preview backend (**never** unintended prod bleed without explicit approval) |
+
+`next.config.ts` aborts **`next build`** on Vercel when `VERCEL=1` and `CASASEGURA_API_BASE_URL` is unset, so Preview/Production cannot silently ship without a backend target.
+
+Additional optional toggles mirror `frontend/src/server/contract-env.ts` (poll timeouts, path templates).
+
+### Verification after deploy
+
+- `curl -sI "https://<deployment-host>/"` → **200**, `content-type` includes `text/html`.
+- Responses should include headers `X-Content-Type-Options: nosniff` and `Referrer-Policy` (verified with the same curl).
+
+### Crawling policy
+
+`/robots.txt` emits **disallow `/`** when `VERCEL_ENV=preview` or `DISALLOW_ROBOTS=true`/`1`. Production allows all bots unless those overrides are set (product decision documented per CS-298).
+
+### Rollback (runbook snippet)
+
+In Vercel → Project → Deployments → select the previous **Ready** deployment → **⋯** → **Promote to Production** (or **Redeploy** the known-good commit).
+
+See also [Next.js deployment docs](https://nextjs.org/docs/app/building-your-application/deploying).
