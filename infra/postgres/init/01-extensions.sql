@@ -10,3 +10,14 @@
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Also install the extensions on `template1` so every future CREATE DATABASE
+-- inherits them. Most importantly, this lets Django's `test_casasegura`
+-- (created by pytest-django on every test session) reach migrations without
+-- failing on `type "vector" does not exist` when applying the LegalChunk
+-- migration. Without this block, CI's Backend tests job aborts at the very
+-- first migration that references a `vector(384)` column.
+\connect template1
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

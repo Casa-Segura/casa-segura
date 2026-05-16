@@ -9,6 +9,7 @@ from __future__ import annotations
 from unittest.mock import patch
 
 import pytest
+
 from django.utils import timezone
 
 from ingestion.application.ocr.errors import (
@@ -65,9 +66,16 @@ def test_size_zero_bytes_is_rejected_as_empty_file():
 @pytest.mark.django_db
 def test_size_one_byte_passes_validation_then_falls_to_routing():
     # 1 byte is invalid as a PDF/image but it must clear the size cap (>0)
-    # and reach the routing step (which will eventually reject it).
-    with pytest.raises(NotAnalyzableError):
-        ingest_upload(_request(b"x"))
+    # and reach the routing step. The orchestrator catches the extractor
+    # failure and persists the submission with a failure status — it does
+    # NOT re-raise to the caller. So we assert on the persisted state.
+    outcome = ingest_upload(_request(b"x"))
+    assert outcome.created is True
+    assert outcome.submission.processing_status in {
+        ProcessingStatus.FAILED_EXTRACTION.value,
+        ProcessingStatus.REJECTED_LANGUAGE.value,
+    }
+    assert outcome.submission.error_code
 
 
 @pytest.mark.django_db

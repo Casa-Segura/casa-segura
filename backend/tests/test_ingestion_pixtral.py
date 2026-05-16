@@ -13,7 +13,6 @@ from ingestion.application.ocr.errors import NotAnalyzableError, NotAnalyzableRe
 from ingestion.application.ocr.extractors.pixtral import extract_via_pixtral
 from shared.llm.openrouter import OpenRouterClient
 
-
 BASE_URL = "https://openrouter.ai/api/v1"
 
 
@@ -43,7 +42,9 @@ def _spanish_ok_response() -> httpx.Response:
     return httpx.Response(
         200,
         json={
-            "choices": [{"message": {"content": "Este contrato establece las cláusulas de arrendamiento del inmueble."}}],
+            "choices": [
+                {"message": {"content": "Este contrato establece las cláusulas de arrendamiento del inmueble."}}
+            ],
             "usage": {"prompt_tokens": 12, "completion_tokens": 34, "cost": 0.005},
         },
     )
@@ -53,9 +54,7 @@ def test_image_payload_uses_image_url_block_without_plugins(mock_router, setting
     settings.OPENROUTER_OCR_MODEL = "mistralai/pixtral-large-2411"
     settings.OPENROUTER_PDF_PLUGIN_ENGINE = "mistral-ocr"
 
-    route = mock_router.post(f"{BASE_URL}/chat/completions").mock(
-        return_value=_spanish_ok_response()
-    )
+    route = mock_router.post(f"{BASE_URL}/chat/completions").mock(return_value=_spanish_ok_response())
 
     client = _client()
     result = extract_via_pixtral(
@@ -81,9 +80,7 @@ def test_pdf_payload_uses_file_block_with_mistral_ocr_plugin(mock_router, settin
     settings.OPENROUTER_OCR_MODEL = "mistralai/pixtral-large-2411"
     settings.OPENROUTER_PDF_PLUGIN_ENGINE = "mistral-ocr"
 
-    route = mock_router.post(f"{BASE_URL}/chat/completions").mock(
-        return_value=_spanish_ok_response()
-    )
+    route = mock_router.post(f"{BASE_URL}/chat/completions").mock(return_value=_spanish_ok_response())
 
     client = _client()
     extract_via_pixtral(
@@ -98,14 +95,10 @@ def test_pdf_payload_uses_file_block_with_mistral_ocr_plugin(mock_router, settin
     types = [b["type"] for b in blocks]
     assert "file" in types
     assert "image_url" not in types
-    assert sent["plugins"] == [
-        {"id": "file-parser", "pdf": {"engine": "mistral-ocr"}}
-    ]
+    assert sent["plugins"] == [{"id": "file-parser", "pdf": {"engine": "mistral-ocr"}}]
     file_block = next(b for b in blocks if b["type"] == "file")
     assert file_block["file"]["filename"] == "contract.pdf"
-    expected_data_url = (
-        "data:application/pdf;base64," + base64.b64encode(b"%PDF-1.5 fake").decode("ascii")
-    )
+    expected_data_url = "data:application/pdf;base64," + base64.b64encode(b"%PDF-1.5 fake").decode("ascii")
     assert file_block["file"]["file_data"] == expected_data_url
 
 
@@ -135,9 +128,7 @@ def test_unsupported_mime_rejected(settings):
 
 def test_openrouter_error_maps_to_upstream_llm_error(mock_router, settings):
     settings.OPENROUTER_OCR_MODEL = "mistralai/pixtral-large-2411"
-    mock_router.post(f"{BASE_URL}/chat/completions").mock(
-        return_value=httpx.Response(503, json={"error": "down"})
-    )
+    mock_router.post(f"{BASE_URL}/chat/completions").mock(return_value=httpx.Response(503, json={"error": "down"}))
 
     with pytest.raises(NotAnalyzableError) as exc:
         extract_via_pixtral(

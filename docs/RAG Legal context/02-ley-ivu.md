@@ -14,7 +14,7 @@ last_verified: 2026-05-09
 relevance_to_casa_segura: medium-high
 covers:
   - rental, lease-with-promise-of-sale, and sale contracts by Instituto de Vivienda Urbana (IVU)
-  - "Bien de Familia" regime
+  - '"Bien de Familia" regime'
   - special procedural rules for IVU contracts
   - eviction and termination grounds for institutional housing
 ---

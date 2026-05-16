@@ -32,6 +32,16 @@ ignore = [
 ]
 
 [lint.per-file-ignores]
-"**/tests/**" = ["S", "PLR"]
+"**/tests/**" = ["S", "PLR", "PLC0415"]
 "**/migrations/**" = ["E", "F", "S", "PLR", "RUF"]
-"conftest.py" = ["S", "PLR"]
+"conftest.py" = ["S", "PLR", "PLC0415"]
+"manage.py" = ["PLC0415"]
+# Django model files: Meta.constraints/indexes are class-level mutable lists by
+# Django convention; the RUF012 ClassVar warning fires on every model. DJ001
+# flags optional CharField/TextField columns that intentionally store NULL for
+# "value not yet known" semantics — fixing those requires migrations and is
+# tracked under CS-002.
+"**/infrastructure/django/models.py" = ["RUF012", "DJ001"]
+# Domain layer uses lazy imports to break import cycles between
+# repositories/specifications/annotations — well-documented pattern, not a bug.
+"shared/domain/entities/annotations.py" = ["PLC0415"]

@@ -4,12 +4,13 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from django.utils import timezone
 
 from ingestion.application.ocr.errors import NotAnalyzableError
 from ingestion.application.upload_service import UploadRequest, ingest_upload
@@ -41,12 +42,8 @@ class SubmissionUploadView(APIView):
         content_type = (upload.content_type or "").lower()
         filename = upload.name or ""
 
-        disclaimer_at: datetime = (
-            serializer.validated_data.get("disclaimer_accepted_at") or timezone.now()
-        )
-        disclaimer_method = DisclaimerAcceptanceMethod(
-            serializer.validated_data["disclaimer_method"]
-        )
+        disclaimer_at: datetime = serializer.validated_data.get("disclaimer_accepted_at") or timezone.now()
+        disclaimer_method = DisclaimerAcceptanceMethod(serializer.validated_data["disclaimer_method"])
         source = SubmissionSource(serializer.validated_data["source"])
 
         req = UploadRequest(

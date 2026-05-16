@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, List
+from typing import Any, ClassVar
 
 from pydantic import BaseModel
 
@@ -17,20 +17,20 @@ class Specification(ABC):
     def to_q(self) -> Q:
         raise NotImplementedError()
 
-    def __and__(self, other: "Specification") -> "CompositeSpec":
+    def __and__(self, other: Specification) -> CompositeSpec:
         return CompositeSpec([self, other], LogicalOperator.AND)
 
-    def __or__(self, other: "Specification") -> "CompositeSpec":
+    def __or__(self, other: Specification) -> CompositeSpec:
         return CompositeSpec([self, other], LogicalOperator.OR)
 
-    def __invert__(self) -> "NotSpec":
+    def __invert__(self) -> NotSpec:
         return NotSpec(self)
 
 
 class FieldSpec(Specification):
     """Specification for conditions on a single field."""
 
-    OPERATOR_LOOKUP_MAP = {
+    OPERATOR_LOOKUP_MAP: ClassVar = {
         CriteriaOperator.EQUAL: "",
         CriteriaOperator.NOT_EQUAL: "",
         CriteriaOperator.IN: "__in",
@@ -53,7 +53,7 @@ class FieldSpec(Specification):
         CriteriaOperator.IREGEX: "__iregex",
     }
 
-    NEGATED_OPERATORS = {CriteriaOperator.NOT_EQUAL, CriteriaOperator.NOT_IN}
+    NEGATED_OPERATORS: ClassVar = {CriteriaOperator.NOT_EQUAL, CriteriaOperator.NOT_IN}
 
     def __init__(self, field: str, operator: CriteriaOperator, value: Any, negate: bool = False):
         self.field = field
@@ -76,7 +76,7 @@ class FieldSpec(Specification):
 class CompositeSpec(Specification):
     """Combines multiple specifications with AND or OR."""
 
-    def __init__(self, specs: List[Specification], operator: LogicalOperator = LogicalOperator.AND):
+    def __init__(self, specs: list[Specification], operator: LogicalOperator = LogicalOperator.AND):
         self.specs = specs
         self.operator = operator
 
@@ -114,7 +114,7 @@ class RelatedFieldSpec(Specification):
 
     def __init__(
         self,
-        relation_path: List[str],
+        relation_path: list[str],
         field: str,
         operator: CriteriaOperator,
         value: Any,
@@ -128,7 +128,7 @@ class RelatedFieldSpec(Specification):
 
     @property
     def full_field(self) -> str:
-        return "__".join(self.relation_path + [self.field])
+        return "__".join([*self.relation_path, self.field])
 
     def to_q(self) -> Q:
         return FieldSpec(self.full_field, self.operator, self.value, self.negate).to_q()
@@ -182,83 +182,83 @@ class LegacySpecificationAdapter(Specification):
 class FieldBuilder:
     """Auxiliary builder for fluent FieldSpec construction."""
 
-    def __init__(self, parent: "SpecBuilder", field: str):
+    def __init__(self, parent: SpecBuilder, field: str):
         self._parent = parent
         self._field = field
 
-    def equals(self, value: Any) -> "SpecBuilder":
+    def equals(self, value: Any) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.EQUAL, value))
         return self._parent
 
-    def not_equals(self, value: Any) -> "SpecBuilder":
+    def not_equals(self, value: Any) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.NOT_EQUAL, value))
         return self._parent
 
-    def is_in(self, values: List[Any]) -> "SpecBuilder":
+    def is_in(self, values: list[Any]) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.IN, values))
         return self._parent
 
-    def not_in(self, values: List[Any]) -> "SpecBuilder":
+    def not_in(self, values: list[Any]) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.NOT_IN, values))
         return self._parent
 
-    def gt(self, value: Any) -> "SpecBuilder":
+    def gt(self, value: Any) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.GT, value))
         return self._parent
 
-    def gte(self, value: Any) -> "SpecBuilder":
+    def gte(self, value: Any) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.GTE, value))
         return self._parent
 
-    def lt(self, value: Any) -> "SpecBuilder":
+    def lt(self, value: Any) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.LT, value))
         return self._parent
 
-    def lte(self, value: Any) -> "SpecBuilder":
+    def lte(self, value: Any) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.LTE, value))
         return self._parent
 
-    def contains(self, value: str) -> "SpecBuilder":
+    def contains(self, value: str) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.CONTAINS, value))
         return self._parent
 
-    def icontains(self, value: str) -> "SpecBuilder":
+    def icontains(self, value: str) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.ICONTAINS, value))
         return self._parent
 
-    def startswith(self, value: str) -> "SpecBuilder":
+    def startswith(self, value: str) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.STARTSWITH, value))
         return self._parent
 
-    def istartswith(self, value: str) -> "SpecBuilder":
+    def istartswith(self, value: str) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.ISTARTSWITH, value))
         return self._parent
 
-    def endswith(self, value: str) -> "SpecBuilder":
+    def endswith(self, value: str) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.ENDSWITH, value))
         return self._parent
 
-    def iendswith(self, value: str) -> "SpecBuilder":
+    def iendswith(self, value: str) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.IENDSWITH, value))
         return self._parent
 
-    def between(self, start: Any, end: Any) -> "SpecBuilder":
+    def between(self, start: Any, end: Any) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.RANGE, (start, end)))
         return self._parent
 
-    def is_null(self) -> "SpecBuilder":
+    def is_null(self) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.IS_NULL, True))
         return self._parent
 
-    def is_not_null(self) -> "SpecBuilder":
+    def is_not_null(self) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.IS_NULL, False))
         return self._parent
 
-    def matches(self, pattern: str) -> "SpecBuilder":
+    def matches(self, pattern: str) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.REGEX, pattern))
         return self._parent
 
-    def imatches(self, pattern: str) -> "SpecBuilder":
+    def imatches(self, pattern: str) -> SpecBuilder:
         self._parent._specs.append(FieldSpec(self._field, CriteriaOperator.IREGEX, pattern))
         return self._parent
 
@@ -267,28 +267,28 @@ class SpecBuilder:
     """Fluent builder for constructing specifications in a readable way."""
 
     def __init__(self):
-        self._specs: List[Specification] = []
+        self._specs: list[Specification] = []
 
     def where(self, field: str) -> FieldBuilder:
         return FieldBuilder(self, field)
 
-    def and_group(self, *specs: Specification) -> "SpecBuilder":
+    def and_group(self, *specs: Specification) -> SpecBuilder:
         self._specs.append(CompositeSpec(list(specs), LogicalOperator.AND))
         return self
 
-    def or_group(self, *specs: Specification) -> "SpecBuilder":
+    def or_group(self, *specs: Specification) -> SpecBuilder:
         self._specs.append(CompositeSpec(list(specs), LogicalOperator.OR))
         return self
 
-    def not_spec(self, spec: Specification) -> "SpecBuilder":
+    def not_spec(self, spec: Specification) -> SpecBuilder:
         self._specs.append(NotSpec(spec))
         return self
 
-    def add(self, spec: Specification) -> "SpecBuilder":
+    def add(self, spec: Specification) -> SpecBuilder:
         self._specs.append(spec)
         return self
 
-    def build(self) -> List[Specification]:
+    def build(self) -> list[Specification]:
         return self._specs
 
     def to_q(self) -> Q:
@@ -310,16 +310,16 @@ def not_(spec: Specification) -> NotSpec:
 class DjangoORMSpecificationBuilder:
     """Builder that converts specifications to Django Q objects."""
 
-    def build(self, criteria: List[Specification]) -> Q:
+    def build(self, criteria: list[Specification]) -> Q:
         if not criteria:
             return Q()
         return CompositeSpec(criteria, LogicalOperator.AND).to_q()
 
-    def build_or(self, criteria: List[Specification]) -> Q:
+    def build_or(self, criteria: list[Specification]) -> Q:
         if not criteria:
             return Q()
         return CompositeSpec(criteria, LogicalOperator.OR).to_q()
 
-    def build_from_legacy(self, legacy_specs: List[LegacySpecification]) -> Q:
-        adapted: List[Specification] = [LegacySpecificationAdapter(s) for s in legacy_specs]
+    def build_from_legacy(self, legacy_specs: list[LegacySpecification]) -> Q:
+        adapted: list[Specification] = [LegacySpecificationAdapter(s) for s in legacy_specs]
         return self.build(adapted)

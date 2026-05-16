@@ -11,10 +11,11 @@ worker boots are cheap (~1s for the first encode), and idle memory is
 
 from __future__ import annotations
 
-from threading import Lock
 from collections.abc import Iterable
+from threading import Lock
 
 import structlog
+
 from django.conf import settings
 
 logger = structlog.get_logger(__name__)

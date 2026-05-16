@@ -16,6 +16,7 @@ from __future__ import annotations
 from io import BytesIO
 
 import structlog
+
 from django.conf import settings
 
 from ingestion.application.ocr.errors import (
@@ -94,9 +95,7 @@ def extract_via_tesseract(*, file_bytes: bytes, content_type: str) -> Extraction
     words = data.get("text", []) or []
     confs = data.get("conf", []) or []
     accepted = [
-        word
-        for word, conf in zip(words, confs, strict=False)
-        if word.strip() and _safe_float(conf) >= min_confidence
+        word for word, conf in zip(words, confs, strict=False) if word.strip() and _safe_float(conf) >= min_confidence
     ]
     text = " ".join(accepted).strip()
 

@@ -57,9 +57,7 @@ class Project(ModelWithTimeStamps):
         help_text="When the project was first created in the system",
     )
     last_analyzed = models.DateTimeField(help_text="Last time an analysis was associated with this project")
-    total_analyses = models.PositiveIntegerField(
-        default=0, help_text="Count of analyses associated (denormalized)"
-    )
+    total_analyses = models.PositiveIntegerField(default=0, help_text="Count of analyses associated (denormalized)")
     avg_score = models.DecimalField(
         max_digits=3,
         decimal_places=1,
@@ -104,7 +102,9 @@ class Project(ModelWithTimeStamps):
         try:
             assert_no_pii(self.metadata)
         except PIIDetected as exc:
-            from django.core.exceptions import ValidationError
+            from django.core.exceptions import (  # noqa: PLC0415 — break circular import between core models and Django exceptions
+                ValidationError,
+            )
 
             raise ValidationError({"metadata": str(exc)}) from exc
 
@@ -157,9 +157,7 @@ class ContractAnalysis(ModelWithTimeStamps):
         blank=True,
         help_text="Type the document claims to be (may differ if reclassified)",
     )
-    contract_type_reclassified = models.BooleanField(
-        default=False, help_text="Whether reclassification occurred (F2)"
-    )
+    contract_type_reclassified = models.BooleanField(default=False, help_text="Whether reclassification occurred (F2)")
     reclassification_reason = models.TextField(
         blank=True,
         default="",
@@ -202,9 +200,7 @@ class ContractAnalysis(ModelWithTimeStamps):
         help_text="Array of Finding (DOMAIN §5.3); reduced to severity counts at anonymization",
     )
     findings_count = models.PositiveIntegerField(default=0, help_text="Total findings (denormalized)")
-    critical_findings_count = models.PositiveIntegerField(
-        default=0, help_text="Count of `critical` severity findings"
-    )
+    critical_findings_count = models.PositiveIntegerField(default=0, help_text="Count of `critical` severity findings")
     unverifiable_count = models.PositiveIntegerField(default=0, help_text="Count of unverifiable criteria")
 
     economic_summary = models.JSONField(

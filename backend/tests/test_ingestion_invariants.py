@@ -12,6 +12,7 @@ three ways:
 from __future__ import annotations
 
 import pytest
+
 from django.apps import apps
 
 FORBIDDEN_FIELD_NAMES = {
@@ -34,9 +35,10 @@ def test_no_model_persists_extracted_text():
             if name in FORBIDDEN_FIELD_NAMES:
                 offenders.append(f"{model.__module__}.{model.__name__}.{name}")
 
-    assert not offenders, (
-        "CS-057 invariant violation: extracted contract text must not be "
-        "persisted. Offenders: " + ", ".join(offenders)
+    assert (
+        not offenders
+    ), "CS-057 invariant violation: extracted contract text must not be " "persisted. Offenders: " + ", ".join(
+        offenders
     )
 
 
@@ -44,7 +46,7 @@ def test_no_model_persists_extracted_text():
 def test_contract_submission_has_no_text_column():
     """Spot-check: ContractSubmission only carries token_count + language."""
 
-    from ingestion.infrastructure.django.models import ContractSubmission  # noqa: PLC0415
+    from ingestion.infrastructure.django.models import ContractSubmission
 
     field_names = {f.name for f in ContractSubmission._meta.get_fields()}
     assert "extracted_text" not in field_names

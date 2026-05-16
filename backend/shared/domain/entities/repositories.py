@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Generic, List, Optional, TypeVar
+from typing import Generic, TypeVar
 
 from shared.domain.entities.annotations import Annotation
 from shared.domain.entities.pagination import QuerySet, QuerySetPagination
@@ -16,26 +16,26 @@ class ReadOnlyRepository(ABC, Generic[T]):
     @abstractmethod
     def get(
         self,
-        criteria: List[Specification],
-        annotations: Optional[List[Annotation]] = None,
+        criteria: list[Specification],
+        annotations: list[Annotation] | None = None,
     ) -> T:
         raise NotImplementedError()
 
     @abstractmethod
     def find(
         self,
-        criteria: List[Specification],
-        annotations: Optional[List[Annotation]] = None,
-    ) -> Optional[T]:
+        criteria: list[Specification],
+        annotations: list[Annotation] | None = None,
+    ) -> T | None:
         raise NotImplementedError()
 
     @abstractmethod
     def filter(
         self,
-        criteria: List[Specification],
-        pagination: Optional[QuerySetPagination] = None,
-        order_by: Optional[List[str]] = None,
-        annotations: Optional[List[Annotation]] = None,
+        criteria: list[Specification],
+        pagination: QuerySetPagination | None = None,
+        order_by: list[str] | None = None,
+        annotations: list[Annotation] | None = None,
         distinct: bool = False,
     ) -> QuerySet[T]:
         raise NotImplementedError()
@@ -57,15 +57,15 @@ class WriteOnlyRepository(ABC, Generic[T]):
         raise NotImplementedError()
 
     @abstractmethod
-    def bulk_create(self, entities: List[T]) -> List[T]:
+    def bulk_create(self, entities: list[T]) -> list[T]:
         raise NotImplementedError()
 
     @abstractmethod
-    def bulk_update(self, entities: List[T], *, fields: List[str]) -> None:
+    def bulk_update(self, entities: list[T], *, fields: list[str]) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    def bulk_delete(self, entities: List[T]) -> None:
+    def bulk_delete(self, entities: list[T]) -> None:
         raise NotImplementedError()
 
 

@@ -33,10 +33,7 @@ def test_chunker_returns_empty_for_stub_law():
 
 
 def test_chunker_returns_one_chunk_per_article():
-    body = (
-        "### Art. 1 — Primero\nTexto del primero.\n\n"
-        "### Art. 2 — Segundo\nTexto del segundo."
-    )
+    body = "### Art. 1 — Primero\nTexto del primero.\n\n" "### Art. 2 — Segundo\nTexto del segundo."
     drafts = chunk_law(_law(body))
     assert [d.article_number for d in drafts] == ["Art. 1", "Art. 2"]
     assert all(d.anchor.startswith("art-") for d in drafts)
@@ -52,19 +49,25 @@ def test_chunker_carries_law_level_tags():
 
 
 def _article_of(length: int) -> str:
+    """Build a markdown article body whose total length (including heading)
+    equals `length`. The chunker measures by total article length, so the
+    boundary case must be expressed in those terms."""
+
     filler_paragraph = ("Lorem ipsum dolor sit amet. " * 5).strip() + "\n\n"
     body = "### Art. 1 — Bordes\n"
-    # Build body up to the desired length.
-    while len(body) < length + len("### Art. 1 — Bordes\n"):
+    while len(body) < length:
         body += filler_paragraph
-    return body[: length + len("### Art. 1 — Bordes\n")]
+    return body[:length]
 
 
-@pytest.mark.parametrize("length,expected_chunks", [
-    (1499, 1),
-    (1500, 1),
-    (1501, 2),  # crosses boundary → splits
-])
+@pytest.mark.parametrize(
+    "length,expected_chunks",
+    [
+        (1499, 1),
+        (1500, 1),
+        (1501, 2),  # crosses boundary → splits
+    ],
+)
 def test_chunker_bva_around_1500_chars(length, expected_chunks):
     drafts = chunk_law(_law(_article_of(length)))
     assert len(drafts) == expected_chunks

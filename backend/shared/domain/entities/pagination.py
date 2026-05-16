@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Generic, List, Optional, TypeVar
+from typing import Generic, TypeVar
 
 from pydantic import BaseModel, Field
 
@@ -29,12 +29,12 @@ class QuerySetPagination(BaseModel):
 class QuerySet(Generic[T]):
     """Generic wrapper for query results."""
 
-    def __init__(self, *, data: List[T], count: Optional[int] = None) -> None:
-        self._data: List[T] = data
-        self._count: Optional[int] = count
+    def __init__(self, *, data: list[T], count: int | None = None) -> None:
+        self._data: list[T] = data
+        self._count: int | None = count
 
     @property
-    def data(self) -> List[T]:
+    def data(self) -> list[T]:
         return self._data
 
     @property
@@ -50,10 +50,10 @@ class QuerySet(Generic[T]):
     def __len__(self) -> int:
         return len(self.data)
 
-    def first(self) -> Optional[T]:
+    def first(self) -> T | None:
         return self.data[0] if self.data else None
 
-    def last(self) -> Optional[T]:
+    def last(self) -> T | None:
         return self.data[-1] if self.data else None
 
     def sort(self, *args, **kwargs) -> None:
@@ -63,8 +63,8 @@ class QuerySet(Generic[T]):
 class PaginationData(BaseModel):
     """Pagination metadata for API responses."""
 
-    previous_page: Optional[str] = Field(None, alias="previousPage")
-    next_page: Optional[str] = Field(None, alias="nextPage")
+    previous_page: str | None = Field(None, alias="previousPage")
+    next_page: str | None = Field(None, alias="nextPage")
     current_page: int = Field(..., alias="currentPage")
     total_pages: int = Field(..., alias="totalPages")
     total_items_on_page: int = Field(..., alias="totalItemsOnPage")
@@ -77,4 +77,4 @@ class PaginatedQuerySet(BaseModel, Generic[T]):
 
     pagination_data: PaginationData
     query_params: dict = Field(default_factory=dict)
-    results: List[T]
+    results: list[T]

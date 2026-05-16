@@ -105,8 +105,7 @@ class DeliveryRequest(models.Model):
             models.Index(
                 fields=["next_attempt_not_before"],
                 name="idx_delivery_next_attempt",
-                condition=Q(status=DeliveryRequestStatus.QUEUED.value)
-                & Q(next_attempt_not_before__isnull=False),
+                condition=Q(status=DeliveryRequestStatus.QUEUED.value) & Q(next_attempt_not_before__isnull=False),
             ),
         ]
 

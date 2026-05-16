@@ -36,9 +36,7 @@ class RetrieveLegalBasisView(APIView):
 
         return Response(
             {
-                "corpus_version": (
-                    service.corpus_version.version if service.corpus_version else None
-                ),
+                "corpus_version": (service.corpus_version.version if service.corpus_version else None),
                 "citations": [
                     {
                         "chunk_id": c.chunk_id,

@@ -28,9 +28,7 @@ class RubricVersion(ModelWithTimeStamps):
     released_at = models.DateTimeField(help_text="When this version was released")
     criteria_count = models.PositiveIntegerField(help_text="Total criteria in this version")
     categories = models.JSONField(help_text="Definition of categories and their global weights")
-    criteria_definitions_path = models.TextField(
-        help_text="Path to the YAML file with the criteria for this version"
-    )
+    criteria_definitions_path = models.TextField(help_text="Path to the YAML file with the criteria for this version")
     changelog = models.TextField(blank=True, default="", help_text="Summary of changes vs prior version")
     is_active = models.BooleanField(
         default=False,

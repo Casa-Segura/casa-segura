@@ -11,6 +11,7 @@ trip the partial unique constraint mid-flight.
 from __future__ import annotations
 
 import structlog
+
 from django.db import transaction
 
 from corpus.infrastructure.django.models import CorpusVersion
@@ -32,9 +33,7 @@ def activate(version: str) -> CorpusVersion:
 
     target = CorpusVersion.objects.select_for_update().get(pk=version)
     if not target.is_active:
-        CorpusVersion.objects.filter(is_active=True).exclude(pk=version).update(
-            is_active=False
-        )
+        CorpusVersion.objects.filter(is_active=True).exclude(pk=version).update(is_active=False)
         target.is_active = True
         target.save(update_fields=["is_active"])
         logger.info("corpus.version.activated", version=version)

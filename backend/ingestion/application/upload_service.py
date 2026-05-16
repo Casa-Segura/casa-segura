@@ -23,6 +23,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 import structlog
+
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
@@ -87,10 +88,14 @@ def ingest_upload(req: UploadRequest) -> IngestOutcome:
         )
         return IngestOutcome(submission=existing, created=False)
 
-    routing = _timed("route", "unknown", detect_kind,
-                     content_type=req.content_type,
-                     file_bytes=req.file_bytes,
-                     filename=req.filename)
+    routing = _timed(
+        "route",
+        "unknown",
+        detect_kind,
+        content_type=req.content_type,
+        file_bytes=req.file_bytes,
+        filename=req.filename,
+    )
 
     submission = _create_initial_submission(
         req=req,
@@ -299,14 +304,10 @@ def _mark_failed(submission: ContractSubmission, exc: NotAnalyzableError) -> Non
         NotAnalyzableReason.PAGE_COUNT_EXCEEDED: ProcessingStatus.REJECTED_SIZE,
         NotAnalyzableReason.UNSUPPORTED_FORMAT: ProcessingStatus.REJECTED_TYPE,
     }
-    submission.processing_status = status_map.get(
-        exc.reason, ProcessingStatus.FAILED_EXTRACTION
-    ).value
+    submission.processing_status = status_map.get(exc.reason, ProcessingStatus.FAILED_EXTRACTION).value
     submission.error_code = exc.reason.value
     submission.error_reason = exc.message[:1000]
-    submission.save(
-        update_fields=["processing_status", "error_code", "error_reason"]
-    )
+    submission.save(update_fields=["processing_status", "error_code", "error_reason"])
 
 
 def _timed(stage: str, strategy: str, fn, /, *args, **kwargs):

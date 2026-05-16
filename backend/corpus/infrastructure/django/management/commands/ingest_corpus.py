@@ -32,7 +32,6 @@ from corpus.application.loader import laws_summary, load_corpus_markdown
 from corpus.application.version import activate as activate_version
 from corpus.infrastructure.django.models import CorpusVersion, LegalChunk, LegalDocument
 
-
 DEFAULT_CORPUS_ROOT = Path("docs/RAG Legal context")
 
 
@@ -80,11 +79,7 @@ class Command(BaseCommand):
         total_chunks = sum(len(c) for c in chunks_per_law.values())
         articles_total = sum(len(c) for c in chunks_per_law.values())
 
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"parsed {len(parsed_laws)} laws → {total_chunks} chunks"
-            )
-        )
+        self.stdout.write(self.style.SUCCESS(f"parsed {len(parsed_laws)} laws → {total_chunks} chunks"))
 
         if dry_run:
             self.stdout.write("--dry-run: skipping persistence")
@@ -104,11 +99,7 @@ class Command(BaseCommand):
                 ),
             )
             if not created:
-                self.stdout.write(
-                    self.style.WARNING(
-                        f"corpus version {version_tag} already exists — skipping insert"
-                    )
-                )
+                self.stdout.write(self.style.WARNING(f"corpus version {version_tag} already exists — skipping insert"))
                 return
 
             for law in parsed_laws:
@@ -135,9 +126,7 @@ class Command(BaseCommand):
                 self.stdout.write(f"embedding {len(texts)} chunks…")
                 vectors = embed_texts(texts)
                 if len(vectors) != len(drafts):
-                    raise CommandError(
-                        f"embedding count mismatch: {len(vectors)} != {len(drafts)}"
-                    )
+                    raise CommandError(f"embedding count mismatch: {len(vectors)} != {len(drafts)}")
                 LegalChunk.objects.bulk_create(
                     [
                         LegalChunk(

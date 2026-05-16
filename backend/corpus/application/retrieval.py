@@ -22,9 +22,10 @@ from dataclasses import dataclass
 from datetime import timedelta
 
 import structlog
+from pgvector.django import CosineDistance
+
 from django.conf import settings
 from django.utils import timezone
-from pgvector.django import CosineDistance
 
 from corpus.application.embeddings import embed_query
 from corpus.application.tags import normalize_tag
@@ -126,10 +127,7 @@ class LegalCitationService:
         if not pattern_slug:
             return []
 
-        links = (
-            PatternLegalLink.objects.filter(finding_pattern=pattern_slug)
-            .order_by("-relevance")[:top_k]
-        )
+        links = PatternLegalLink.objects.filter(finding_pattern=pattern_slug).order_by("-relevance")[:top_k]
         if not links:
             return []
 

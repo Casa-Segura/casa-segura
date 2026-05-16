@@ -30,9 +30,7 @@ _PDF_NATIVE_TEXT_THRESHOLD = 200
 
 
 PDF_MIME = "application/pdf"
-IMAGE_MIMES: frozenset[str] = frozenset(
-    {"image/jpeg", "image/jpg", "image/png", "image/webp", "image/heic"}
-)
+IMAGE_MIMES: frozenset[str] = frozenset({"image/jpeg", "image/jpg", "image/png", "image/webp", "image/heic"})
 
 
 @dataclass(frozen=True)
@@ -43,12 +41,29 @@ class RoutingDecision:
 
 
 def detect_kind(*, content_type: str, file_bytes: bytes, filename: str = "") -> RoutingDecision:
-    """Pick the initial extraction strategy for a freshly received file."""
+    """Pick the initial extraction strategy for a freshly received file.
+
+    Routing precedence (most specific → least):
+      1. Trusted MIME or extension says "PDF" → pypdf if it carries native
+         text, otherwise Pixtral (with the file-parser plugin).
+      2. Trusted MIME or extension says "image/<jpeg|png|webp|heic>" →
+         Pixtral with an `image_url` block.
+      3. Nothing trusted → fall back to Tesseract OCR. Pixtral is *not*
+         invoked for unknown inputs to avoid burning OpenRouter credits
+         on garbage bytes; Tesseract will return `OCR_UNAVAILABLE` if the
+         binary or `spa.traineddata` is missing, which the orchestrator
+         turns into a clean `not_analyzable` envelope.
+    """
 
     content_type = (content_type or "").lower()
     fmt = _detect_file_format(content_type=content_type, filename=filename)
 
-    if content_type == PDF_MIME or fmt == FileFormat.PDF:
+    trusted_pdf = content_type == PDF_MIME or (fmt == FileFormat.PDF and filename.lower().endswith(".pdf"))
+    trusted_image = content_type in IMAGE_MIMES or (
+        fmt in {FileFormat.JPG, FileFormat.JPEG, FileFormat.PNG, FileFormat.WEBP, FileFormat.HEIC} and "." in filename
+    )
+
+    if trusted_pdf:
         if _pdf_has_native_text(file_bytes):
             return RoutingDecision(
                 strategy=ExtractionStrategy.PYPDF,
@@ -61,21 +76,14 @@ def detect_kind(*, content_type: str, file_bytes: bytes, filename: str = "") -> 
             file_format=FileFormat.PDF,
         )
 
-    if content_type in IMAGE_MIMES or fmt in {
-        FileFormat.JPG,
-        FileFormat.JPEG,
-        FileFormat.PNG,
-        FileFormat.WEBP,
-        FileFormat.HEIC,
-    }:
+    if trusted_image:
         return RoutingDecision(
             strategy=ExtractionStrategy.VISION_LLM,
             reason="image_routed_to_pixtral",
             file_format=fmt,
         )
 
-    # Default: try Tesseract as a last-resort offline fallback for anything
-    # that smells like an image without a recognised MIME.
+    # Fully unknown: try Tesseract as a last-resort offline fallback.
     return RoutingDecision(
         strategy=ExtractionStrategy.TESSERACT,
         reason="unknown_mime_fallback",

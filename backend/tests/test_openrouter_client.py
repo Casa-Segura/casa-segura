@@ -11,7 +11,6 @@ import respx
 
 from shared.llm.openrouter import OpenRouterClient, OpenRouterError
 
-
 BASE_URL = "https://openrouter.ai/api/v1"
 
 
@@ -65,9 +64,7 @@ def test_chat_completion_returns_content_and_usage(mock_router):
 
 def test_chat_completion_injects_plugins_for_pdf(mock_router):
     route = mock_router.post(f"{BASE_URL}/chat/completions").mock(
-        return_value=httpx.Response(
-            200, json={"choices": [{"message": {"content": "ok"}}]}
-        )
+        return_value=httpx.Response(200, json={"choices": [{"message": {"content": "ok"}}]})
     )
 
     with _client() as client:
@@ -129,9 +126,7 @@ def test_missing_api_key_raises_at_call_time():
 
 
 def test_exhausted_retries_raise(mock_router):
-    mock_router.post(f"{BASE_URL}/chat/completions").mock(
-        return_value=httpx.Response(500, json={"error": "boom"})
-    )
+    mock_router.post(f"{BASE_URL}/chat/completions").mock(return_value=httpx.Response(500, json={"error": "boom"}))
 
     with _client(max_retries=2) as client:
         with pytest.raises(OpenRouterError):
@@ -142,9 +137,7 @@ def test_exhausted_retries_raise(mock_router):
 
 
 def test_response_without_content_raises(mock_router):
-    mock_router.post(f"{BASE_URL}/chat/completions").mock(
-        return_value=httpx.Response(200, json={"choices": []})
-    )
+    mock_router.post(f"{BASE_URL}/chat/completions").mock(return_value=httpx.Response(200, json={"choices": []}))
 
     with _client() as client:
         with pytest.raises(OpenRouterError):
