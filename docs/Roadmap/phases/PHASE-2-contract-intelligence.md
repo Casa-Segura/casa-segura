@@ -36,10 +36,9 @@ Phase 1 ingestion + corpus retrieval contracts are in place (commit `d613c2d`):
 - `POST /api/v1/submissions/` returns `extracted_text_language` + `extracted_text_token_count` per submission, with the text held only in-memory through the extractor (CS-057 invariant — never persisted).
 - `LegalCitationService.retrieve_legal_basis(finding=…)` returns ≥0 citations via `POST /api/v1/corpus/retrieve/`.
 
-**2026-05-16 — Phase 2 in active development:**
+**2026-05-16 — Phase 2 first-pass complete (7 of 7 tickets shipped):**
 
-Both waves of parallel-safe picks landed in the 2026-05-16 batch.
-First-pass code shipped for 5 of 7 tickets under `backend/classification/`.
+All Phase 2 tickets have code shipped under `backend/classification/`.
 
 Status of the dependency chain:
 
@@ -48,12 +47,20 @@ Status of the dependency chain:
 3. ☑→◐ **CS-111** leasing reclassification detector (6 Art. 2 LAF indicators, threshold 4/6, scope = purchase-side types per PRD §8.4).
 4. ☑→◐ **CS-112** project name normalization + linkage (extractor + linker with collision/upsert policy; implements CS-031 AC4 per ADR-0003).
 5. ☑→◐ **CS-113** economic field extraction (per-type prompts + value coercion + extractor).
-6. ☐ **CS-116** unverifiable bookkeeping for missing fields — unblocked by CS-113 + CS-114; next BE pickup.
-7. ☐ **CS-115** classification eval set — depends on all five above; unblocks the flips from `in_progress` → `done` for CS-110/111/112/113.
+6. ☑→◐ **CS-116** unverifiable bookkeeping aggregator (`ExtractionStatus` + `AggregatedExtraction` + warning precursor for `interest_calculation_base_unfavorable`).
+7. ☑→◐ **CS-115** classification eval set (31 synthetic BR-07-safe cases + `eval_classification` harness command).
 
-**All 5 shipped tickets stay `in_progress`** awaiting CS-115's live eval pass (golden classification set + live OpenRouter exercise). DDD layering verified clean: `classification/domain/*` has zero infra imports (`django.*`, `httpx`, `requests`, `shared.llm.*`).
+**All 7 tickets stay `in_progress`** for one of two reasons:
+- Live OpenRouter exercise still needed (CS-110/111/112/113/115).
+- Downstream wiring still needed (CS-116 → CS-137 persistence; CS-114 → `elements_detected` flag map).
 
-Next parallel-safe picks: **CS-115** (eval set) and **CS-116** (unverifiable bookkeeping). After CS-115 lands, the in_progress→done flips for CS-110/111/112/113 fall out from a single live verification run.
+**DDD layering verified clean**: `classification/domain/*` has zero infra imports (`django.*`, `httpx`, `requests`, `shared.llm.*`).
+
+**Phase 2 done-blockers** (in priority order):
+1. **Orchestrator service** to wire CS-110 → CS-111 → CS-112 → CS-113 → CS-116 into a single classification pipeline (no ticket yet — likely belongs to a new EPIC-04 closeout ticket or CS-137).
+2. **CS-137** persistence: `AggregatedExtraction` → `ContractAnalysis.economic_summary` JSONB.
+3. **Live eval run**: `python manage.py eval_classification --threshold 0.95` against real `OPENROUTER_API_KEY` → if it passes thresholds, flips CS-110/111/112/113/115 to `done`.
+4. **CI wiring** of the eval harness as a gate (CS-115 AC4).
 
 Upstream notes:
 
@@ -68,11 +75,11 @@ No primary FE tickets live in this phase. FE depends on the API contract outputs
 
 - ◐ [CS-112](../tickets/CS-112.md) - Project name extraction and normalization. *(2026-05-16: `ProjectNameExtractor` + `ProjectLinker` shipped under `backend/classification/{domain,application}/project_*.py`. Placeholder hash = `unknown_<sha256[:8](text)>`; orchestrator can override via `placeholder_seed=submission_hash`. Collision resolution uses `select_for_update` + IntegrityError catch for races. **CS-031 AC4 implemented here** per ADR-0003. 3/4 ACs; AC4 orchestrator wiring of `ContractAnalysis.project_id` pending.)*
 - ◐ [CS-114](../tickets/CS-114.md) - Classification confidence and extraction field schema. *(2026-05-16: `ExtractedFields` (19 optional fields), `ConfidenceLevel`/`ConfidenceBand`, `ContractExtraction`, `REQUIRED_FIELDS_BY_TYPE` policy table covering all 9 ContractType values shipped under `backend/classification/domain/` + `backend/classification/application/extraction_policy.py`. 3/4 ACs; AC4 `elements_detected` flag map pending.)*
-- ☐ [CS-116](../tickets/CS-116.md) - Unverifiable bookkeeping for missing fields.
+- ◐ [CS-116](../tickets/CS-116.md) - Unverifiable bookkeeping for missing fields. *(2026-05-16: `ExtractionStatus` StrEnum + `EconomicSlot` + `AggregatedExtraction` + pure `aggregate_extraction()` shipped under `backend/classification/{domain,application}/`. BVA boundary `confidence < 0.5` → NOT_PRESENT verified (0.49 → NOT_PRESENT, 0.50 → PRESENT). `warning_precursors` emits `interest_calculation_base_unfavorable` when base=total_balance + rate missing. 3/3 ACs ticked; stays `in_progress` until CS-137 wires `AggregatedExtraction` into `ContractAnalysis.economic_summary` JSONB.)*
 
 ## INFRA WORK
 
-- ☐ [CS-115](../tickets/CS-115.md) - Classification eval set.
+- ◐ [CS-115](../tickets/CS-115.md) - Classification eval set. *(2026-05-16: `backend/fixtures/classification_eval_cases.yaml` ships **31 synthetic cases** (CVC 3, CVP 5, ARV 4, ARC 3, APV 3, LEA 3, IVU 3, FSV 3, NOT_CLASSIFIABLE 4) including 2 leasing-BVA cases (3-of-6 stays CVP / 4-of-6 → LEA) + 1 borderline-confidence variant. Harness command `python manage.py eval_classification` with `--dry-run`/`--threshold`/`--out` flags. Threshold defaults from PRD F2 §9 (macro_accuracy_min 0.95, NC precision_min 0.90, reclass FP_max 0.02, FN_max 0.10). 3/4 ACs; AC4 CI wiring is separate work.)*
 
 Keep eval fixtures versioned and privacy-safe. Coordinate with CI conventions from Phase 0 before adding expensive model-backed checks.
 
