@@ -122,12 +122,22 @@ For each of `web`, `worker`, `beat`:
 
 1. **+ New** → **GitHub Repo** → same repo.
 2. Service **Settings**:
-   - **Root Directory**: `/backend`
-   - **Watch Paths**: `/backend/**`
-   - **Builder**: Dockerfile (auto-detected from `backend/Dockerfile`)
-   - **Dockerfile Target**: see table below
-   - **Start Command**: see table below (overrides `railway.toml`)
-   - **Healthcheck Path**: `/api/health/` (web only; blank for worker/beat)
+   - **Source → Root Directory**: `/backend` (with leading slash, no
+     trailing slash — typing `backend/` or `backend` will subtly break
+     railpack autodetection and you'll see
+     `directory .../snapshot-target-unpack/backend does not exist`).
+   - **Source → Watch Paths**: `/backend/**`
+   - **Build → Builder**: **`Dockerfile`** (set this **explicitly** in
+     the dashboard — railpack, Railway's new default, can ignore the
+     `[build].builder = "DOCKERFILE"` line in `railway.toml` and
+     autodetect Python instead, which fails on the monorepo layout).
+   - **Build → Dockerfile Path**: leave blank (defaults to `Dockerfile`
+     relative to Root Directory) or `Dockerfile`.
+   - **Build → Dockerfile Target**: see table below.
+   - **Deploy → Start Command**: see table below (overrides
+     `railway.toml`).
+   - **Deploy → Healthcheck Path**: `/api/health/` (web only; blank for
+     worker/beat).
 
 | Service | Dockerfile Target | Start Command |
 |---|---|---|
