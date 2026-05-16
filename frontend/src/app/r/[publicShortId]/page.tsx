@@ -4,7 +4,16 @@ import { DisclaimerFooter } from "@/components/disclaimer-footer";
 import { ReportPublicFrame } from "@/components/report-public-frame";
 import { buildPublicReportUrl } from "@/server/contract-env";
 
-/** CS-294 — probes BE HTML once, then embeds via sandboxed iframe `src` (same URL) for correct relative assets. */
+/**
+ * CS-294 — probes BE HTML once, then embeds via sandboxed iframe `src` (same URL) for correct relative assets.
+ *
+ * Expired / missing report (CS-295): redirects to `/enlace-expirado` when —
+ * `buildPublicReportUrl` is null (malformed/missing short id or missing API base),
+ * BE returns HTTP 404 or 410,
+ * Fetch is a 3xx without following (manual redirect handling),
+ * response is non-OK,
+ * `Content-Type` is not HTML (or XHTML).
+ */
 
 type PageProps = {
   params: Promise<{ publicShortId: string }>;
