@@ -1,0 +1,1028 @@
+# Casa Segura — Rubric Version 1.0.0 catalog.
+#
+# Source of truth: docs/Casa Segura Formal PRDs/RUBRICA_CONTRATO.md (sections
+# 4..9 and the master appendix §16). All `code`, `category`, `weight_in_category`,
+# `applicable_types`, `legal_anchor`, and `override_code` values are transcribed
+# verbatim from §16. `title` is the prose heading (e.g. "A1. Written form...").
+# `description` and `evaluation_prompt` quote the "What is sought" / scoring
+# rubric verbatim from each criterion's prose. `scoring_scale` mirrors the per-
+# criterion 0–10 table.
+#
+# Note (CS-033 follow-up): the master table in §16 enumerates 42 criteria
+# (A1-A6, B1-B9, C1-C7, D1-D6, E1-E9, F1-F5), even though the prose around the
+# same table says "the 38 defined criteria". This file ships all 42 rows because
+# they are the canonical content of the rubric document; reconciling the headline
+# number is a documentation follow-up and is captured in the CS-033 ticket.
+
+rubric_version: "1.0.0"
+released_at: "2026-05-16T00:00:00Z"
+changelog: |
+  Initial bootstrap of the Casa Segura rubric catalog. Transcribes the 42-row
+  master criteria table from RUBRICA_CONTRATO.md §16 (six categories A..F)
+  with their per-criterion weights, applicable contract types, legal anchors,
+  override codes, scoring scales, and verification rules.
+categories:
+  A: { name: "Validez legal y formal", global_weight: 0.20 }
+  B: { name: "Salud económica", global_weight: 0.30 }
+  C: { name: "Garantías para el comprador o arrendatario", global_weight: 0.20 }
+  D: { name: "Riesgos del inmueble", global_weight: 0.15 }
+  E: { name: "Cláusulas y prácticas abusivas", global_weight: 0.10 }
+  F: { name: "Transparencia y claridad", global_weight: 0.05 }
+
+criteria:
+
+  # ----------------- Category A — Legal and formal validity (20%) -----------------
+
+  - code: A1
+    category: A
+    title: "A1. Written form and complete property data"
+    weight_in_category: 25
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-4-ley-inquilinato"
+      - "art-18-ley-inquilinato"
+      - "art-1605-cc"
+      - "art-22-lpc"
+      - "art-27-lpc"
+    override_code: "art_1605_cc"
+    description: |
+      For purchase: public deed before notary. For lease: written contract
+      signed by the parties. For all: property description including
+      location, registry data (matrícula, inscription number, folio, libro),
+      area in square meters, boundaries.
+    evaluation_prompt: |
+      Verify the formal vehicle (escritura pública vs. private document) and
+      that the contract contains complete property identification: location,
+      registry data (matrícula, inscription number, folio, libro), area in
+      square meters, and boundaries. If type is CVC, CVP, or APV and there
+      is no public deed (or notarized private document for leasing), force
+      the score to 0 with override `art_1605_cc`.
+    scoring_scale:
+      "10": "For purchase: public deed. Complete registry description. Area and boundaries."
+      "8": "For lease: written contract with complete property data including matrícula."
+      "6": "Written document with description of location and area, without registry matrícula."
+      "4": "Written document with generic address, no registry data or specific area."
+      "2": "Purchase in a simple private document without public deed (critical override — system flags but the computation stays here)."
+      "0": "Property not identified, or only 'the offered lot', or verbal lease contract."
+
+  - code: A2
+    category: A
+    title: "A2. Identification of the parties"
+    weight_in_category: 15
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-18-ley-inquilinato"
+      - "art-12-b-lpc"
+    override_code: null
+    description: |
+      Full name, DUI or NIT, domicile, profession, legal capacity of each
+      party. In institutional contracts: appointment or legal representation
+      of the entity.
+    evaluation_prompt: |
+      Confirm that both parties are identified with full name, DUI or NIT,
+      domicile, and profession. For institutional contracts also verify
+      appointment or legal representation of the entity.
+    scoring_scale:
+      "10": "Both parties with name, DUI or NIT, domicile, profession."
+      "7": "Missing DUI or domicile of one party."
+      "4": "Missing two or more data of one party."
+      "0": "One party unidentified, or representative without accredited powers."
+
+  - code: A3
+    category: A
+    title: "A3. Determined price and payment form"
+    weight_in_category: 20
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-1612-cc"
+      - "art-1613-cc"
+      - "art-4-ley-inquilinato"
+      - "art-12-b-d-lpc"
+      - "art-12-b-e-lpc"
+      - "art-12-b-f-lpc"
+    override_code: "art_1613_cc"
+    description: |
+      Total price stated as a concrete figure. For installment purchase:
+      down payment, term, installment periodicity, interest rate, number of
+      installments, amount of each installment. For lease: monthly rent,
+      periodicity, place of payment. Concrete payment form (bank account,
+      receipt, deposit).
+    evaluation_prompt: |
+      Verify the price is determined and not left to the discretion of one
+      party. Confirm all numeric elements and a concrete payment form. If
+      the price is left at one party's discretion, force the score to 0
+      with override `art_1613_cc`.
+    scoring_scale:
+      "10": "Total price and all numeric elements. Clear payment form."
+      "7": "Price mentioned but missing some element (e.g. rate not expressed as effective annual)."
+      "4": "Price present but payment form ambiguous."
+      "0": "Variable, undetermined price, or 'at the seller's discretion' or 'per company policy'."
+
+  - code: A4
+    category: A
+    title: "A4. Term and validity"
+    weight_in_category: 15
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-6-ley-inquilinato"
+      - "art-2-ley-ivu"
+      - "art-9-laf"
+      - "art-1611-cc"
+    override_code: null
+    description: |
+      Start date, term, form of termination or renewal.
+    evaluation_prompt: |
+      Confirm the contract has a certain start date and term within the
+      applicable legal maximum (e.g. 30 years for IVU institutional
+      contracts; mandatory lessor term for leasing per Art. 9 LAF). Score
+      lower if term is missing, ambiguous, or exceeds the legal cap.
+    scoring_scale:
+      "10": "Certain term, within the applicable legal maximum."
+      "6": "Term present but no termination form specified."
+      "3": "Term exceeds legal maximum or is ambiguous."
+      "0": "No term, or term is undetermined."
+
+  - code: A5
+    category: A
+    title: "A5. Signature, date, and place"
+    weight_in_category: 10
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-18-ley-inquilinato"
+      - "art-12-b-j-lpc"
+      - "art-12-b-k-lpc"
+    override_code: null
+    description: |
+      Signatures of all parties, signing date, signing place.
+    evaluation_prompt: |
+      Verify the three elements are present: signatures of all parties,
+      signing date, and signing place. Score 0 if signature or date is
+      absent.
+    scoring_scale:
+      "10": "Signatures of all parties, signing date, signing place."
+      "6": "Missing one of the three elements."
+      "0": "No signature or no date."
+
+  - code: A6
+    category: A
+    title: "A6. Valid promise to sell (when applicable)"
+    weight_in_category: 15
+    applicable_types: [APV, CVP]
+    legal_anchor:
+      - "art-1425-cc"
+    override_code: "art_1425_cc"
+    description: |
+      The four circumstances of Art. 1425 CC without which the promise
+      produces no obligation: written form, lawful contract, term or
+      condition fixing the time of execution, sufficient specification of
+      the promised contract.
+    evaluation_prompt: |
+      Only applies to APV (or CVP when a prior promise exists). Verify the
+      four Art. 1425 CC circumstances. If requirement 3 (term or condition)
+      is missing, force the score to 0 with override `art_1425_cc` — this
+      is a classic fraud pattern.
+    scoring_scale:
+      "10": "Promise in writing, lawful contract, term or condition fixing the time of execution, sufficient specification of the promised contract."
+      "7": "One of the four requirements missing."
+      "4": "Two requirements missing."
+      "0": "Promise without term or condition fixing the time. The promise does not bind the promisor and the 'buyer' has no enforceable right."
+
+  # ----------------- Category B — Economic health (30%) -----------------
+
+  - code: B1
+    category: B
+    title: "B1. Reasonable down payment or advance"
+    weight_in_category: 10
+    applicable_types: [CVP, APV, LEA, FSV]
+    legal_anchor:
+      - "art-13-lpc"
+      - "art-43-d-lpc"
+      - "art-7-ley-fsv"
+      - "art-68-ley-fsv"
+    override_code: null
+    description: |
+      Percentage of the total price delivered as down payment or advance.
+      Benchmarks (config): purchase with bank or FSV financing standard
+      10%; purchase directly with developer 5–15%; lease with promise to
+      sell variable. Asymmetric penalty — low down payments do not
+      penalize.
+    evaluation_prompt: |
+      Extract the down-payment percentage and compare against the
+      benchmark for the segment. Apply the asymmetric penalty scale (low
+      down payments score equal to or better than benchmark; only
+      above-benchmark values reduce the score). Flag full delivery before
+      the deed as a fraud pattern (score 0).
+    scoring_scale:
+      "10": "Down payment ≤ standard benchmark (≤ 10%)."
+      "8": "Down payment 1–5 percentage points above benchmark (10–15%)."
+      "5": "Down payment 5–10 points above benchmark (15–20%) — 'high'."
+      "2": "Down payment 10–25 points above benchmark (20–35%) — 'very high'."
+      "0": "Down payment > 35% of price or full delivery before the deed — fraud pattern."
+
+  - code: B2
+    category: B
+    title: "B2. Effective annual interest rate"
+    weight_in_category: 20
+    applicable_types: [CVP, APV, LEA, FSV]
+    legal_anchor:
+      - "art-12-lpc"
+      - "art-19-f-lpc"
+      - "art-19-j-lpc"
+      - "art-19-p-lpc"
+    override_code: null
+    description: |
+      Effective annual interest rate applied to the financed balance.
+      Benchmarks (config): bank mortgage 7–9% annual; FSV subsidised 5–7%;
+      direct developer credit 8–12%; any rate > 15% is out of market.
+      Rule: 2 points above average = bad, 5 points above = severe.
+    evaluation_prompt: |
+      Extract the effective annual rate. If only a monthly rate is given,
+      compute the equivalent annual rate before applying the scale. If
+      neither is computable, score 4 with justification "annual rate not
+      expressed — Art. 19 lit. j LPC requires effective annual rate".
+    worst_case_when_unverifiable: 4.0
+    scoring_scale:
+      "10": "Rate ≤ segment median benchmark (≤ 9%)."
+      "9": "Rate 0–1 point above median benchmark (9–10%)."
+      "7": "Rate 1–2 points above benchmark (10–11%)."
+      "5": "Rate 2–5 points above benchmark (11–14%) — 'bad'."
+      "2": "Rate 5–10 points above benchmark (14–19%) — 'severe'."
+      "0": "Rate > 10 points above benchmark (> 19%) or not expressed as effective annual."
+
+  - code: B3
+    category: B
+    title: "B3. Credit term"
+    weight_in_category: 10
+    applicable_types: [CVP, APV, LEA, FSV]
+    legal_anchor:
+      - "art-2-ley-ivu"
+    override_code: null
+    description: |
+      Benchmarks (config): reasonable term 5–25 years for real estate;
+      IVU institutional maximum 30 years.
+    evaluation_prompt: |
+      Compare the financing term against the segment benchmark and the
+      legal maximum (30 years for IVU). Penalise terms above 30 years or
+      so short that the installment is pathological relative to the
+      financed amount.
+    scoring_scale:
+      "10": "Term between 5 and 20 years, consistent with the financed amount."
+      "7": "Term between 20 and 25 years."
+      "4": "Term between 25 and 30 years (IVU legal maximum)."
+      "0": "Term > 30 years, or term so short the installment is pathological relative to the amount."
+
+  - code: B4
+    category: B
+    title: "B4. Computed final total cost"
+    weight_in_category: 15
+    applicable_types: [CVP, APV, LEA, FSV]
+    legal_anchor: []
+    override_code: null
+    description: |
+      Derived computation: principal + (monthly installment × number of
+      installments) + commissions + insurance + deed costs + registry
+      costs + any other identified fee. Comparison: total cost / cash
+      price. Healthy mortgage credit: total cost between 1.4× and 1.8×
+      cash price for 15–25 year terms. Asymmetric penalty — short or
+      subsidised financings score better.
+    evaluation_prompt: |
+      Compute principal + (monthly installment × number of installments) +
+      commissions + insurance + deed costs + registry costs + any other
+      identified fee. Divide by the cash price and apply the asymmetric
+      scale (lower total cost never penalises).
+    scoring_scale:
+      "10": "Total cost ≤ 1.5× cash price."
+      "8": "Total cost between 1.5× and 1.8×."
+      "6": "Total cost between 1.8× and 2.0× — expensive but typical of long terms."
+      "3": "Total cost between 2.0× and 2.5×."
+      "0": "Total cost > 2.5× — excessive or usurious."
+
+  - code: B5
+    category: B
+    title: "B5. Reasonable monthly payment (absolute criterion, does not require user income)"
+    weight_in_category: 10
+    applicable_types: [CVP, APV, LEA, FSV, ARV]
+    legal_anchor: []
+    override_code: null
+    description: |
+      The monthly installment relative to the total price, normalised to
+      identify whether it is within the reasonable range for the financed
+      amount and term. Computation: monthly payment ÷ (total price / term
+      in months). A ratio close to 1 indicates the installment is aligned
+      with linear amortisation. Very high ratios suggest excessive
+      interest or hidden costs.
+    evaluation_prompt: |
+      Compute monthly payment ÷ (total price / term in months) and apply
+      the ratio scale. If the term or total price cannot be determined,
+      mark unverifiable and add score 4 (worst intermediate case).
+    worst_case_when_unverifiable: 4.0
+    scoring_scale:
+      "10": "Ratio between 1.0 and 1.2."
+      "7": "Ratio between 1.2 and 1.4."
+      "4": "Ratio between 1.4 and 1.7."
+      "0": "Ratio > 1.7 — the installment implies excessive interest or costs for the term."
+
+  - code: B6
+    category: B
+    title: "B6. Itemized additional charges"
+    weight_in_category: 10
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-12-a-lpc"
+      - "art-19-p-lpc"
+      - "art-27-lpc"
+    override_code: null
+    description: |
+      All charges to the buyer or tenant (deed, registry, commissions,
+      insurance, maintenance, administration) must be listed with amount
+      and reason.
+    evaluation_prompt: |
+      Verify every charge is itemised with specific amount and reason.
+      Penalise generic ("administrative commissions", "various expenses")
+      or open-ended ("commissions per bank policy") clauses.
+    scoring_scale:
+      "10": "All charges listed with specific amount and reason."
+      "7": "Charges listed but without specific amount or clear reason."
+      "4": "Generic charges ('administrative commissions', 'various expenses')."
+      "0": "Open charges ('commissions per bank policy' or 'charges the seller determines')."
+
+  - code: B7
+    category: B
+    title: "B7. Reasonable late-payment penalty"
+    weight_in_category: 10
+    applicable_types: [CVP, APV, LEA, ARV, FSV]
+    legal_anchor:
+      - "art-12-lpc"
+      - "art-17-i-lpc"
+    override_code: "art_12_lpc"
+    description: |
+      Late interest percentage and computation base. Late interest must be
+      computed only on overdue principal (Art. 12 LPC), not on the total
+      balance.
+    evaluation_prompt: |
+      Identify the late-interest rate and base. If computed on the total
+      balance (Art. 12 LPC prohibited), force the score to 0 with
+      override `art_12_lpc`. Penalise disproportionate penalty clauses
+      under Art. 17 lit. i LPC.
+    scoring_scale:
+      "10": "Late interest computed only on overdue principal, ≤ 1.5× ordinary interest rate."
+      "7": "Late interest ≤ 2× ordinary rate, on overdue principal."
+      "4": "Late interest > 2× ordinary rate, on overdue principal."
+      "0": "Late interest computed on total balance (Art. 12 LPC prohibited), or disproportionate penalty clause."
+
+  - code: B8
+    category: B
+    title: "B8. Prepayment penalty"
+    weight_in_category: 8
+    applicable_types: [CVP, APV, LEA, FSV]
+    legal_anchor:
+      - "art-17-g-lpc"
+      - "art-19-m-lpc"
+    override_code: null
+    description: |
+      Prepayment fees are generally prohibited (Art. 17 lit. g LPC) and
+      credit operations should allow prepayment without fee except for
+      external funds or fixed rate at short/medium term (Art. 19 lit. m
+      LPC).
+    evaluation_prompt: |
+      Check whether the contract allows prepayment without fee. Penalise
+      fees above 1% (unless justified by external funds or fixed rate)
+      and fees above 3% or outright prohibitions of prepayment.
+    scoring_scale:
+      "10": "Prepayment without fee."
+      "7": "Prepayment fee ≤ 1% of balance, justified by external funds or fixed rate."
+      "4": "Prepayment fee between 1% and 3% of balance."
+      "0": "Prepayment fee > 3% or without justification, or prohibition of prepayment."
+
+  - code: B9
+    category: B
+    title: "B9. Unilateral modification of price or conditions"
+    weight_in_category: 7
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-13-lpc"
+      - "art-17-b-lpc"
+      - "art-1613-cc"
+    override_code: "art_13_lpc"
+    description: |
+      Price or conditions must not be modifiable unilaterally by the
+      provider.
+    evaluation_prompt: |
+      Detect any clause allowing the seller or landlord to modify price
+      or conditions without consent. If unilateral modification is
+      permitted, force the score to 0 with override `art_13_lpc`.
+    scoring_scale:
+      "10": "The contract does not allow unilateral modification of price or conditions."
+      "5": "Allows adjustments with at least 30 days prior notice and the right to withdraw."
+      "0": "Allows the seller or landlord to modify price or conditions without consent."
+
+  # --------- Category C — Guarantees for the buyer or tenant (20%) ---------
+
+  - code: C1
+    category: C
+    title: "C1. Escrow or trust mechanism for the down payment"
+    weight_in_category: 20
+    applicable_types: [CVP, APV]
+    legal_anchor:
+      - "art-13-lpc"
+      - "art-43-d-lpc"
+    override_code: null
+    description: |
+      Not a direct legal requirement, but its absence reinforces the risk
+      described in Art. 13 LPC (deferred delivery) and Art. 43 lit. d LPC
+      (non-refund of down payments is a serious infraction).
+    evaluation_prompt: |
+      Identify the mechanism protecting the down payment: bank escrow,
+      joint account released against delivery, notarial receipt, or
+      simple receipt. Score 0 for unconditional no-refund clauses or
+      cash without proof.
+    scoring_scale:
+      "10": "Down payment deposited in bank escrow or joint account, released only against delivery of the property."
+      "7": "Down payment to the seller's account but with notarial receipt and proof of destination of the money."
+      "4": "Down payment delivered with simple receipt."
+      "0": "Down payment delivered in cash without proof or protection, or unconditional no-refund clause."
+
+  - code: C2
+    category: C
+    title: "C2. Certain delivery date"
+    weight_in_category: 15
+    applicable_types: [CVP, APV, LEA, ARV, FSV]
+    legal_anchor:
+      - "art-13-lpc"
+      - "art-1714-cc"
+    override_code: null
+    description: |
+      Exact delivery date with quantified penalty for delay.
+    evaluation_prompt: |
+      Look for an exact delivery date with a quantified delay penalty.
+      Penalise vague language ("when construction is finished", "as work
+      progresses") without penalty.
+    scoring_scale:
+      "10": "Exact delivery date, with quantified penalty for delay."
+      "7": "Date range (specific month and year) with penalty."
+      "4": "'Approximately N months' with generic penalty."
+      "0": "'When construction is finished', 'as work progresses', without penalty."
+
+  - code: C3
+    category: C
+    title: "C3. Penalty for seller or lessor delay"
+    weight_in_category: 15
+    applicable_types: [CVP, APV, LEA, ARV, FSV]
+    legal_anchor:
+      - "art-13-lpc"
+      - "art-1714-cc"
+    override_code: null
+    description: |
+      Penalty equal to or higher than the buyer's in the symmetric case
+      (% per month of delay, refund of down payment with legal commercial
+      interest).
+    evaluation_prompt: |
+      Compare the seller/lessor delay penalty against the buyer's
+      symmetric penalty. Penalty must be at least symmetric; absence of
+      penalty or exclusion of seller liability scores 0.
+    scoring_scale:
+      "10": "Quantified penalty (% per month of delay, refund of down payment with legal commercial interest), symmetric or higher than the penalty to the late buyer."
+      "6": "Penalty present but lower than the buyer's symmetric."
+      "3": "Symbolic penalty or lower than legal commercial interest."
+      "0": "No penalty or clause excluding the seller from liability for delay."
+
+  - code: C4
+    category: C
+    title: "C4. Treatment of seller or lessor non-compliance"
+    weight_in_category: 15
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-13-lpc"
+      - "art-43-d-lpc"
+      - "art-1675-cc"
+      - "art-1677-cc"
+    override_code: null
+    description: |
+      Refund of payments plus indemnification if the provider breaches
+      (Art. 13 LPC). Non-refund of down payments is a serious infraction
+      (Art. 43 lit. d LPC).
+    evaluation_prompt: |
+      Look for a clear clause that refunds everything paid plus legal
+      commercial interest on seller breach. Penalise retention clauses
+      or onerous restitution conditions. Non-refund clauses score 0 —
+      Art. 43 lit. d LPC serious infraction.
+    scoring_scale:
+      "10": "Clear clause: if the seller breaches, the buyer recovers everything paid plus legal commercial interest."
+      "7": "Refund of payments but with percentage retention under 5%."
+      "4": "Partial refund or subject to onerous conditions."
+      "0": "Payments on account not refunded in case of seller breach — serious infraction Art. 43 lit. d LPC."
+
+  - code: C5
+    category: C
+    title: "C5. Warranty against eviction and hidden defects"
+    weight_in_category: 15
+    applicable_types: [CVC, CVP, APV, LEA, FSV]
+    legal_anchor:
+      - "art-1639-cc"
+      - "art-1644-cc"
+      - "art-1659-cc"
+      - "art-1660-cc"
+      - "art-1661-cc"
+      - "art-1662-cc"
+      - "art-1663-cc"
+      - "art-1664-cc"
+      - "art-1665-cc"
+      - "art-1666-cc"
+      - "art-1667-cc"
+      - "art-1668-cc"
+      - "art-1669-cc"
+      - "art-1670-cc"
+      - "art-4-b-laf"
+    override_code: "art_1644_cc"
+    description: |
+      Explicit warranty clause covering eviction and hidden defects, with
+      defects term ≥ 1 year (Art. 1668 CC).
+    evaluation_prompt: |
+      Identify the warranty clause and its scope. If there is an explicit
+      clause exempting from eviction warranty, force the score to 0 with
+      override `art_1644_cc` — the buyer must know it may be void.
+    scoring_scale:
+      "10": "Explicit warranty clause, per common law, with defects term ≥ 1 year."
+      "7": "Warranty mentioned but limited to specific aspects."
+      "4": "Limited clause or full silence (Civil Code applies supplementarily)."
+      "0": "Clause exempting the seller from eviction warranty — Art. 1644 CC void if bad faith."
+
+  - code: C6
+    category: C
+    title: "C6. Right to a receipt for each payment"
+    weight_in_category: 10
+    applicable_types: [CVP, APV, LEA, ARV, ARC, IVU, FSV]
+    legal_anchor:
+      - "art-9-ley-inquilinato"
+      - "art-20-ley-inquilinato"
+    override_code: null
+    description: |
+      Mandatory receipt for every payment (Art. 9 Ley de Inquilinato —
+      triple fine for not issuing; Art. 20 Ley de Inquilinato for
+      tenement houses).
+    evaluation_prompt: |
+      Verify an explicit clause obliges the lessor or seller to issue a
+      receipt for each payment. Clauses exempting the seller or lessor
+      from issuing receipts are void.
+    scoring_scale:
+      "10": "Explicit clause of the lessor's or seller's obligation to issue a receipt."
+      "6": "Implied but not expressly recorded (law applies supplementarily)."
+      "0": "Clause exempting the seller or lessor from issuing receipts (void)."
+
+  - code: C7
+    category: C
+    title: "C7. Contract continuity on death or transfer"
+    weight_in_category: 10
+    applicable_types: [ARV, ARC, APV, IVU]
+    legal_anchor:
+      - "art-27-ley-inquilinato"
+      - "art-28-ley-inquilinato"
+      - "art-2-ley-inquilinato"
+    override_code: null
+    description: |
+      Death of tenant does not extinguish — continues with heirs, spouse,
+      companion, ascendants, descendants (Art. 27 LI). Death of lessor or
+      property transfer does not extinguish (Art. 28 LI).
+    evaluation_prompt: |
+      Confirm the contract recognises continuity, or remains silent so the
+      law applies supplementarily. Any clause attempting to extinguish on
+      tenant's death or property transfer is contrary to Art. 27/28 LI and
+      void per Art. 2 LI.
+    scoring_scale:
+      "10": "Clause recognizes continuity or the contract is silent (law applies supplementarily)."
+      "0": "Clause attempting to extinguish the contract on tenant's death or property transfer — contrary to Art. 27/28 and void per Art. 2 Ley de Inquilinato."
+
+  # ----------------- Category D — Property risks (15%) -----------------
+
+  - code: D1
+    category: D
+    title: "D1. Declared registry status"
+    weight_in_category: 20
+    applicable_types: [CVC, CVP, APV, LEA, FSV]
+    legal_anchor:
+      - "art-1639-cc"
+    override_code: null
+    description: |
+      Contract declares the registry status of the property (matrícula,
+      libro, folio) and ideally attaches proof.
+    evaluation_prompt: |
+      Look for explicit registry data (matrícula, libro, folio) and
+      attached proof. Penalise contracts that only declare the property
+      is free of liens without proof, or omit registry status entirely.
+    scoring_scale:
+      "10": "The contract declares the registry status of the property (matrícula, libro, folio) and shows attached proof."
+      "7": "Declares the property is free of liens but without attached proof."
+      "3": "Superficial mention of the property status."
+      "0": "The contract omits any mention of registry status."
+
+  - code: D2
+    category: D
+    title: "D2. Bien de Familia regime (when applicable)"
+    weight_in_category: 20
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-3-ley-ivu"
+      - "art-14-ley-ivu"
+      - "art-6-a-ley-ivu"
+    override_code: "art_3_ivu_family_homestead"
+    description: |
+      Transfers of property under Bien de Familia are absolutely void
+      (Art. 3 Ley IVU). Detection: the contract mentions "Bien de
+      Familia", "IVU", "adjudicación", or describes a property with
+      historical institutional-program characteristics.
+    evaluation_prompt: |
+      Detect Bien de Familia indicators. Confirm the regime has lapsed
+      (Art. 6-A: 10 years from the last installment payment) or a public
+      deed cancelling the lien exists. If a transfer is attempted without
+      prior cancellation, force the score to 0 with override
+      `art_3_ivu_family_homestead`. If suspicious institutional origin
+      but the contract is silent, mark unverifiable and advise the user
+      to verify in the Property Registry.
+    scoring_scale:
+      "10": "The property is not under Bien de Familia, or the regime has already lapsed (Art. 6-A: 10 years from the last installment payment), or a public deed cancelling the lien is shown."
+      "0": "The property is under Bien de Familia and a transfer is attempted without prior cancellation — Art. 3 Ley IVU absolute nullity."
+
+  - code: D3
+    category: D
+    title: "D3. Preventive FSV annotation"
+    weight_in_category: 15
+    applicable_types: [CVC, CVP, APV, LEA, FSV]
+    legal_anchor:
+      - "art-55-ley-fsv"
+      - "art-58-ley-fsv"
+      - "art-59-ley-fsv"
+    override_code: null
+    description: |
+      Preventive FSV annotation has retroactive effect (Art. 55) and
+      without the Fund's consent no sale, lien, or right constitution can
+      be recorded (Art. 58). Non-attachability per Art. 59.
+    evaluation_prompt: |
+      Confirm the contract declares no preventive FSV annotation, or
+      shows the Fund's consent letter. Silence is unverifiable — score 5
+      and warn the user. If FSV exists without consent, recording is
+      impossible (Art. 58) — score 0.
+    worst_case_when_unverifiable: 5.0
+    scoring_scale:
+      "10": "The contract declares the property has no preventive FSV annotation or shows the Fund's consent letter."
+      "5": "Silence on the matter. Unverifiable; the user must verify with the Registry."
+      "0": "The contract declares FSV exists but does not show the Fund's consent — recording is impossible (Art. 58)."
+
+  - code: D4
+    category: D
+    title: "D4. Urbanism and construction permit"
+    weight_in_category: 20
+    applicable_types: [CVC, CVP, APV, LEA]
+    legal_anchor:
+      - "art-1-luc"
+      - "art-2-luc"
+      - "art-5-luc"
+      - "art-6-luc"
+    override_code: null
+    description: |
+      Applies when the property is under construction or in a recent
+      project. Cites permit number, recognised issuing authority, valid
+      date. Permits expire after one year (Art. 6 LUC).
+    evaluation_prompt: |
+      Look for the permit number, issuing authority, and date. Penalise
+      missing or expired permits (> 1 year without evidence of work
+      continuity per Art. 6 LUC).
+    scoring_scale:
+      "10": "The contract cites permit number, recognized issuing authority, valid date."
+      "6": "Permit cited but with dubious format or no date."
+      "3": "Generic mention of the permit."
+      "0": "No permit mention, or permit > 1 year without evidence of work continuity (Art. 6 lapsed)."
+
+  - code: D5
+    category: D
+    title: "D5. Registered responsible professional"
+    weight_in_category: 10
+    applicable_types: [CVC, CVP, APV, LEA]
+    legal_anchor:
+      - "art-4-luc"
+      - "art-8-luc"
+    override_code: null
+    description: |
+      Applies when the property is in a construction project. Architect
+      or civil engineer registered with the National Registry (Art. 4, 8
+      LUC).
+    evaluation_prompt: |
+      Identify the responsible professional by name and registration
+      number. Generic mentions ("the construction company") score 3 and
+      total absence scores 0.
+    scoring_scale:
+      "10": "Name and registration number of the responsible professional."
+      "6": "Name of the professional without registration number."
+      "3": "Generic mention ('the construction company')."
+      "0": "No responsible identified."
+
+  - code: D6
+    category: D
+    title: "D6. Regularized subdivision (when applicable)"
+    weight_in_category: 15
+    applicable_types: [CVC, CVP]
+    legal_anchor:
+      - "ley-lotificaciones-provisional"
+    override_code: null
+    description: |
+      Applies when the property is a lot in subdivision. Provisional
+      criterion (`provisional_pending_corpus`) until the Ley Especial
+      para la Regularización de Lotificaciones y Parcelaciones para Uso
+      Habitacional is obtained verbatim.
+    evaluation_prompt: |
+      Verify the subdivision is registered with the Registry or in a
+      documented regularisation process. Provisional scoring until the
+      law is incorporated verbatim.
+    scoring_scale:
+      "10": "Subdivision registered with the Registry or in a documented regularization process."
+      "6": "Declaration of regularization but without attached documentation."
+      "3": "Subdivision prior to September 2012 (subject to regularization with constraints)."
+      "0": "Lot not registered and not in regularization process."
+
+  # -------- Category E — Abusive clauses and practices (10%) --------
+
+  - code: E1
+    category: E
+    title: "E1. Waiver of non-waivable rights"
+    weight_in_category: 15
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-5-lpc"
+      - "art-17-d-lpc"
+      - "art-2-ley-inquilinato"
+    override_code: "art_5_lpc_non_waivable"
+    description: |
+      Binary criterion: 10 if no clause waives legal consumer rights,
+      0 if an explicit waiver exists.
+    evaluation_prompt: |
+      Detect any explicit waiver clause ("the buyer waives..."). If
+      present, force the score to 0 with override
+      `art_5_lpc_non_waivable`.
+    scoring_scale:
+      "10": "No clause waives legal consumer rights."
+      "0": "Explicit waiver clause ('the buyer waives...'). Void clause."
+
+  - code: E2
+    category: E
+    title: "E2. Warranty waiver"
+    weight_in_category: 10
+    applicable_types: [CVC, CVP, APV, LEA]
+    legal_anchor:
+      - "art-1644-cc"
+      - "art-1661-cc"
+    override_code: null
+    description: |
+      Binary criterion. Void agreement exempting in bad faith (Art. 1644
+      CC); known defects rule (Art. 1661 CC).
+    evaluation_prompt: |
+      Detect any warranty exemption clause. Binary scoring: 10 if absent,
+      0 if present.
+    scoring_scale:
+      "10": "No warranty exemption clause."
+      "0": "Explicit exemption clause."
+
+  - code: E3
+    category: E
+    title: "E3. Burden-of-proof reversal"
+    weight_in_category: 10
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-17-e-lpc"
+    override_code: null
+    description: |
+      Binary criterion. Clause placing the burden on the consumer is
+      abusive (Art. 17 lit. e LPC).
+    evaluation_prompt: |
+      Detect any clause placing the burden of proof on the consumer.
+      Binary scoring: 10 if absent, 0 if present.
+    scoring_scale:
+      "10": "No burden reversal."
+      "0": "Clause placing the burden on the consumer."
+
+  - code: E4
+    category: E
+    title: "E4. Automatic renewal without consent"
+    weight_in_category: 10
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-17-f-lpc"
+      - "art-18-k-lpc"
+    override_code: null
+    description: |
+      Applies to all contracts with a term. Binary criterion: automatic
+      renewal without express written consent is abusive.
+    evaluation_prompt: |
+      Detect automatic renewal clauses. Score 10 if absent or requires
+      express written consent; 0 if renewal happens without consent.
+    scoring_scale:
+      "10": "No automatic renewal, or it exists but requires express written consent."
+      "0": "Automatic renewal without consent."
+
+  - code: E5
+    category: E
+    title: "E5. Notary imposed by the provider"
+    weight_in_category: 10
+    applicable_types: [CVC, CVP, APV, LEA, FSV]
+    legal_anchor:
+      - "art-19-d-lpc"
+      - "art-20-a-lpc"
+      - "art-44-n-lpc"
+    override_code: null
+    description: |
+      Respect the consumer's notary designation (Art. 19 lit. d LPC);
+      prohibition to impose (Art. 20 lit. a LPC); very serious infraction
+      (Art. 44 lit. ñ LPC).
+    evaluation_prompt: |
+      Detect any clause where the seller imposes the notary. Score 10 if
+      the buyer chooses or the contract is silent; 0 if imposed.
+    scoring_scale:
+      "10": "The buyer chooses the notary, or the contract does not impose a notary."
+      "0": "The seller imposes the notary."
+
+  - code: E6
+    category: E
+    title: "E6. Blank signature on obligation documents"
+    weight_in_category: 10
+    applicable_types: [CVP, APV, LEA, FSV]
+    legal_anchor:
+      - "art-18-b-lpc"
+      - "art-44-c-lpc"
+    override_code: "art_18_lpc_blank_signature"
+    description: |
+      Applies to all contracts with financing. Prohibition to require
+      blank signature except for negotiable instruments with legal
+      requirements (Art. 18 lit. b LPC); very serious infraction (Art. 44
+      lit. c LPC).
+    evaluation_prompt: |
+      Detect any requirement to sign blank promissory notes, drafts, or
+      other documents. If present, force the score to 0 with override
+      `art_18_lpc_blank_signature`.
+    scoring_scale:
+      "10": "Does not require blank signature."
+      "0": "Requires signing blank promissory notes, drafts, or other documents in blank."
+
+  - code: E7
+    category: E
+    title: "E7. Arbitration imposed in adhesion contract"
+    weight_in_category: 10
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-17-h-lpc"
+      - "art-44-g-lpc"
+    override_code: "art_17h_lpc_arbitration"
+    description: |
+      Applies to all adhesion contracts. Arbitration clauses in adhesion
+      contracts are abusive (Art. 17 lit. h LPC); very serious infraction
+      (Art. 44 lit. g LPC).
+    evaluation_prompt: |
+      Detect any arbitration clause. If present in an adhesion contract,
+      force the score to 0 with override `art_17h_lpc_arbitration`.
+      Arbitration freely negotiated between parties is allowed.
+    scoring_scale:
+      "10": "Does not impose arbitration, or arbitration was freely negotiated between the parties."
+      "0": "Arbitration clause in adhesion contract."
+
+  - code: E8
+    category: E
+    title: "E8. Limitation of seller or lessor liability"
+    weight_in_category: 10
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-17-a-lpc"
+    override_code: null
+    description: |
+      Abusive clause: exonerate, attenuate, or limit provider's liability
+      for damages (Art. 17 lit. a LPC).
+    evaluation_prompt: |
+      Detect any clause exempting the seller or lessor from damages
+      caused by the good or service. Binary scoring: 10 if absent, 0 if
+      present.
+    scoring_scale:
+      "10": "No limitation or exoneration of liability."
+      "0": "Clause exempting the seller or lessor from damages caused by the good or service."
+
+  - code: E9
+    category: E
+    title: "E9. Abusive penalty to the consumer for non-compliance"
+    weight_in_category: 15
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-17-i-lpc"
+    override_code: null
+    description: |
+      Penalty must correspond to the damage caused to the provider (Art.
+      17 lit. i LPC).
+    evaluation_prompt: |
+      Evaluate penalties for consumer non-compliance against the damage
+      caused. Penalise disproportionate penalties (e.g. losing everything
+      paid for breaching one month).
+    scoring_scale:
+      "10": "Penalties proportional to the damage, justified."
+      "5": "High but justified penalty by the nature of the contract."
+      "0": "Disproportionate penalty (e.g. losing everything paid for breaching one month), without correspondence to the damage."
+
+  # ----------------- Category F — Transparency and clarity (5%) -----------------
+
+  - code: F1
+    category: F
+    title: "F1. Spanish language and legible characters"
+    weight_in_category: 30
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-22-lpc"
+    override_code: null
+    description: |
+      Adhesion contracts in Spanish, characters readable to the naked
+      eye (Art. 22 LPC).
+    evaluation_prompt: |
+      Verify the contract is in clear Spanish with legible typography.
+      Penalise excessive technicality, fragments in another language, or
+      critical clauses in microscopic font.
+    scoring_scale:
+      "10": "Clear Spanish, legible typography."
+      "6": "Excessive technicality or fragments in another language."
+      "0": "Illegible characters, foreign language, or critical clauses in microscopic font."
+
+  - code: F2
+    category: F
+    title: "F2. Referenced exhibits actually attached"
+    weight_in_category: 30
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-22-lpc"
+      - "art-4-n-lpc"
+    override_code: null
+    description: |
+      No references to texts not delivered to the consumer, except laws
+      (Art. 22 LPC). Detailed explanation of obligations and exhibits
+      (Art. 4 lit. n LPC).
+    evaluation_prompt: |
+      Verify every referenced exhibit is actually attached. Penalise
+      missing exhibits, with score 0 for critical exhibits (plans,
+      technical specifications, warranties, general conditions).
+    scoring_scale:
+      "10": "All referenced exhibits are attached."
+      "6": "Some exhibits missing but not critical."
+      "0": "Critical exhibits missing (plans, technical specifications, warranties, general conditions)."
+
+  - code: F3
+    category: F
+    title: "F3. Right of withdrawal communicated"
+    weight_in_category: 15
+    applicable_types: [CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV]
+    legal_anchor:
+      - "art-13-a-lpc"
+    override_code: null
+    description: |
+      Applies to contracts entered outside the provider's establishment
+      or at a distance. Right of withdrawal: 8 days, without
+      justification, without penalty (Art. 13-A LPC).
+    evaluation_prompt: |
+      Confirm the right of withdrawal is communicated with term and
+      exercise form. Penalise clauses denying or penalising the right.
+    scoring_scale:
+      "10": "Right communicated clearly with term and exercise form."
+      "5": "Partial mention of the right."
+      "0": "Not communicated, or clause denying or penalizing it."
+
+  - code: F4
+    category: F
+    title: "F4. Total cost expressed"
+    weight_in_category: 15
+    applicable_types: [CVP, APV, LEA, FSV]
+    legal_anchor:
+      - "art-19-p-lpc"
+      - "art-31-b-lpc"
+    override_code: null
+    description: |
+      Approval letter with comparable total cost (Art. 19 lit. p LPC).
+      Installment-sale advertising must state cash price and installment
+      total price (Art. 31 lit. b final paragraph LPC).
+    evaluation_prompt: |
+      Verify the total cost is expressed clearly and comparable with the
+      cash price. Penalise contracts where the total cost is not
+      expressed and difficult to compute.
+    scoring_scale:
+      "10": "Total cost expressed clearly and comparable with the cash price."
+      "5": "Total cost deducible but not expressed."
+      "0": "Total cost not expressed and difficult to compute from the clause."
+
+  - code: F5
+    category: F
+    title: "F5. Effective annual rate expressed"
+    weight_in_category: 10
+    applicable_types: [CVP, APV, LEA, FSV]
+    legal_anchor:
+      - "art-19-j-lpc"
+      - "art-31-lpc"
+    override_code: null
+    description: |
+      Rate expressed as effective annual, as a percentage (Art. 19 lit. j
+      LPC; Art. 31 LPC final paragraph).
+    evaluation_prompt: |
+      Verify the rate is expressed as effective annual percentage.
+      Penalise contracts that express only a monthly rate (5) or no rate
+      at all (0).
+    scoring_scale:
+      "10": "Rate expressed as effective annual, as a percentage."
+      "5": "Monthly rate expressed but not converted to effective annual."
+      "0": "Rate not expressed."
