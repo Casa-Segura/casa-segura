@@ -37,7 +37,6 @@ Use this folder as a phase-first pick list for parallel work:
 
 - [CS-001](../tickets/CS-001.md) - repo posture and README skeleton
 - [CS-270](../tickets/CS-270.md) - retention scheduler ADR
-- [CS-290](../tickets/CS-290.md) - mobile-first landing page
 
 These are the global ready picks currently marked `ready` with no dependencies. Phase pages also include phase-local `Ready Now` notes so engineers can see whether their phase has work available. If the global list changes, update this file and [Parallel Work Plan](../PARALLEL_WORK_PLAN.md) in the same documentation pass.
 

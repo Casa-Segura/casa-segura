@@ -53,3 +53,21 @@ export function readSubmissionStatusTemplate(): string {
 export function readUploadEnabled(): boolean {
   return process.env.CASASEGURA_UPLOAD_ENABLED !== "false";
 }
+
+/**
+ * Path template for the public HTML report (F7 `GET /r/{id}` style).
+ * Placeholder `{{id}}` is replaced with `public_short_id` (URL-encoded).
+ */
+export function readPublicReportPathTemplate(): string {
+  return process.env.CASASEGURA_PUBLIC_REPORT_PATH_TEMPLATE?.trim() || "/r/{{id}}";
+}
+
+/** Builds absolute report URL; `null` when API base is unset (CS-294 stub-friendly). */
+export function buildPublicReportUrl(publicShortId: string): string | null {
+  const base = readContractApiBase();
+  if (!base) return null;
+  const id = publicShortId.trim();
+  if (!id) return null;
+  const tail = readPublicReportPathTemplate().replace("{{id}}", encodeURIComponent(id));
+  return `${base}${tail.startsWith("/") ? tail : `/${tail}`}`;
+}

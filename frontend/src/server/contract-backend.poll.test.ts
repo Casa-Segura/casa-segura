@@ -3,7 +3,7 @@ import { classifyPollPayload } from "./contract-backend";
 
 describe("classifyPollPayload", () => {
   it("reports completed terminal", () => {
-    expect(classifyPollPayload({ processing_status: "completed", analysis: {} })).toEqual({
+    expect(classifyPollPayload({ processing_status: "completed", analysis: {} })).toMatchObject({
       kind: "completed",
       analysisHint: {},
     });
@@ -19,6 +19,32 @@ describe("classifyPollPayload", () => {
     ).toEqual({
       kind: "not_analyzable",
       reasons: ["Texto muy bajo"],
+    });
+  });
+
+  it("exposes public_short_id on completed handoff", () => {
+    expect(
+      classifyPollPayload({
+        processing_status: "completed",
+        analysis: {},
+        public_short_id: "CS-2026-TEST01",
+      }),
+    ).toMatchObject({
+      kind: "completed",
+      analysisHint: {},
+      publicShortId: "CS-2026-TEST01",
+    });
+  });
+
+  it("reads public_short_id nested under analysis", () => {
+    expect(
+      classifyPollPayload({
+        processing_status: "completed",
+        analysis: { public_short_id: "CS-2026-NESTED" },
+      }),
+    ).toMatchObject({
+      kind: "completed",
+      publicShortId: "CS-2026-NESTED",
     });
   });
 
