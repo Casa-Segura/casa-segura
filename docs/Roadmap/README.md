@@ -54,7 +54,7 @@ For day-to-day pickup, start with the phase-first team index in [phases/README.m
 | [[EPIC-07-report-generation]] | Report Generation | F6 | Backlog (stub) |
 | [[EPIC-08-multichannel-delivery]] | Multi-Channel Delivery (incl. Zavu) | F7 | Backlog |
 | [[EPIC-09-retention-privacy]] | Retention & Privacy Jobs | F8 part 2 | Backlog (stub) |
-| [[EPIC-10-frontend]] | Frontend Web App | — | Backlog (stub) |
+| [[EPIC-10-frontend]] | Frontend Web App | — | In progress |
 | [[EPIC-11-observability]] | Observability, Security, Disclaimers | — | Backlog (stub) |
 | [[EPIC-12-project-verification]] | Project Verification (Billboard OCR + Form) | — (separate flow) | Backlog (stub) |
 

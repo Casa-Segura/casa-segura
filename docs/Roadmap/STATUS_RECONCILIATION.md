@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: reconciliation
 status: pending_review
-last_updated: 2026-05-12
+last_updated: 2026-05-15
 tags:
   - casa-segura
   - reconciliation
@@ -10,6 +10,8 @@ tags:
 
 # STATUS Reconciliation — Gap Analysis vs Formal PRDs
 
+> **Scope:** This file is an analysis of deltas between hackathon-era [[STATUS]] and the formal PRDs. It does **not** represent live delivery state. Execution status lives in **`docs/Roadmap/tickets/`**, with summaries in **`docs/Roadmap/EPIC-*.md`** (see Roadmap README).
+>
 > Per project Rule 7 (surface conflicts, don't average them). [[STATUS]] was written for the hackathon framing. The formal PRDs ([[PRD_GENERAL]], [[FEATURES_MAP]], [[RUBRICA_CONTRATO]], [[BE-SERVICES]]) describe the production product. Where they conflict, the **formal PRDs win** because they are more specified, more recent in intent, and approved.
 >
 > This note lists every delta. Action column says what to do.

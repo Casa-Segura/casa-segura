@@ -35,10 +35,11 @@ Use this folder as a phase-first pick list for parallel work:
 
 ## Current Ready Picks
 
-- [CS-001](../tickets/CS-001.md) - repo posture and README skeleton
-- [CS-270](../tickets/CS-270.md) - retention scheduler ADR
+- [CS-270](../tickets/CS-270.md) - retention scheduler ADR (currently the only ticket marked `ready` with no dependencies).
 
-These are the global ready picks currently marked `ready` with no dependencies. Phase pages also include phase-local `Ready Now` notes so engineers can see whether their phase has work available. If the global list changes, update this file and [Parallel Work Plan](../PARALLEL_WORK_PLAN.md) in the same documentation pass.
+**In flight:** [CS-001](../tickets/CS-001.md) (repo posture and README skeleton) is **`in_progress`**; completing it unblocks **`CS-002`** and **`CS-003`**.
+
+Phase pages also include phase-local `Ready Now` notes so engineers can see whether their phase has work available. If the global list changes, update this file and [Parallel Work Plan](../PARALLEL_WORK_PLAN.md) in the same documentation pass.
 
 ## Maintenance Notes
 

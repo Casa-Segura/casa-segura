@@ -17,16 +17,16 @@ Use this plan to decide who owns which folder, which tickets are safe to start, 
 
 ## Current Ready Picks
 
-Only two tickets are marked `ready` with no dependencies right now:
+Only **`CS-270`** — Choose retention job scheduler and document ADR — is marked `ready` with no dependencies right now (`docs/Roadmap/tickets/CS-270.md`).
 
-- `CS-001` - Initialize public repo with MIT license and README skeleton.
-- `CS-270` - Choose retention job scheduler and document ADR.
+**`CS-001`** (repo posture and README skeleton) is **`in_progress`**, not `ready`. Completing **`CS-001`** unblocks both scaffolds. Most practical implementation work then flows through **`CS-002`** (backend Django / DRF) and **`CS-003`** (Next.js).
 
-Keep this list synchronized with `docs/Roadmap/phases/README.md`. Most practical implementation work unlocks after `CS-001`, `CS-002`, and `CS-003`:
+Keep this list synchronized with `docs/Roadmap/phases/README.md`.
 
-- `CS-001` unlocks both app scaffolds.
-- `CS-002` creates `apps/api`, which unlocks backend, config, logging, database, and CI work.
-- `CS-003` creates `apps/web`, which unlocks frontend implementation and web CI.
+- `CS-002` establishes the **`backend/`** tree, which unlocks backend, config, logging, database, and CI work.
+- `CS-003` establishes the **`frontend/`** tree, which unlocks frontend implementation and web CI.
+
+**Path note:** Canonical layout is **`backend/`** and **`frontend/`** (see `AGENTS.md` and this repository). Ticket scope text on **CS-002** / **CS-003** still uses legacy **`apps/api`** / **`apps/web`** wording until those ticket files are updated.
 
 ## Engineer Lanes
 
@@ -36,7 +36,7 @@ These are ownership lanes for a three-person team. The phase docs use the same l
 
 Primary folders:
 
-- `apps/api/`
+- `backend/`
 - `docs/adr/` when the ADR is backend-facing
 - shared backend config files introduced by `CS-002`
 
@@ -61,7 +61,7 @@ Skill hints:
 
 Primary folders:
 
-- `apps/web/`
+- `frontend/`
 - frontend-facing design/token files
 - page and component folders introduced by `CS-003`
 
@@ -127,7 +127,7 @@ Skill hints:
 
 Primary folders and contracts:
 
-- `apps/api/` service boundaries that call OCR, RAG, delivery, or external providers
+- `backend/` service boundaries that call OCR, RAG, delivery, or external providers
 - prompt, retrieval, eval, and integration fixtures
 - webhook, Zavu, SMTP, model, and vector-search contracts
 
@@ -138,8 +138,8 @@ Start this lane when its backing BE or Infra foundation exists. Early API / AI w
 ### Round 1 - Unblock Folders
 
 - One engineer completes or confirms `CS-001`.
-- Backend engineer starts `CS-002` and creates `apps/api`.
-- Frontend engineer prepares `CS-003` and then creates `apps/web`.
+- Backend engineer starts `CS-002` and lands the **`backend/`** scaffold.
+- Frontend engineer prepares `CS-003` and then lands the **`frontend/`** scaffold.
 - Infra engineer starts `CS-270` in `docs/adr` with no app dependency.
 
 ### Round 2 - Stabilize Shared Contracts
