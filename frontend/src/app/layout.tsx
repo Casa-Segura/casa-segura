@@ -11,10 +11,6 @@ export const metadata: Metadata = {
   title: "Casa Segura — Analiza tu contrato antes de firmar",
   description:
     "Revisa un contrato de compraventa o arrendamiento con apoyo de IA antes de firmar. Esto no reemplaza asesoría legal.",
-  /** Smoke: bump value to confirm Vercel picked up a new production deploy. */
-  other: {
-    "casa-segura-deploy-check": "fe-layout-meta-20260516a",
-  },
 };
 
 export default function RootLayout({
