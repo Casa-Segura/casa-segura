@@ -99,6 +99,20 @@ SQL: `vector`, `pgcrypto`, `uuid-ossp`.
 Copy `.env.example` to `.env` and fill in secrets. `backend/.env` is
 gitignored. Variables consumed by `config/settings.py` via `django-environ`.
 
+### Python interpreter
+
+[`pyproject.toml`](pyproject.toml) allows **`>=3.11,<4.0`**. **GitHub Actions uses Python 3.11.** **`.python-version`** is only a convenience pin for pyenv-local dev — use **3.11.x** for parity with CI, or another supported **3.12.x / 3.13.x** version.
+
+Do **not** use **Python 3.14+** yet for `make install`: dependency **`tiktoken`** builds native code via PyO3, whose bundled PyO3 only supports Python through **3.13** today (install fails with “newer than PyO3's maximum”). Use **pyenv**:
+
+```bash
+pyenv install 3.11.11   # or any installed 3.11.x / 3.12.x / 3.13.x
+cd backend && pyenv local 3.11.11 && python3 --version
+poetry env remove --all && poetry env use "$(command -v python3)" && make install
+```
+
+Rust is unnecessary when a **manylinux/macOS wheel** exists for your Python (typical on **3.11–3.13**).
+
 ## Tests
 
 `pytest-django` with transactional rollback per test. Factories live in

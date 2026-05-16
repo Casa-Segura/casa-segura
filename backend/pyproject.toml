@@ -32,6 +32,9 @@ dependencies = [
     "pyyaml (>=6.0.2,<7.0.0)"
 ]
 
+# Application (not a publishable wheel); only lock + install dependencies.
+[tool.poetry]
+package-mode = false
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

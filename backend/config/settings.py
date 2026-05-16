@@ -107,9 +107,10 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": env("DB_NAME", default="casa_segura_db"),
+            "NAME": env("DB_NAME", default="casasegura"),
             "USER": env("DB_USER", default="postgres"),
-            "PASSWORD": env("DB_PASSWORD", default="postgres"),
+            # Aligns with docker-compose.dev.yml + CI service Postgres (local dev).
+            "PASSWORD": env("DB_PASSWORD", default="administrador"),
             "HOST": env("DB_HOST", default="localhost"),
             "PORT": env("DB_PORT", default="5432"),
             "CONN_MAX_AGE": env.int("DB_CONN_MAX_AGE", default=60),
