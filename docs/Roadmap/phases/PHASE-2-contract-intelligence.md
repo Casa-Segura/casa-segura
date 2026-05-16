@@ -36,21 +36,24 @@ Phase 1 ingestion + corpus retrieval contracts are in place (commit `d613c2d`):
 - `POST /api/v1/submissions/` returns `extracted_text_language` + `extracted_text_token_count` per submission, with the text held only in-memory through the extractor (CS-057 invariant — never persisted).
 - `LegalCitationService.retrieve_legal_basis(finding=…)` returns ≥0 citations via `POST /api/v1/corpus/retrieve/`.
 
-**2026-05-16 — Phase 2 has started:**
+**2026-05-16 — Phase 2 in active development:**
 
-- **CS-110** (classification prompt) and **CS-114** (confidence + extraction schema) both have first-pass code under `backend/classification/`. They were the parallel-safe first picks per the dependency chain.
+Both waves of parallel-safe picks landed in the 2026-05-16 batch.
+First-pass code shipped for 5 of 7 tickets under `backend/classification/`.
 
-Remaining dependency chain (in pickup order):
+Status of the dependency chain:
 
-1. ☑ **CS-110** entry point shipped (prompt + few-shot anchors + classifier wired to OpenRouter client).
-2. ☑ **CS-114** DTO shape shipped (`ExtractedFields`, `ConfidenceBand`, `ContractExtraction`, `REQUIRED_FIELDS_BY_TYPE`).
-3. **CS-111** (leasing reclassification detector) — unblocked by CS-110.
-4. **CS-112** (project name normalization + linkage) — unblocked by CS-110 + CS-031's normalize function.
-5. **CS-113** (economic field extraction prompt) — unblocked by CS-110 + CS-114.
-6. **CS-116** (unverifiable bookkeeping for missing fields) — unblocked by CS-113 + CS-114.
-7. **CS-115** (classification eval set) — depends on all five above; ships once they stabilise.
+1. ☑→◐ **CS-110** entry point shipped (prompt + few-shot anchors + classifier wired to OpenRouter client).
+2. ☑→◐ **CS-114** DTO shape shipped (`ExtractedFields` 19 fields, `ConfidenceBand`, `ContractExtraction`, `REQUIRED_FIELDS_BY_TYPE`).
+3. ☑→◐ **CS-111** leasing reclassification detector (6 Art. 2 LAF indicators, threshold 4/6, scope = purchase-side types per PRD §8.4).
+4. ☑→◐ **CS-112** project name normalization + linkage (extractor + linker with collision/upsert policy; implements CS-031 AC4 per ADR-0003).
+5. ☑→◐ **CS-113** economic field extraction (per-type prompts + value coercion + extractor).
+6. ☐ **CS-116** unverifiable bookkeeping for missing fields — unblocked by CS-113 + CS-114; next BE pickup.
+7. ☐ **CS-115** classification eval set — depends on all five above; unblocks the flips from `in_progress` → `done` for CS-110/111/112/113.
 
-Parallel-safe next picks: **CS-111**, **CS-112**, **CS-113** (no inter-dep).
+**All 5 shipped tickets stay `in_progress`** awaiting CS-115's live eval pass (golden classification set + live OpenRouter exercise). DDD layering verified clean: `classification/domain/*` has zero infra imports (`django.*`, `httpx`, `requests`, `shared.llm.*`).
+
+Next parallel-safe picks: **CS-115** (eval set) and **CS-116** (unverifiable bookkeeping). After CS-115 lands, the in_progress→done flips for CS-110/111/112/113 fall out from a single live verification run.
 
 Upstream notes:
 
@@ -63,8 +66,8 @@ No primary FE tickets live in this phase. FE depends on the API contract outputs
 
 ## BE WORK
 
-- ◐ [CS-112](../tickets/CS-112.md) - Project name extraction and normalization.
-- ◐ [CS-114](../tickets/CS-114.md) - Classification confidence and extraction field schema. *(2026-05-16: `ExtractedFields` (20 optional fields), `ConfidenceLevel`/`ConfidenceBand`, `ContractExtraction`, `REQUIRED_FIELDS_BY_TYPE` policy table covering all 9 ContractType values shipped under `backend/classification/domain/` + `backend/classification/application/extraction_policy.py`. 3/4 ACs; AC4 `elements_detected` flag map pending.)*
+- ◐ [CS-112](../tickets/CS-112.md) - Project name extraction and normalization. *(2026-05-16: `ProjectNameExtractor` + `ProjectLinker` shipped under `backend/classification/{domain,application}/project_*.py`. Placeholder hash = `unknown_<sha256[:8](text)>`; orchestrator can override via `placeholder_seed=submission_hash`. Collision resolution uses `select_for_update` + IntegrityError catch for races. **CS-031 AC4 implemented here** per ADR-0003. 3/4 ACs; AC4 orchestrator wiring of `ContractAnalysis.project_id` pending.)*
+- ◐ [CS-114](../tickets/CS-114.md) - Classification confidence and extraction field schema. *(2026-05-16: `ExtractedFields` (19 optional fields), `ConfidenceLevel`/`ConfidenceBand`, `ContractExtraction`, `REQUIRED_FIELDS_BY_TYPE` policy table covering all 9 ContractType values shipped under `backend/classification/domain/` + `backend/classification/application/extraction_policy.py`. 3/4 ACs; AC4 `elements_detected` flag map pending.)*
 - ☐ [CS-116](../tickets/CS-116.md) - Unverifiable bookkeeping for missing fields.
 
 ## INFRA WORK
@@ -76,8 +79,8 @@ Keep eval fixtures versioned and privacy-safe. Coordinate with CI conventions fr
 ## API / AI CONNECTIONS
 
 - ◐ [CS-110](../tickets/CS-110.md) - Classification prompt and few-shot anchors. *(2026-05-16: `ContractType` enum (9 values from PRD §8.1), Spanish system prompt + `FEW_SHOT_ANCHORS` (one synthetic BR-07-safe anchor per type), `ContractClassifier.classify()` wired to `shared.llm.openrouter.OpenRouterClient` at `temperature=0.1`. 2/N ACs ticked; live eval blocked by CS-115; persistence by CS-114 confidence orchestration.)*
-- ☐ [CS-111](../tickets/CS-111.md) - Leasing reclassification detector.
-- ☐ [CS-113](../tickets/CS-113.md) - Economic field extraction prompt.
+- ◐ [CS-111](../tickets/CS-111.md) - Leasing reclassification detector. *(2026-05-16: `LeasingReclassificationDetector` + `LeasingIndicators` (6 Art. 2 LAF booleans per PRD §8.4) + `LeasingReclassificationResult` (model_validator enforces "only LEA on reclassification") shipped. Threshold = 4/6 per PRD BR-03, overridable via constructor. **Important per-PRD scope correction:** detector runs over **purchase-side** types `{CVC, CVP, APV}` to catch disguised-purchase-as-lease, not over lease-side types. 3/10 ACs; orchestrator wiring + live LLM eval pending.)*
+- ◐ [CS-113](../tickets/CS-113.md) - Economic field extraction prompt. *(2026-05-16: `EconomicFieldExtractor` + per-type prompt registry (`economic_prompts.py`) + `value_coercion.py` (money/int/pct/periodicity/interest-base/currency coercers) shipped. Dedicated few-shots for CVC/CVP/ARV/LEA; APV/ARC/IVU/FSV fall back to CVP anchor (richest field menu). Per-field validation failures demote to `unverifiable` rather than crashing. 5/5 ACs ticked in code but stays `in_progress` until CS-115 live eval runs.)*
 
 ## Parallel Pick Guidance
 
