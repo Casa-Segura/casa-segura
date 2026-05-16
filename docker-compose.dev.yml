@@ -48,6 +48,42 @@ services:
       timeout: 3s
       retries: 10
 
+  # `api` only starts when explicitly requested:
+  #   docker compose -f docker-compose.dev.yml --profile full up -d
+  # Devs running the backend via `make runserver` skip this entirely.
+  api:
+    profiles: ["full"]
+    build:
+      context: ./backend
+      target: web
+    container_name: casasegura-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: casasegura
+      DB_USER: postgres
+      DB_PASSWORD: administrador
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      DEBUG: "False"
+      LOG_LEVEL: INFO
+      SECRET_KEY: dev-secret-change-me
+      ALLOWED_HOSTS: "*"
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/api/health/ || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+
 volumes:
   casasegura-pg-data:
     name: casasegura-pg-data
