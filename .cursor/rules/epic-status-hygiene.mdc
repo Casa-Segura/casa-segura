@@ -1,0 +1,19 @@
+---
+description: Sync epic markdown (Definition of done, status, stub notes) when tickets ship
+globs: docs/Roadmap/EPIC-*.md
+alwaysApply: false
+---
+
+# Epic Status Hygiene
+
+Epic files under `docs/Roadmap/EPIC-*.md` summarize delivery; they must stay aligned with ticket truth in `docs/Roadmap/tickets/CS-*.md` (see `ticket-status-hygiene.mdc`).
+
+When marking tickets **done** (or moving an epic’s scope forward in a PR):
+
+1. **Find the owning epic** from each ticket’s `epic:` frontmatter (e.g. `EPIC-10` → `EPIC-10-frontend.md`).
+2. **Definition of done / checklist** — set `- [x]` only where behavior is implemented **and** verified to match the bullet; leave `- [ ]` for anything still open.
+3. **Epic frontmatter `status`** — if DoD is incomplete, keep a non-terminal state (`backlog`, `ready`, `in_progress`, etc.) consistent with other epics in this repo. When **all** DoD items are `[x]` and scope is closed, set epic `status` to `done` (or the project’s standard terminal value).
+4. **Stub / “thin until…” copy** — tighten or remove misleading stub language once the epic has shipped surface (e.g. upload + channel + actions landed).
+5. **Avoid duplicating ticket AC** in the epic beyond short DoD lines; acceptance detail stays on `CS-*.md`.
+
+If the change affects phase pickup lists or dates, follow `phase-roadmap-hygiene.mdc` in the same PR when practical.

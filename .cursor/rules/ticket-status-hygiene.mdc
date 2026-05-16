@@ -16,4 +16,5 @@ Use the ticket file as the source of truth:
 - If all AC are met and verified, update `status` to `done` in the relevant `docs/Roadmap/tickets/CS-*.md` file.
 - If a ticket becomes blocked or needs a follow-up split, record that in the ticket or PR notes instead of silently leaving stale status.
 - Phase index files are navigation only; never treat them as the authoritative status location.
+- When tickets list an `epic:` in frontmatter, update the owning `docs/Roadmap/EPIC-*.md` (Definition of done, epic `status`, stub notes) per `epic-status-hygiene.mdc` in the same delivery when epic scope moves.
 

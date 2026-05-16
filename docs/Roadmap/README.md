@@ -87,6 +87,10 @@ Flat `CS-NNN` with reserved blocks per epic so cross-epic moves don't renumber:
 5. **BVA on numeric thresholds.** Every numeric rule in [[RUBRICA_CONTRATO]] has boundary values. Acceptance criteria must exercise them. See ticket template for examples.
 6. **Test intent, not behavior.** A test must fail if business meaning changes, not just if implementation changes (Rule 9).
 
+## AI assistants & contributors (Claude, Cursor)
+
+When ship-ready work satisfies tickets, update **ticket files first**, then the **owning epic** (`EPIC-*.md`) Definition of done and epic `status`. Phase docs remain navigation-only. Full playbook: **[`AGENTS.md`](../../AGENTS.md)** at repo root. Cursor encodes the same norms under **`.cursor/rules/`** (`ticket-status-hygiene.mdc`, `epic-status-hygiene.mdc`, `phase-roadmap-hygiene.mdc`, `parallel-roadmap-work.mdc`).
+
 ## Phases (from [[FEATURES_MAP]] §3)
 
 ```

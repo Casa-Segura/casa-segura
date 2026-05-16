@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Parallel Roadmap Work
 
-Before changing roadmap, app, CI, or config files, read `docs/Roadmap/README.md` and the relevant `docs/Roadmap/tickets/CS-*.md` ticket.
+Before changing roadmap, app, CI, or config files, read `docs/Roadmap/README.md` and the relevant `docs/Roadmap/tickets/CS-*.md` ticket. When marking tickets complete, refresh the owning `docs/Roadmap/EPIC-*.md` (Definition of done, status) via `epic-status-hygiene.mdc`.
 
 Use ticket frontmatter as the dependency contract:
 
@@ -23,4 +23,3 @@ For Casa Segura specifically:
 - Project verification is optional and separate; never gate contract upload or analysis on billboard OCR.
 - Treat OCR text, delivery targets, report content, logs, prompts, and errors as privacy-sensitive.
 - Numeric rubric, retention, RAG, and delivery thresholds need boundary value coverage.
-

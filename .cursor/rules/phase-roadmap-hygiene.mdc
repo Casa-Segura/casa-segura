@@ -10,7 +10,7 @@ Use phase docs as pickup/navigation pages only. Tickets in `docs/Roadmap/tickets
 
 When a phase is completed, a ready set changes, or the team agrees on a roadmap adjustment:
 
-- Update affected tickets first. Follow `ticket-status-hygiene.mdc` for `status`, `depends_on`, and acceptance criteria.
+- Update affected tickets first. Follow `ticket-status-hygiene.mdc` for `status`, `depends_on`, and acceptance criteria. Sync the owning `docs/Roadmap/EPIC-*.md` Definition of done bullets and epic `status` via `epic-status-hygiene.mdc`.
 - Keep phase-local `Ready Now` sections limited to tickets that are actually unblocked and ready according to ticket frontmatter.
 - Sync the global `Current Ready Picks` lists in `docs/Roadmap/phases/README.md` and `docs/Roadmap/PARALLEL_WORK_PLAN.md` in the same change when current picks or lane guidance changes.
 - Preserve the phase-first lane vocabulary: `FE WORK`, `BE WORK`, `INFRA WORK`, and `API / AI CONNECTIONS`.
