@@ -55,7 +55,20 @@ Goal: **`main`** → Production, Pull Requests → Preview. Never put API secret
 
 `next.config.ts` aborts **`next build`** on Vercel when `VERCEL=1` and `CASASEGURA_API_BASE_URL` is unset, so Preview/Production cannot silently ship without a backend target.
 
-Additional optional toggles mirror `frontend/src/server/contract-env.ts` (poll timeouts, path templates).
+Additional optional toggles mirror [`frontend/src/server/contract-env.ts`](src/server/contract-env.ts) (poll timeouts, path templates).
+
+### Without a live backend yet
+
+You can still ship the marketing shell (landing + gated `/subir` UX):
+
+1. Set **`CASASEGURA_API_BASE_URL`** to a placeholder or future staging origin (must be non-empty — build gate).
+2. Set **`CASASEGURA_UPLOAD_ENABLED=false`** so `/subir` short-circuits with the deterministic Spanish message instead of opaque upstream failures.
+
+Replace both when Django is reachable and upload should flow end-to-end.
+
+### Phase 1 upload contract (Django)
+
+Defaults target **`POST /api/v1/submissions/`** and **`GET /api/v1/submissions/{{id}}/`** (see `.env.example`). The serializer expects multipart field **`file`** (singular) and **`disclaimer_accepted`** (required per CS-058). The web UI currently appends multiple **`files`** — multi-file ingestion on the API is still future work; until then treat upload E2E as blocked unless you post a single `file` or add an adapter.
 
 ### Verification after deploy
 

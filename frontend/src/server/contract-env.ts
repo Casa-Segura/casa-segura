@@ -37,15 +37,16 @@ export function readPollBackoffMsSeries(): readonly number[] {
   return [1_000, 2_000, 5_000] as const;
 }
 
+/** Canonical Django upload path: POST `/api/v1/submissions/`. Override via env only if BE mounts elsewhere. */
 export function readSubmitPath(): string {
-  return process.env.CASASEGURA_CONTRACT_SUBMIT_PATH?.trim() || "/api/v1/contracts/submit";
+  return process.env.CASASEGURA_CONTRACT_SUBMIT_PATH?.trim() || "/api/v1/submissions/";
 }
 
 /** Use `{{id}}` placeholder for submission UUID string. */
 export function readSubmissionStatusTemplate(): string {
   return (
     process.env.CASASEGURA_CONTRACT_SUBMISSION_PATH_TEMPLATE?.trim() ||
-    "/api/v1/contracts/submissions/{{id}}/"
+    "/api/v1/submissions/{{id}}/"
   );
 }
 
