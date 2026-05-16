@@ -17,11 +17,10 @@ Use this plan to decide who owns which folder, which tickets are safe to start, 
 
 ## Current Ready Picks
 
-Only three tickets are marked `ready` with no dependencies right now:
+Only two tickets are marked `ready` with no dependencies right now:
 
 - `CS-001` - Initialize public repo with MIT license and README skeleton.
 - `CS-270` - Choose retention job scheduler and document ADR.
-- `CS-290` - Build mobile-first landing page.
 
 Keep this list synchronized with `docs/Roadmap/phases/README.md`. Most practical implementation work unlocks after `CS-001`, `CS-002`, and `CS-003`:
 
@@ -72,16 +71,16 @@ Start here:
 
 Next picks after `CS-003`:
 
-- `CS-290` - Mobile-first landing page.
+- `CS-290` - Mobile-first landing page - **done** (see `frontend/` `/`).
 - `CS-291` - Upload page with disclaimer gate.
 - `CS-292` - Delivery channel selector.
-- `CS-293` - Loading state with rotating Spanish reassurance copy.
+- `CS-293` - Loading state with rotating Spanish reassurance copy — **done** (`frontend/` upload flow).
+- `CS-294` - Result page (HTML report embed) — **done** (`frontend/` `/r/[publicShortId]`).
 - `CS-297` - Single-source disclaimer module.
 
 Constraints:
 
-- `CS-290` is marked ready for landing-page planning, copy, and UI work; code should land once `apps/web` exists.
-- Keep landing copy focused on contract analysis. Do not make billboard/project verification a prerequisite.
+- Landing (`CS-290`) shipped in canonical `frontend/`; keep landing copy focused on contract analysis. Do not make billboard/project verification a prerequisite.
 - Maintain Spanish `tú` register and include `Esto no es asesoría legal` where required.
 
 Skill hints:
@@ -146,7 +145,7 @@ Start this lane when its backing BE or Infra foundation exists. Early API / AI w
 ### Round 2 - Stabilize Shared Contracts
 
 - Backend continues with `CS-007`, `CS-008`, and `CS-009`.
-- Frontend continues with `CS-290` once `apps/web` exists.
+- Frontend continues EPIC-10 follow-ons (deploy, QA, CS-295) in `frontend/`.
 - Infra starts `CS-006` after `CS-002` chooses env loading and app boot conventions.
 
 ### Round 3 - Make CI and Data Work Real
