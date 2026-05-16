@@ -43,7 +43,7 @@ function classifyClientFileReject(file: File): string | null {
   const dot = name.lastIndexOf(".");
   const ext = dot >= 0 ? name.slice(dot + 1) : "";
   if (!CONTRACT_ACCEPTABLE_EXTENSIONS.has(ext)) {
-    return "Sólo aceptamos PDF, JPEG/PNG/HEIC y WEBP. Convierte o exporta antes de intentar.";
+    return "Sólo aceptamos PDF, JPEG/PNG/HEIC y WEBP. Convertí o exportá antes de intentar.";
   }
   let mimeOk = CONTRACT_ACCEPTABLE_MIME_TYPES.some((t) => file.type === t);
   if (!mimeOk && file.type === "") mimeOk = Boolean(mimeFromFilename(file.name));
@@ -97,13 +97,13 @@ export function ContractUploadFlow() {
         next.push(raw);
       }
       if (next.length > CONTRACT_MAX_FILE_COUNT) {
-        setGlobalError("Sólo puedes subir hasta 50 archivos a la vez. Quita algunos para continuar.");
+        setGlobalError("Sólo podés subir hasta 50 archivos a la vez. Quitá algunos para continuar.");
         return;
       }
       const accum = next.reduce((a, b) => a + b.size, 0);
       if (accum > CONTRACT_MAX_TOTAL_BYTES) {
         setGlobalError(
-          `En conjunto superan los ${Math.round(CONTRACT_MAX_TOTAL_BYTES / (1024 * 1024))} MB máximos. Elimina algunos archivos.`,
+          `En conjunto superan los ${Math.round(CONTRACT_MAX_TOTAL_BYTES / (1024 * 1024))} MB máximos. Eliminá algunos archivos.`,
         );
         return;
       }
@@ -140,7 +140,7 @@ export function ContractUploadFlow() {
     const parts = validateDeliveryForSubmit(delivery);
     if ("invalid" in parts) {
       setFieldErrors({ [parts.field]: parts.message });
-      setDeliveryBanner("Revisa tus datos antes de enviar.");
+      setDeliveryBanner("Revisá tus datos antes de enviar.");
       return;
     }
     setFieldErrors({});
@@ -153,13 +153,13 @@ export function ContractUploadFlow() {
     }
 
     if (files.length === 0) {
-      setGlobalError("Primero selecciona o arrastra tus archivos en el recuadro.");
+      setGlobalError("Primero elegí o arrastrá tus archivos en el recuadro.");
       return;
     }
 
     if (accumBytes(files) > CONTRACT_MAX_TOTAL_BYTES) {
       setGlobalError(
-        `En conjunto superan los ${Math.round(CONTRACT_MAX_TOTAL_BYTES / (1024 * 1024))} MB máximos.`,
+        `En conjunto superan los ${Math.round(CONTRACT_MAX_TOTAL_BYTES / (1024 * 1024))} MB máximos. Eliminá algunos archivos.`,
       );
       return;
     }
@@ -216,7 +216,7 @@ export function ContractUploadFlow() {
       }
     } catch {
       setGlobalError(
-        "Algo interrumpió el envío. Comprueba la conexión y vuelve a intentarlo en un momento.",
+        "Algo interrumpió el envío. Comprobá la conexión y volvé a intentarlo en un momento.",
       );
     } finally {
       setBusy(false);
@@ -234,10 +234,10 @@ export function ContractUploadFlow() {
       {busy ? <ContractAnalysisLoadingPanel key={loadingSession} /> : null}
       <header className="flex flex-col gap-2">
         <h1 id={`${baseId}-h1`} className="text-xl font-semibold text-text-primary">
-          Sube tu contrato
+          Subí tu contrato
         </h1>
         <p className="text-base leading-relaxed text-text-secondary">
-          Puedes combinar páginas en PDF y fotos nítidas. Te avisamos en el canal que elijas cuando el
+          Podés combinar páginas en PDF y fotos nítidas. Te avisamos en el canal que elijas cuando el
           análisis quede listo.
         </p>
       </header>
@@ -271,7 +271,7 @@ export function ContractUploadFlow() {
         </h2>
         {!disclaimerAccepted ? (
           <p className="text-sm leading-relaxed text-text-secondary">
-            Marca la casilla de aviso legal del bloque de arriba para habilitar la subida y evitar tratamiento sin tu
+            Marcá la casilla de aviso legal del bloque de arriba para habilitar la subida y evitar tratamiento sin tu
             consentimiento explícito.
           </p>
         ) : null}
@@ -298,9 +298,9 @@ export function ContractUploadFlow() {
               aria-labelledby={`${baseId}-zone-title`}
               aria-controls={`${baseId}-file-input`}
             >
-              Elige tus archivos
+              Elegí tus archivos
             </button>
-            <span className="text-sm text-text-secondary">o déjalos caer dentro de este recuadro.</span>
+            <span className="text-sm text-text-secondary">o dejalos caer dentro de este recuadro.</span>
             <input
               ref={fileInputRef}
               id={`${baseId}-file-input`}
@@ -348,7 +348,7 @@ export function ContractUploadFlow() {
       <div aria-live="assertive" className="min-h-[2.5rem]">
         {disclaimerReminder ? (
           <p role="alert" className="text-sm font-semibold text-verdict-red">
-            Confirma primero la casilla de aviso legal; sin eso tu envío puede ser rechazado por el servidor.
+            Confirmá primero la casilla de aviso legal; sin eso tu envío puede ser rechazado por el servidor.
           </p>
         ) : null}
         {globalError ? (
@@ -372,7 +372,7 @@ export function ContractUploadFlow() {
             <span className="font-mono text-xs text-text-primary select-all">{result.submissionId}</span>.
           </p>
           <p className="mt-2 text-sm text-text-secondary">
-            Canal elegido: {result.hint}. Si no ve nada, revisa filtros del correo o conversaciones en WhatsApp según cómo lo configuraste.
+            Canal elegido: {result.hint}. Si no ves nada, revisá filtros del correo o conversaciones en WhatsApp según cómo lo configuraste.
           </p>
         </aside>
       ) : null}
@@ -395,7 +395,7 @@ export function ContractUploadFlow() {
             ))}
           </ul>
           <p className="mt-4 text-sm text-text-secondary">
-            Puedes probar fotos más contrastadas y con buena luz o un PDF nuevo exportado con texto seleccionable.
+            Podés probar fotos más contrastadas y con buena luz o un PDF nuevo exportado con texto seleccionable.
           </p>
         </aside>
       ) : null}

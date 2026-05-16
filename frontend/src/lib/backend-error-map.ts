@@ -2,42 +2,42 @@
  * Maps CS-009 `error_code` strings from the Casa Segura JSON envelope into safe Spanish UX copy.
  */
 
-const SPANISH_DEFAULT = "Algo salió mal. Inténtalo otra vez en unos segundos.";
+const SPANISH_DEFAULT = "Algo salió mal. Intentá otra vez en unos segundos.";
 const SPANISH_5XX =
-  "El servicio tardó más de lo previsto o no está disponible. Inténtalo más tarde.";
+  "El servicio tardó más de lo previsto o no está disponible. Probá más tarde.";
 const SPANISH_NETWORK =
-  "No pudimos conectar. Revisa tu conexión y vuelve a intentarlo.";
+  "No pudimos conectar. Revisá tu conexión y volvé a intentarlo.";
 const SPANISH_NOT_CONFIGURED =
   "Este entorno no tiene configurado el servidor de Casa Segura (CASASEGURA_API_BASE_URL).";
 
 /** Uppercase semantic codes from PRD F1 / ingestion (and stable aliases). */
 const TABLE = {
   DISCLAIMER_REQUIRED:
-    "Debes confirmar el aviso legal antes de enviar. Marca la casilla y prueba de nuevo.",
+    "Tenés que confirmar el aviso legal antes de enviar. Marcá la casilla y probá de nuevo.",
   FILE_TOO_LARGE:
-    "Uno de los archivos pesa más de 15 MB. Reduce el tamaño o divide el documento antes de enviar.",
+    "Uno de los archivos pesa más de 15 MB. Reducí el tamaño o dividí el documento antes de enviar.",
   TOTAL_SIZE_TOO_LARGE:
-    "En conjunto superan los 100 MB permitidos por envío. Quita algunos archivos antes de continuar.",
+    "En conjunto superan los 100 MB permitidos por envío. Quitá algunos archivos antes de continuar.",
   TOO_MANY_FILES:
-    "Sólo puedes enviar hasta 50 archivos en un mismo envío. Quitar algunos antes de continuar.",
+    "Sólo podés enviar hasta 50 archivos en un mismo envío. Quitá algunos antes de continuar.",
   TOO_MANY_PAGES:
-    "Superaste el límite de páginas (máx. ~50 por PDF y ~80 en total). Revisa o divide tus PDF antes de intentar.",
+    "Superaste el límite de páginas (máx. ~50 por PDF y ~80 en total). Revisá o dividí tus PDF antes de intentar.",
   FORMAT_NOT_SUPPORTED:
-    "Uno de los archivos no está en formato permitido. Usa PDF, JPEG, PNG, HEIC o WEBP.",
+    "Uno de los archivos no está en formato permitido. Usá PDF, JPEG, PNG, HEIC o WEBP.",
   IMAGE_DIMENSIONS_INVALID:
-    "Una imagen tiene medidas muy pequeñas o muy grandes. Prueba otro archivo o foto más nítida.",
-  INVALID_DELIVERY_CHANNEL: "Selecciona de nuevo cómo quieres recibir el resultado.",
+    "Una imagen tiene medidas muy pequeñas o muy grandes. Probá otro archivo o foto más nítida.",
+  INVALID_DELIVERY_CHANNEL: "Elegí de nuevo cómo querés recibir el resultado.",
   INVALID_DELIVERY_TARGET:
-    "Revisa el correo o el número (formato internacional con +); el servidor lo rechazó.",
-  FILE_EMPTY: "Uno de los archivos está vacío. Exporta otro archivo e inténtalo otra vez.",
+    "Revisá el correo o el número (formato internacional con +); el servidor lo rechazó.",
+  FILE_EMPTY: "Uno de los archivos está vacío. Exportá otro archivo e intentá otra vez.",
   PDF_NOT_SAFE:
-    "Ese PDF no se puede procesar de forma segura ahora mismo. Exporta uno nuevo o fotografía las páginas.",
+    "Ese PDF no se puede procesar de forma segura ahora mismo. Exportá uno nuevo o fotografiá las páginas.",
   VALIDATION_ERROR:
-    "Faltan datos o hay errores en el envío. Revisa tus archivos y las opciones elegidas.",
+    "Faltan datos o hay errores en el envío. Revisá tus archivos y las opciones elegidas.",
   RATE_LIMITED:
-    "Llegamos al cupo temporal de envíos. Espera un momento antes de volver a intentarlo.",
+    "Llegamos al cupo temporal de envíos. Esperá un momento antes de volver a intentarlo.",
   THROTTLED:
-    "Llegamos al cupo temporal de envíos. Espera un momento antes de volver a intentarlo.",
+    "Llegamos al cupo temporal de envíos. Esperá un momento antes de volver a intentarlo.",
 } as const satisfies Record<string, string>;
 
 export type ApiErrorEnvelope = {

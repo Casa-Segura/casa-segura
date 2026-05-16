@@ -56,7 +56,7 @@ export function validateDeliveryForSubmit(draft: DeliveryDraft): DeliverySubmitP
           invalid: true,
           field: "email",
           message:
-            "Escribe un correo válido para enviarte el PDF. Revisa typos antes de enviar.",
+            "Escribí un correo válido para enviarte el PDF. Revisá erratas antes de enviar.",
         };
       }
       return {
@@ -71,7 +71,7 @@ export function validateDeliveryForSubmit(draft: DeliveryDraft): DeliverySubmitP
           invalid: true,
           field: "phone",
           message:
-            "Introduce tu número en formato internacional E.164, por ejemplo +503XXXXXXX.",
+            "Ingresá tu número en formato internacional E.164, por ejemplo +503XXXXXXX.",
         };
       }
       return {

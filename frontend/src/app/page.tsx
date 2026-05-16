@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DisclaimerFooter } from "@/components/disclaimer-footer";
+import { DISCLAIMER_SHORT } from "@/legal/disclaimer";
 import { PUBLIC_SOURCE_REPO_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Casa Segura — Analiza tu contrato antes de firmar",
-  description:
-    "Herramienta abierta para revisar contratos inmobiliarios con contexto antes de firmar. Esto no es asesoría legal.",
+  description: `Herramienta abierta para revisar contratos inmobiliarios con contexto antes de firmar. ${DISCLAIMER_SHORT}.`,
 };
 
 export default function Home() {

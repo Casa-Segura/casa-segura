@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { DISCLAIMER_SHORT } from "@/legal/disclaimer";
 import "./globals.css";
 
 const inter = Inter({
@@ -9,8 +10,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Casa Segura — Analiza tu contrato antes de firmar",
-  description:
-    "Revisa un contrato de compraventa o arrendamiento con apoyo de IA antes de firmar. Esto no es asesoría legal.",
+  description: `Revisa un contrato de compraventa o arrendamiento con apoyo de IA antes de firmar. ${DISCLAIMER_SHORT}.`,
 };
 
 export default function RootLayout({

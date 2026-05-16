@@ -43,13 +43,13 @@ export function DeliveryChannelFields(props: Props) {
 
   return (
     <fieldset className="flex flex-col gap-4 rounded-[var(--radius-input)] border-0 p-0">
-      <legend className="sr-only">¿Cómo quieres recibir el resultado?</legend>
+      <legend className="sr-only">¿Cómo querés recibir el resultado?</legend>
       <div>
         <h2 id={`${idPrefix}-delivery-heading`} className="text-lg font-semibold text-text-primary">
           ¿Cómo te envío el resultado?
         </h2>
         <p className="mt-1 text-sm leading-relaxed text-text-secondary">
-          Elige uno. Para email o WhatsApp usaremos el dato sólo para entregarte el informe.
+          Elegí uno. Para email o WhatsApp usaremos el dato sólo para entregarte el informe.
         </p>
       </div>
       <div

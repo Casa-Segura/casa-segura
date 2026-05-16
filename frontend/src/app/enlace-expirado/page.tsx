@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function EnlaceExpiradoPage() {
   return (
-    <div className="flex min-h-dvh flex-col bg-bg px-4 py-6 sm:px-6">
+    <div className="flex min-h-dvh flex-1 flex-col bg-bg px-4 py-6 sm:px-6">
       <div className="mx-auto flex w-full max-w-[480px] flex-1 flex-col gap-6">
         <Link
           href="/"
@@ -30,8 +30,8 @@ export default function EnlaceExpiradoPage() {
             {EXPIRED_ANALYSIS_PRIVACY_LINE}
           </p>
           <p className="break-words text-base leading-relaxed text-text-secondary">
-            Si acabas de abrir el enlace y ves este mensaje, puede haber un retraso puntual: intenta de nuevo en unos minutos o
-            inicia un análisis nuevo.
+            Si acabás de abrir el enlace y ves este mensaje, puede haber un retraso puntual: intentá de nuevo en unos minutos o
+            iniciá un análisis nuevo.
           </p>
           <Link
             href="/subir"
