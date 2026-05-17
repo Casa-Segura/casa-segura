@@ -10,6 +10,7 @@ import logging
 from typing import Any
 
 from django.conf import settings
+from zavudev import Zavudev
 
 logger = logging.getLogger(__name__)
 
@@ -23,8 +24,6 @@ def zavu_email_download_link_html(*, url: str, link_text: str) -> str:
 
 def _zavu_client():
     """Return configured SDK client or raise :exc:`ValueError` if API key is missing."""
-    from zavudev import Zavudev
-
     key = (getattr(settings, "ZAVUDEV_API_KEY", "") or "").strip()
     if not key:
         raise ValueError("ZAVUDEV_API_KEY / ZAVU_API_KEY is not configured")

@@ -10,6 +10,28 @@ _ZAVU_MAX_AGE_SECONDS = 300
 _ZAVU_FUTURE_SKEW_SECONDS = 60
 
 
+def _parse_zavu_signature_header(signature_header: str) -> tuple[int | None, str | None]:
+    """Extract ``t`` timestamp and ``v1`` hex digest from ``X-Zavu-Signature``."""
+    ts: int | None = None
+    v1: str | None = None
+    for part in signature_header.split(","):
+        segment = part.strip()
+        if segment.startswith("t="):
+            try:
+                ts = int(segment[2:])
+            except ValueError:
+                return None, None
+        elif segment.startswith("v1="):
+            v1 = segment[3:]
+    return ts, v1
+
+
+def _zavu_timestamp_valid(ts: int, clock: int) -> bool:
+    if clock - ts > _ZAVU_MAX_AGE_SECONDS:
+        return False
+    return ts <= clock + _ZAVU_FUTURE_SKEW_SECONDS
+
+
 def verify_zavu_signature(
     *,
     signature_header: str | None,
@@ -21,25 +43,12 @@ def verify_zavu_signature(
     if not signature_header or not secret:
         return False
 
-    ts: int | None = None
-    v1: str | None = None
-    for part in signature_header.split(","):
-        segment = part.strip()
-        if segment.startswith("t="):
-            try:
-                ts = int(segment[2:])
-            except ValueError:
-                return False
-        elif segment.startswith("v1="):
-            v1 = segment[3:]
-
+    ts, v1 = _parse_zavu_signature_header(signature_header)
     if ts is None or not v1:
         return False
 
     clock = int(time.time()) if now is None else now
-    if clock - ts > _ZAVU_MAX_AGE_SECONDS:
-        return False
-    if ts - clock > _ZAVU_FUTURE_SKEW_SECONDS:
+    if not _zavu_timestamp_valid(ts, clock):
         return False
 
     try:
@@ -54,6 +63,4 @@ def verify_zavu_signature(
         hashlib.sha256,
     ).hexdigest()
 
-    if len(v1) != len(expected):
-        return False
-    return hmac.compare_digest(expected, v1)
+    return len(v1) == len(expected) and hmac.compare_digest(expected, v1)

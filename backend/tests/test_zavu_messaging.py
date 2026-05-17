@@ -20,7 +20,7 @@ def test_zavu_email_download_link_html_escapes():
 
 
 @override_settings(ZAVUDEV_API_KEY="zk_test_x", ZAVU_SENDER_ID="snd_default")
-@patch("zavudev.Zavudev")
+@patch("delivery.infrastructure.external.zavu_messaging.Zavudev")
 def test_send_zavu_email_passes_channel_and_merges_attachments(mock_zavu_cls: MagicMock) -> None:
     mock_client = MagicMock()
     mock_response = MagicMock()
