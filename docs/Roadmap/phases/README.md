@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: phase_index
 status: living
-last_updated: 2026-05-17  # EPIC-04 cerrada (PR-0..PR-7)
+last_updated: 2026-05-17  # EPIC-12 optional verification closure sync
 tags:
   - casa-segura
   - roadmap
@@ -39,9 +39,13 @@ Use this folder as a phase-first pick list for parallel work:
 - [[CS-270]](../tickets/CS-270.md) — **`done`** (2026-05-16) — retention scheduler ADR landed; harness + CI documented in [`ADR-0005`](../adr/ADR-0005-retention-job-scheduling.md).
 - [EPIC-10 - Frontend Web App](../EPIC-10-frontend.md) - **`done` (2026-05-16).** Deploy + device QA tracked in [CS-298](../tickets/CS-298.md) and [CS-299](../tickets/CS-299.md).
 
-**EPIC-04 (Classification & Field Extraction) cerrada 2026-05-17.** CS-110..CS-116 + CS-031 AC4 → `done`. Pipeline F2 (`backend/classification/application/orchestrator.py::F2Orchestrator`) encadena clasificación + leasing + project + economic + aggregate, persiste en `ContractAnalysis` vía las columnas F2 §5.1 añadidas por `platform_core/0005_classification_f2_fields.py`. Endpoint interno `POST /api/v1/internal/classify` (DRF, `IsInternal`); CI gate `.github/workflows/classification-eval.yml`. Phase 2 cerrada; EPIC-06 (Rubric) desbloqueada.
+**EPIC-04 (Classification & Field Extraction) cerrada 2026-05-17.** CS-110..CS-116 + CS-031 AC4 → `done`. Pipeline F2 (`backend/classification/application/orchestrator.py::F2Orchestrator`) encadena clasificación + leasing + project + economic + aggregate, persiste en `ContractAnalysis` vía las columnas F2 §5.1 añadidas por `platform_core/0005_classification_f2_fields.py`. Endpoint interno `POST /api/v1/internal/classify` (DRF, `IsInternal`); CI gate `.github/workflows/classification-eval.yml`. Phase 2 cerrada.
 
-**In flight:** EPIC-12 optional verification work: [CS-356](../tickets/CS-356.md), [CS-351](../tickets/CS-351.md), [CS-355](../tickets/CS-355.md) are **`in_progress`** across `frontend/` and gated Django stubs under `PROJECT_VERIFICATION_ENABLED` (matrix: [`project-verification-fe-be-gates.md`](../../guides/project-verification-fe-be-gates.md)).
+**Phase 4–5 closure (2026-05-17):** [[EPIC-06-rubric-engine]] → **`done`** (Definition of done all `[x]`). [[EPIC-07-report-generation]] → **`done`** (canonical HTML/PDF + `/r/` TTL parity via `CS-247`). Remaining **Phase 5** product gap: [[EPIC-08-multichannel-delivery]] **submission-time channel picker** (Epic DoD line 1 — still `[ ]`).
+
+**Phase 6 — EPIC-09:** [[EPIC-09-retention-privacy]](../EPIC-09-retention-privacy.md) → **`done`** (2026-05-17); tickets **`CS-271`**–**`CS-276`** closed — see [Phase 6](PHASE-6-privacy-closure.md). Follow-up (ops / FE): expired-link UX coordination + optional §6.2 audit-row purge automation if not already tracked.
+
+**EPIC‑12 optional verification — `done` (2026‑05‑17):** billboard vision + deterministic verdict path + guarded reputation lookups + resultado flash UX shipped (`frontend/src/app/verificacion-proyecto/`, `backend/project_verification/`, gates: [`project-verification-fe-be-gates.md`](../../guides/project-verification-fe-be-gates.md); tickets **`CS-350`**–**`CS-356`** marked `done`).
 
 **Phase 1 progress (2026-05-16):** EPIC-03 (Legal Corpus & RAG, CS-080..CS-090) closed with revised multi-Top-K AC after four live calibration runs (final: e5-large + bge-reranker-v2-m3 + ES corpus → Strict Top-1 = 0.633, Top-3 = 0.900, Top-5 = 0.967). **Phase 1 closed 2026-05-16.** EPIC-02 (Contract Ingestion & OCR) and EPIC-03 (Legal Corpus & RAG) both `done`. EPIC-02 ships CS-050..CS-060 (multi-file `files[]` 1–50 + image dimensions + batch caps; router 100-char threshold; pypdf separators/normalization/watchdog/vision-escalation; Pixtral single-call; Tesseract mean-confidence gate; PRD §US-08 language gate + HTTP 422; multi-file SHA-256 idempotency; 15 MB byte cap; latency budget instrumentation). One AC deferred to EPIC-04 / EPIC-06: CS-051 HTTP 409 `is_duplicate` envelope (needs ContractAnalysis lookup). See [PHASE-1-input-pipelines.md](PHASE-1-input-pipelines.md).
 

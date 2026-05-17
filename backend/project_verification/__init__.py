@@ -1,1 +1,1 @@
-"""Stub API for optional billboard / manual project verification (EPIC-12)."""
+"""Optional billboard / manual project verification (EPIC-12)."""

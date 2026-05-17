@@ -15,8 +15,17 @@ export type ProjectVerificationTelemetryCtaImpressionPayload = Readonly<{
   route: "/verificacion-proyecto/resultado";
 }>;
 
+/** Count-free routing metadata only — never filenames, base64, or OCR text (CS-351). */
+export type ProjectVerificationTelemetryBillboardPayload = Readonly<{
+  event: "project_verification_billboard_completed";
+  ocr_status: string;
+  ocr_quality_hint: string;
+  routed: "resultado_flash" | "manual_handoff";
+}>;
+
 export type ProjectVerificationTelemetryPayload =
   | ProjectVerificationTelemetryManualEntryPayload
+  | ProjectVerificationTelemetryBillboardPayload
   | ProjectVerificationTelemetryCtaImpressionPayload;
 
 function isTelemetryLogEnabled(): boolean {

@@ -88,9 +88,9 @@ def test_compound_vs_linear_guard():
 
     result = normalize_annual_rate(extraction)
 
-    assert result.annual_rate_pct != Decimal("0.1800"), (
-        "regression — compound formula collapsed to linear `12*m`; PRD_F5 BR-05"
-    )
+    assert result.annual_rate_pct != Decimal(
+        "0.1800"
+    ), "regression — compound formula collapsed to linear `12*m`; PRD_F5 BR-05"
 
 
 def test_annual_takes_precedence_when_both_consistent():

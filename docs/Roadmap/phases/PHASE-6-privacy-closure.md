@@ -3,7 +3,7 @@ project: Casa Segura
 doc_type: phase_index
 phase: 6
 status: living
-last_updated: 2026-05-15
+last_updated: 2026-05-17
 tags:
   - casa-segura
   - roadmap
@@ -28,7 +28,8 @@ Source-of-truth links:
 
 ## Ready Now
 
-- `CS-270` is ready now; see `INFRA WORK`.
+- **`CS-270`** — **`done`** (scheduler ADR + harness + CI gate — [`ADR-0005`](../../adr/ADR-0005-retention-job-scheduling.md)).
+- **EPIC-09 backend lane:** **`CS-271`**, **`CS-272`**, **`CS-274`**, **`CS-273`**, **`CS-275`**, **`CS-276`** — **`done`** (see [EPIC-09](../EPIC-09-retention-privacy.md)). Remaining Phase 6 work is mostly FE coordination (expired-link UX) and any follow-up ops tickets (e.g. §6.2 audit purge automation).
 
 ## FE WORK
 
@@ -36,12 +37,12 @@ No primary FE tickets live in this phase. FE should coordinate expired-link copy
 
 ## BE WORK
 
-- [CS-271](../tickets/CS-271.md) - Cleanup job for ContractSubmission and OcrJob.
-- [CS-272](../tickets/CS-272.md) - Delivery-target erasure job.
-- [CS-273](../tickets/CS-273.md) - 90-day anonymization job.
-- [CS-274](../tickets/CS-274.md) - Link expiration job.
-- [CS-275](../tickets/CS-275.md) - Project average score recomputation.
-- [CS-276](../tickets/CS-276.md) - Anonymization audit log row.
+- [CS-271](../tickets/CS-271.md) — transient cleanup (**done**).
+- [CS-272](../tickets/CS-272.md) — delivery-target erasure (**done**).
+- [CS-273](../tickets/CS-273.md) — 90-day anonymization (**done**).
+- [CS-274](../tickets/CS-274.md) — link expiration (**done**).
+- [CS-275](../tickets/CS-275.md) — project average score recomputation (**done**).
+- [CS-276](../tickets/CS-276.md) — anonymization audit log row (**done**).
 
 ## INFRA WORK
 

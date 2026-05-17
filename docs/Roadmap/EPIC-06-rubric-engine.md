@@ -2,7 +2,7 @@
 id: EPIC-06
 name: Rubric Engine & Scoring
 phase: 4
-status: in_progress
+status: done
 depends_on:
   - EPIC-01
   - EPIC-03

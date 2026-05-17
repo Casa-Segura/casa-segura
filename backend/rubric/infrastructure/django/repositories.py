@@ -98,6 +98,7 @@ class ContractAnalysisRepository:
         analysis.findings_count = result.findings_count
         analysis.critical_findings_count = result.critical_findings_count
         analysis.unverifiable_count = result.unverifiable_count
+        analysis.executive_summary = result.executive_summary
         analysis.rubric_version_id = result.rubric_version
         analysis.corpus_version_id = result.corpus_version
         if result.benchmark_version is not None:
@@ -114,6 +115,7 @@ class ContractAnalysisRepository:
                 "findings_count",
                 "critical_findings_count",
                 "unverifiable_count",
+                "executive_summary",
                 "rubric_version",
                 "corpus_version",
                 "benchmark_version",

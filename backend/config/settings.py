@@ -286,6 +286,11 @@ SMS_WEBHOOK_SECRET = env("SMS_WEBHOOK_SECRET", default="")
 # ─── Public HTML report link TTL — worker ``web_link`` + GET `/r/<id>/` (maps ``REPORT_LINK_TTL_DAYS``) ───
 PUBLIC_REPORT_LINK_TTL_DAYS = env.int("REPORT_LINK_TTL_DAYS", default=30)
 
+# ─── Retention jobs (PRD F8 §6.3, ADR-0005, CS-271+) ───
+JOB_BATCH_SIZE = env.int("JOB_BATCH_SIZE", default=100)
+DELIVERY_TARGET_ERASE_GRACE_SECONDS = env.int("DELIVERY_TARGET_ERASE_GRACE_SECONDS", default=300)
+ANONYMIZATION_AFTER_DAYS = env.int("ANONYMIZATION_AFTER_DAYS", default=90)
+
 
 # ─── Optional project verification (EPIC-12 / CS-356) ───
 # Mirrors `frontend` `PROJECT_VERIFICATION_ENABLED`; default-off for safe prod rollouts.
@@ -293,6 +298,33 @@ PROJECT_VERIFICATION_ENABLED = env.bool(
     "PROJECT_VERIFICATION_ENABLED",
     default=False,
 )
+
+# Reputation façade (EPIC-12 / CS-353). `none`/`stub` impose no outbound requirements.
+_PROJECT_RP_RAW = env("PROJECT_REPUTATION_PROVIDER", default="none")
+PROJECT_REPUTATION_PROVIDER = _PROJECT_RP_RAW.strip().lower() or "none"
+
+# Operational gate for HTTP adapters (SSRF allowlist verified). Checked by Django `manage.py check`.
+PROJECT_REPUTATION_ADAPTER_READY = env.bool("PROJECT_REPUTATION_ADAPTER_READY", default=False)
+
+# Billboard vision extraction (EPIC-12 / CS-350). Defaults to shared OCR Pixtral model.
+PROJECT_VERIFICATION_VISION_MODEL = env(
+    "PROJECT_VERIFICATION_VISION_MODEL",
+    default="",
+)
+
+# Optional LLM narration only (EPIC-12 / CS-354); deterministic band stays authoritative.
+PROJECT_VERIFICATION_LLM_SYNTH = env.bool("PROJECT_VERIFICATION_LLM_SYNTH", default=False)
+
+
+# ─── Billboard / reputation HTTP knobs (EPIC-12 runtime) ───
+PROJECT_VERIFICATION_MAX_MEGAPIXELS = env.float("PROJECT_VERIFICATION_MAX_MEGAPIXELS", default=20.0)
+PROJECT_VERIFICATION_VISION_TIMEOUT_SECONDS = env.int(
+    "PROJECT_VERIFICATION_VISION_TIMEOUT_SECONDS",
+    default=45,
+)
+PROJECT_REPUTATION_HTTP_BASE_URL = env("PROJECT_REPUTATION_HTTP_BASE_URL", default="")
+PROJECT_REPUTATION_HTTP_ALLOW_HOSTS = env("PROJECT_REPUTATION_HTTP_ALLOW_HOSTS", default="")
+PROJECT_REPUTATION_HTTP_TIMEOUT_SECONDS = env.float("PROJECT_REPUTATION_HTTP_TIMEOUT_SECONDS", default=5.0)
 
 
 LANGUAGE_CODE = "en-us"

@@ -22,6 +22,7 @@ type ManualPageProps = {
     permit?: string;
     address?: string;
     source?: string;
+    ocr_quality?: string;
   }>;
 };
 
@@ -29,7 +30,7 @@ export default async function ProjectVerificationManualPage({
   searchParams,
 }: ManualPageProps) {
   const sp = (await searchParams) ?? {};
-  const { initialValues, source, hasPrefill } =
+  const { initialValues, source, hasPrefill, ocr_quality: ocrQuality } =
     parseManualVerificationHandoffSearchParams(sp);
 
   let prefillNote: string | undefined;
@@ -72,14 +73,24 @@ export default async function ProjectVerificationManualPage({
             Datos del proyecto (manual)
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-            Respaldo cuando la lectura automática de la valla falle. Hoy solo
-            validamos en el servidor sin guardar datos permanentes hasta que
-            exista API.
+            Respaldo cuando la lectura automática de la valla falle. La imagen no
+            se guarda: solo usamos estos campos para un veredicto orientativo sin
+            persistencia.
           </p>
           <div className="mt-6">
             <ProjectVerificationManualForm
               initialValues={initialValues}
               prefillNote={prefillNote}
+              verificationMeta={
+                source === "verification_hub" ||
+                source === "photo_skip" ||
+                !source
+                  ? { submissionSource: "manual" }
+                  : {
+                      submissionSource: "billboard_ocr",
+                      ocrQuality,
+                    }
+              }
             />
           </div>
         </div>

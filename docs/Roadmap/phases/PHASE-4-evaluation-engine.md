@@ -28,7 +28,7 @@ Source-of-truth links:
 
 ## Ready Now
 
-No Phase 4 tickets are ready yet. Start after Phase 3 economic summary and Phase 1/2 retrieval/extraction contracts are stable.
+**Phase 4 closed:** [[EPIC-06-rubric-engine]] is **`done`** (2026-05-17 — Definition of done all `[x]`). BE ticket links below are for navigation / regression context; authoritative **`status`** lives in each `CS-*.md` file.
 
 ## FE WORK
 

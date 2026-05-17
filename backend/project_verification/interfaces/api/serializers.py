@@ -1,4 +1,4 @@
-"""Request bodies for `/api/v1/project-verification/manual/` stub (mirrors frontend validation.ts)."""
+"""Request bodies for `/api/v1/project-verification/manual/` (mirrors frontend validation.ts)."""
 
 from __future__ import annotations
 
@@ -18,8 +18,8 @@ def _max_len_message() -> str:
     return f"Máximo {_MANUAL_VERIFICATION_MAX_LEN} caracteres."
 
 
-class ManualVerificationStubSerializer(serializers.Serializer):
-    """Validated echo payload aligned with FE `manual/validation.ts`."""
+class ManualVerificationRequestSerializer(serializers.Serializer):
+    """Validated project-verification submission (manual fallback + billboard follow-up)."""
 
     developer = serializers.CharField(
         max_length=_MANUAL_VERIFICATION_MAX_LEN,
@@ -64,4 +64,18 @@ class ManualVerificationStubSerializer(serializers.Serializer):
             "blank": _MESSAGES["address_blank"],
             "max_length": _max_len_message(),
         },
+    )
+
+    submission_source = serializers.ChoiceField(
+        choices=["manual", "billboard_ocr"],
+        default="manual",
+        required=False,
+        allow_blank=False,
+    )
+
+    ocr_quality = serializers.ChoiceField(
+        choices=["high", "medium", "low", "unknown"],
+        required=False,
+        allow_null=True,
+        allow_blank=True,
     )

@@ -142,8 +142,8 @@ For each of `web`, `worker`, `beat`:
 | Service | Dockerfile Path | Start Command |
 |---|---|---|
 | `web` | `Dockerfile.web` *(default from `railway.toml`)* | `sh -c 'gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -'` |
-| `worker` | `Dockerfile.worker` | `celery -A shared.infrastructure.celery worker -l INFO --concurrency=2` |
-| `beat` | `Dockerfile.beat` | `celery -A shared.infrastructure.celery beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler` |
+| `worker` | `Dockerfile.worker` | `celery -A config.celery worker -l INFO --concurrency=2` |
+| `beat` | `Dockerfile.beat` | `celery -A config.celery beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler` |
 
 > **Why one Dockerfile per service.** Railway's dashboard does not expose
 > `--target` for multi-stage builds reliably, so each process ships its own
