@@ -2,7 +2,7 @@
 id: EPIC-06
 name: Rubric Engine & Scoring
 phase: 4
-status: backlog
+status: in_progress
 depends_on:
   - EPIC-01
   - EPIC-03
@@ -34,14 +34,14 @@ Delivering [[PRD_GENERAL]] US-03 ("System applies the rubric and produces the sc
 
 ## Definition of done
 
-- [ ] All 38 criteria from [[RUBRICA_CONTRATO]] §16 have an evaluator that returns a `CriterionEvaluation` for any classified contract
-- [ ] All 11 overrides from [[RUBRICA_CONTRATO]] §2.2 detect their trigger correctly and force score=0 + band=red when active
-- [ ] Score aggregation algorithm in [[RUBRICA_CONTRATO]] §10 is implemented and matches the spec line-for-line under property-based testing
-- [ ] Asymmetric penalty rule ([[RUBRICA_CONTRATO]] §1.1): better-than-benchmark inputs never reduce score below benchmark-equivalent
-- [ ] Unverifiable handling ([[PRD_GENERAL]] BR-04): missing data scores worst case from the criterion's scale, with justification recorded
-- [ ] Weight renormalization when criteria don't apply to the detected contract type
-- [ ] Verdict synthesis prompt produces a 2–3 sentence summary that contains **zero** legal citations not present in the retrieved RAG context ([[PRD_GENERAL]] BR-02, BR-03)
-- [ ] Every `Finding` produced carries: severity, title, description, optional cited clause, optional `LegalReference` (from RAG), recommendation
+- [x] All 38 criteria from [[RUBRICA_CONTRATO]] §16 have an evaluator that returns a `CriterionEvaluation` for any classified contract
+- [x] All 11 overrides from [[RUBRICA_CONTRATO]] §2.2 detect their trigger correctly and force score=0 + band=red when active
+- [x] Score aggregation algorithm in [[RUBRICA_CONTRATO]] §10 is implemented and matches the spec line-for-line under property-based testing
+- [x] Asymmetric penalty rule ([[RUBRICA_CONTRATO]] §1.1): better-than-benchmark inputs never reduce score below benchmark-equivalent
+- [x] Unverifiable handling ([[PRD_GENERAL]] BR-04): missing data scores worst case from the criterion's scale, with justification recorded
+- [x] Weight renormalization when criteria don't apply to the detected contract type
+- [x] Verdict synthesis prompt produces a 2–3 sentence summary that contains **zero** legal citations not present in the retrieved RAG context ([[PRD_GENERAL]] BR-02, BR-03)
+- [x] Every `Finding` produced carries: severity, title, description, optional cited clause, optional `LegalReference` (from RAG), recommendation
 - [ ] BVA test suite passes for all numeric thresholds (see ticket-level BVA tables)
 - [ ] Rubric version is stamped on every `ContractAnalysis` row ([[PRD_GENERAL]] BR-16)
 
