@@ -9,7 +9,11 @@
   --color-accent-light: #e6f2f1;
   --color-bg: #faf7f2;
   --color-border: #e7e2d9;
+  --color-border-strong: #d1cbc2;
+  --color-document-bg: #eceae6;
   --color-surface: #ffffff;
+  --color-surface-muted: #f4f1ec;
+  --color-surface-subtle: #fafaf9;
   --color-text-primary: #1f1a14;
   --color-text-secondary: #6b6258;
   --color-verdict-green: #15803d;
@@ -20,12 +24,59 @@
   --color-verdict-yellow-bg: #fefce8;
   --radius-card: 12px;
   --radius-input: 8px;
+  --radius-panel: 16px;
+  --radius-hero: 24px;
+  --radius-pill: 999px;
   --spacing-section: 28px;
+  --shadow-soft: 0 18px 45px -30px rgb(31 26 20 / 0.45);
+  --shadow-panel: 0 24px 80px -48px rgb(31 26 20 / 0.5);
+  --motion-fast: 160ms;
+  --motion-base: 240ms;
+  --motion-slow: 420ms;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-newsreader), var(--font-inter), ui-serif, serif;
+}
+
+html {
+  color-scheme: light;
 }
 
 body {
   background-color: var(--color-bg);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
+}
+
+::selection {
+  background-color: var(--color-accent-light);
+  color: var(--color-text-primary);
+}
+
+@keyframes casa-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes casa-pulse-soft {
+  0%,
+  100% {
+    opacity: 0.78;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

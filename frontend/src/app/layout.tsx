@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Newsreader } from "next/font/google";
 import { DISCLAIMER_SHORT } from "@/legal/disclaimer";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -19,7 +25,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${inter.variable} h-full antialiased`}>
+    <html
+      lang="es"
+      className={`${inter.variable} ${newsreader.variable} h-full antialiased`}
+    >
       <body className="min-h-dvh flex flex-col touch-manipulation [-webkit-tap-highlight-color:transparent]">
         <a
           href="#main-content"
