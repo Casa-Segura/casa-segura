@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 /**
  * CS-298 — Fail Vercel builds when `CASASEGURA_API_BASE_URL` is missing so Preview/Production cannot
  * ship pointing at nowhere. CI and local builds omit VERCEL unless explicitly set.
+ *
+ * Hosting typically redeploys from new commits on the linked branch; if a deploy does not start,
+ * push a trivial commit or re-run the deployment from the host dashboard.
  */
 if (
   process.env.NODE_ENV === "production" &&
