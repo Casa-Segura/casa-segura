@@ -18,8 +18,7 @@ Use this plan to decide who owns which folder, which tickets are safe to start, 
 ## Current Ready Picks
 
 - **`CS-270`** — retention scheduler ADR ([`CS-270.md`](tickets/CS-270.md)) — `ready`.
-- **`CS-298`** — Vercel frontend deploy ([`CS-298.md`](tickets/CS-298.md)) — `ready`; connect repo → set `CASASEGURA_API_BASE_URL` on Preview + Production ([`frontend/README.md`](../../frontend/README.md)); README runbook landed.
-- **`CS-299`** — physical Android QA at 360px ([`CS-299.md`](tickets/CS-299.md)) — `ready` **after** a preview/production URL exists; checklist [`frontend/docs/CS-299-mobile-qa-checklist.md`](../../frontend/docs/CS-299-mobile-qa-checklist.md).
+- **EPIC-10 (Frontend Web App)** — **`done` (2026-05-16).** [`CS-298`](tickets/CS-298.md) Vercel production + previews; [`CS-299`](tickets/CS-299.md) physical Android QA (360px / 4G) per checklist (`frontend/docs/CS-299-mobile-qa-checklist.md`).
 - **EPIC-12 (FE)** — Optional project verification shells: [`CS-356`](tickets/CS-356.md) / [`CS-351`](tickets/CS-351.md) / [`CS-355`](tickets/CS-355.md) are **`in_progress`**; enable locally with `PROJECT_VERIFICATION_ENABLED=true` ([`frontend/README.md`](../../frontend/README.md)).
 
 **EPIC-03 (Legal Corpus & RAG) cerrado 2026-05-16.** CS-080..CS-090 → `done`. Stack productivo: `intfloat/multilingual-e5-large` (1024-dim, prefijos `passage:`/`query:`) + `BAAI/bge-reranker-v2-m3` sobre top-10 pgvector. AC revisado: Top-1 ≥ 0.60 ∧ Top-3 ≥ 0.85 ∧ Top-5 ≥ 0.95 (lo cumple en 0.633 / 0.900 / 0.967). Trace en [`CS-087`](tickets/CS-087.md) — "Live calibration runs #1–#4". **Phase 1 cerrada 2026-05-16.** EPIC-02 (Contract Ingestion & OCR) → `done`. CS-050..CS-060 todos cerrados (multi-file `files[]` 1–50 + image dims + batch caps; router 100-char threshold + `force_strategy`; pypdf separators + normalization + 30s watchdog + 500-char vision escalation; Pixtral single-call; Tesseract mean-confidence gate; PRD §US-08 language gate + HTTP 422; multi-file SHA-256 idempotency; 15 MB byte cap; latency-budget instrumentation). Único AC diferido: CS-051 HTTP 409 `is_duplicate=true` envelope — bloqueado por EPIC-04 / EPIC-06 (ContractAnalysis lookup).
@@ -83,8 +82,8 @@ Next picks after `CS-003`:
 - `CS-294` - Result page (HTML report embed) — **done** (`frontend/` `/r/[publicShortId]`).
 - `CS-295` - Expired-link UX (`/enlace-expirado`, PRD US-05) — **done**.
 - `CS-297` - Single-source disclaimer module — **done** (`frontend/src/legal`).
-- **`CS-298`** - Vercel deploy (`frontend/README.md`, headers/`robots`, env gate) — **ready** for operator verification (ticket AC¹–²).
-- **`CS-299`** - Physical Android QA (360px / 4G) — **ready**; checklist `frontend/docs/CS-299-mobile-qa-checklist.md` (**after** Preview/Prod URL).
+- `CS-298` - Vercel deploy (`frontend/README.md`, headers/`robots`, env gate) — **done**.
+- `CS-299` - Physical Android QA (360px / 4G) — **done** (`frontend/docs/CS-299-mobile-qa-checklist.md`).
 - **EPIC-12 (optional)** - Project verification shells — **`CS-356` / `CS-351` / `CS-355`** are **`in_progress`** (`frontend/src/app/verificacion-proyecto/`; `PROJECT_VERIFICATION_ENABLED` — `frontend/README.md`). Backend OCR/verdict tickets still open.
 
 Constraints:
@@ -154,7 +153,7 @@ Start this lane when its backing BE or Infra foundation exists. Early API / AI w
 ### Round 2 - Stabilize Shared Contracts
 
 - Backend continues with `CS-007`, `CS-008`, and `CS-009`.
-- Frontend continues EPIC-10 closure (operator **CS-298** deploy wiring, then **CS-299** device QA checklist) in `frontend/`.
+- Frontend epic **EPIC-10 is `done`** (Vercel + device QA landed); FE continues EPIC-12 optional shells or downstream polish tickets as needed (`frontend/`).
 - Infra starts `CS-006` after `CS-002` chooses env loading and app boot conventions.
 
 ### Round 3 - Make CI and Data Work Real

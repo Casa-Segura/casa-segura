@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: roadmap_index
 status: living
-last_updated: 2026-05-15
+last_updated: 2026-05-16
 tags:
   - casa-segura
   - roadmap
@@ -54,7 +54,7 @@ For day-to-day pickup, start with the phase-first team index in [phases/README.m
 | [[EPIC-07-report-generation]] | Report Generation | F6 | Backlog (stub) |
 | [[EPIC-08-multichannel-delivery]] | Multi-Channel Delivery | F7 | Backlog |
 | [[EPIC-09-retention-privacy]] | Retention & Privacy Jobs | F8 part 2 | Backlog (stub) |
-| [[EPIC-10-frontend]] | Frontend Web App | — | In progress |
+| [[EPIC-10-frontend]] | Frontend Web App | — | Done |
 | [[EPIC-11-observability]] | Observability, Security, Disclaimers | — | Backlog (stub) |
 | [[EPIC-12-project-verification]] | Project Verification (Billboard OCR + Form) | — (separate flow) | Backlog (stub) |
 

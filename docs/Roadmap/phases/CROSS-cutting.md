@@ -30,7 +30,7 @@ Source-of-truth links:
 
 ## Ready Now
 
-- **EPIC-10 FE closure:** **`CS-298`** (operator: connect Vercel + env), then **`CS-299`** (physical device QA checklist). **`CS-295`** is **`done`**; core upload flow tickets **291–297** are **`done`** (see epic).
+- **EPIC-10 (Frontend Web App)** — **`done` (2026-05-16).** Vercel ([[CS-298]]) + physical Android QA ([[CS-299]]) verified. Continue cross-cutting frontend polish via follow-up tickets or optional [[EPIC-12-project-verification]] shells.
 
 ## FE WORK
 
@@ -42,8 +42,8 @@ Source-of-truth links:
 - [CS-295](../tickets/CS-295.md) - Expired-link page — **done**.
 - [CS-296](../tickets/CS-296.md) - Server actions to call backend — **done**.
 - [CS-297](../tickets/CS-297.md) - Disclaimer module — **done**.
-- [CS-298](../tickets/CS-298.md) - Vercel deploy — **ready** (`frontend/README.md` + `robots`/headers/next.config env gate).
-- [CS-299](../tickets/CS-299.md) - Mobile QA pass at 360px — **ready** (`frontend/docs/CS-299-mobile-qa-checklist.md`).
+- [CS-298](../tickets/CS-298.md) - Vercel deploy — **done**.
+- [CS-299](../tickets/CS-299.md) - Mobile QA pass at 360px — **done** (`frontend/docs/CS-299-mobile-qa-checklist.md`).
 
 ## BE WORK
 

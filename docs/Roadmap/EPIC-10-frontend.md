@@ -2,7 +2,7 @@
 id: EPIC-10
 name: Frontend Web App
 phase: cross
-status: in_progress
+status: done
 depends_on:
   - EPIC-00
   - EPIC-08
@@ -32,8 +32,8 @@ Public-facing surface for contract submission and report viewing on web. Spanish
 - [x] Loading state with rotating Spanish copy
 - [x] Result page (when channel = link) embeds the HTML report
 - [x] Expired-link friendly page ([[CS-295]] — PRD_US-05 copy + `noindex`; `/enlace-expirado` + documented 404/410 handling on `/r/...`)
-- [ ] Deployed to Vercel
-- [ ] QA passed on a real Android device
+- [x] Deployed to Vercel
+- [x] QA passed on a real Android device
 
 ## Tickets
 
@@ -45,8 +45,8 @@ Public-facing surface for contract submission and report viewing on web. Spanish
 - [[CS-295]] — Expired-link page — **done**
 - [[CS-296]] — Server actions to call BE — **done**
 - [[CS-297]] — Disclaimer module (single source for "Esto no es asesoría legal") — **done**
-- [[CS-298]] — Vercel deploy — **ready** (repo wiring landed; operational AC pending first Vercel project)
-- [[CS-299]] — Mobile QA pass at 360px — **ready** (checklist: `frontend/docs/CS-299-mobile-qa-checklist.md`)
+- [[CS-298]] — Vercel deploy — **done**
+- [[CS-299]] — Mobile QA pass at 360px — **done** (checklist: `frontend/docs/CS-299-mobile-qa-checklist.md`)
 
 ## Notes
 
