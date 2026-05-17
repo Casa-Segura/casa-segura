@@ -43,7 +43,7 @@ Delivering [[PRD_GENERAL]] US-03 ("System applies the rubric and produces the sc
 - [x] Verdict synthesis prompt produces a 2–3 sentence summary that contains **zero** legal citations not present in the retrieved RAG context ([[PRD_GENERAL]] BR-02, BR-03)
 - [x] Every `Finding` produced carries: severity, title, description, optional cited clause, optional `LegalReference` (from RAG), recommendation
 - [ ] BVA test suite passes for all numeric thresholds (see ticket-level BVA tables)
-- [ ] Rubric version is stamped on every `ContractAnalysis` row ([[PRD_GENERAL]] BR-16)
+- [x] Rubric version is stamped on every `ContractAnalysis` row ([[PRD_GENERAL]] BR-16)
 
 ## In scope
 

@@ -8,7 +8,7 @@ HTML string. The function never persists anything (PRD F6 BR-01).
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 
 from reports.application.services.section_builders import (
     DEFAULT_FINDINGS_COLLAPSE_THRESHOLD,
@@ -145,7 +145,7 @@ def _build_context(
     return ReportContextVM(
         analysis_id=str(analysis.id),
         public_short_id=analysis.public_short_id,
-        generated_at=datetime.utcnow(),
+        generated_at=datetime.now(UTC),
         header=header,
         verdict=verdict,
         economic=economic,
