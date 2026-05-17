@@ -49,8 +49,8 @@ export function ProjectVerificationBillboardUploadForm() {
       <div className="rounded-[var(--radius-card)] border border-border bg-accent-light/50 p-4 text-sm leading-relaxed text-text-primary">
         <p className="font-medium">La foto se usa solo para este intento.</p>
         <p className="mt-2 text-text-secondary">
-          El stub actual la descarta en memoria; cuando exista OCR real, si la
-          lectura queda incompleta vas a poder corregir los datos a mano.
+          Buscamos señales visibles del proyecto. Si la lectura queda
+          incompleta, vas a poder corregir los datos a mano.
         </p>
       </div>
 
