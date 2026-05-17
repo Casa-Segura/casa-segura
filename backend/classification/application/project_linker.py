@@ -55,6 +55,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
@@ -62,6 +63,13 @@ from classification.domain.project_link import ProjectLinkResult
 
 # Cross-bounded-context import: see module docstring "DDD layering note".
 from platform_core.infrastructure.django.models import Project
+
+# `Project.save()` calls `full_clean(exclude={"first_seen"})`, so a unique
+# conflict on `normalized_name` can surface as `ValidationError` (the
+# model-level check fires before the DB) OR `IntegrityError` (a true race
+# that wasn't visible at validation time). Catch both so the linker's
+# recovery path works under both isolation conditions.
+_UNIQUE_CONFLICT_EXCEPTIONS = (IntegrityError, ValidationError)
 
 if TYPE_CHECKING:
     from classification.domain.project_name_extraction import ProjectNameExtraction
@@ -133,7 +141,7 @@ class ProjectLinker:
                     was_created=True,
                     was_collision=False,
                 )
-            except IntegrityError:
+            except _UNIQUE_CONFLICT_EXCEPTIONS:
                 # Two workers raced on the same placeholder (same submission,
                 # concurrent retries). Re-fetch and return the winner — still
                 # "was_created" semantics from the caller's POV (the row
@@ -181,7 +189,7 @@ class ProjectLinker:
                     was_created=True,
                     was_collision=False,
                 )
-            except IntegrityError:
+            except _UNIQUE_CONFLICT_EXCEPTIONS:
                 # Concurrent insert won the race — fetch and treat as collision.
                 logger.info(
                     "project_linker.upsert_race_resolved",
