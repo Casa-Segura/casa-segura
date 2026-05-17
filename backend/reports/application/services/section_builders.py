@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import hashlib
 from collections.abc import Iterable
-from datetime import datetime
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -79,7 +79,7 @@ _CRITICAL_DISCLAIMER_ES = (
 
 
 def build_header(analysis, project_name: str | None) -> HeaderVM:
-    date_value = getattr(analysis, "created_at", None) or datetime.utcnow()
+    date_value = getattr(analysis, "created_at", None) or datetime.now(UTC)
     return HeaderVM(
         public_short_id=analysis.public_short_id,
         analysis_date_long_es=long_date_es(date_value),
