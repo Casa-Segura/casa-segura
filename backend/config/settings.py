@@ -5,7 +5,9 @@ from pathlib import Path
 
 import environ
 
+from shared.observability.error_tracking import configure_error_tracking
 from shared.observability.logging import configure_logging
+from shared.security.tls import tls_settings_for_stage, validate_tls_posture
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -64,6 +66,7 @@ INSTALLED_APPS = [
     "classification.infrastructure.django.apps.ClassificationConfig",
     "reports.infrastructure.django.apps.ReportsConfig",
     "delivery.infrastructure.django.apps.DeliveryConfig",
+    "feedback.infrastructure.django.apps.FeedbackConfig",
     # EPIC-12 optional stubs (`/api/v1/project-verification/...`).
     "project_verification.apps.ProjectVerificationConfig",
 ]
@@ -165,6 +168,7 @@ MIGRATION_MODULES = {
     "economics": "economics.infrastructure.django.migrations",
     "reports": "reports.infrastructure.django.migrations",
     "delivery": "delivery.infrastructure.django.migrations",
+    "feedback": "feedback.infrastructure.django.migrations",
 }
 
 
@@ -306,3 +310,34 @@ STORAGES = {
 }
 
 configure_logging(debug=DEBUG, log_level=LOG_LEVEL)
+
+# CS-332: opt-in error tracking. No DSN → SDK stays inactive (zero
+# outbound calls) so dev / CI environments work unchanged.
+configure_error_tracking()
+
+# ─── CS-333: TLS posture per deploy stage ───
+DEPLOY_STAGE = env("DEPLOY_STAGE", default="development")
+ALLOW_INSECURE_TLS_DEV_ONLY = env.bool("ALLOW_INSECURE_TLS_DEV_ONLY", default=False)
+_TLS = tls_settings_for_stage(DEPLOY_STAGE)
+SECURE_SSL_REDIRECT = _TLS.secure_ssl_redirect
+SECURE_HSTS_SECONDS = _TLS.secure_hsts_seconds
+SECURE_HSTS_INCLUDE_SUBDOMAINS = _TLS.secure_hsts_include_subdomains
+SECURE_HSTS_PRELOAD = _TLS.secure_hsts_preload
+SESSION_COOKIE_SECURE = _TLS.session_cookie_secure
+CSRF_COOKIE_SECURE = _TLS.csrf_cookie_secure
+SECURE_CONTENT_TYPE_NOSNIFF = _TLS.secure_content_type_nosniff
+SECURE_REFERRER_POLICY = _TLS.secure_referrer_policy
+
+# Outbound URLs that must be HTTPS in production. Skip empty / unset values.
+_OUTBOUND_URLS = [
+    OPENROUTER_BASE_URL,
+    env("ZAVU_API_BASE_URL", default=""),
+    env("SMS_PROVIDER_BASE_URL", default=""),
+    env("PUBLIC_REPORT_BASE_URL", default=""),
+]
+validate_tls_posture(
+    stage=DEPLOY_STAGE,
+    secure_ssl_redirect=SECURE_SSL_REDIRECT,
+    outbound_urls=[u for u in _OUTBOUND_URLS if u],
+    allow_insecure_dev=ALLOW_INSECURE_TLS_DEV_ONLY,
+)

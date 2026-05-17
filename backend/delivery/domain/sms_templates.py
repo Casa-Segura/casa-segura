@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-SMS_TEMPLATE_REGISTRY_VERSION = "2026.05.17"
+from shared.legal import DISCLAIMER_SMS_SHORTHAND_ES as DISCLAIMER_SHORTHAND_ES
 
-DISCLAIMER_SHORTHAND_ES = "No es asesoría legal."
+SMS_TEMPLATE_REGISTRY_VERSION = "2026.05.17"
 
 SMS_BODY_SUMMARY_TEMPLATE = (
     "Hola — tu informe Casa Segura ({public_short_id}) quedó en banda {band}. "

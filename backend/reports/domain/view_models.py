@@ -16,6 +16,11 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from shared.legal import (
+    DISCLAIMER_EXTENDED_FOOTER_ES,
+    DISCLAIMER_REPORT_HEADER_ES,
+)
+
 BandLiteral = Literal["green", "yellow", "red", "not_analyzable"]
 SeverityLiteral = Literal["critical", "red", "yellow", "green", "unverifiable"]
 
@@ -34,7 +39,7 @@ class HeaderVM(BaseModel):
     project_name_disclaimer: str = (
         "El nombre del proyecto se extrajo del contrato; no se verificó contra fuente externa."
     )
-    invariant_disclaimer: str = "Este reporte no es asesoría legal. Antes de firmar, consulta a un abogado."
+    invariant_disclaimer: str = DISCLAIMER_REPORT_HEADER_ES
 
 
 class OverrideEntryVM(BaseModel):
@@ -203,11 +208,7 @@ class FooterVM(BaseModel):
     integrity_hash_short: str  # first 16 chars of SHA-256
     aggregate_project_note_es: str | None = None
     error_report_es: str = "Reporta errores a errores@casasegura.sv mencionando el identificador del análisis."
-    extended_disclaimer_es: str = (
-        "Casa Segura es una herramienta de orientación. No reemplaza asesoría legal "
-        "profesional. Antes de firmar cualquier contrato inmobiliario, consulta a un "
-        "abogado salvadoreño."
-    )
+    extended_disclaimer_es: str = DISCLAIMER_EXTENDED_FOOTER_ES
 
 
 class ReportContextVM(BaseModel):

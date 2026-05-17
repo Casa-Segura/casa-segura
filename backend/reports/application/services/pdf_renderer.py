@@ -13,6 +13,11 @@ import logging
 import time
 from dataclasses import dataclass
 
+from reports.application.metrics import (
+    REPORT_BYTES_HISTOGRAM,
+    REPORT_PDF_DURATION,
+    REPORT_RENDER_OUTCOMES,
+)
 from reports.application.services.html_renderer import (
     GenerateReportOptions,
     generate_report_html,
@@ -67,9 +72,17 @@ def generate_report_pdf(
     try:
         pdf_bytes = HTML(string=html).write_pdf(stylesheets=[page_css])
     except Exception as exc:
+        REPORT_PDF_DURATION.labels(page_size=pdf_options.page_size, outcome="error").observe(
+            time.perf_counter() - start
+        )
+        REPORT_RENDER_OUTCOMES.labels(format="pdf", outcome="error").inc()
         logger.warning("reports.pdf.weasyprint_failed", exc_info=True)
         raise PdfRenderFailedError(f"WeasyPrint failed: {exc}") from exc
     elapsed_ms = int((time.perf_counter() - start) * 1000)
+
+    REPORT_PDF_DURATION.labels(page_size=pdf_options.page_size, outcome="ok").observe(elapsed_ms / 1000.0)
+    REPORT_RENDER_OUTCOMES.labels(format="pdf", outcome="ok").inc()
+    REPORT_BYTES_HISTOGRAM.labels(format="pdf").observe(len(pdf_bytes))
 
     return PdfResult(
         pdf_bytes=pdf_bytes,

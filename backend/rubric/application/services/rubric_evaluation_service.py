@@ -17,9 +17,20 @@ wraps it with ``asyncio.run``.
 from __future__ import annotations
 
 import asyncio
+import time
 from dataclasses import dataclass
 from typing import Any
 
+from rubric.application.metrics import (
+    RUBRIC_BAND_TOTAL,
+    RUBRIC_CONTRACT_TYPE_TOTAL,
+    RUBRIC_CRITERION_OUTCOMES,
+    RUBRIC_EVAL_DURATION,
+    RUBRIC_FINDINGS_PER_ANALYSIS,
+    RUBRIC_OVERRIDE_TOTAL,
+    RUBRIC_SCORE_DISTRIBUTION,
+    RUBRIC_UNVERIFIABLE_RATE,
+)
 from rubric.application.services.criterion_evaluator import (
     CriterionDispatcher,
     CriterionRegistry,
@@ -62,6 +73,7 @@ class RubricEvaluationService:
         benchmark_version: str | None = None,
     ) -> FullAnalysisResult:
         dispatcher = self.dispatcher_factory(self.registry)
+        eval_started = time.perf_counter()
         evaluations = await dispatcher.evaluate_all(specs, context)
 
         aggregation = aggregate_total(evaluations, contract_type=context.contract_type)
@@ -89,7 +101,7 @@ class RubricEvaluationService:
             allowed_anchors=allowed_anchors,
         )
 
-        return FullAnalysisResult(
+        result = FullAnalysisResult(
             score_total=aggregation.score_total,
             band=aggregation.band,
             override_triggered=list(aggregation.override_triggered),
@@ -104,6 +116,27 @@ class RubricEvaluationService:
             corpus_version=corpus_version,
             benchmark_version=benchmark_version,
         )
+
+        # CS-330 telemetry — coarse, PII-free.
+        RUBRIC_EVAL_DURATION.observe(time.perf_counter() - eval_started)
+        RUBRIC_SCORE_DISTRIBUTION.observe(result.score_total)
+        RUBRIC_BAND_TOTAL.labels(band=result.band.value).inc()
+        RUBRIC_CONTRACT_TYPE_TOTAL.labels(contract_type=context.contract_type).inc()
+        RUBRIC_FINDINGS_PER_ANALYSIS.observe(result.findings_count)
+        for code in result.override_triggered:
+            RUBRIC_OVERRIDE_TOTAL.labels(override_code=code.value).inc()
+        for ev in evaluations:
+            if not ev.applicable:
+                continue
+            if ev.unverifiable:
+                RUBRIC_CRITERION_OUTCOMES.labels(criterion_id=ev.criterion_id, outcome="unverifiable").inc()
+                RUBRIC_UNVERIFIABLE_RATE.labels(criterion_id=ev.criterion_id).inc()
+            elif not ev.evaluated:
+                RUBRIC_CRITERION_OUTCOMES.labels(criterion_id=ev.criterion_id, outcome="failed").inc()
+            else:
+                RUBRIC_CRITERION_OUTCOMES.labels(criterion_id=ev.criterion_id, outcome="evaluated").inc()
+
+        return result
 
     def evaluate_sync(
         self,

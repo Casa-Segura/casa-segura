@@ -18,6 +18,8 @@ from typing import Any
 
 import structlog
 
+from shared.observability.scrubbing import scrub_event_dict
+
 SCHEMA_VERSION = "1.0.0"
 SERVICE_NAME = "casa-segura-api"
 
@@ -55,6 +57,12 @@ def configure_logging(*, debug: bool, log_level: str = "INFO") -> None:
         _add_service_context,
         _add_default_versions,
         timestamper,
+        # CS-331: scrub deny-list keys and inline PII before the
+        # renderer turns the event dict into a string. Must remain the
+        # last processor before the renderer so downstream stack info
+        # (added by ``StackInfoRenderer`` later in the chain) cannot
+        # smuggle raw content through.
+        scrub_event_dict,
     ]
 
     if debug:

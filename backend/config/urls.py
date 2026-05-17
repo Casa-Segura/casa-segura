@@ -21,6 +21,7 @@ api_v1_url_patterns = [
     path("webhooks/zavu/", include("delivery.interfaces.api.urls")),
     path("webhooks/sms/", SmsDeliveryCallbackView.as_view(), name="sms-delivery-callback"),
     path("corpus/", include("corpus.interfaces.api.urls", namespace="corpus")),
+    path("feedback/", include("feedback.interfaces.api.urls", namespace="feedback")),
     path(
         "project-verification/",
         include(

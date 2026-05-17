@@ -7,9 +7,15 @@ HTML string. The function never persists anything (PRD F6 BR-01).
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
 from datetime import UTC, datetime
 
+from reports.application.metrics import (
+    REPORT_BYTES_HISTOGRAM,
+    REPORT_HTML_DURATION,
+    REPORT_RENDER_OUTCOMES,
+)
 from reports.application.services.section_builders import (
     DEFAULT_FINDINGS_COLLAPSE_THRESHOLD,
     build_actions,
@@ -61,54 +67,67 @@ def generate_report_html(analysis, options: GenerateReportOptions | None = None)
         raise AnalysisNotFoundError("analysis is None")
 
     options = options or GenerateReportOptions()
-    _guard_analysis_state(analysis)
-
-    rubric_version = _resolve_version_field(analysis, ("rubric_version_id", "rubric_version"))
-    corpus_version = _resolve_version_field(analysis, ("corpus_version_id", "corpus_version"))
-    benchmark_version = _resolve_version_field(
-        analysis,
-        ("benchmark_version_id", "benchmark_version"),
-        allow_missing=True,
-    )
-
-    if rubric_version is None or corpus_version is None:
-        raise VersionMissingError("rubric_version / corpus_version absent on ContractAnalysis")
-
-    context = _build_context(
-        analysis,
-        rubric_version=rubric_version,
-        corpus_version=corpus_version,
-        benchmark_version=benchmark_version,
-        options=options,
-    )
-
-    template_name = "anonymized.html.j2" if context.anonymized else "full.html.j2"
+    started = time.perf_counter()
     try:
-        env = make_env(options.template_version)
-        template = env.get_template(template_name)
-    except FileNotFoundError as exc:
-        raise TemplateNotFoundError(str(exc)) from exc
+        _guard_analysis_state(analysis)
 
-    html = template.render(ctx=context)
+        rubric_version = _resolve_version_field(analysis, ("rubric_version_id", "rubric_version"))
+        corpus_version = _resolve_version_field(analysis, ("corpus_version_id", "corpus_version"))
+        benchmark_version = _resolve_version_field(
+            analysis,
+            ("benchmark_version_id", "benchmark_version"),
+            allow_missing=True,
+        )
 
-    integrity = compute_integrity_hash(
-        analysis_id=str(analysis.id),
-        rubric_version=rubric_version,
-        corpus_version=corpus_version,
-        benchmark_version=benchmark_version or "",
-        rendered_html=html,
+        if rubric_version is None or corpus_version is None:
+            raise VersionMissingError("rubric_version / corpus_version absent on ContractAnalysis")
+
+        context = _build_context(
+            analysis,
+            rubric_version=rubric_version,
+            corpus_version=corpus_version,
+            benchmark_version=benchmark_version,
+            options=options,
+        )
+
+        template_name = "anonymized.html.j2" if context.anonymized else "full.html.j2"
+        try:
+            env = make_env(options.template_version)
+            template = env.get_template(template_name)
+        except FileNotFoundError as exc:
+            raise TemplateNotFoundError(str(exc)) from exc
+
+        html = template.render(ctx=context)
+
+        integrity = compute_integrity_hash(
+            analysis_id=str(analysis.id),
+            rubric_version=rubric_version,
+            corpus_version=corpus_version,
+            benchmark_version=benchmark_version or "",
+            rendered_html=html,
+        )
+        updated_footer = FooterVM(
+            versions_line_es=context.footer.versions_line_es,
+            integrity_hash_short=integrity[:16],
+            aggregate_project_note_es=context.footer.aggregate_project_note_es,
+            error_report_es=context.footer.error_report_es,
+            extended_disclaimer_es=context.footer.extended_disclaimer_es,
+        )
+        if updated_footer.integrity_hash_short != context.footer.integrity_hash_short:
+            new_context = context.model_copy(update={"footer": updated_footer})
+            html = template.render(ctx=new_context)
+    except Exception:
+        REPORT_HTML_DURATION.labels(template_version=options.template_version, outcome="error").observe(
+            time.perf_counter() - started
+        )
+        REPORT_RENDER_OUTCOMES.labels(format="html", outcome="error").inc()
+        raise
+
+    REPORT_HTML_DURATION.labels(template_version=options.template_version, outcome="ok").observe(
+        time.perf_counter() - started
     )
-    updated_footer = FooterVM(
-        versions_line_es=context.footer.versions_line_es,
-        integrity_hash_short=integrity[:16],
-        aggregate_project_note_es=context.footer.aggregate_project_note_es,
-        error_report_es=context.footer.error_report_es,
-        extended_disclaimer_es=context.footer.extended_disclaimer_es,
-    )
-    if updated_footer.integrity_hash_short != context.footer.integrity_hash_short:
-        new_context = context.model_copy(update={"footer": updated_footer})
-        html = template.render(ctx=new_context)
-
+    REPORT_RENDER_OUTCOMES.labels(format="html", outcome="ok").inc()
+    REPORT_BYTES_HISTOGRAM.labels(format="html").observe(len(html))
     return html
 
 

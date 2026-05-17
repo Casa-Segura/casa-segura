@@ -4,9 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-_BR_DISCLAIMER_ES = (
-    "Este informe es orientativo y no sustituye asesoría legal. Revísalo con un profesional antes de decidir."
-)
+from shared.legal import DISCLAIMER_EMAIL_BODY_ES as _BR_DISCLAIMER_ES
 
 
 READABLE_CONTRACT_TYPE_ES: dict[str, str] = {

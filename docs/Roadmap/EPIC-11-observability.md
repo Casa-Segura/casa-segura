@@ -2,7 +2,7 @@
 id: EPIC-11
 name: Observability, Security & Disclaimers
 phase: cross
-status: backlog
+status: done
 depends_on:
   - EPIC-00
 prd_refs:
@@ -27,13 +27,13 @@ Operate the system in production: metrics, logs, alerts, error tracking, TLS, se
 
 ## Definition of done
 
-- [ ] Metrics emitted: latency per pipeline stage, OCR success rate, leasing reclassification rate, score distribution, override frequency, contract type distribution ([[PRD_GENERAL]] §5)
-- [ ] Metrics contain **zero** user-identifying data ([[PRD_GENERAL]] §5)
-- [ ] Error tracking captures stack traces but scrubs body content
-- [ ] All transport TLS-only
-- [ ] Secrets rotation documented
-- [ ] SECURITY.md exists with disclosure email and false-positive dispute path
-- [ ] Disclaimer registry centralizes every "Esto no es asesoría legal" surface; lint rule prevents string drift
+- [x] Metrics emitted: latency per pipeline stage, OCR success rate, leasing reclassification rate, score distribution, override frequency, contract type distribution ([[PRD_GENERAL]] §5)
+- [x] Metrics contain **zero** user-identifying data ([[PRD_GENERAL]] §5)
+- [x] Error tracking captures stack traces but scrubs body content
+- [x] All transport TLS-only
+- [x] Secrets rotation documented
+- [x] SECURITY.md exists with disclosure email and false-positive dispute path
+- [x] Disclaimer registry centralizes every "Esto no es asesoría legal" surface; lint rule prevents string drift
 
 ## Tickets (titles only — stubs)
 
