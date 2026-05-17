@@ -103,9 +103,11 @@ Formato de salida:
 - Si un campo solicitado NO aparece de forma explícita y verificable en el \
 contrato, devuélvelo con `"value": null` y `"confidence": 0.0`. NUNCA \
 inventes un valor para satisfacer el esquema.
-- Si encuentras valores en conflicto para el mismo campo, devuelve \
-`"value": null`, `"confidence": 0.0`, y explica el conflicto en \
-`rationale`. No adivines.
+- Si encuentras valores en CONFLICTO para el mismo campo (dos cifras \
+distintas, dos plazos, dos tasas) — añade además \
+`"extraction_status": "ambiguous"` al campo, deja `"value": null` y \
+`"confidence": 0.0`, y resume el conflicto en `rationale`. NUNCA adivines \
+ni promedies cifras contradictorias (PRD F5 BR-09 — honestidad).
 """
 
 # --- Spanish descriptions per field ------------------------------------

@@ -261,6 +261,7 @@ class EconomicFieldExtractor:
         accepted_values: dict[str, Any] = {}
         accepted_confidences: dict[str, ConfidenceBand] = {}
         demoted_fields: set[str] = set()
+        ambiguous_fields: set[str] = set()
         known_attrs = set(ExtractedFields.model_fields.keys())
 
         for field_name, raw_entry in payload.items():
@@ -280,6 +281,7 @@ class EconomicFieldExtractor:
                 raw_value = raw_entry
                 raw_confidence: Any = None
                 rationale = None
+                extraction_status: str | None = None
             else:
                 raw_value = raw_entry.get("value")
                 raw_confidence = raw_entry.get("confidence")
@@ -288,6 +290,25 @@ class EconomicFieldExtractor:
                     rationale = rationale[:500]
                 else:
                     rationale = None
+                status_raw = raw_entry.get("extraction_status")
+                extraction_status = (
+                    status_raw.strip().lower() if isinstance(status_raw, str) and status_raw.strip() else None
+                )
+
+            # Ambiguity short-circuit (CS-113 + CS-116). PRD_F2 US-04: when
+            # the contract carries conflicting figures for the same field,
+            # the LLM signals `extraction_status="ambiguous"`. We suppress
+            # the numeric value (BR-09 honesty: no silent guess) and route
+            # the field through `ambiguous_fields` so CS-116's aggregator
+            # tags the slot as `ExtractionStatus.AMBIGUOUS` rather than
+            # falling back to `not_present` or substituting zero.
+            if extraction_status == "ambiguous":
+                logger.info(
+                    "economic_extraction.field_ambiguous",
+                    extra={"field": field_name, "contract_type": contract_type.value},
+                )
+                ambiguous_fields.add(field_name)
+                continue
 
             coercer = _FIELD_COERCERS.get(field_name)
             coerced = coercer(raw_value) if coercer is not None else raw_value
@@ -352,6 +373,7 @@ class EconomicFieldExtractor:
             extracted_fields=extracted,
             field_confidences=accepted_confidences,
             unverifiable_fields=sorted(unverifiable),
+            ambiguous_fields=sorted(ambiguous_fields),
         )
 
 

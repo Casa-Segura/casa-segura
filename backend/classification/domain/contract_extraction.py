@@ -52,6 +52,17 @@ class ContractExtraction(BaseModel):
     extracted_fields: ExtractedFields = Field(default_factory=ExtractedFields)
     field_confidences: dict[str, ConfidenceBand] = Field(default_factory=dict)
     unverifiable_fields: list[str] = Field(default_factory=list)
+    ambiguous_fields: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Field names the LLM flagged as ambiguous (conflicting figures in "
+            "the contract, or `extraction_status=ambiguous` in the per-field "
+            "envelope). Value is suppressed for these fields; downstream "
+            "`aggregate_extraction` (CS-116) maps the entry to "
+            "`ExtractionStatus.AMBIGUOUS` rather than substituting a numeric "
+            "zero (PRD_F5 BR-09 honesty)."
+        ),
+    )
 
     @model_validator(mode="after")
     def _confidence_keys_are_known_fields(self) -> ContractExtraction:
@@ -64,6 +75,12 @@ class ContractExtraction(BaseModel):
         unknown = set(self.field_confidences.keys()) - known
         if unknown:
             raise ValueError(f"field_confidences references unknown ExtractedFields keys: {sorted(unknown)}")
+
+        unknown_ambiguous = set(self.ambiguous_fields) - known
+        if unknown_ambiguous:
+            raise ValueError(
+                f"ambiguous_fields references unknown ExtractedFields keys: {sorted(unknown_ambiguous)}",
+            )
         return self
 
 
