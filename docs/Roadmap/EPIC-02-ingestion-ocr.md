@@ -2,7 +2,7 @@
 id: EPIC-02
 name: Contract Ingestion & OCR
 phase: 1
-status: in_progress
+status: done
 depends_on:
   - EPIC-01
 prd_refs:
@@ -67,3 +67,11 @@ Receive contract uploads (PDF, JPG, PNG, HEIC, WEBP), detect document kind, extr
 
 - [[GENERATED-RESEARCH-create-ocr-documentation-2026-05-11]] — earlier OCR research (also relevant to [[EPIC-12-project-verification]] for billboard handling)
 - [[BE-SERVICES]] §3 routing table is the source of truth for which path each input takes
+
+## Closure — 2026-05-16
+
+EPIC-02 closed alongside the CS-059 + CS-051 commit. Phase 1 closure follows because EPIC-03 (Legal Corpus & RAG) is already `done`. Open follow-ups tracked outside this epic:
+
+- HTTP 409 `is_duplicate=true` envelope on resubmission — blocked by [[EPIC-04]] / [[EPIC-06]] (ContractAnalysis lookup). Recorded in [[CS-051]] AC checklist.
+- Multi-file majority routing rule for mixed-MIME submissions — recorded in [[CS-052]] AC checklist; the router signature is ready, the orchestrator still treats each file independently which is correct for the MVP.
+- Submission-wide 5-minute wall-clock budget — parked for the Phase 2 Celery refactor (noted in [[CS-054]] / [[CS-060]]).

@@ -223,7 +223,7 @@ OPENROUTER_MAX_RETRIES = env.int("OPENROUTER_MAX_RETRIES", default=3)
 
 # ─── OCR pipeline (Phase 1, EPIC-02) ───
 OCR_MAX_PAGES = env.int("OCR_MAX_PAGES", default=50)
-OCR_MAX_BYTES = env.int("OCR_MAX_BYTES", default=10 * 1024 * 1024)
+OCR_MAX_BYTES = env.int("OCR_MAX_BYTES", default=15 * 1024 * 1024)  # CS-059: PRD §US-01 canonical
 OCR_VISION_LLM_TIMEOUT = env.int("OCR_VISION_LLM_TIMEOUT", default=60)
 OCR_TESSERACT_ENABLED = env.bool("OCR_TESSERACT_ENABLED", default=True)
 OCR_TESSERACT_LANG = env("OCR_TESSERACT_LANG", default="spa")

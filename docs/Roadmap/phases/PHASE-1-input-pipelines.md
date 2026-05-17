@@ -2,17 +2,13 @@
 project: Casa Segura
 doc_type: phase_index
 phase: 1
-status: living
+status: done
 last_updated: 2026-05-16
-# Phase 1 implementation pass (Pixtral OCR architecture) committed in d613c2d.
-# EPIC-03 (Legal Corpus & RAG) closed 2026-05-16 with revised multi-Top-K AC after
-# four live calibration runs (CS-087). EPIC-02 (Contract Ingestion & OCR) still in_progress;
-# CS-050 + CS-052 + CS-053 + CS-054 + CS-055 + CS-056 + CS-060 closed 2026-05-16
-# (multi-file `files[]` 1–50 + image dimension validator + batch caps; router 100-char
-# threshold + force_strategy override; pypdf separators + normalization + 30s watchdog
-# + 500-char vision escalation; Pixtral single-call AC re-anchor; Tesseract
-# mean-confidence gate at 60.0; PRD §US-08 language gate + HTTP 422 envelopes;
-# latency budget instrumentation with page-bucket histogram + TIMEOUT counter).
+# Phase 1 closed 2026-05-16. EPIC-03 (Legal Corpus & RAG) shipped with revised
+# multi-Top-K AC after four live calibration runs (CS-087). EPIC-02 (Contract
+# Ingestion & OCR) all CS-050..CS-060 tickets closed; CS-051 carries a single
+# deferred AC (HTTP 409 is_duplicate) blocked by EPIC-04 / EPIC-06 ContractAnalysis
+# lookup — explicitly noted in the ticket and the EPIC-02 closure section.
 tags:
   - casa-segura
   - roadmap
@@ -42,10 +38,10 @@ Source-of-truth links:
 Phase 1 backend lane status (2026-05-16):
 
 - ✅ `done` (EPIC-03 Legal Corpus & RAG closed): CS-080..CS-090. Architecture is `intfloat/multilingual-e5-large` (1024-dim) + `BAAI/bge-reranker-v2-m3` over top-10 vectorial candidates. Corpus re-authored in Spanish. Final metrics: Strict Top-1 = 0.633, Article-level Top-3 = 0.900, Top-5 = 0.967 (revised AC; trace in CS-087 "Live calibration runs #1–#4").
-- ✅ `done`: CS-050 (multi-file `files[]` 1–50 + image dimension validator + batch caps), CS-052 (`ocr.detect_kind` 100-char threshold + `force_strategy` override), CS-053 (pypdf separators + normalization + 30s watchdog + 500-char vision escalation), CS-054 (Pixtral single-call extraction — AC re-anchored), CS-055 (Tesseract Spanish fallback mean-confidence gate at 60.0), CS-056 (language gate 2000-char window + 0.85 threshold + HTTP 422), CS-057 (discard-after-extract invariant), CS-058 (disclaimer gate), CS-060 (latency budget instrumentation with page-bucket histogram + TIMEOUT counter).
-- 🟡 `in_progress` (EPIC-02 Contract Ingestion & OCR — the only remaining blocker for Phase 1 closure): CS-051/059.
+- ✅ `done`: **EPIC-02 closed 2026-05-16**. CS-050 (multi-file `files[]` 1–50 + image dimensions + batch caps), CS-051 (multi-file SHA-256 composition), CS-052 (router 100-char threshold + `force_strategy`), CS-053 (pypdf separators + normalization + 30s watchdog + 500-char vision escalation), CS-054 (Pixtral single-call), CS-055 (Tesseract mean-confidence gate at 60.0), CS-056 (language gate + HTTP 422), CS-057 (discard-after-extract), CS-058 (disclaimer gate), CS-059 (15 MB byte cap + multi-file aggregation), CS-060 (latency budget instrumentation).
+- ✅ EPIC-03 (Legal Corpus & RAG) closed 2026-05-16 — see CS-087 calibration trace.
 
-The next backend-blocking pickup on this phase is **EPIC-02 closure**: enforce the 15 MB-per-file canonical byte cap (CS-059) and surface the multi-file SHA-256 composition in the response envelope (CS-051; 409 duplicate lookup remains blocked by EPIC-04). See [PHASE-1-config-checklist.md](PHASE-1-config-checklist.md).
+**Phase 1 closure note** — only deferred AC: CS-051 HTTP 409 `is_duplicate=true` envelope, blocked by [[EPIC-04]] / [[EPIC-06]] ContractAnalysis lookup. Tracked on the CS-051 AC checklist and the EPIC-02 closure section. See [PHASE-1-config-checklist.md](PHASE-1-config-checklist.md) for the operator checklist.
 
 Out-of-phase pickups still pending:
 
@@ -61,14 +57,14 @@ FE should keep coordinating disclaimer copy with [CS-291](../tickets/CS-291.md) 
 ## BE WORK
 
 - ~~[CS-050](../tickets/CS-050.md)~~ — **done** (multi-file `files[]` 1–50 + image dimension validator 600×800..8000×10000 + batch caps 100 MB / 80 pages; PRD-canonical error codes `too_many_files` / `total_size_too_large` / `file_too_large` / `image_dimensions_invalid`).
-- [CS-051](../tickets/CS-051.md) - Content hash for idempotency.
+- ~~[CS-051](../tickets/CS-051.md)~~ — **done** (single-file collapses to `sha256(bytes)`; multi-file is `sha256(concat(sorted_by_filename(hexhashes)))`; idempotent re-upload returns existing submission with HTTP 200; HTTP 409 `is_duplicate` AC explicitly deferred to EPIC-04 / EPIC-06).
 - ~~[CS-052](../tickets/CS-052.md)~~ — **done** (`ocr.detect_kind` with PRD §US-04 strict `> 100`-char threshold + `force_strategy` override via `X-Force-Strategy` header + BVA at 99/100/101).
 - ~~[CS-053](../tickets/CS-053.md)~~ — **done** (pypdf with `--- PAGE N ---` 1-indexed separators + NFKC/CRLF/NBSP/soft-hyphen normalization + 30s per-page wall-clock watchdog + 500-char escalation to vision via orchestrator).
 - ~~[CS-054](../tickets/CS-054.md)~~ — **done** (single-call Pixtral via OpenRouter `file-parser` plugin for PDFs + direct `image_url` for images; AC re-anchored to single-call architecture per EPIC-02 audit).
 - ~~[CS-055](../tickets/CS-055.md)~~ — **done** (Tesseract Spanish fallback with PRD §US-07 mean-confidence gate at 60.0; `-1` layout placeholders excluded; BVA 59.9/60.0/60.1 covered).
 - ~~[CS-056](../tickets/CS-056.md)~~ — **done** (PRD §US-08 language gate over first 2000 chars with strict `> 0.85` confidence + low-confidence warning log; HTTP 422 `LANGUAGE_NOT_SUPPORTED` / `TEXT_TOO_SHORT` envelopes; BVA at 0.849/0.850/0.851 covered).
 - [CS-057](../tickets/CS-057.md) - Discard-after-extract invariant and test.
-- [CS-059](../tickets/CS-059.md) - Page-count and size caps.
+- ~~[CS-059](../tickets/CS-059.md)~~ — **done** (15 MB per-file `OCR_MAX_BYTES` PRD canonical; per-file 50-page cap + combined 80-page aggregate via `_run_batch_extraction` / `_enforce_total_pages`; `.env.example` updated).
 - ~~[CS-060](../tickets/CS-060.md)~~ — **done** (`casa_segura_ingest_stage_duration_seconds` + page-bucket histogram `casa_segura_ingest_extract_pages_duration_seconds{strategy,page_bucket}` (1/2-10/11+/unknown) + `casa_segura_ingest_timeouts_total{stage,strategy}` counter; fake-clock CI test verifies bucket increments; cardinality budget called out in metrics.py docstring).
 
 ## INFRA WORK
