@@ -28,9 +28,10 @@ Source-of-truth links:
 
 ## Ready Now
 
-- **CS-131** — Effective annual rate normalization. Inputs (`AggregatedExtraction.slots`) and benchmarks (`BenchmarkVersion 2026-Q2`) are both wired; pick up `backend/economics/application/rate_normalizer.py`.
+- **CS-132** — Monthly payment alignment ratio (`monthly_payment / (price_cash / term_months)`). Reads benchmark keys `monthly_payment_ratio_*` from `BenchmarkVersion 2026-Q2`.
+- **CS-133** — Total cost paid + French amortization + 5% coherence check. Consumes `RateNormalization.annual_rate_pct` from CS-131.
 
-**CS-130 closed 2026-05-16.** 18-row catalog at `backend/fixtures/economic_benchmarks_2026q2.yaml`; `manage.py seed_benchmark_version` + `manage.py load_benchmark_catalog --activate` boot the active benchmark version. `economics.application.version.latest_active()` exposes the singleton for downstream tickets.
+**CS-130 + CS-131 closed 2026-05-16.** 21-row catalog at `backend/fixtures/economic_benchmarks_2026q2.yaml`; `manage.py seed_benchmark_version` + `manage.py load_benchmark_catalog --activate` boot the active benchmark version. `economics.application.version.latest_active()` exposes the singleton. `economics.application.rate_normalizer.normalize_annual_rate()` is the deterministic rate-canonicalizer for B2 scoring.
 
 ## FE WORK
 
