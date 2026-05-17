@@ -1,0 +1,14 @@
+---
+description: Intent-first Casa Segura frontend scan flow
+globs: frontend/src/**/*.{tsx,ts,css},docs/Design/**/*.md
+alwaysApply: false
+---
+
+# Intent-First Scan Flow
+
+- Ask what the user wants to review before showing upload UI: `contrato` or `valla publicitaria / proyecto`.
+- Do not render contract upload, document preview, and analysis workbench before intent is selected.
+- Treat billboard scan as a first-class path whenever the UI asks what to scan; do not bury it as a future-only or dead-link option.
+- Mobile and desktop may use different layouts, but both must preserve the same sequence: choose intent, upload selected asset, show matching progress/result.
+- Desktop side panels must be contextual to the selected intent: contract workbench for contracts, billboard/project verification preview for vallas.
+- Keep narrow panels column-oriented and content-sized; avoid multi-column option grids that collapse text or reserve empty vertical space.
