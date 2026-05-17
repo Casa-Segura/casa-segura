@@ -11,4 +11,11 @@ describe("getProjectVerificationFixture", () => {
   it("defaults unknown query to yellow band", () => {
     expect(getProjectVerificationFixture("nope").verdict).toBe("yellow");
   });
+
+  it("defaults malformed types to yellow band", () => {
+    expect(getProjectVerificationFixture(null).verdict).toBe("yellow");
+    expect(getProjectVerificationFixture(undefined).verdict).toBe("yellow");
+    expect(getProjectVerificationFixture(["green"]).verdict).toBe("yellow");
+    expect(getProjectVerificationFixture({ v: "green" }).verdict).toBe("yellow");
+  });
 });

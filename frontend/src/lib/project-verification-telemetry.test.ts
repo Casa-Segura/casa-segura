@@ -51,4 +51,22 @@ describe("project-verification-telemetry", () => {
     expect(JSON.parse(line).address).toBeUndefined();
     expect(JSON.parse(line).developer).toBeUndefined();
   });
+
+  it("logs contract CTA impression without PII-ish keys when enabled", () => {
+    process.env.PROJECT_VERIFICATION_TELEMETRY_LOG = "true";
+    reportProjectVerificationTelemetry({
+      event: "project_verification_contract_cta_impression",
+      route: "/verificacion-proyecto/resultado",
+    });
+    expect(console.info).toHaveBeenCalledTimes(1);
+    const [, line] = vi.mocked(console.info).mock.calls[0] as unknown as [
+      string,
+      string,
+    ];
+    expect(JSON.parse(line)).toMatchObject({
+      event: "project_verification_contract_cta_impression",
+      route: "/verificacion-proyecto/resultado",
+    });
+    expect(JSON.parse(line).developer).toBeUndefined();
+  });
 });

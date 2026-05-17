@@ -34,4 +34,16 @@ describe("isProjectVerificationEnabled", () => {
     process.env.PROJECT_VERIFICATION_ENABLED = "yes";
     expect(isProjectVerificationEnabled()).toBe(true);
   });
+
+  it("treats unknown truthy-ish strings as off (safe rollout)", () => {
+    process.env.PROJECT_VERIFICATION_ENABLED = " maybe ";
+    expect(isProjectVerificationEnabled()).toBe(false);
+    process.env.PROJECT_VERIFICATION_ENABLED = "truthy_but_not_allowlisted";
+    expect(isProjectVerificationEnabled()).toBe(false);
+  });
+
+  it("ignores leading and trailing whitespace for allowlisted on values", () => {
+    process.env.PROJECT_VERIFICATION_ENABLED = "  TRUE  ";
+    expect(isProjectVerificationEnabled()).toBe(true);
+  });
 });
