@@ -1,3 +1,4 @@
+// No-op: touch file to trigger frontend deployment; safe to remove on the next real change.
 import type { Metadata } from "next";
 import { Inter, Newsreader, Geist } from "next/font/google";
 import { DISCLAIMER_SHORT } from "@/legal/disclaimer";
