@@ -5,10 +5,11 @@ from __future__ import annotations
 import uuid
 
 import pytest
+
 from django.db import connection, transaction
 from django.utils import timezone
 
-from corpus.infrastructure.django.models import CorpusVersion, EMBEDDING_DIM, LegalChunk, LegalDocument
+from corpus.infrastructure.django.models import EMBEDDING_DIM, CorpusVersion, LegalChunk, LegalDocument
 from platform_core.infrastructure.django.models import ContractAnalysis
 from tests.factories import ContractAnalysisFactory, age_to
 

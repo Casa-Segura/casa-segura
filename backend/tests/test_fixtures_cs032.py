@@ -5,6 +5,7 @@ from __future__ import annotations
 import uuid
 
 import pytest
+
 from django.db import IntegrityError
 
 from corpus.domain.enums import SeverityHint
