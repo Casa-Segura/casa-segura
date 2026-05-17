@@ -155,7 +155,7 @@ class SubmissionDetailView(APIView):
 
     def get(self, request, submission_id):
         try:
-            submission = ContractSubmission.objects.get(pk=submission_id)
+            submission = ContractSubmission.objects.select_related("analysis").get(pk=submission_id)
         except ContractSubmission.DoesNotExist:
             return Response(
                 {"error": "not_found", "detail": "submission_id unknown"},

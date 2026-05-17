@@ -34,6 +34,8 @@ class SubmissionUploadSerializer(serializers.Serializer):
 class SubmissionResponseSerializer(serializers.ModelSerializer):
     """Stable response shape for upload/status calls."""
 
+    analysis = serializers.SerializerMethodField()
+
     class Meta:
         model = ContractSubmission
         fields = (
@@ -53,5 +55,16 @@ class SubmissionResponseSerializer(serializers.ModelSerializer):
             "error_reason",
             "received_at",
             "expires_at",
+            "analysis",
         )
         read_only_fields = fields
+
+    def get_analysis(self, obj: ContractSubmission):
+        if obj.analysis_id is None:
+            return None
+        a = obj.analysis
+        return {
+            "public_short_id": a.public_short_id,
+            "delivery_status": a.delivery_status,
+            "link_expires_at": a.link_expires_at.isoformat() if a.link_expires_at else None,
+        }

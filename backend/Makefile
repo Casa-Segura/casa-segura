@@ -65,10 +65,10 @@ shell:               ## Django shell_plus if available, else shell
 	poetry run python manage.py shell_plus 2>/dev/null || poetry run python manage.py shell
 
 celery-worker:       ## Celery worker
-	poetry run celery -A config worker -l info
+	poetry run celery -A config.celery worker -l info
 
 celery-beat:         ## Celery beat
-	poetry run celery -A config beat -l info
+	poetry run celery -A config.celery beat -l info
 
 dev-up:              ## docker compose -f ../docker-compose.dev.yml up -d
 	docker compose -f ../docker-compose.dev.yml up -d

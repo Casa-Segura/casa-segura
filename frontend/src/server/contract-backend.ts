@@ -21,6 +21,26 @@ const DEFAULT_HEADERS_ACCEPT = {
   Accept: "application/json",
 };
 
+/** Mirrors Django ``DeliveryStatus`` string literals exposed via polling payloads. */
+const CASA_DELIVERY_STATUSES = new Set([
+  "pending",
+  "queued",
+  "sent_sms",
+  "sent_email",
+  "available_link",
+  "expired",
+  "failed",
+]);
+
+export type CasaDeliveryStatus =
+  | "pending"
+  | "queued"
+  | "sent_sms"
+  | "sent_email"
+  | "available_link"
+  | "expired"
+  | "failed";
+
 export type SubmissionPostResult =
   | { ok: true; submissionId: string }
   | { ok: false; status: number; body: unknown };
@@ -89,6 +109,8 @@ export type PollTerminal =
       /** Present when BE surfaces `public_short_id` for `web_link` handoff (CS-294). */
       publicShortId?: string;
       linkExpiresAt?: string;
+      /** When submission polls nest ``analysis.delivery_status`` (EPIC-08). */
+      deliveryStatus?: CasaDeliveryStatus;
     }
   | { kind: "not_analyzable"; reasons: string[] }
   | { kind: "failed"; message: string };
@@ -116,22 +138,35 @@ function readPublicShortIdFromRecord(
   return s.length ? s : undefined;
 }
 
+function readDeliveryStatusFromRecord(
+  obj: Record<string, unknown>,
+): CasaDeliveryStatus | undefined {
+  const raw = obj["delivery_status"] ?? obj["deliveryStatus"];
+  if (typeof raw !== "string") return undefined;
+  const s = raw.trim().toLowerCase();
+  if (!s.length || !CASA_DELIVERY_STATUSES.has(s)) return undefined;
+  return s as CasaDeliveryStatus;
+}
+
 /** Pulls capability token + optional expiry from poll payloads (tolerant shapes until OpenAPI is final). */
 export function extractCompletedHandoffMeta(payload: Record<string, unknown>): {
   publicShortId?: string;
   linkExpiresAt?: string;
+  deliveryStatus?: CasaDeliveryStatus;
 } {
   let publicShortId = readPublicShortIdFromRecord(payload);
   let linkExpiresAt = readExpiresAt(payload);
+  let deliveryStatus = readDeliveryStatusFromRecord(payload);
 
   const analysis = payload["analysis"];
   if (typeof analysis === "object" && analysis !== null) {
     const arec = analysis as Record<string, unknown>;
     if (!publicShortId) publicShortId = readPublicShortIdFromRecord(arec);
     if (!linkExpiresAt) linkExpiresAt = readExpiresAt(arec);
+    if (!deliveryStatus) deliveryStatus = readDeliveryStatusFromRecord(arec);
   }
 
-  return { publicShortId, linkExpiresAt };
+  return { publicShortId, linkExpiresAt, deliveryStatus };
 }
 
 function processingStatus(payload: Record<string, unknown>): string {
@@ -185,13 +220,14 @@ export function classifyPollPayload(
       : "";
 
   if (st === "completed") {
-    const { publicShortId, linkExpiresAt } =
+    const { publicShortId, linkExpiresAt, deliveryStatus } =
       extractCompletedHandoffMeta(payload);
     return {
       kind: "completed",
       analysisHint: payload["analysis"],
       publicShortId,
       linkExpiresAt,
+      deliveryStatus,
     };
   }
 
@@ -301,6 +337,7 @@ export type FlowResult =
       channelSummary: string;
       publicShortId?: string;
       linkExpiresAt?: string;
+      deliveryStatus?: CasaDeliveryStatus;
     }
   | {
       outcome: "not_analyzable";
@@ -365,6 +402,7 @@ export async function runContractSubmissionServerFlow(
       channelSummary: channelHuman,
       publicShortId: terminal.publicShortId,
       linkExpiresAt: terminal.linkExpiresAt,
+      deliveryStatus: terminal.deliveryStatus,
     };
 
   if (terminal.kind === "not_analyzable")

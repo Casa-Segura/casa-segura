@@ -3,6 +3,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from django.contrib import admin
 from django.urls import include, path
 
+from delivery.interfaces.public_views import PublicReportHtmlView
 from shared.observability.health import health, ready
 
 swagger_url_patterns = [
@@ -41,6 +42,7 @@ api_v1_internal_url_patterns = [
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("r/<str:public_short_id>/", PublicReportHtmlView.as_view(), name="public-report-html"),
     path("api/health/", health, name="health"),
     path("api/ready/", ready, name="ready"),
     path("api/v1/schema/", include(swagger_url_patterns)),

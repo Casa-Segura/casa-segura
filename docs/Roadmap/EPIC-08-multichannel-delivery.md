@@ -26,7 +26,7 @@ tags:
 
 Deliver the rendered report through the channel the user chose at submission time: SMS summary, email PDF, or public web link with TTL. Manage delivery state, retries, and link expiration. Honor the privacy invariants in [[PRD_GENERAL]] BR-01 (no persisted report) and US-07 (hashed delivery targets, discard after confirmation).
 
-Casa Segura is Python / **Django 5.2 LTS** + **DRF** / **Django ORM**, with **Celery** on **Redis** for async work. Delivery tickets use Django services and queue workers; no Node/Fastify/Zavu implementation is part of the MVP. See [ADR-0001 — Django backend stack](../adr/ADR-0001-django-backend-stack.md).
+Casa Segura is Python / **Django 5.2 LTS** + **DRF** / **Django ORM**, with **Celery** on **Redis** for async work. Delivery tickets use Django services and queue workers (no separate Node delivery service). **Transactional email** uses the **Zavu HTTP API** (`zavudev` SDK) plus **`POST /api/v1/webhooks/zavu/`** for signed provider callbacks — this is **transport only**: user-facing channels remain **`sms_summary`**, **`email_pdf`**, and **`web_link`** ([[PRD_GENERAL]] US-05). See [ADR-0001 — Django backend stack](../adr/ADR-0001-django-backend-stack.md) and [ADR-0006 — Delivery queues & Zavu transport](../adr/ADR-0006-delivery-celery-zavu.md).
 
 ## Definition of done
 
@@ -43,7 +43,7 @@ Casa Segura is Python / **Django 5.2 LTS** + **DRF** / **Django ORM**, with **Ce
 ## In scope
 
 - `DeliveryRequest` lifecycle (already schema'd in [[EPIC-01-persistence]])
-- Email transport (SMTP or transactional API; configurable)
+- Email transport (**Zavu transactional API** primary; optional SMTP adapter behind the same interface if ops requires fallback — [[CS-235]])
 - PDF generation orchestration — uses output of [[EPIC-07-report-generation]]
 - SMS provider wrapper (thin adapter around the configured transactional SMS provider)
 - SMS message composer with strict segment-budget guardrails
@@ -57,7 +57,7 @@ Casa Segura is Python / **Django 5.2 LTS** + **DRF** / **Django ORM**, with **Ce
 
 - Inbound SMS conversations (receiving photos/PDFs over SMS) — not in MVP; web upload remains primary
 - Report HTML/PDF generation — [[EPIC-07-report-generation]]
-- WhatsApp/Zavu or other channels not in [[PRD_GENERAL]] US-05
+- **WhatsApp as a user-selected delivery channel** or other channels beyond the three in [[PRD_GENERAL]] US-05 — **Zavu behind `email_pdf` is in scope** as API/webhook transport only (not a fourth picker option)
 - Per-user delivery history UI — there is no user account ([[PRD_GENERAL]] D3)
 
 ## Dependencies
@@ -77,7 +77,7 @@ Casa Segura is Python / **Django 5.2 LTS** + **DRF** / **Django ORM**, with **Ce
 
 ### Email channel
 
-- [[CS-235]] — Email transport client (SMTP or transactional API)
+- [[CS-235]] — Email transport client (**Zavu SDK primary**; optional SMTP adapter)
 - [[CS-236]] — Email composition: subject, body, PDF attachment, disclaimer
 - [[CS-237]] — Email delivery handler wired to the queue
 
@@ -88,7 +88,7 @@ Casa Segura is Python / **Django 5.2 LTS** + **DRF** / **Django ORM**, with **Ce
 - [[CS-240]] — SMS summary composer (score + link, Spanish, "tú")
 - [[CS-241]] — SMS delivery handler wired to the queue with rate limiter
 - [[CS-242]] — SMS provider callback endpoint if provider supports delivery status callbacks
-- [[CS-243]] — SMS/SMTP error handling: INVALID_PHONE_NUMBER, RATE_LIMITED, PROVIDER_UNAVAILABLE, generic
+- [[CS-243]] — SMS / email (Zavu + optional SMTP) error normalization for retries
 - [[CS-244]] — `SMS_*` provider secrets wired through [[CS-006]] secrets baseline
 
 ### Web link channel
@@ -96,6 +96,10 @@ Casa Segura is Python / **Django 5.2 LTS** + **DRF** / **Django ORM**, with **Ce
 - [[CS-245]] — Public link route (`GET /r/{public_short_id}`) with TTL gate
 - [[CS-246]] — Expired-link friendly response per [[PRD_GENERAL]] US-05
 - [[CS-247]] — On-demand report regeneration (no persistence per BR-01)
+
+### Provider webhooks
+
+- [[CS-357]] — Zavu webhook reconciliation (`DeliveryRequest` by `provider_message_id`)
 
 ### Resend and integrity
 
