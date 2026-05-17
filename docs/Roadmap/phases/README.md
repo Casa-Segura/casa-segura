@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: phase_index
 status: living
-last_updated: 2026-05-17
+last_updated: 2026-05-17  # EPIC-04 cerrada (PR-0..PR-7)
 tags:
   - casa-segura
   - roadmap
@@ -38,6 +38,8 @@ Use this folder as a phase-first pick list for parallel work:
 - [CS-001](../tickets/CS-001.md) — **`done`** (2026-05-17) — canonical public repo ([github.com/Casa-Segura/casa-segura](https://github.com/Casa-Segura/casa-segura)), root README + BR-07 posture, commit-signing policy in [`AGENTS.md`](../../../AGENTS.md#commit-signing-policy).
 - [[CS-270]](../tickets/CS-270.md) — **`done`** (2026-05-16) — retention scheduler ADR landed; harness + CI documented in [`ADR-0005`](../adr/ADR-0005-retention-job-scheduling.md).
 - [EPIC-10 - Frontend Web App](../EPIC-10-frontend.md) - **`done` (2026-05-16).** Deploy + device QA tracked in [CS-298](../tickets/CS-298.md) and [CS-299](../tickets/CS-299.md).
+
+**EPIC-04 (Classification & Field Extraction) cerrada 2026-05-17.** CS-110..CS-116 + CS-031 AC4 → `done`. Pipeline F2 (`backend/classification/application/orchestrator.py::F2Orchestrator`) encadena clasificación + leasing + project + economic + aggregate, persiste en `ContractAnalysis` vía las columnas F2 §5.1 añadidas por `platform_core/0005_classification_f2_fields.py`. Endpoint interno `POST /api/v1/internal/classify` (DRF, `IsInternal`); CI gate `.github/workflows/classification-eval.yml`. Phase 2 cerrada; EPIC-06 (Rubric) desbloqueada.
 
 **In flight:** EPIC-12 optional verification work: [CS-356](../tickets/CS-356.md), [CS-351](../tickets/CS-351.md), [CS-355](../tickets/CS-355.md) are **`in_progress`** across `frontend/` and gated Django stubs under `PROJECT_VERIFICATION_ENABLED` (matrix: [`project-verification-fe-be-gates.md`](../../guides/project-verification-fe-be-gates.md)).
 

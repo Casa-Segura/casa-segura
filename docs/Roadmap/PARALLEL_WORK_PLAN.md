@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: parallel_work_plan
 status: living
-last_updated: 2026-05-17
+last_updated: 2026-05-17  # EPIC-04 cerrada (PR-0..PR-7)
 tags:
   - casa-segura
   - roadmap
@@ -22,6 +22,8 @@ Use this plan to decide who owns which folder, which tickets are safe to start, 
 - **EPIC-12** — Optional project verification: [`CS-356`](tickets/CS-356.md) / [`CS-351`](tickets/CS-351.md) / [`CS-355`](tickets/CS-355.md) are **`in_progress`** (`frontend/` + gated Django stubs; enable FE/BE independently only with awareness of mismatch behaviour documented in [`project-verification-fe-be-gates.md`](../guides/project-verification-fe-be-gates.md)).
 
 **EPIC-03 (Legal Corpus & RAG) cerrado 2026-05-16.** CS-080..CS-090 → `done`. Stack productivo: `intfloat/multilingual-e5-large` (1024-dim, prefijos `passage:`/`query:`) + `BAAI/bge-reranker-v2-m3` sobre top-10 pgvector. AC revisado: Top-1 ≥ 0.60 ∧ Top-3 ≥ 0.85 ∧ Top-5 ≥ 0.95 (lo cumple en 0.633 / 0.900 / 0.967). Trace en [`CS-087`](tickets/CS-087.md) — "Live calibration runs #1–#4". **Phase 1 cerrada 2026-05-16.** EPIC-02 (Contract Ingestion & OCR) → `done`. CS-050..CS-060 todos cerrados (multi-file `files[]` 1–50 + image dims + batch caps; router 100-char threshold + `force_strategy`; pypdf separators + normalization + 30s watchdog + 500-char vision escalation; Pixtral single-call; Tesseract mean-confidence gate; PRD §US-08 language gate + HTTP 422; multi-file SHA-256 idempotency; 15 MB byte cap; latency-budget instrumentation). Único AC diferido: CS-051 HTTP 409 `is_duplicate=true` envelope — bloqueado por EPIC-04 / EPIC-06 (ContractAnalysis lookup).
+
+**EPIC-04 (Classification & Field Extraction) cerrada 2026-05-17.** CS-110..CS-116 + CS-031 AC4 → `done`. Stack shipped en 8 PRs (PR-0 schema F2 §5.1 → PR-7 CI gate eval). Pipeline: `F2Orchestrator.run(submission_hash, extracted_text)` encadena clasificación (PRD §US-01 bandas + §8.3 validator) → leasing detect (4-of-6 LAF + severidad none/low/medium/high) → project name extract + linker (BR-05 collision + BR-06 placeholders) → economic extraction (`(1+m)^12 - 1` + señal `AMBIGUOUS`) → aggregator (precedencia AMBIGUOUS > INVALID > NOT_PRESENT > PRESENT + precursor `interest_calculation_base_unfavorable`) → single transactional write a `ContractAnalysis` (idempotente por `submission_hash`). Endpoint interno: `POST /api/v1/internal/classify` con `IsInternal` (header `X-Internal-Token` vs `settings.INTERNAL_API_TOKEN`). CI gate: `.github/workflows/classification-eval.yml` (workflow_dispatch + nightly cron + label `eval:classification`). 349/349 tests verdes; ruff clean. EPIC-06 (Rubric) ahora desbloqueada con contrato estable en `ContractAnalysis`.
 
 **EPIC-05 (Economic Analysis & Benchmarks) cerrada 2026-05-16.** CS-130..CS-137 → `done`. Pipeline determinístico (sin LLM, PRD_F5 BR-13) en `backend/economics/`: catálogo `economic_benchmarks_2026q2.yaml` versionado con seeder + loader (CS-130), normalizador de tasa compuesto `(1+m)^12-1` (CS-131), ratio cuota/línea-base con banda `MonthlyRatioBand` (CS-132), `TotalCostBundle` con amortización francesa y coherence BR-07 al 5% (CS-133), `BenchmarkComparison` y `Overcost` con asimetría BR-02 / BR-11 (CS-134), assembler `analyze()` que emite el contrato `ECONOMIC_SUMMARY_CONTRACT.md` con dedup por `(code, related_field)` (CS-135), stamping byte-equal de `benchmark_version` + señal de stale BR-12 (CS-136), y cross-checks `down_payment_inconsistent` + `total_cost_not_disclosed` + honestidad BR-09 (CS-137). 103 tests en la suite económica.
 
