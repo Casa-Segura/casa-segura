@@ -28,9 +28,10 @@ Source-of-truth links:
 
 ## Ready Now
 
-- **CS-134** — Benchmark comparisons + overcost USD (segment selection, asymmetric bands, substitution re-amort). Consumes `BenchmarkCatalog` (lands with CS-135) + `TotalCostBundle` from CS-133.
+- **CS-135** — `EconomicSummary` pydantic + `analyze()` assembler that orchestrates CS-131..CS-134 outputs and emits the persisted JSON shape per `docs/analysis/F5_analisis_economico/ECONOMIC_SUMMARY_CONTRACT.md`.
+- **CS-137** — Renormalization / insufficient-data path (depends on CS-135).
 
-**CS-130 + CS-131 + CS-132 + CS-133 closed 2026-05-16.** Catalog + active singleton, rate canonicalizer, monthly-payment-ratio band classifier, and `TotalCostBundle` (financed resolution, French amort theoretical, total cost paid + multiplier, BR-07 coherence). All four are independent pure modules; CS-135 will assemble them under one `analyze()` entrypoint.
+**CS-130 through CS-134 closed 2026-05-16.** Catalog (CS-130), rate canonicalizer (CS-131), monthly-payment-ratio classifier (CS-132), `TotalCostBundle` with French amort + BR-07 coherence (CS-133), and `BenchmarkComparison` / `Overcost` with BR-02 / BR-11 asymmetric guards (CS-134). All five are independent pure modules; CS-135 will assemble them under one `analyze()` entrypoint that returns the JSON contract.
 
 ## FE WORK
 
