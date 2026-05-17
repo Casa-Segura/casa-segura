@@ -2,7 +2,7 @@
 id: EPIC-09
 name: Retention & Privacy Jobs
 phase: 6
-status: backlog
+status: in_progress
 depends_on:
   - EPIC-01
   - EPIC-08
@@ -16,12 +16,11 @@ tags:
   - casa-segura
   - epic
   - epic-09
-  - stub
 ---
 
 # EPIC-09 — Retention & Privacy Jobs
 
-> **Stub.** Epic-level only. Tickets fleshed out in second pass.
+> **Progress (2026-05-17):** Transient cleanup (**[[CS-271]]**), delivery-target wipe (**[[CS-272]]**), and link expiry (**[[CS-274]]**) ship under `platform_core.worker.retention` + django-celery-beat migration `0006_retention_beat_schedules`. **[[CS-273]]** (anonymize), **[[CS-275]]** (project metrics), and **[[CS-276]]** (audit rows) remain.
 
 ## Goal
 
@@ -30,10 +29,10 @@ Operate the privacy invariants over time: cleanup of transient submissions / OCR
 ## Definition of done
 
 - [ ] Cron jobs run on a schedule and are idempotent
-- [ ] `ContractSubmission` and `OcrJob` rows past `expires_at` are deleted
-- [ ] `DeliveryRequest.target_value_encrypted` cleared after successful delivery
+- [x] `ContractSubmission` and `OcrJob` rows past `expires_at` are deleted
+- [x] `DeliveryRequest.target_value_encrypted` cleared after successful delivery
 - [ ] `ContractAnalysis` older than 90 days is anonymized per [[PRD_GENERAL]] US-07 (target hash cleared, economic summary bucketed)
-- [ ] `delivery_status = expired` set on links past `link_expires_at`
+- [x] `delivery_status = expired` set on links past `link_expires_at`
 - [ ] `Project.avg_score` recomputed when underlying analyses change
 - [ ] Anonymization is irreversible and recorded in an audit log row (count + timestamp, no PII)
 

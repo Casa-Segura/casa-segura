@@ -282,6 +282,11 @@ SMS_WEBHOOK_SECRET = env("SMS_WEBHOOK_SECRET", default="")
 # ─── Public HTML report link TTL — worker ``web_link`` + GET `/r/<id>/` (maps ``REPORT_LINK_TTL_DAYS``) ───
 PUBLIC_REPORT_LINK_TTL_DAYS = env.int("REPORT_LINK_TTL_DAYS", default=30)
 
+# ─── Retention jobs (PRD F8 §6.3, ADR-0005, CS-271+) ───
+JOB_BATCH_SIZE = env.int("JOB_BATCH_SIZE", default=100)
+DELIVERY_TARGET_ERASE_GRACE_SECONDS = env.int("DELIVERY_TARGET_ERASE_GRACE_SECONDS", default=300)
+ANONYMIZATION_AFTER_DAYS = env.int("ANONYMIZATION_AFTER_DAYS", default=90)
+
 
 # ─── Optional project verification (EPIC-12 / CS-356) ───
 # Mirrors `frontend` `PROJECT_VERIFICATION_ENABLED`; default-off for safe prod rollouts.

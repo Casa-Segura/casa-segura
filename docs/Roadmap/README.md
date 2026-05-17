@@ -53,7 +53,7 @@ For day-to-day pickup, start with the phase-first team index in [phases/README.m
 | [[EPIC-06-rubric-engine]] | Rubric Engine & Scoring | F4 | Done — Definition of done complete (38 criteria + overrides + BVA / Hypothesis + BR-16 scoring stamp + public TTL HTML wired to canonical `generate_report_html`). |
 | [[EPIC-07-report-generation]] | Report Generation | F6 | Done — HTML/PDF in `backend/reports/`; delivery TTL route uses same façade (`CS-247`). |
 | [[EPIC-08-multichannel-delivery]] | Multi-Channel Delivery | F7 | In progress — backend delivery stack shipped (`CS-230`..`CS-248`, `CS-357`); channel picker at submission still open (see EPIC-08 DoD). |
-| [[EPIC-09-retention-privacy]] | Retention & Privacy Jobs | F8 part 2 | Backlog — scheduler contract shipped ([[CS-270]] / [`ADR-0005`](../adr/ADR-0005-retention-job-scheduling.md); execution jobs queued per tickets). |
+| [[EPIC-09-retention-privacy]] | Retention & Privacy Jobs | F8 part 2 | In progress — transient cleanup + delivery-target wipe + link expiry shipped (**[[CS-271]]**, **[[CS-272]]**, **[[CS-274]]**); anonymization (**[[CS-273]]**), project metrics (**[[CS-275]]**), audit (**[[CS-276]]**) remain. Scheduler: [[CS-270]] / [`ADR-0005`](../adr/ADR-0005-retention-job-scheduling.md). |
 | [[EPIC-10-frontend]] | Frontend Web App | — | Done |
 | [[EPIC-11-observability]] | Observability, Security, Disclaimers | — | Backlog (stub) |
 | [[EPIC-12-project-verification]] | Project Verification (Billboard OCR + Form) | — (separate flow) | In progress — guarded Next.js flows + gated Django stubs (see Parallel Work Plan + [`project-verification-fe-be-gates.md`](../guides/project-verification-fe-be-gates.md)). |
