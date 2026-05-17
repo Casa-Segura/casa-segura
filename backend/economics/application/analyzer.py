@@ -35,6 +35,7 @@ from economics.application.benchmark_comparator import (
 from economics.application.catalog import BenchmarkCatalog
 from economics.application.payment_ratio import compute_monthly_ratio
 from economics.application.rate_normalizer import normalize_annual_rate
+from economics.application.renormalizer import detect_precursors
 from economics.application.total_cost import compute_total_cost
 from economics.application.warning_catalog import to_warning_or_none
 from economics.domain.benchmark_comparison import BenchmarkComparison
@@ -97,11 +98,13 @@ def analyze(
         has_developer_direct_hint=has_developer_direct_hint,
     )
 
-    # 5. Aggregate warning precursors and translate to structured warnings.
+    # 5. Aggregate warning precursors (including CS-137 renormalizer
+    #    cross-slot checks) and translate to structured warnings.
     precursor_codes: list[str] = []
     precursor_codes.extend(extraction.warning_precursors)
     precursor_codes.extend(rate.warning_precursors)
     precursor_codes.extend(bundle.warning_precursors)
+    precursor_codes.extend(detect_precursors(extraction, bundle))
     warnings = _build_warnings(precursor_codes)
 
     # 6. Build top-level summary.

@@ -28,10 +28,7 @@ Source-of-truth links:
 
 ## Ready Now
 
-- **CS-135** — `EconomicSummary` pydantic + `analyze()` assembler that orchestrates CS-131..CS-134 outputs and emits the persisted JSON shape per `docs/analysis/F5_analisis_economico/ECONOMIC_SUMMARY_CONTRACT.md`.
-- **CS-137** — Renormalization / insufficient-data path (depends on CS-135).
-
-**CS-130 through CS-134 closed 2026-05-16.** Catalog (CS-130), rate canonicalizer (CS-131), monthly-payment-ratio classifier (CS-132), `TotalCostBundle` with French amort + BR-07 coherence (CS-133), and `BenchmarkComparison` / `Overcost` with BR-02 / BR-11 asymmetric guards (CS-134). All five are independent pure modules; CS-135 will assemble them under one `analyze()` entrypoint that returns the JSON contract.
+**EPIC-05 closed 2026-05-16.** All 8 tickets (CS-130..CS-137) shipped. The deterministic F5 pipeline is live: `backend/economics/application/analyzer.py::analyze(extraction, *, catalog)` returns an `EconomicSummary` matching `docs/analysis/F5_analisis_economico/ECONOMIC_SUMMARY_CONTRACT.md`, with version stamping (CS-136), BR-09 honesty guard (CS-137), and zero LLM calls anywhere in `backend/economics/` (PRD_F5 BR-13). Next phase: EPIC-06 rubric engine consumes `EconomicSummary.fields_derived` + `benchmark_comparisons` for category B scoring.
 
 ## FE WORK
 
