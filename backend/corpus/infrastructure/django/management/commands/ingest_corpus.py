@@ -12,8 +12,13 @@ published catalog rows; you must bump the version).
 
 Usage:
 
-    python manage.py ingest_corpus --version 2026-05-15 --activate
-    python manage.py ingest_corpus --version 2026-05-15 --root docs/RAG\\ Legal\\ context/
+    python manage.py ingest_corpus --corpus-version 2026-05-15 --activate
+    python manage.py ingest_corpus --corpus-version 2026-05-15 --root docs/RAG\\ Legal\\ context/
+
+Note: the option is named `--corpus-version` (not `--version`) because
+Django's `BaseCommand` reserves `--version` for printing the Django
+version, and registering a second `--version` raises `ArgumentError` at
+parser construction time.
 """
 
 from __future__ import annotations
@@ -41,8 +46,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser) -> None:
         parser.add_argument(
-            "--version",
+            "--corpus-version",
             required=True,
+            dest="corpus_version",
             help="Corpus version tag, e.g. 2026-05-15 or v1.",
         )
         parser.add_argument(
@@ -62,7 +68,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options) -> None:
-        version_tag: str = options["version"]
+        version_tag: str = options["corpus_version"]
         root_arg: str | None = options["root"]
         activate: bool = options["activate"]
         dry_run: bool = options["dry_run"]
