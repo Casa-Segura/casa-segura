@@ -90,7 +90,7 @@ export default function Home() {
           </div>
 
           <div className="hidden lg:block">
-            <DocumentPreview active className="mx-auto max-w-[620px]" />
+            <DocumentPreview phase="result" className="mx-auto max-w-[620px]" />
           </div>
         </section>
 

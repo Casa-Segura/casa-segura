@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { DownloadSimple, ShareNetwork } from "@phosphor-icons/react";
+import { CheckCircle, DownloadSimple, ShareNetwork } from "@phosphor-icons/react";
 import {
   BrandMark,
   CasaButton,
@@ -12,6 +12,7 @@ import {
   ProgressTimeline,
   SkeletonBlock,
   StatusPill,
+  cx,
   type ProgressStep,
 } from "@/components/casa-ui";
 
@@ -64,28 +65,40 @@ export function AnalysisWorkbench({
 }) {
   const complete = mode === "complete";
   const loading = mode === "loading";
+  const preview = !loading && !complete;
+  const showOutcomeActions = complete;
   const reduceMotion = useReducedMotion();
   const enter = reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 };
   const leave = reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -8 };
 
   return (
     <section
-      className="hidden min-h-[760px] overflow-hidden rounded-[var(--radius-panel)] border border-border bg-surface-muted shadow-[var(--shadow-panel)] lg:flex"
+      className={cx(
+        "hidden overflow-hidden rounded-[var(--radius-panel)] border border-border bg-surface-muted shadow-[var(--shadow-panel)] lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]",
+        preview ? "min-h-[520px]" : "min-h-[760px]",
+      )}
       aria-label="Mesa de análisis del contrato"
     >
-      <div className="flex min-w-0 flex-1 flex-col border-r border-border bg-surface">
+      <div className="flex min-h-0 min-w-0 flex-col border-r border-border bg-surface">
         <header className="flex min-h-[52px] items-center justify-between border-b border-border px-5">
           <BrandMark />
           <span className="min-w-0 truncate text-xs font-medium text-text-secondary">
-            Contrato_Venta_Rivas.pdf
+            {preview
+              ? "Sin documento aún"
+              : loading
+                ? "Leyendo tu contrato…"
+                : "Contrato_Venta_Rivas.pdf"}
           </span>
         </header>
         <div className="flex flex-1 items-center justify-center bg-surface-muted p-6">
-          <DocumentPreview active={loading || complete} className="w-full max-w-[560px]" />
+          <DocumentPreview
+            phase={loading ? "scanning" : complete ? "result" : "idle"}
+            className="w-full max-w-[560px]"
+          />
         </div>
       </div>
 
-      <aside className="flex w-[440px] flex-col bg-surface-muted">
+      <aside className="flex min-h-0 min-w-0 flex-col bg-surface-muted">
         <header className="flex min-h-[52px] items-center justify-between border-b border-border bg-surface px-5">
           {loading ? (
             <StatusPill tone="yellow" pulse>
@@ -129,7 +142,7 @@ export function AnalysisWorkbench({
                 <ProgressTimeline steps={defaultSteps} progress={58} />
                 <SkeletonPanel />
               </motion.div>
-            ) : (
+            ) : complete ? (
               <motion.div
                 key="complete"
                 initial={enter}
@@ -165,24 +178,83 @@ export function AnalysisWorkbench({
                   />
                 </div>
               </motion.div>
+            ) : (
+              <motion.div
+                key="preview"
+                initial={enter}
+                animate={{ opacity: 1, y: 0 }}
+                exit={leave}
+                transition={{ type: "spring", stiffness: 130, damping: 22 }}
+              >
+                <PreviewCompanionPanel />
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        <footer className="border-t border-border bg-surface p-4">
-          <div className="grid grid-cols-2 gap-3">
-            <CasaButton variant="secondary" className="text-sm">
-              <ShareNetwork size={16} aria-hidden />
-              Compartir
-            </CasaButton>
-            <CasaLinkButton href="/subir" className="text-sm">
-              <DownloadSimple size={16} aria-hidden />
-              Nuevo análisis
-            </CasaLinkButton>
-          </div>
-        </footer>
+        {showOutcomeActions ? (
+          <footer className="border-t border-border bg-surface p-4">
+            <div className="grid grid-cols-2 gap-3">
+              <CasaButton variant="secondary" className="text-sm">
+                <ShareNetwork size={16} aria-hidden />
+                Compartir
+              </CasaButton>
+              <CasaLinkButton href="/subir" className="text-sm">
+                <DownloadSimple size={16} aria-hidden />
+                Nuevo análisis
+              </CasaLinkButton>
+            </div>
+          </footer>
+        ) : null}
       </aside>
     </section>
+  );
+}
+
+function PreviewCompanionPanel() {
+  const bullets = [
+    "Un resumen con puntaje orientativo y mensaje claro.",
+    "Pasos del análisis (lectura, criterios, reporte).",
+    "Hallazgos por severidad: crítico, atención y correcto.",
+  ];
+
+  return (
+    <div className="flex flex-col gap-5">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          Antes de enviar
+        </p>
+        <h2 className="mt-2 text-xl font-semibold tracking-tight text-text-primary">
+          Así se verá tu informe en escritorio
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+          Esta columna se llena cuando el análisis corre de verdad: primero verás
+          el progreso y placeholders animados, después el resultado completo.
+          Todavía no hay datos de tu contrato.
+        </p>
+      </div>
+      <section
+        className="rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-[var(--shadow-soft)]"
+        aria-label="Qué incluye el informe"
+      >
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-text-secondary">
+          Incluye
+        </p>
+        <ul className="mt-3 flex flex-col gap-3 text-sm text-text-primary">
+          {bullets.map((line) => (
+            <li key={line} className="flex gap-3">
+              <CheckCircle
+                size={20}
+                className="mt-0.5 shrink-0 text-accent"
+                weight="fill"
+                aria-hidden
+              />
+              <span className="leading-relaxed">{line}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
   );
 }
 

@@ -21,6 +21,10 @@ export function cx(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(" ");
 }
 
+/** Equal-width desktop columns: primary flow (form) + companion panel (preview / workbench). */
+export const scanFlowDesktopSplitGridClass =
+  "grid w-full gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start";
+
 type Tone = "neutral" | "accent" | "green" | "yellow" | "red";
 
 const toneClasses: Record<Tone, string> = {
@@ -369,48 +373,117 @@ export function LegalSummary({
 }
 
 export function DocumentPreview({
-  active = false,
+  phase = "idle",
   className,
 }: {
-  active?: boolean;
+  /** idle: esperando envío · scanning: lectura en curso (shimmer) · resultado con resaltados */
+  phase?: "idle" | "scanning" | "result";
   className?: string;
 }) {
+  const ariaScan =
+    phase === "scanning"
+      ? "Leyendo el contrato (vista previa animada)"
+      : phase === "result"
+        ? "Vista previa del contrato con áreas resaltadas"
+        : "Espacio donde aparecerá tu contrato después del envío";
+
   return (
     <div
       className={cx(
         "rounded-[var(--radius-panel)] border border-border bg-document-bg p-4 shadow-[var(--shadow-panel)]",
         className,
       )}
-      aria-label="Vista previa del contrato"
+      aria-label={ariaScan}
     >
       <div className="mb-3 flex items-center justify-between rounded-[var(--radius-input)] border border-border bg-surface-subtle px-3 py-2 text-xs text-text-secondary">
-        <span className="inline-flex items-center gap-2">
-          <FileText size={14} aria-hidden />
-          Contrato_Venta_Rivas.pdf
+        <span className="inline-flex min-w-0 items-center gap-2">
+          <FileText size={14} className="shrink-0" aria-hidden />
+          <span className="truncate">
+            {phase === "idle"
+              ? "Aún sin documento"
+              : "Contrato_Venta_Rivas.pdf"}
+          </span>
         </span>
-        <span>Página 1 de 4</span>
+        <span className="shrink-0 tabular-nums">
+          {phase === "idle" ? "—" : "Página 1 de 4"}
+        </span>
       </div>
-      <div className="min-h-[360px] rounded-[10px] bg-surface p-6 shadow-sm">
-        <div className="mb-7 h-3 w-40 rounded-full bg-border" />
-        <DocumentLine width="w-full" />
-        <DocumentLine width="w-11/12" />
-        <DocumentLine width="w-10/12" />
-        <DocumentHighlight tone="green" active={active} />
-        <DocumentLine width="w-full" />
-        <DocumentLine width="w-9/12" />
-        <DocumentHighlight tone="red" active={active} />
-        <DocumentLine width="w-11/12" />
-        <DocumentLine width="w-8/12" />
-        <DocumentHighlight tone="yellow" active={active} />
-        <DocumentLine width="w-full" />
-        <DocumentLine width="w-10/12" />
-      </div>
+
+      {phase === "idle" ? (
+        <div className="flex min-h-[280px] flex-col items-center justify-center rounded-[10px] border border-dashed border-border bg-surface px-6 py-10 text-center shadow-sm">
+          <span className="inline-flex size-14 items-center justify-center rounded-full bg-accent-light text-accent">
+            <FileText size={28} aria-hidden />
+          </span>
+          <p className="mt-5 text-sm font-semibold text-text-primary">
+            Tu documento aparecerá aquí
+          </p>
+          <p className="mt-2 max-w-[34ch] text-sm leading-relaxed text-text-secondary">
+            Cuando envíes el contrato, esta vista mostrará la lectura en curso
+            y luego los fragmentos que destacamos para el informe.
+          </p>
+        </div>
+      ) : (
+        <div className="min-h-[320px] rounded-[10px] bg-surface p-6 shadow-sm">
+          {phase === "scanning" ? (
+            <>
+              <DocumentLine shimmer width="w-40" />
+              <DocumentLine shimmer width="w-full" />
+              <DocumentLine shimmer width="w-11/12" />
+              <DocumentLine shimmer width="w-10/12" />
+              <DocumentLine shimmer dense={false} width="w-full" />
+              <DocumentLine shimmer width="w-full" />
+              <DocumentLine shimmer width="w-9/12" />
+              <DocumentLine shimmer dense={false} width="w-11/12" />
+              <DocumentLine shimmer width="w-11/12" />
+              <DocumentLine shimmer width="w-8/12" />
+              <DocumentLine shimmer width="w-full" />
+              <DocumentLine shimmer width="w-10/12" />
+            </>
+          ) : (
+            <>
+              <div className="mb-7 h-3 w-40 rounded-full bg-border" />
+              <DocumentLine width="w-full" />
+              <DocumentLine width="w-11/12" />
+              <DocumentLine width="w-10/12" />
+              <DocumentHighlight tone="green" active />
+              <DocumentLine width="w-full" />
+              <DocumentLine width="w-9/12" />
+              <DocumentHighlight tone="red" active />
+              <DocumentLine width="w-11/12" />
+              <DocumentLine width="w-8/12" />
+              <DocumentHighlight tone="yellow" active />
+              <DocumentLine width="w-full" />
+              <DocumentLine width="w-10/12" />
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-function DocumentLine({ width }: { width: string }) {
-  return <div className={cx("mb-2 h-2 rounded-full bg-border", width)} />;
+function DocumentLine({
+  width,
+  shimmer = false,
+  dense = true,
+}: {
+  width: string;
+  shimmer?: boolean;
+  /** false = barra más alta (simula bloque en lectura) */
+  dense?: boolean;
+}) {
+  return (
+    <div
+      className={cx(
+        "rounded-full",
+        dense ? "mb-2 h-2" : "my-3 h-3",
+        shimmer
+          ? "relative overflow-hidden bg-border/70 before:absolute before:inset-y-0 before:left-[-100%] before:w-full before:bg-gradient-to-r before:from-transparent before:via-white/55 before:to-transparent motion-safe:before:animate-[casa-shimmer_1.35s_ease-in-out_infinite] motion-reduce:before:hidden"
+          : "bg-border",
+        width,
+      )}
+    />
+  );
 }
 
 function DocumentHighlight({

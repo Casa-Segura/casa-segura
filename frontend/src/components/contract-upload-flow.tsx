@@ -15,6 +15,7 @@ import {
   StepPill,
   cx,
   focusRing,
+  scanFlowDesktopSplitGridClass,
 } from "@/components/casa-ui";
 import { DisclaimerCallout } from "@/components/disclaimer-callout";
 import { DeliveryChannelFields } from "@/components/delivery-channel-fields";
@@ -248,7 +249,7 @@ export function ContractUploadFlow() {
   };
 
   return (
-    <div className="grid w-full gap-6 lg:grid-cols-[minmax(360px,440px)_1fr] lg:items-start">
+    <div className={scanFlowDesktopSplitGridClass}>
       {busy ? (
         <div className="lg:hidden">
           <ContractAnalysisLoadingPanel key={loadingSession} />

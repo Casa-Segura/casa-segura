@@ -10,6 +10,8 @@ import {
 
 const initialState: BillboardUploadFormState | null = null;
 
+export type BillboardDesktopCompanionPhase = "idle" | "loading" | "complete";
+
 function formErrorFromState(
   state: BillboardUploadFormState | null,
 ): string | null {
@@ -17,7 +19,12 @@ function formErrorFromState(
   return state.formError;
 }
 
-export function ProjectVerificationBillboardUploadForm() {
+export function ProjectVerificationBillboardUploadForm({
+  onCompanionPhaseChange,
+}: {
+  /** Sincroniza la mesa de escritorio `/subir` (valla) con el estado del envío. */
+  onCompanionPhaseChange?: (phase: BillboardDesktopCompanionPhase) => void;
+} = {}) {
   const [state, formAction, pending] = useActionState(
     submitProjectVerificationBillboardUpload,
     initialState,
@@ -43,6 +50,16 @@ export function ProjectVerificationBillboardUploadForm() {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
+
+  useEffect(() => {
+    if (!onCompanionPhaseChange) return;
+    const phase: BillboardDesktopCompanionPhase = pending
+      ? "loading"
+      : state?.ok
+        ? "complete"
+        : "idle";
+    onCompanionPhaseChange(phase);
+  }, [pending, state?.ok, onCompanionPhaseChange]);
 
   return (
     <form action={formAction} className="flex flex-col gap-5" noValidate>
