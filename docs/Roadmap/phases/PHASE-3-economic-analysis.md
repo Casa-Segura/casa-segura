@@ -28,9 +28,9 @@ Source-of-truth links:
 
 ## Ready Now
 
-- **CS-133** — Total cost paid + French amortization + 5% coherence check. Consumes `RateNormalization.annual_rate_pct` from CS-131.
+- **CS-134** — Benchmark comparisons + overcost USD (segment selection, asymmetric bands, substitution re-amort). Consumes `BenchmarkCatalog` (lands with CS-135) + `TotalCostBundle` from CS-133.
 
-**CS-130 + CS-131 + CS-132 closed 2026-05-16.** 21-row catalog + active singleton (CS-130), deterministic rate canonicalizer (CS-131), monthly-payment-ratio band classifier (CS-132 — `compute_monthly_ratio` + `MonthlyRatioBand`).
+**CS-130 + CS-131 + CS-132 + CS-133 closed 2026-05-16.** Catalog + active singleton, rate canonicalizer, monthly-payment-ratio band classifier, and `TotalCostBundle` (financed resolution, French amort theoretical, total cost paid + multiplier, BR-07 coherence). All four are independent pure modules; CS-135 will assemble them under one `analyze()` entrypoint.
 
 ## FE WORK
 
