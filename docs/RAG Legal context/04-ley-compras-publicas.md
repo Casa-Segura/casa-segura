@@ -21,104 +21,104 @@ covers:
   - RUPES (Unique Registry of State Providers)
   - bidding methods and thresholds
 note: |
-  This file is a structured summary based on the U.S. ITA market intelligence
-  article and the Asamblea Legislativa announcement. The full text was not
-  directly accessible at retrieval time (asamblea.gob.sv blocked the fetch).
-  When the full decree is downloaded, expand each section with article-level
-  citations.
+  Este archivo es un resumen estructurado basado en el artículo de inteligencia
+  de mercado de la ITA de EE. UU. y el anuncio de la Asamblea Legislativa. El
+  texto completo no fue directamente accesible al momento de la recuperación
+  (asamblea.gob.sv bloqueó la descarga). Cuando el decreto completo se descargue,
+  expandir cada sección con citas a nivel de artículo.
 ---
 
 # Ley de Compras Públicas (LCP)
 
-## Plain-language summary
+## Resumen en lenguaje sencillo
 
-The new Public Procurement Law (LCP) approved by the Legislative Assembly on 25 January 2023 and in force since 10 March 2023 regulates **all government procurement** by central agencies, autonomous entities, and municipalities using public funds. It replaces the Procurement and Contracting of the Public Administration Law (LACAP).
+La nueva Ley de Compras Públicas (LCP) aprobada por la Asamblea Legislativa el 25 de enero de 2023 y en vigencia desde el 10 de marzo de 2023 regula **todas las compras públicas** realizadas por entidades del gobierno central, entidades autónomas y municipalidades que utilicen fondos públicos. Sustituye a la Ley de Adquisiciones y Contrataciones de la Administración Pública (LACAP).
 
-The LCP creates the **Dirección Nacional de Compras Públicas (DINAC)**, an autonomous regulator that owns government procurement policy and runs **COMPRASAL** (the electronic procurement system). All companies — national and foreign — that want to sell to the Salvadoran government must register in **RUPES** (Registro Único de Proveedores del Estado), with exceptions during national emergencies.
+La LCP crea la **Dirección Nacional de Compras Públicas (DINAC)**, un ente regulador autónomo que es responsable de la política de contratación pública y opera **COMPRASAL** (el sistema electrónico de compras públicas). Todas las empresas — nacionales y extranjeras — que quieran venderle al gobierno salvadoreño deben inscribirse en el **RUPES** (Registro Único de Proveedores del Estado), con excepciones durante emergencias nacionales.
 
-**Strategic projects and procurements done by the Dirección de Obras Municipales (DOM) are excluded** from the LCP.
+**Los proyectos estratégicos y las adquisiciones realizadas por la Dirección de Obras Municipales (DOM) están excluidos** de la LCP.
 
-The four procurement methods are: (a) Competitive Bidding, (b) Price Comparison, (c) Direct Purchasing, and (d) Low Amount. Threshold for competitive bidding: **$87,600**.
+Los cuatro métodos de contratación son: (a) Licitación Competitiva, (b) Comparación de Precios, (c) Compra Directa, y (d) Bajo Monto. Umbral para licitación competitiva: **$87,600**.
 
-## Application to Casa Segura
+## Aplicación a Casa Segura
 
-This law matters when:
-- A "developer" claims their project is part of a government program (Ministry of Vivienda, FSV, IVU, municipality)
-- A buyer is being offered "preferential government pricing" or "DOM-discounted" properties
-- A seller claims registration in RUPES as a credibility marker
+Esta ley es relevante cuando:
+- Un "desarrollador" afirma que su proyecto forma parte de un programa gubernamental (Ministerio de Vivienda, FSV, IVU, municipalidad)
+- A un comprador se le ofrecen "precios gubernamentales preferenciales" o propiedades "con descuento DOM"
+- Un vendedor presenta su inscripción en el RUPES como signo de credibilidad
 
-Key fraud-detection angles:
+Ángulos clave para la detección de fraude:
 
-1. **Phantom government contracts.** A seller claims a building is part of a government project. RUPES + COMPRASAL records can verify whether the developer is a registered, contracted state provider.
-2. **DOM-exclusion misuse.** Some sellers exploit the fact that DOM strategic projects are excluded from LCP transparency to claim opacity is normal. Casa Segura can flag this pattern.
-3. **State-of-Exception cover.** Direct purchases under the State of Exception (March 2022) are exempt from competitive bidding. A "developer" may abuse this to fabricate a fake government contract.
+1. **Contratos gubernamentales fantasma.** Un vendedor afirma que un edificio forma parte de un proyecto gubernamental. Los registros del RUPES + COMPRASAL pueden verificar si el desarrollador es un proveedor del Estado inscrito y contratado.
+2. **Uso indebido de la exclusión DOM.** Algunos vendedores explotan el hecho de que los proyectos estratégicos de la DOM están excluidos de la transparencia de la LCP para argumentar que la opacidad es normal. Casa Segura puede marcar este patrón.
+3. **Cobertura bajo el Régimen de Excepción.** Las compras directas bajo el Régimen de Excepción (marzo de 2022) están exentas de licitación competitiva. Un "desarrollador" puede abusar de esto para fabricar un contrato gubernamental falso.
 
-Findings the verdict engine should ground here:
+Hallazgos que el motor de veredictos debería anclar aquí:
 
-- **`gov_project_claim_unverified`** → cross-check with COMPRASAL and RUPES databases
-- **`developer_not_in_rupes`** → indicates the seller cannot legally contract with the State for projects above thresholds
-- **`dom_exclusion_misuse`** → flag when a project claims DOM affiliation without verifiable basis
+- **`gov_project_claim_unverified`** → cruzar con las bases de datos de COMPRASAL y RUPES
+- **`developer_not_in_rupes`** → indica que el vendedor no puede contratar legalmente con el Estado para proyectos sobre los umbrales
+- **`dom_exclusion_misuse`** → marcar cuando un proyecto declara afiliación a la DOM sin base verificable
 
-## Key provisions (summary level)
+## Disposiciones clave (nivel resumen)
 
-### Scope and replacement of LACAP
-- Applies to: government agencies, autonomous entities, municipalities — when public funds are used.
-- Replaces: Ley de Adquisiciones y Contrataciones de la Administración Pública (LACAP).
-- Excluded: strategic projects and DOM-managed procurements.
+### Ámbito y sustitución de la LACAP
+- Se aplica a: entidades gubernamentales, entidades autónomas, municipalidades — cuando se utilicen fondos públicos.
+- Sustituye a: Ley de Adquisiciones y Contrataciones de la Administración Pública (LACAP).
+- Excluidos: proyectos estratégicos y adquisiciones gestionadas por la DOM.
 
 ### DINAC — Dirección Nacional de Compras Públicas
-A new autonomous regulator created by a companion decree (Ley de Creación de la Dirección Nacional de Compras Públicas). Responsibilities:
-- Setting government procurement policy and regulation
-- Administering COMPRASAL
-- Maintaining RUPES
+Un nuevo regulador autónomo creado por un decreto complementario (Ley de Creación de la Dirección Nacional de Compras Públicas). Responsabilidades:
+- Establecer la política y regulación de las compras públicas
+- Administrar COMPRASAL
+- Mantener el RUPES
 
-### COMPRASAL — Electronic Procurement System
-The mandatory electronic platform through which all government procurement runs (with emergency exceptions). All registered providers must transact via COMPRASAL.
+### COMPRASAL — Sistema Electrónico de Compras Públicas
+La plataforma electrónica obligatoria a través de la cual se canalizan todas las compras públicas (con excepciones por emergencia). Todos los proveedores inscritos deben realizar sus operaciones a través de COMPRASAL.
 
 ### RUPES — Registro Único de Proveedores del Estado
-Single registry of state providers. **All companies wanting to sell to the government must register** (national or foreign), except during national emergency or urgency as defined by law.
+Registro único de proveedores del Estado. **Todas las empresas que quieran venderle al gobierno deben inscribirse** (nacionales o extranjeras), salvo durante emergencia o urgencia nacional según lo defina la ley.
 
-> **Casa Segura signal:** if a developer claims they "build for the government" but cannot show RUPES registration, that's a flag. Public RUPES records (when accessible via COMPRASAL) make this verifiable.
+> **Señal Casa Segura:** si un desarrollador afirma que "construye para el gobierno" pero no puede mostrar su inscripción en el RUPES, es una alerta. Los registros públicos del RUPES (cuando son accesibles vía COMPRASAL) hacen esto verificable.
 
-### Procurement methods
-- **(a) Competitive Bidding** — threshold above $87,600
-- **(b) Price Comparison** — under $87,600, requires quotes from at least 3 suppliers
-- **(c) Direct Purchasing** — allowed during national emergency or urgency (e.g. State of Exception)
-- **(d) Low Amount** — for small purchases
+### Métodos de contratación
+- **(a) Licitación Competitiva** — umbral por encima de $87,600
+- **(b) Comparación de Precios** — bajo $87,600, requiere cotizaciones de al menos 3 proveedores
+- **(c) Compra Directa** — permitida durante emergencia o urgencia nacional (p. ej. Régimen de Excepción)
+- **(d) Bajo Monto** — para compras pequeñas
 
-The law mandates **high technology use** and consideration of **sustainability and innovation criteria**.
+La ley exige **el uso de alta tecnología** y la consideración de **criterios de sostenibilidad e innovación**.
 
-### State of Exception interaction
-Purchases tied to the State of Exception declared in March 2022 operate under the emergency exemptions noted above. A developer claiming State-of-Exception cover for a private real estate project should be a red flag — that exemption is for emergency procurement, not residential development.
+### Interacción con el Régimen de Excepción
+Las compras vinculadas al Régimen de Excepción declarado en marzo de 2022 operan bajo las exenciones de emergencia señaladas arriba. Un desarrollador que invoque cobertura bajo el Régimen de Excepción para un proyecto inmobiliario privado debería ser una alerta — esa exención es para contratación de emergencia, no para desarrollo residencial.
 
-## Practical fraud patterns to watch
+## Patrones de fraude prácticos a vigilar
 
-| Pattern | Verification |
+| Patrón | Verificación |
 |---|---|
-| Developer claims to be a "proveedor del Estado" — verify RUPES registration | RUPES (via DINAC/COMPRASAL) |
-| Project claims to be a government social-housing project | Verify with Ministerio de Vivienda + FSV portal |
-| "DOM-built" claim with no public records | DOM publishes its strategic projects |
-| State-of-Exception bidding cited for residential housing sale | LCP State-of-Exception is for emergency procurement |
-| Sale price "subsidized by competitive bidding under $87,600" | Threshold check |
+| El desarrollador afirma ser un "proveedor del Estado" — verificar inscripción en RUPES | RUPES (vía DINAC/COMPRASAL) |
+| El proyecto afirma ser un proyecto gubernamental de vivienda social | Verificar con el Ministerio de Vivienda + portal del FSV |
+| Afirmación de "construido por DOM" sin registros públicos | La DOM publica sus proyectos estratégicos |
+| Licitación bajo Régimen de Excepción invocada para una venta de vivienda residencial | El Régimen de Excepción de la LCP es para contratación de emergencia |
+| Precio de venta "subsidiado por licitación competitiva bajo $87,600" | Revisión del umbral |
 
-## Cross-references
+## Referencias cruzadas
 
-- **FSV-financed worker housing**: see `03-ley-fsv.md` (FSV is itself a public-law institution with its own regime).
-- **IVU contracts**: see `02-ley-ivu.md` (institutional housing under different special law).
-- **Real estate transfer tax**: Ley del Impuesto sobre Transferencia de Bienes Raíces.
+- **Vivienda obrera financiada por el FSV**: ver `03-ley-fsv.md` (el FSV es en sí una institución de derecho público con su propio régimen).
+- **Contratos del IVU**: ver `02-ley-ivu.md` (vivienda institucional bajo una ley especial distinta).
+- **Impuesto sobre transferencia de bienes raíces**: Ley del Impuesto sobre Transferencia de Bienes Raíces.
 
-## Pending: full article-level breakdown
+## Pendiente: desglose completo a nivel de artículo
 
-When the complete LCP and DINAC decrees are downloaded from the Diario Oficial archive, expand this file with:
-- Article-by-article scope, definitions
-- Detailed procurement method articles (Title II)
-- DINAC governance articles
-- Sanctions and disqualification articles
-- RUPES inscription rules
+Cuando los decretos completos de la LCP y la DINAC se descarguen del archivo del Diario Oficial, expandir este archivo con:
+- Ámbito y definiciones artículo por artículo
+- Artículos detallados sobre métodos de contratación (Título II)
+- Artículos sobre gobernanza de la DINAC
+- Artículos sobre sanciones e inhabilitaciones
+- Reglas de inscripción en el RUPES
 
-Suggested retrieval: https://imprentanacional.gob.sv/servicios/archivo-digital-del-diario-oficial/, search for D.O. 2 March 2023.
+Recuperación sugerida: https://imprentanacional.gob.sv/servicios/archivo-digital-del-diario-oficial/, buscar D.O. del 2 de marzo de 2023.
 
-## Citation format for findings
+## Formato de cita para hallazgos
 
 ```json
 {

@@ -13,265 +13,265 @@ source_url: https://www.jurisprudencia.gob.sv/DocumentosBoveda/D/2/1970-1979/197
 last_verified: 2026-05-09
 relevance_to_casa_segura: high
 covers:
-  - creation and structure of the Fondo Social para la Vivienda (FSV)
-  - mandatory employer/worker contributions
-  - FSV-financed credit operations for worker housing
-  - special procedural and registry rules for FSV contracts
-  - tax exemptions for FSV-financed purchases
+  - creación y estructura del Fondo Social para la Vivienda (FSV)
+  - aportaciones obligatorias de empleador/trabajador
+  - operaciones de crédito financiadas por el FSV para vivienda del trabajador
+  - reglas procesales y registrales especiales para contratos del FSV
+  - exenciones tributarias para compras financiadas por el FSV
 ---
 
 # Ley del Fondo Social para la Vivienda
 
-## Plain-language summary
+## Resumen en lenguaje sencillo
 
-Creates the **Fondo Social para la Vivienda (FSV)** as an autonomous public-law credit institution whose purpose is to help workers obtain comfortable, hygienic, and safe housing. It's funded by mandatory employer (5%) and worker (0.5%) contributions on payroll, plus state subsidies and operations.
+Crea el **Fondo Social para la Vivienda (FSV)** como una institución autónoma de crédito de derecho público cuyo propósito es ayudar a los trabajadores a obtener una vivienda cómoda, higiénica y segura. Se financia con aportaciones obligatorias del empleador (5%) y del trabajador (0.5%) sobre la planilla, más subsidios estatales y operaciones.
 
-The FSV does not build housing directly in the typical case — it **finances** purchases, construction, repair, or refinancing for worker housing, either directly or through intermediary institutions calified by the Ministry of Housing. It also has special powers: certifications by its Director Ejecutivo are executive titles for collection, its credits have first-class privilege, and FSV-financed sales below a threshold are exempt from real estate transfer tax.
+El FSV no construye vivienda directamente en el caso típico — **financia** la compra, construcción, reparación o refinanciamiento de vivienda para trabajadores, ya sea directamente o a través de instituciones intermediarias calificadas por el Ministerio de Vivienda. También tiene facultades especiales: las certificaciones del Director Ejecutivo son títulos ejecutivos para el cobro, sus créditos gozan de privilegio de primera clase, y las compraventas financiadas por el FSV bajo cierto umbral están exentas del impuesto de transferencia de bienes raíces.
 
-## Application to Casa Segura
+## Aplicación a Casa Segura
 
-This law matters for projects that:
-- Claim to be FSV-financed or FSV-affiliated
-- Offer "FSV-elegible" housing as a sales pitch
-- Use the FSV as an intermediary or guarantor
+Esta ley importa para proyectos que:
+- Aleguen estar financiados o afiliados al FSV
+- Ofrezcan vivienda "elegible para FSV" como argumento de venta
+- Usen al FSV como intermediario o garante
 
-Key fraud-detection angles:
+Ángulos clave para detección de fraude:
 
-1. **Phantom FSV affiliation.** A developer claims FSV financing they don't actually have. Verifiable: FSV publishes its supported projects.
-2. **Tax exemption fraud.** Someone claims their sale is FSV-financed (and thus exempt from transfer tax under art. 68) when it isn't.
-3. **Worker contribution fraud.** An employer charges workers but doesn't actually deposit the contributions to FSV.
-4. **Mortgage anotación preventiva manipulation.** The FSV's anotación preventiva (art. 55) creates retroactive priority — fraud schemes try to slip transactions in between adjudication and inscription.
+1. **Afiliación fantasma al FSV.** Un desarrollador afirma tener financiamiento del FSV que en realidad no tiene. Verificable: el FSV publica los proyectos que apoya.
+2. **Fraude de exención tributaria.** Alguien alega que su venta es financiada por el FSV (y por tanto exenta del impuesto de transferencia bajo el art. 68) cuando no lo es.
+3. **Fraude en aportaciones del trabajador.** Un empleador cobra a los trabajadores pero no deposita efectivamente las aportaciones al FSV.
+4. **Manipulación de la anotación preventiva de la hipoteca.** La anotación preventiva del FSV (art. 55) crea prioridad retroactiva — los esquemas de fraude intentan colar transacciones entre la adjudicación y la inscripción.
 
-Findings the verdict engine should ground here:
+Findings que el motor de veredicto debería fundamentar aquí:
 
 - **`fsv_affiliation_claim_unverified`** → arts. 5, 7
-- **`fsv_intermediary_required_for_third_party`** → art. 7 final paragraph
+- **`fsv_intermediary_required_for_third_party`** → art. 7 párrafo final
 - **`fsv_tax_exemption_misapplied`** → art. 68
 - **`fsv_first_class_privilege_misrepresented`** → art. 71(b)
 - **`fsv_anotacion_preventiva_required`** → arts. 55–57
 
-## Chapter I — Creation, object, nature
+## Capítulo I — Creación, objeto, naturaleza
 
-### Art. 1 — Creation
-The FSV is created as a social-security development program.
+### Art. 1 — Creación
+Se crea el FSV como un programa de desarrollo de la seguridad social.
 
-### Art. 2 — Legal personality, domicile
-FSV is an **autonomous credit institution of public law** with juridical personality, no limitations beyond this law, headquartered in San Salvador, with branches across the country.
+### Art. 2 — Personalidad jurídica, domicilio
+El FSV es una **institución autónoma de crédito de derecho público** con personalidad jurídica, sin más limitaciones que las de esta ley, con sede en San Salvador y sucursales en todo el país.
 
-### Art. 3 — Object
-Contribute to solving workers' housing problems by providing means to acquire comfortable, hygienic, and safe homes.
+### Art. 3 — Objeto
+Contribuir a la solución del problema habitacional de los trabajadores, proporcionando los medios adecuados para adquirir viviendas cómodas, higiénicas y seguras.
 
-### Art. 4 — Scope
-Applies to all employers and workers regardless of relationship type or remuneration form. Regulations specify the time and form of incorporation. Coverage may extend to workers without an employer.
+### Art. 4 — Ámbito de aplicación
+Se aplica a todos los empleadores y trabajadores sin importar el tipo de relación o la forma de remuneración. El reglamento especifica el tiempo y la forma de incorporación. La cobertura puede extenderse a trabajadores sin empleador.
 
-### Art. 5 — Government relationship
-The Fund relates to government via the **Ministerio de Vivienda**.
+### Art. 5 — Relación con el gobierno
+El Fondo se relaciona con el gobierno a través del **Ministerio de Vivienda**.
 
-## Chapter II — Resources and operations
+## Capítulo II — Recursos y operaciones
 
-### Art. 6 — Resources
-- (a) Initial state subsidy of ¢25,000,000 paid in 5 annual installments;
-- (b) Contributions of **5% (employer) and 0.5% (worker)** on payroll, within limits set by regulation;
-- (c) Additional state subsidies;
-- (d) Net profits from operations;
-- (e) Other income.
+### Art. 6 — Recursos
+- (a) Subsidio estatal inicial de ¢25,000,000 pagados en 5 cuotas anuales;
+- (b) Aportaciones del **5% (empleador) y 0.5% (trabajador)** sobre la planilla, dentro de los límites que fije el reglamento;
+- (c) Subsidios estatales adicionales;
+- (d) Utilidades netas de las operaciones;
+- (e) Otros ingresos.
 
-### Art. 7 — Use of resources (CRITICAL)
-The FSV's resources are destined to:
-- (a) Credits to **workers** for: (I) housing acquisition; (II) construction, repair, expansion, improvement; (III) refinancing earlier debts of these types;
-- (b) Credits to **employers** to build housing for workers;
-- (c) Credits to **cooperatives** for furniture/household goods financing;
-- (d) Acquisition of movable/immovable goods needed for FSV's purposes;
-- (e) Financing materials-of-construction enterprises;
-- (f) Construction or financing of housing complexes;
-- (g) Operating expenses.
+### Art. 7 — Uso de los recursos (CRÍTICO)
+Los recursos del FSV se destinan a:
+- (a) Créditos a **trabajadores** para: (I) adquisición de vivienda; (II) construcción, reparación, ampliación, mejora; (III) refinanciamiento de deudas anteriores de estos tipos;
+- (b) Créditos a **empleadores** para construir vivienda para trabajadores;
+- (c) Créditos a **cooperativas** para financiamiento de muebles/enseres del hogar;
+- (d) Adquisición de bienes muebles/inmuebles necesarios para los fines del FSV;
+- (e) Financiamiento de empresas de materiales de construcción;
+- (f) Construcción o financiamiento de complejos habitacionales;
+- (g) Gastos de operación.
 
-Credits are granted **directly or through intermediary institutions** calified by the Ministry of Housing.
+Los créditos se otorgan **directamente o a través de instituciones intermediarias** calificadas por el Ministerio de Vivienda.
 
-> **Casa Segura signal:** if a developer claims FSV financing but is neither an FSV-calificada institution nor a worker/employer beneficiary type listed in (a)–(c), that claim is suspect. Cite art. 7.
+> **Señal Casa Segura:** si un desarrollador alega financiamiento del FSV pero no es una institución calificada por el FSV ni un tipo de beneficiario trabajador/empleador listado en (a)–(c), esa afirmación es sospechosa. Citar art. 7.
 
-### Art. 8 — Operations the FSV may conduct
-- (a) Buy, hold, and sell credit titles and easily realizable securities;
-- (b) Buy and sell shares, easily realizable securities, real estate, and other compatible assets;
-- (c) Issue and place bonds and securities per law;
-- (d) Trade for third parties securities issued by the State, autonomous bodies, or construction-sector enterprises;
-- (e) Grant guarantees;
-- (f) Discount documents and obtain financing from BCR and other institutions;
-- (g) Obtain internal/external financing;
-- (h) Administer (non-profit) funds the State or third parties give it to build replacement housing for tugurios (slums);
-- (i) Other compatible operations.
+### Art. 8 — Operaciones que el FSV puede realizar
+- (a) Comprar, mantener y vender títulos de crédito y valores de fácil realización;
+- (b) Comprar y vender acciones, valores de fácil realización, inmuebles y otros activos compatibles;
+- (c) Emitir y colocar bonos y valores conforme a la ley;
+- (d) Negociar por cuenta de terceros valores emitidos por el Estado, organismos autónomos o empresas del sector construcción;
+- (e) Otorgar garantías;
+- (f) Descontar documentos y obtener financiamiento del BCR y otras instituciones;
+- (g) Obtener financiamiento interno/externo;
+- (h) Administrar (sin fines de lucro) fondos que el Estado o terceros le entreguen para construir vivienda de reemplazo para tugurios;
+- (i) Otras operaciones compatibles.
 
-### Art. 8-A — Transfer of credit titles
-Credit titles are transferable by delivery + written endorsement signed before notary, registered in the Registro de Hipotecas in margin of the corresponding hipotecaria inscription.
+### Art. 8-A — Transferencia de títulos de crédito
+Los títulos de crédito son transferibles por entrega + endoso escrito firmado ante notario, registrado en el Registro de Hipotecas al margen de la inscripción hipotecaria correspondiente.
 
-## Chapter III — Organization and administration
+## Capítulo III — Organización y administración
 
-### Arts. 9–40 (summary)
-**Organs:** Asamblea de Gobernadores, Junta Directiva, Dirección Ejecutiva, Gerencia, Consejo de Vigilancia.
+### Arts. 9–40 (resumen)
+**Órganos:** Asamblea de Gobernadores, Junta Directiva, Dirección Ejecutiva, Gerencia, Consejo de Vigilancia.
 
-**Asamblea de Gobernadores** (art. 10): Highest authority. Composed of titulares of Vivienda, Obras Públicas/Transporte, Trabajo, Hacienda, Economía, plus 2 employer-sector and 2 labor-sector governors (last reform 2021).
+**Asamblea de Gobernadores** (art. 10): Máxima autoridad. Compuesta por los titulares de Vivienda, Obras Públicas/Transporte, Trabajo, Hacienda, Economía, más 2 gobernadores del sector empleador y 2 del sector laboral (última reforma 2021).
 
-**Junta Directiva** (arts. 17–26): 5 members — 1 nominated by President of the Republic (who is President of Junta and Director Ejecutivo), 4 nominated by the Asamblea (1 employer, 1 labor, 2 public-sector).
+**Junta Directiva** (arts. 17–26): 5 miembros — 1 nominado por el Presidente de la República (quien es Presidente de la Junta y Director Ejecutivo), 4 nominados por la Asamblea (1 empleador, 1 laboral, 2 del sector público).
 
-**Director Ejecutivo** (arts. 27–30): Executes Junta resolutions, has legal representation, signs operational contracts.
+**Director Ejecutivo** (arts. 27–30): Ejecuta las resoluciones de la Junta, tiene la representación legal, firma los contratos operativos.
 
-**Consejo de Vigilancia** (arts. 34–40): 4 members — 1 employer, 1 labor, 2 from Executive (Vivienda, Trabajo). Supervises correct application of the law, has full access to documentation.
+**Consejo de Vigilancia** (arts. 34–40): 4 miembros — 1 empleador, 1 laboral, 2 del Ejecutivo (Vivienda, Trabajo). Supervisa la correcta aplicación de la ley, tiene acceso pleno a la documentación.
 
-### Art. 16-A — Removal grounds (added 2021)
-Governors may only be removed by their nominating authority, with stated cause, for: (a) violation of nomination requirements; (b) legal incompliance in functions; (c) condemnation for intentional crime; (d) loss of citizenship rights; (e) conduct against morals; (f) conflict of interest; (g) undue influence; (h) loss of sector representativity.
+### Art. 16-A — Causales de remoción (añadido en 2021)
+Los gobernadores solo pueden ser removidos por su autoridad nominadora, con causa motivada, por: (a) violación de los requisitos de nominación; (b) incumplimiento legal en funciones; (c) condena por delito doloso; (d) pérdida de los derechos de ciudadanía; (e) conducta contraria a la moral; (f) conflicto de intereses; (g) tráfico de influencias; (h) pérdida de la representatividad sectorial.
 
-## Chapter IV — Registry, affiliation, contributions
+## Capítulo IV — Registro, afiliación, aportaciones
 
-### Art. 41 — Registry obligation
-The FSV maintains a registry of contributing employers and workers. The employer must register itself and its workers per regulation.
+### Art. 41 — Obligación de registro
+El FSV mantiene un registro de empleadores y trabajadores cotizantes. El empleador debe inscribirse a sí mismo y a sus trabajadores conforme al reglamento.
 
-### Art. 42 — Prohibition on deduction
-Employer contributions cannot be deducted from worker wages. Violation: fine per art. 54 and restitution.
+### Art. 42 — Prohibición de deducción
+Las aportaciones del empleador no pueden ser deducidas del salario del trabajador. Violación: multa según el art. 54 y restitución.
 
-> **Casa Segura signal:** if a worker claims their employer is deducting the *employer* portion (5%) from their salary, that's a clear violation. Cite art. 42.
+> **Señal Casa Segura:** si un trabajador alega que su empleador le está deduciendo la porción *del empleador* (5%) de su salario, eso es una violación clara. Citar art. 42.
 
-### Art. 43 — Retention and remittance
-The employer retains the worker contribution and any FSV credit installment from wages and is **personally responsible** for delivery to FSV. Late payments incur 1% surcharge per month.
+### Art. 43 — Retención y entrega
+El empleador retiene la aportación del trabajador y cualquier cuota del crédito del FSV del salario y es **personalmente responsable** de entregarlo al FSV. Los pagos tardíos generan un recargo del 1% mensual.
 
-### Art. 44 — Inspection
-FSV may conduct inspections at workplaces directly or via the Ministry of Labor. Inspector reports and minutes are presumed accurate until proven otherwise.
+### Art. 44 — Inspección
+El FSV puede realizar inspecciones en los lugares de trabajo directamente o a través del Ministerio de Trabajo. Los informes y actas del inspector se presumen exactos salvo prueba en contrario.
 
-## Chapter V — Deposits and refunds
+## Capítulo V — Depósitos y devoluciones
 
-### Art. 45 — Deposits and tax exemption
-Worker and employer contributions are received by the FSV as **deposits in favor of the worker**, exempt from all taxes.
+### Art. 45 — Depósitos y exención tributaria
+Las aportaciones del trabajador y el empleador son recibidas por el FSV como **depósitos a favor del trabajador**, exentos de todo impuesto.
 
-### Art. 46 — Refunds
-Refund procedures per regulation, after the actuarial wait period or in cases of jubilation, death, permanent total incapacity.
+### Art. 46 — Devoluciones
+Procedimientos de devolución conforme al reglamento, tras el período actuarial de espera o en casos de jubilación, muerte, incapacidad permanente total.
 
-### Art. 47 — Right to refund
-Workers in jubilation or permanent total incapacity have the right to refund. On death, refund goes to beneficiaries or heirs.
+### Art. 47 — Derecho a la devolución
+Los trabajadores en jubilación o incapacidad permanente total tienen derecho a devolución. En caso de muerte, la devolución va a los beneficiarios o herederos.
 
-### Art. 48 — Compensation
-On any refund, prior debt to FSV is settled first (even if not yet due) against the deposit.
+### Art. 48 — Compensación
+En cualquier devolución, la deuda previa con el FSV se salda primero (aunque no esté aún vencida) contra el depósito.
 
-## Chapter VI — Conflicts and sanctions
+## Capítulo VI — Conflictos y sanciones
 
-### Art. 49 — Competence
-Conflicts between cotizantes/FSV/beneficiaries are heard by the Director Ejecutivo, who appoints a delegate that acts as arbitrador.
+### Art. 49 — Competencia
+Los conflictos entre cotizantes/FSV/beneficiarios son conocidos por el Director Ejecutivo, quien designa un delegado que actúa como arbitrador.
 
 ### Art. 50 — Recurso de revisión
-Within 3 days of notification, parties may request review.
+Dentro de los 3 días de notificada, las partes pueden solicitar revisión.
 
-### Art. 51 — Review commission
-The Junta Directiva names a 3-member commission of its members to hear reviews.
+### Art. 51 — Comisión de revisión
+La Junta Directiva nombra una comisión de 3 miembros de su seno para conocer las revisiones.
 
-### Art. 52 — Resolution period
-The commission has 15 days to resolve. Its decision is final.
+### Art. 52 — Plazo de resolución
+La comisión tiene 15 días para resolver. Su decisión es definitiva.
 
-### Art. 53 — Other actions preserved
-Notwithstanding the above, parties retain the right to ordinary judicial action.
+### Art. 53 — Otras acciones preservadas
+No obstante lo anterior, las partes conservan el derecho a la acción judicial ordinaria.
 
-### Art. 54 — Sanctions
-Sanctions are **fines** of ¢50–5,000, set by the Director Ejecutivo per gravity and economic capacity.
+### Art. 54 — Sanciones
+Las sanciones son **multas** de ¢50–5,000, fijadas por el Director Ejecutivo según gravedad y capacidad económica.
 
-## Chapter VII — Credit formalities (added by reform 3)
+## Capítulo VII — Formalidades del crédito (añadido por la reforma 3)
 
-### Art. 55 — Anotación preventiva (CRITICAL)
-Once the Junta authorizes a hipoteca-backed credit, an extract certification is issued. It contains: act date, name of beneficiary, credit amount, term, and references to current Registro de la Propiedad inscriptions of the offered properties — without need for property descriptions.
+### Art. 55 — Anotación preventiva (CRÍTICO)
+Una vez que la Junta autoriza un crédito con garantía hipotecaria, se emite una certificación con extracto. Contiene: fecha del acto, nombre del beneficiario, monto del crédito, plazo y referencias a las inscripciones vigentes en el Registro de la Propiedad de los inmuebles ofrecidos — sin necesidad de descripción de los inmuebles.
 
-The certification, signed by the Director Ejecutivo or Gerente, is **anotada preventivamente** in the Registro de la Propiedad Raíz e Hipotecas. **No fee charged for the anotación.**
+La certificación, firmada por el Director Ejecutivo o el Gerente, se **anota preventivamente** en el Registro de la Propiedad Raíz e Hipotecas. **No se cobra derecho alguno por la anotación.**
 
-The hipoteca's effects, once the contract is registered, **retroactively go to the date of the anotación preventiva**.
+Los efectos de la hipoteca, una vez inscrito el contrato, **se retrotraen a la fecha de la anotación preventiva**.
 
-> **Casa Segura signal:** this retroactive priority is critical. If a sale happens between FSV anotación preventiva and final inscription, the buyer's title is junior to FSV's lien. Verifying the Registro for FSV anotaciones is a key check. Cite art. 55.
+> **Señal Casa Segura:** esta prioridad retroactiva es crítica. Si una venta ocurre entre la anotación preventiva del FSV y la inscripción definitiva, el título del comprador queda subordinado al gravamen del FSV. Verificar en el Registro las anotaciones del FSV es una verificación clave. Citar art. 55.
 
-### Art. 56 — Subsequent contract
-After anotación, the contract is signed in legal form unless an unfavorable circumstance leads the Junta to revoke.
+### Art. 56 — Contrato subsiguiente
+Tras la anotación, el contrato se firma en forma legal salvo que una circunstancia desfavorable lleve a la Junta a revocar.
 
-### Art. 57 — Cessation of anotación
-The anotación ceases by:
-1. Final inscription of the credit;
-2. Written notice from FSV to the Registry to cancel;
-3. Lapse of 90 days from the presentation per art. 55.
+### Art. 57 — Cesación de la anotación
+La anotación cesa por:
+1. Inscripción definitiva del crédito;
+2. Notificación escrita del FSV al Registro para cancelarla;
+3. Transcurso de 90 días desde la presentación conforme al art. 55.
 
-### Art. 58 — Encumbrance restrictions
-Without FSV consent, no escritura selling, alienating, or encumbering any FSV-mortgaged property may be inscribed.
+### Art. 58 — Restricciones de gravamen
+Sin el consentimiento del FSV, no podrá inscribirse ninguna escritura que venda, enajene o grave cualquier inmueble hipotecado al FSV.
 
 ### Art. 59 — Inembargabilidad
-Once FSV grants the loan, the encumbered goods are not embargable for personal credits prior or posterior to the constitution of the encumbrance. The protection runs from the anotación preventiva date for hipoteca, from inscription date for prenda.
+Una vez que el FSV otorga el préstamo, los bienes gravados no son embargables por créditos personales anteriores o posteriores a la constitución del gravamen. La protección corre desde la fecha de la anotación preventiva para la hipoteca, y desde la fecha de la inscripción para la prenda.
 
-### Art. 60 — Termination of inferior rights on embargo
-If FSV embargo follows debt default, embargoes terminate any post-hipoteca arrendamiento, usufructo, anticresis, or other right unless granted with FSV consent.
+### Art. 60 — Terminación de derechos inferiores por embargo
+Si el embargo del FSV se da por incumplimiento de la deuda, el embargo termina con cualquier arrendamiento, usufructo, anticresis u otro derecho posterior a la hipoteca, salvo que se haya otorgado con consentimiento del FSV.
 
-### Art. 61 — Caducidad (acceleration)
-The agreed term lapses (i.e. the credit becomes immediately due) when:
-- (a) Debtor doesn't notify within a month deteriorations affecting property value, possession, or title;
-- (b) Debtor concealed any cause of resolution, rescission, or hidden encumbrance;
-- (c) Debtor misses any installment;
-- (d) Debtor alienates the encumbered goods or constitutes hipotecas, usufructos, etc., without FSV consent (refaccionario credit excepted);
-- (e) Debtor defaults on any other FSV debt;
-- (f) Goods deteriorate so they no longer cover the guarantee (FSV must accept a sufficient alternative guarantee);
-- (g) Funds are diverted to purposes other than agreed;
-- (h) Other cases per applicable laws or contracts.
+### Art. 61 — Caducidad (aceleración)
+El plazo convenido caduca (es decir, el crédito se vuelve inmediatamente exigible) cuando:
+- (a) El deudor no notifica dentro del mes los deterioros que afecten el valor, la posesión o el título del inmueble;
+- (b) El deudor ocultó cualquier causa de resolución, rescisión o gravamen oculto;
+- (c) El deudor omite cualquier cuota;
+- (d) El deudor enajena los bienes gravados o constituye hipotecas, usufructos, etc., sin consentimiento del FSV (excepto crédito refaccionario);
+- (e) El deudor incumple cualquier otra deuda con el FSV;
+- (f) Los bienes se deterioran de manera que ya no cubren la garantía (el FSV debe aceptar una garantía alternativa suficiente);
+- (g) Los fondos se desvían a fines distintos de los acordados;
+- (h) Otros casos conforme a las leyes o contratos aplicables.
 
-## Chapter VIII — General dispositions
+## Capítulo VIII — Disposiciones generales
 
-### Art. 62 — Prescription of inactive balances
-Inactive balances at FSV's expense prescribe per art. 204 of Ley de Instituciones de Crédito y Organizaciones Auxiliares — but on completion, the balance reverts to FSV (not the State).
+### Art. 62 — Prescripción de saldos inactivos
+Los saldos inactivos a cargo del FSV prescriben conforme al art. 204 de la Ley de Instituciones de Crédito y Organizaciones Auxiliares — pero al cumplirse, el saldo revierte al FSV (no al Estado).
 
-### Art. 65 — Inapplicable laws
-The Ley de Tesorería, Ley Orgánica de Presupuestos, Ley de Suministros, and other dispositions on public funds and personnel **do not apply** to FSV's gestion. This law prevails over any other.
+### Art. 65 — Leyes inaplicables
+La Ley de Tesorería, la Ley Orgánica de Presupuestos, la Ley de Suministros y demás disposiciones sobre fondos públicos y personal **no se aplican** a la gestión del FSV. Esta ley prevalece sobre cualquier otra.
 
-### Art. 66 — Court of Accounts oversight
-The Corte de Cuentas oversees budget execution via a delegado-auditor. The audit is *a posteriori*, focused on legality.
+### Art. 66 — Fiscalización de la Corte de Cuentas
+La Corte de Cuentas fiscaliza la ejecución presupuestaria a través de un delegado-auditor. La auditoría es *a posteriori*, enfocada en la legalidad.
 
-### Art. 68 — Tax exemption on FSV-financed compraventas (CRITICAL)
-Real estate compraventas **financed by the FSV** and FSV-granted loans, **when the operation does not exceed ¢100,000**, do not generate any fiscal tax. Public deeds for these acts are issued on plain paper, and registry inscription is exempt from any tax/fee.
+### Art. 68 — Exención tributaria en compraventas financiadas por el FSV (CRÍTICO)
+Las compraventas de inmuebles **financiadas por el FSV** y los préstamos otorgados por el FSV, **cuando la operación no exceda de ¢100,000**, no generan ningún impuesto fiscal. Las escrituras públicas para estos actos se extienden en papel simple, y la inscripción registral está exenta de todo impuesto o derecho.
 
-The 1976 authentic interpretation (D.L. 180) clarifies: this exemption covers:
-- Sales between private parties and contributing workers, FSV-financed;
-- Sales between private parties and FSV destined for adjudication to contributing workers;
-- Sales between private parties and FSV destined for FSV construction for adjudication to contributing workers.
+La interpretación auténtica de 1976 (D.L. 180) aclara: esta exención cubre:
+- Ventas entre particulares y trabajadores cotizantes, financiadas por el FSV;
+- Ventas entre particulares y el FSV destinadas a la adjudicación a trabajadores cotizantes;
+- Ventas entre particulares y el FSV destinadas a la construcción por el FSV para adjudicación a trabajadores cotizantes.
 
-> **Casa Segura signal:** a fraudulent seller may claim "FSV exemption" applies to bypass real-estate transfer tax (3% on transactions over $28,571.43 per the Ley del Impuesto sobre Transferencia de Bienes Raíces). Verify the FSV financing chain. Cite art. 68.
+> **Señal Casa Segura:** un vendedor fraudulento puede alegar que la "exención del FSV" aplica para evadir el impuesto de transferencia de bienes raíces (3% sobre transacciones mayores a $28,571.43 conforme a la Ley del Impuesto sobre Transferencia de Bienes Raíces). Verificar la cadena de financiamiento del FSV. Citar art. 68.
 
-### Art. 69 — General tax exemption for FSV
-FSV is exempt from all fiscal taxes when it owes them, and from succession/donation taxes on receipts to FSV.
+### Art. 69 — Exención tributaria general para el FSV
+El FSV está exento de todos los impuestos fiscales cuando los adeude, y de los impuestos de sucesiones/donaciones sobre las recepciones al FSV.
 
-### Art. 70 — Bond exemption
-FSV-issued bonds and their interest are exempt from all fiscal taxes including renta, vialidad, papel sellado, sucesiones y donaciones.
+### Art. 70 — Exención de bonos
+Los bonos emitidos por el FSV y sus intereses están exentos de todos los impuestos fiscales, incluyendo renta, vialidad, papel sellado, sucesiones y donaciones.
 
-### Art. 71 — Special executive procedures (CRITICAL)
-FSV (or its intermediaries) executive trials follow common law with these modifications:
-- (a) Director Ejecutivo's certifications of amounts owed are **executive titles**;
-- (b) FSV credits are **first-class** with absolute preference except for worker wage/social claims of the debtor;
-- (c) Notifications can be made directly to the debtor or to a power-of-attorney that the debtor must constitute in the foundational deed;
-- (d) Probative period: 3 days. Only allowed exceptions: actual payment, error in liquidation;
-- (e) **No appeal** of the embargo decree, sale-by-auction sentence, or other rulings;
-- (f) Creditor (FSV) is depositor of embargoed goods without bond;
-- (g) Tercerías only admissible if based on a title prior to the FSV mortgage;
-- (h) No other suit may be cumulated to the execution.
+### Art. 71 — Procedimientos ejecutivos especiales (CRÍTICO)
+Los juicios ejecutivos del FSV (o sus intermediarios) siguen el derecho común con estas modificaciones:
+- (a) Las certificaciones del Director Ejecutivo de los montos adeudados son **títulos ejecutivos**;
+- (b) Los créditos del FSV son de **primera clase** con preferencia absoluta excepto frente a los créditos laborales/sociales del deudor;
+- (c) Las notificaciones pueden hacerse directamente al deudor o al apoderado que el deudor debe constituir en la escritura fundacional;
+- (d) Período probatorio: 3 días. Únicas excepciones admisibles: pago efectivo, error en la liquidación;
+- (e) **No hay apelación** contra el decreto de embargo, la sentencia de remate u otras resoluciones;
+- (f) El acreedor (FSV) es depositario de los bienes embargados sin fianza;
+- (g) Las tercerías solo son admisibles si se basan en un título anterior a la hipoteca del FSV;
+- (h) No puede acumularse ningún otro juicio a la ejecución.
 
-After full payment from auction, other creditors are notified to pursue any surplus.
+Tras el pago total con el remate, se notifica a los demás acreedores para perseguir cualquier remanente.
 
-### Art. 72 — Authentic value of FSV certifications
-Transcripciones, extractos, certifications from FSV books and registries, signed by Director Ejecutivo or Gerente with the FSV seal, have the value of authentic documents.
+### Art. 72 — Valor auténtico de las certificaciones del FSV
+Las transcripciones, extractos y certificaciones de los libros y registros del FSV, firmados por el Director Ejecutivo o el Gerente con el sello del FSV, tienen valor de documentos auténticos.
 
-## Practical fraud patterns to watch
+## Patrones prácticos de fraude a vigilar
 
-| Pattern | Article |
+| Patrón | Artículo |
 |---|---|
-| Developer claims FSV financing without being a calificada institution or having a worker/employer beneficiary | art. 7 |
-| Sale claims FSV tax exemption with no verifiable FSV credit chain | art. 68 |
-| Property has FSV anotación preventiva but seller doesn't disclose | art. 55, 58 |
-| Seller claims "FSV mortgage will be cancelled at signing" without FSV written consent | art. 58, 61(d) |
-| Employer charges worker the 5% employer contribution | art. 42 |
-| Sale price within FSV-eligible range but seller refuses FSV process | hint to fraud |
+| Desarrollador alega financiamiento del FSV sin ser una institución calificada ni tener un beneficiario trabajador/empleador | art. 7 |
+| Venta alega exención tributaria del FSV sin cadena de crédito FSV verificable | art. 68 |
+| Inmueble tiene anotación preventiva del FSV pero el vendedor no la divulga | art. 55, 58 |
+| Vendedor alega "la hipoteca del FSV se cancelará al firmar" sin consentimiento escrito del FSV | art. 58, 61(d) |
+| El empleador cobra al trabajador el 5% de la aportación patronal | art. 42 |
+| Precio de venta dentro del rango elegible para FSV pero el vendedor se niega al proceso del FSV | indicio de fraude |
 
-## Cross-references
+## Referencias cruzadas
 
-- **Real estate transfer tax**: Ley del Impuesto sobre Transferencia de Bienes Raíces (3% over $28,571.43 unless FSV-exempt).
-- **Government-built housing**: Ley sobre Contratos del IVU (`02-ley-ivu.md`) for IVU-specific contracts.
-- **Public banking system**: Ley de Bancos and SSF supervision.
-- **Mortgage execution**: common procedural law + this special regime.
+- **Impuesto de transferencia de bienes raíces**: Ley del Impuesto sobre Transferencia de Bienes Raíces (3% sobre $28,571.43 salvo exención del FSV).
+- **Vivienda construida por el gobierno**: Ley sobre Contratos del IVU (`02-ley-ivu.md`) para contratos específicos del IVU.
+- **Sistema bancario público**: Ley de Bancos y supervisión de la SSF.
+- **Ejecución hipotecaria**: derecho procesal común + este régimen especial.
 
-## Citation format for findings
+## Formato de citación para findings
 
 ```json
 {

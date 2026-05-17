@@ -13,205 +13,205 @@ source_url: https://www.jurisprudencia.ues.edu.sv/oajc/leyes/LegislacionCivil/Le
 last_verified: 2026-05-09
 relevance_to_casa_segura: high
 covers:
-  - rental contracts (vivienda, locales comerciales, oficinas)
-  - mesones (rooming houses)
-  - tenant rights and protections
-  - termination causes
+  - contratos de arrendamiento (vivienda, locales comerciales, oficinas)
+  - mesones (casas de habitación colectiva)
+  - derechos y protecciones del inquilino
+  - causas de terminación
 ---
 
 # Ley de Inquilinato
 
-## Plain-language summary
+## Resumen en lenguaje sencillo
 
-Salvadoran tenancy law for rentals of housing and small commercial premises (active business value ≤ ¢15,000), schools, and professional offices. Establishes that rental contracts must be in writing, lists tenant rights that cannot be waived, regulates rent increases, requires landlords to issue receipts, and lists the only causes by which a landlord can terminate a rental and evict.
+Ley salvadoreña de inquilinato aplicable a arrendamientos de vivienda y pequeños locales comerciales (valor del activo comercial ≤ ¢15,000), centros educativos y oficinas profesionales. Establece que los contratos de arrendamiento deben constar por escrito, enumera los derechos del inquilino que no pueden renunciarse, regula los aumentos de renta, obliga al arrendador a extender recibos y enumera las únicas causas por las cuales el arrendador puede dar por terminado un arrendamiento y proceder al desahucio.
 
-The law is **deeply protective of tenants** as a matter of public policy. Any clause in a contract that tries to waive these protections is null. Many procedural articles (30–54) were repealed in 2008 when the matter passed to civil/family courts under the Código Procesal Civil y Mercantil — substantive rights remain in force.
+La ley es **profundamente protectora del inquilino** por razones de orden público. Cualquier cláusula contractual que pretenda renunciar a estas protecciones es nula. Numerosos artículos procesales (30–54) fueron derogados en 2008 cuando la materia pasó a la jurisdicción civil/familiar bajo el Código Procesal Civil y Mercantil — los derechos sustantivos siguen vigentes.
 
-## Application to Casa Segura
+## Aplicación a Casa Segura
 
-This is the primary law for **Flow 2 (contract check)** when the contract is an `arrendamiento` (rental). Findings the verdict engine should ground here:
+Esta es la ley principal para el **Flujo 2 (revisión de contrato)** cuando el contrato es un `arrendamiento`. Hallazgos que el motor de veredicto debe fundamentar aquí:
 
 - **`written_contract_required`** → art. 4, 18
-- **`required_clauses_present`** (names, property ID, price) → art. 4, 18
-- **`tenant_rights_unwaivable`** (any clause attempting to waive protections) → art. 2
+- **`required_clauses_present`** (nombres, identificación del inmueble, precio) → art. 4, 18
+- **`tenant_rights_unwaivable`** (cualquier cláusula que pretenda renunciar a las protecciones) → art. 2
 - **`receipt_obligation`** → art. 9, 20
 - **`payment_via_court_when_landlord_refuses`** → art. 10
 - **`termination_only_for_listed_causes`** → art. 24
 - **`succession_on_tenant_death`** → art. 27
 - **`sale_does_not_terminate_lease`** → art. 28
 
-## Scope
+## Ámbito de aplicación
 
-### Art. 1 — Scope
-The law covers rentals and subleases of houses and premises used for: (a) housing; (b) commercial or industrial establishments where the active business value does not exceed ¢15,000 and the tenant lives in adjacent premises and owns the business; (c) educational centers under the Ministry of Culture or UES; (d) public and professional offices, clinics.
+### Art. 1 — Ámbito de aplicación
+La ley regula los arrendamientos y subarrendamientos de casas y locales destinados a: (a) vivienda; (b) establecimientos comerciales o industriales cuyo valor del activo en giro no exceda de ¢15,000 y el inquilino habite en locales contiguos y sea dueño del negocio; (c) centros educativos dependientes del Ministerio de Cultura o de la UES; (d) oficinas públicas y profesionales, clínicas.
 
-### Art. 2 — Rights are non-waivable
-Tenant rights granted by this law are non-waivable. Any clause designed to evade these provisions, expressly or surreptitiously, has no value.
+### Art. 2 — Derechos irrenunciables
+Los derechos que esta ley otorga al inquilino son irrenunciables. Toda cláusula que tienda a eludir estas disposiciones, en forma expresa o solapada, carece de valor.
 
-> **Casa Segura signal:** if a contract contains a clause that says the tenant waives any right granted by this law (e.g. "el inquilino renuncia a..."), flag as **red**: such a clause is automatically null under art. 2.
+> **Señal Casa Segura:** si un contrato contiene una cláusula que indique que el inquilino renuncia a cualquier derecho otorgado por esta ley (por ejemplo, "el inquilino renuncia a..."), márquese como **rojo**: dicha cláusula es automáticamente nula conforme al art. 2.
 
-### Art. 3 — Out-of-scope cases
-For rentals not covered by this law (subject to common dispositions), if termination is sought due to non-payment, no `desahucio` or `reconvención de pago` is required and common courts apply the procedure in Chapter V Section 2.
+### Art. 3 — Casos fuera de ámbito
+Para los arrendamientos no comprendidos en esta ley (sujetos a las disposiciones del derecho común), si se persigue la terminación por mora, no se requerirá `desahucio` ni `reconvención de pago` y los tribunales comunes aplicarán el procedimiento del Capítulo V Sección 2.
 
-## Chapter II — Rentals of houses and premises
+## Capítulo II — Arrendamientos de casas y locales
 
-### Art. 4 — Written contract required
-Every rental or sublease contract under this law, signed after the law's effective date, must be in writing and must state: (i) name and personal details of landlord and tenant, (ii) data sufficient to identify the property, (iii) price, (iv) form of payment.
+### Art. 4 — Contrato escrito obligatorio
+Todo contrato de arrendamiento o subarrendamiento regido por esta ley, suscrito después de la entrada en vigencia de la misma, deberá constar por escrito y expresar: (i) nombre y datos personales del arrendador y del inquilino, (ii) datos suficientes para identificar el inmueble, (iii) precio, (iv) forma de pago.
 
-Contracts with rent under ¢300/month are exempt from stamp tax.
+Los contratos con renta inferior a ¢300/mes están exentos del impuesto de timbre.
 
-> **Casa Segura signal:** if the contract is verbal, or missing any of the four required elements, flag as **yellow** (or **red** if multiple are missing). Cite art. 4.
+> **Señal Casa Segura:** si el contrato es verbal, o le falta alguno de los cuatro elementos exigidos, márquese como **amarillo** (o **rojo** si faltan varios). Cítese el art. 4.
 
-### Art. 5 — Penalty for missing written contract
-If there is no written contract (in cases requiring it), the fault is the landlord's, who incurs a fine equal to 50% of the monthly rent, or ¢10–50 if rent cannot be established.
+### Art. 5 — Sanción por falta de contrato escrito
+Si no existe contrato escrito (en los casos en que se requiere), la responsabilidad corresponde al arrendador, quien incurrirá en una multa equivalente al 50% de la renta mensual, o de ¢10 a ¢50 si la renta no pudiera establecerse.
 
-### Art. 6 — Term clauses
-A term may be set, but it only binds the tenant to pay rent during the term. The landlord cannot demand the property back at term end if the tenant continues paying — except for the causes in art. 24.
+### Art. 6 — Cláusulas de plazo
+Podrá pactarse un plazo, pero éste solo obliga al inquilino a pagar la renta durante su vigencia. El arrendador no podrá exigir la devolución del inmueble al vencimiento del plazo si el inquilino continúa pagando — salvo por las causales del art. 24.
 
-> **Casa Segura signal:** if the contract claims the landlord can recover the property at term end without one of the art. 24 causes, that clause is unenforceable.
+> **Señal Casa Segura:** si el contrato pretende que el arrendador pueda recuperar el inmueble al vencimiento del plazo sin invocar alguna de las causales del art. 24, dicha cláusula es inexigible.
 
-### Art. 7 — Rent ceiling (legacy from 1973)
-Rents on existing rentals cannot exceed those paid as of 31 Dec 1973 if those were ≤ ¢500/month. Does not apply to new properties or those never rented before. Detailed declaration procedure to courts. (Mostly historical relevance now.)
+### Art. 7 — Tope de renta (legado de 1973)
+Las rentas de arrendamientos existentes no pueden exceder las pagadas al 31 de diciembre de 1973 si éstas eran ≤ ¢500/mes. No aplica a inmuebles nuevos o nunca arrendados antes. Existe procedimiento detallado de declaración ante los tribunales. (Actualmente de relevancia mayormente histórica.)
 
-### Art. 8 — Authorized rent increases
-The landlord can be authorized to raise rent only if: (a) improvements were made post-rental with tenant or judicial permission representing ≥20% of property value; or (b) the tenant subleased and there's a notable disproportion. Increase capped at 10% annually on improvement cost.
+### Art. 8 — Aumentos de renta autorizados
+El arrendador podrá ser autorizado a aumentar la renta únicamente si: (a) realizó mejoras posteriores al arrendamiento con permiso del inquilino o judicial, que representen ≥20% del valor del inmueble; o (b) el inquilino subarrendó y existe desproporción notable. El aumento está limitado al 10% anual sobre el costo de las mejoras.
 
-### Art. 9 — Receipt obligation (rental contract)
-Landlords are obligated to issue a receipt for any payment, total or partial. Penalty for non-compliance: triple the amount for which no receipt was issued. The tenant is obligated to acknowledge having received the receipt (signature on landlord's stub or fingerprint).
+### Art. 9 — Obligación de extender recibo (contrato de arrendamiento)
+El arrendador está obligado a extender recibo por todo pago, total o parcial. La sanción por incumplimiento es el triple del monto por el cual no se extendió recibo. El inquilino está obligado a acusar recibo (firma en el talonario del arrendador o huella digital).
 
-> **Casa Segura signal:** if the contract has a clause saying "no receipts will be issued" or similar, flag as **red**. This violates a non-waivable obligation.
+> **Señal Casa Segura:** si el contrato contiene una cláusula que indique que "no se extenderán recibos" o similar, márquese como **rojo**. Esto viola una obligación irrenunciable.
 
-### Art. 10 — Payment via court when landlord refuses
-If the landlord refuses to receive payment or to issue a receipt, the tenant may deposit rent in the competent court within 8 days of the due date and is not in default.
+### Art. 10 — Pago por vía judicial cuando el arrendador rehúsa
+Si el arrendador rehúsa recibir el pago o extender recibo, el inquilino podrá depositar la renta en el tribunal competente dentro de los 8 días posteriores a la fecha de vencimiento y no incurrirá en mora.
 
-### Art. 11 — Harassment by landlord
-Any act by the landlord (or those depending on him) that harms the tenant — e.g. cutting off water or electricity — incurs a fine of ¢100, without prejudice to criminal sanctions.
+### Art. 11 — Hostigamiento por parte del arrendador
+Todo acto del arrendador (o de personas que dependan de él) que perjudique al inquilino — por ejemplo, cortar el agua o la energía eléctrica — incurre en una multa de ¢100, sin perjuicio de las sanciones penales.
 
-## Chapter III — Mesones (rooming houses)
+## Capítulo III — Mesones (casas de habitación colectiva)
 
-### Art. 12 — Mesón scope
-A "mesón" is a house with at least four rooms rented separately to families or individuals with shared services. Family-type houses ("casas de pupilos") are not mesones.
+### Art. 12 — Ámbito del mesón
+Un "mesón" es una casa con al menos cuatro habitaciones arrendadas por separado a familias o individuos con servicios compartidos. Las casas de tipo familiar ("casas de pupilos") no son mesones.
 
-### Art. 13 — Parties to a mesón rental
-The landlord, tenant, mesonero (caretaker), and subtenant.
+### Art. 13 — Partes en el arrendamiento de mesón
+El arrendador, el inquilino, el mesonero (encargado) y el subarrendatario.
 
-### Art. 14 — Right to sublet implied
-When a mesón is rented as a whole, the right to sublet is implied. Personal grounds to terminate the principal lease do not affect subtenants.
+### Art. 14 — Derecho a subarrendar implícito
+Cuando un mesón se arrienda en su totalidad, el derecho a subarrendar se entiende implícito. Las causales personales para dar por terminado el arrendamiento principal no afectan a los subarrendatarios.
 
-### Art. 16 — Continuation on death/incapacity
-The contract continues with the family group living with the tenant in case of death, incapacity, or extended absence. The tenant designates the representative.
+### Art. 16 — Continuación por muerte/incapacidad
+El contrato continúa con el grupo familiar que convivía con el inquilino en caso de muerte, incapacidad o ausencia prolongada. El inquilino designa al representante.
 
-### Art. 17 — Rent ceiling for mesón rooms (1973 baseline)
-Rent for mesón rooms cannot exceed the last rent paid as of 31 Dec 1973. Detailed declaration procedure follows.
+### Art. 17 — Tope de renta para habitaciones de mesón (línea base 1973)
+La renta por habitaciones de mesón no puede exceder la última renta pagada al 31 de diciembre de 1973. Sigue un procedimiento detallado de declaración.
 
-### Art. 18 — Required content of mesón rental contract
-Every contract for renting or subleasing a mesón room must be in writing and contain at minimum:
-1. Full name, age, profession, domicile of landlord, ID number;
-2. Same for tenant;
-3. Mesón name (if any) and room number;
-4. Rent price;
-5. Person authorized to receive rent;
-6. Family group representative under art. 16;
-7. Place and date of signing.
+### Art. 18 — Contenido obligatorio del contrato de arrendamiento de mesón
+Todo contrato de arrendamiento o subarrendamiento de una habitación de mesón debe constar por escrito y contener como mínimo:
+1. Nombre completo, edad, profesión, domicilio del arrendador, número de identificación;
+2. Lo mismo respecto del inquilino;
+3. Nombre del mesón (si lo tuviere) y número de habitación;
+4. Precio de la renta;
+5. Persona autorizada para recibir la renta;
+6. Representante del grupo familiar conforme al art. 16;
+7. Lugar y fecha de la firma.
 
-> **Casa Segura signal:** stronger requirements than art. 4. Missing any of the seven elements = flag.
+> **Señal Casa Segura:** requisitos más estrictos que los del art. 4. Si falta cualquiera de los siete elementos = márquese.
 
-### Art. 19 — Triplicate
-Contract is signed in triplicate: one copy each to landlord, tenant, court (within 5 days).
+### Art. 19 — Triplicado
+El contrato se firma por triplicado: una copia para el arrendador, una para el inquilino y una para el tribunal (dentro de los 5 días).
 
-### Art. 20 — Receipt obligation (mesón)
-Landlord must issue receipts for every payment. If not, tenant must not pay directly and must deposit at the court.
+### Art. 20 — Obligación de extender recibo (mesón)
+El arrendador debe extender recibo por cada pago. De lo contrario, el inquilino no debe pagar directamente y debe depositar en el tribunal.
 
-### Art. 21 — Penalties for non-compliance
-Fine of ¢100 per infraction of arts. 17, 18, 19, 20.
+### Art. 21 — Sanciones por incumplimiento
+Multa de ¢100 por cada infracción a los arts. 17, 18, 19, 20.
 
-### Art. 22 — Monthly payment terms
-Mesón rent is monthly, paid in arrears on the last day of the month.
+### Art. 22 — Plazos de pago mensual
+La renta de mesón es mensual, pagadera vencida el último día del mes.
 
-### Art. 23 — Repeated failure to issue receipts
-Four infractions in 12 months → court orders all future payments deposited at court.
+### Art. 23 — Reiteración en no extender recibos
+Cuatro infracciones en 12 meses → el tribunal ordena que todos los pagos futuros se depositen en el tribunal.
 
-## Chapter IV — Termination
+## Capítulo IV — Terminación
 
-### Art. 24 — Causes for termination
-The only causes for terminating a lease (other than voluntary expiration) are:
+### Art. 24 — Causas de terminación
+Las únicas causas para dar por terminado un arrendamiento (aparte del vencimiento voluntario) son:
 
-1. Default by tenant (8 days past due);
-2. Using the property for purposes other than residential, or for purposes harmful to safety, hygiene, or morality;
-3. Storing inflammables/explosives without written landlord consent;
-4. Total destruction of the property;
-5. Partial destruction making it uninhabitable;
-6. Significant damage caused by tenant or his dependents;
-7. Tenant making alterations without written landlord consent;
-8. Owner intends to build a new construction on the same lot;
-9. Owner needs to perform works increasing capacity or essential repairs requiring vacancy;
-10. Property threatens ruin (action against tenants of affected portions only);
-11. Public-utility taking;
-12. Property declared insanitary under the Health Code;
-13. Tenant refuses to reimburse excess water consumption (defined per ANDA tariff thresholds);
-14. Tenant subleases without written consent;
-15. Owner, usufructuary, or holder needs the property for himself, spouse, ancestors, descendants, siblings, first-degree affinity. Need is presumed when the relevant party lives in another's house;
-16. Term expiration when owner gave the lease because he was leaving the country/locality;
-17. Landlord's title expires for reasons beyond his will (e.g. usufruct expires).
+1. Mora del inquilino (8 días después del vencimiento);
+2. Destinar el inmueble a fines distintos del habitacional, o a fines contrarios a la seguridad, higiene o moralidad;
+3. Almacenar inflamables/explosivos sin consentimiento escrito del arrendador;
+4. Destrucción total del inmueble;
+5. Destrucción parcial que lo haga inhabitable;
+6. Daños significativos causados por el inquilino o quienes dependan de él;
+7. Que el inquilino realice modificaciones sin consentimiento escrito del arrendador;
+8. Que el propietario pretenda edificar una nueva construcción en el mismo terreno;
+9. Que el propietario necesite realizar obras de ampliación de capacidad o reparaciones esenciales que requieran la desocupación;
+10. Que el inmueble amenace ruina (acción contra inquilinos solo de las porciones afectadas);
+11. Expropiación por utilidad pública;
+12. Inmueble declarado insalubre conforme al Código de Salud;
+13. Que el inquilino se niegue a reintegrar el consumo excesivo de agua (definido según los umbrales tarifarios de ANDA);
+14. Que el inquilino subarriende sin consentimiento escrito;
+15. Que el propietario, usufructuario o tenedor necesite el inmueble para sí, cónyuge, ascendientes, descendientes, hermanos, afines en primer grado. La necesidad se presume cuando la parte interesada vive en casa ajena;
+16. Vencimiento del plazo cuando el propietario dio el arrendamiento porque se ausentaba del país/localidad;
+17. Que el título del arrendador expire por causas ajenas a su voluntad (por ejemplo, expiración del usufructo).
 
-> **Casa Segura signal:** any contract clause listing termination causes outside this list (e.g. "podrá darse por terminado a sola voluntad del arrendador") is unenforceable. Flag **yellow**, cite art. 24.
+> **Señal Casa Segura:** toda cláusula contractual que enumere causales de terminación fuera de esta lista (por ejemplo, "podrá darse por terminado a sola voluntad del arrendador") es inexigible. Márquese como **amarillo**, cítese el art. 24.
 
-### Art. 25 — Mesones and apartments — additional cause
-In mesones and apartment buildings, the landlord may also seek termination for tenant conduct against public order or internal building order, at judge's prudent judgment.
+### Art. 25 — Mesones y edificios de apartamentos — causa adicional
+En mesones y edificios de apartamentos, el arrendador también podrá pedir la terminación por conducta del inquilino contraria al orden público o al orden interno del edificio, a prudente arbitrio del juez.
 
-### Art. 26 — Penalty for fraudulent termination claims
-The owner who obtains vacancy under causes 8, 9 (planned construction) or 15 (need for self/family) but fails to act on the stated reason within the deadlines incurs a fine of 10× monthly rent and must indemnify the tenant by 2× monthly rent.
+### Art. 26 — Sanción por pretensiones de terminación fraudulentas
+El propietario que obtenga la desocupación bajo las causales 8, 9 (construcción planeada) o 15 (necesidad para sí o su familia) y luego no actúe conforme a la razón invocada dentro de los plazos, incurre en multa de 10 veces la renta mensual y debe indemnizar al inquilino con 2 veces la renta mensual.
 
-> **Casa Segura signal:** this is a strong tenant protection. Worth surfacing.
+> **Señal Casa Segura:** ésta es una protección fuerte para el inquilino. Vale la pena hacerla visible.
 
-### Art. 27 — Death of tenant does not terminate
-The contract continues with heirs, or with spouse, life partner, ancestors/descendants who lived there.
+### Art. 27 — La muerte del inquilino no termina el contrato
+El contrato continúa con los herederos, o con el cónyuge, compañero/a de vida, ascendientes/descendientes que allí habitaban.
 
-### Art. 28 — Sale of property does not terminate the lease
-Death or transfer of the property by the landlord does not terminate the lease. Buyers must respect the lease even if not registered. Termination only by causes in art. 24-25.
+### Art. 28 — La venta del inmueble no termina el arrendamiento
+Ni la muerte ni la transferencia del inmueble por parte del arrendador dan por terminado el arrendamiento. Los compradores deben respetar el arrendamiento aunque no esté inscrito. La terminación solo procede por las causales de los arts. 24-25.
 
-> **Casa Segura signal:** when verifying a rental contract, if a "new owner" is trying to evict citing the sale alone, that's not a valid cause. Cite art. 28.
+> **Señal Casa Segura:** al verificar un contrato de arrendamiento, si un "nuevo propietario" pretende desahuciar invocando únicamente la venta, esa no es causa válida. Cítese el art. 28.
 
-### Art. 29 — Cascading effect on subleases
-When the principal lease ends, all subleases based on it end — except by non-payment, where any subtenant may pay and become principal tenant. Mesón rule different per art. 14.
+### Art. 29 — Efecto en cascada sobre subarrendamientos
+Cuando termina el arrendamiento principal, terminan todos los subarrendamientos basados en él — salvo por mora, en cuyo caso cualquier subarrendatario podrá pagar y convertirse en inquilino principal. La regla del mesón es distinta conforme al art. 14.
 
-## Chapter V — Procedures
+## Capítulo V — Procedimientos
 
 ### Arts. 30–54
-**Almost entirely repealed by D.L. 712 of 2008.** Procedural matters now follow the Código Procesal Civil y Mercantil. Substantive rights in chapters I–IV remain in force.
+**Derogados casi en su totalidad por el D.L. 712 de 2008.** Las cuestiones procesales se rigen ahora por el Código Procesal Civil y Mercantil. Los derechos sustantivos de los capítulos I–IV permanecen vigentes.
 
-## Chapter VI — General provisions
+## Capítulo VI — Disposiciones generales
 
-### Art. 55 — Establishing business asset value
-For purposes of art. 1(b) and art. 24(2), business value is determined from the Matrícula de Comercio file, municipal calification office, or judicial expert.
+### Art. 55 — Determinación del valor del activo comercial
+Para efectos del art. 1(b) y del art. 24(2), el valor del negocio se determina a partir del expediente de Matrícula de Comercio, la oficina municipal de calificación, o perito judicial.
 
-### Art. 57 — Landlord pays utilities
-Landlord pays normal water consumption, sewage, municipal taxes, fees, contributions, and any fiscal charge on the property. Water service cannot be cut to a tenant without first notifying. Mesón water service can never be cut.
+### Art. 57 — El arrendador paga los servicios
+El arrendador paga el consumo normal de agua, el alcantarillado, los impuestos municipales, tasas, contribuciones y cualquier carga fiscal sobre el inmueble. El servicio de agua no puede cortarse al inquilino sin previa notificación. El servicio de agua de un mesón no puede cortarse en ningún caso.
 
-> **Casa Segura signal:** any contract clause shifting these to the tenant should be flagged.
+> **Señal Casa Segura:** cualquier cláusula contractual que traslade estos rubros al inquilino debe ser marcada.
 
-### Art. 58 — Distribution of fines
-50% of fines go to municipal coffers, 50% to national treasury.
+### Art. 58 — Distribución de las multas
+El 50% de las multas se destina a las arcas municipales, el 50% al fisco nacional.
 
-### Art. 59 — 5% surcharge on judicial deposits
-When tenants are forced to deposit at court, a 5% surcharge applies to the landlord.
+### Art. 59 — Recargo del 5% sobre depósitos judiciales
+Cuando los inquilinos se ven forzados a depositar en el tribunal, se aplica un recargo del 5% contra el arrendador.
 
-### Art. 60 — Public registry of defaulters
-Courts maintain a public registry of tenants condemned to vacate for non-payment. Consultable, not certifiable.
+### Art. 60 — Registro público de morosos
+Los tribunales mantienen un registro público de inquilinos condenados a desocupar por falta de pago. Es consultable, no certificable.
 
-### Art. 60-A — Landlord declaration registry
-Courts also keep a registry of landlord declarations (name, address, rent paid 1973).
+### Art. 60-A — Registro de declaraciones de arrendadores
+Los tribunales también llevan un registro de declaraciones de arrendadores (nombre, dirección, renta pagada en 1973).
 
-### Art. 62 — Common law applies for what's not covered
-For everything not foreseen in this law, common law applies.
+### Art. 62 — Aplicación del derecho común
+Para todo lo no previsto en esta ley, se aplica el derecho común.
 
-## Cross-references
+## Referencias cruzadas
 
-- For **government-built housing rentals**, the Ley sobre Contratos del IVU (`02-ley-ivu.md`) prevails over this law per art. 13 of that law.
-- For **financial leasing** (with purchase option), the Ley de Arrendamiento Financiero (`05-ley-arrendamiento-financiero.md`) applies, not this law.
-- Procedural matters: Código Procesal Civil y Mercantil (post-2008).
+- Para los **arrendamientos de vivienda construida por el Estado**, la Ley sobre Contratos del IVU (`02-ley-ivu.md`) prevalece sobre esta ley conforme al art. 13 de dicha ley.
+- Para el **arrendamiento financiero** (con opción de compra), aplica la Ley de Arrendamiento Financiero (`05-ley-arrendamiento-financiero.md`), no esta ley.
+- Cuestiones procesales: Código Procesal Civil y Mercantil (post-2008).
 
-## Citation format for findings
+## Formato de citación para los hallazgos
 
 ```json
 {

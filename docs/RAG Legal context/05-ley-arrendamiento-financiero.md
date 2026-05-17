@@ -15,192 +15,192 @@ sources:
 last_verified: 2026-05-09
 relevance_to_casa_segura: medium-high
 covers:
-  - financial leasing contracts (movable and immovable property)
-  - parties (Proveedor, Arrendador, Arrendatario)
-  - obligations and prohibitions
-  - registration in Registro de Comercio
-  - tax treatment
-  - special procedural rules (executive force, inembargabilidad)
+  - contratos de arrendamiento financiero (bienes muebles e inmuebles)
+  - partes (Proveedor, Arrendador, Arrendatario)
+  - obligaciones y prohibiciones
+  - inscripción en el Registro de Comercio
+  - tratamiento tributario
+  - reglas procesales especiales (fuerza ejecutiva, inembargabilidad)
 ---
 
 # Ley de Arrendamiento Financiero
 
-## Plain-language summary
+## Resumen en lenguaje sencillo
 
-Special law regulating **financial leasing (leasing)** contracts in El Salvador — the only Central American country with a dedicated leasing statute. A financial lease is a contract where the **arrendador** (lessor) grants the use of a movable or immovable good to the **arrendatario** (lessee) for a forced-compliance term in exchange for a canon (rent), with three end-of-term options: **buy at predefined price, return, or renew**.
+Ley especial que regula los contratos de **arrendamiento financiero (leasing)** en El Salvador — el único país centroamericano con un estatuto dedicado al leasing. Un arrendamiento financiero es un contrato donde el **arrendador** otorga el uso de un bien mueble o inmueble al **arrendatario** por un plazo de cumplimiento forzoso a cambio de un canon (renta), con tres opciones al término del plazo: **comprar a precio predefinido, devolver o renovar**.
 
-The law explicitly **excludes civil rentals** — those follow the Ley de Inquilinato or common civil law. The lessor is not responsible for choices of supplier or asset (those are the lessee's). The contract must be in writing (public deed or authenticated private document) and **registered in the Registro de Comercio** to be enforceable against third parties.
+La ley **excluye expresamente los arrendamientos civiles** — éstos se rigen por la Ley de Inquilinato o el derecho civil común. El arrendador no es responsable de las elecciones de proveedor o de bien (esas son del arrendatario). El contrato debe constar por escrito (escritura pública o documento privado autenticado) y **inscribirse en el Registro de Comercio** para ser oponible frente a terceros.
 
-The law gives lessors strong protection: leased goods are not part of the lessee's bankruptcy estate, the contract has executive force, and the lessor can request seizure as a precautionary measure.
+La ley otorga al arrendador una protección fuerte: los bienes arrendados no forman parte de la masa concursal del arrendatario, el contrato tiene fuerza ejecutiva y el arrendador puede solicitar el secuestro como medida cautelar.
 
-## Application to Casa Segura
+## Aplicación a Casa Segura
 
-This law matters in two scenarios for Casa Segura:
+Esta ley es relevante en dos escenarios para Casa Segura:
 
-1. **Real estate "sales" that are actually leases.** A common fraud pattern is to present a leasing contract as a "compraventa con financiamiento". The buyer pays canons for years, then discovers ownership requires exercising a purchase option (often at a higher price than represented). Casa Segura should detect when a contract has lease-with-purchase-option mechanics dressed up as a sale.
+1. **"Ventas" inmobiliarias que en realidad son arrendamientos.** Un patrón de fraude común consiste en presentar un contrato de leasing como una "compraventa con financiamiento". El comprador paga cánones durante años y luego descubre que para obtener la propiedad debe ejercer una opción de compra (con frecuencia a un precio mayor al representado). Casa Segura debe detectar cuando un contrato tiene mecánicas de arrendamiento con opción de compra disfrazadas de venta.
 
-2. **Real estate leases mislabeled as financial.** Conversely, a regular rental might be dressed up as a "leasing" to escape Ley de Inquilinato protections. The law explicitly says civil rentals are NOT covered (art. 1).
+2. **Arrendamientos inmobiliarios mal etiquetados como financieros.** A la inversa, un arrendamiento ordinario puede disfrazarse como "leasing" para eludir las protecciones de la Ley de Inquilinato. La ley dice expresamente que los arrendamientos civiles NO están cubiertos (art. 1).
 
-Findings the verdict engine should ground here:
+Findings que el motor de veredicto debe fundamentar aquí:
 
 - **`leasing_disguised_as_sale`** → arts. 2, 7
-- **`rental_disguised_as_leasing`** → art. 1 (civil rentals excluded)
-- **`leasing_contract_unregistered`** → art. 7 (must be in Registro de Comercio for third-party effects)
-- **`leasing_excessive_penalty_clause`** → art. 9 (modification damages)
+- **`rental_disguised_as_leasing`** → art. 1 (arrendamientos civiles excluidos)
+- **`leasing_contract_unregistered`** → art. 7 (debe estar en el Registro de Comercio para efectos frente a terceros)
+- **`leasing_excessive_penalty_clause`** → art. 9 (daños por modificación)
 - **`leasing_lessor_obligation_evasion`** → art. 5
 
-## Key articles
+## Artículos clave
 
-### Art. 1 — Scope (CRITICAL)
-This law applies to financial leasing contracts and the parties that sign them. **Civil rental operations are NOT subject to this law.**
+### Art. 1 — Ámbito (CRÍTICO)
+Esta ley se aplica a los contratos de arrendamiento financiero y a las partes que los suscriben. **Las operaciones de arrendamiento civil NO están sujetas a esta ley.**
 
-> **Casa Segura signal:** if a contract says "arrendamiento financiero" but lacks a purchase option, forced term, or supplier-arrendador-arrendatario triangle, it's likely a civil rental — Ley de Inquilinato applies. Conversely, if a contract has all the leasing characteristics but is labeled as a sale, the buyer should know they don't own the property until they exercise the purchase option. Cite art. 1, art. 2.
+> **Señal Casa Segura:** si un contrato se denomina "arrendamiento financiero" pero carece de opción de compra, plazo forzoso o del triángulo proveedor-arrendador-arrendatario, probablemente sea un arrendamiento civil — se aplica la Ley de Inquilinato. A la inversa, si un contrato tiene todas las características de leasing pero está rotulado como una venta, el comprador debe saber que no es dueño del inmueble hasta que ejerza la opción de compra. Citar art. 1, art. 2.
 
-### Art. 2 — Definition (CRITICAL)
-**Financial leasing** is the contract where the lessor grants the use and enjoyment of specified movable or immovable goods, **for a forced-compliance term**, to a lessee who must pay canon and other costs.
+### Art. 2 — Definición (CRÍTICO)
+El **arrendamiento financiero** es el contrato por el cual el arrendador financiero concede el uso y goce de bienes muebles o inmuebles determinados, **por un plazo de cumplimiento forzoso**, a un arrendatario financiero que debe pagar canon y otros costos.
 
-**At the end of the term, the lessee has the option** to:
-- Buy the asset at a **predefined price**;
-- Return it; or
-- Extend the term.
+**Al término del plazo, el arrendatario tiene la opción** de:
+- Comprar el bien a un **precio predefinido**;
+- Devolverlo; o
+- Prorrogar el plazo.
 
-The **lessee chooses the supplier and the asset**. The lessor is therefore not responsible for favorable or unfavorable juridical effects of supplier/asset choice — except when the lessor is also the supplier.
+El **arrendatario elige al proveedor y el bien**. Por lo tanto, el arrendador no es responsable de los efectos jurídicos favorables o desfavorables de la elección del proveedor/bien — salvo cuando el arrendador sea también el proveedor.
 
-> **Casa Segura signal:** if a "sale contract" has these three end-options instead of immediate ownership transfer, it's a financial lease, not a sale. The buyer must understand they don't own the property during the canon period.
+> **Señal Casa Segura:** si un "contrato de venta" presenta estas tres opciones al término del plazo en lugar de una transferencia inmediata de la propiedad, se trata de un arrendamiento financiero, no de una venta. El comprador debe entender que no es dueño del inmueble durante el período de cánones.
 
-### Art. 3 — Parties
-The contract has three parties:
-- **Proveedor (Supplier)**: who transfers ownership of the asset to the lessor. Can be a habitual seller, an occasional seller, or the lessor itself.
-- **Arrendador (Lessor)**: who delivers the asset in financial leasing.
-- **Arrendatario (Lessee)**: who obtains the right to use, enjoy, and economically exploit the asset.
+### Art. 3 — Partes
+El contrato tiene tres partes:
+- **Proveedor**: quien transfiere la propiedad del bien al arrendador. Puede ser un vendedor habitual, un vendedor ocasional o el propio arrendador.
+- **Arrendador**: quien entrega el bien en arrendamiento financiero.
+- **Arrendatario**: quien obtiene el derecho de usar, gozar y explotar económicamente el bien.
 
-### Art. 4 — Supplier obligations
-The supplier must:
-1. Deliver the asset to the lessee when authorized by the lessor;
-2. Ensure assets are free of encumbrances, in working order, without hidden defects;
-3. Honor the warranty;
-4. Comply with consumer protection law;
-5. Other contractual obligations.
+### Art. 4 — Obligaciones del proveedor
+El proveedor debe:
+1. Entregar el bien al arrendatario cuando lo autorice el arrendador;
+2. Asegurar que los bienes estén libres de gravámenes, en buen estado de funcionamiento, sin vicios ocultos;
+3. Honrar la garantía;
+4. Cumplir con la legislación de protección al consumidor;
+5. Las demás obligaciones contractuales.
 
-### Art. 5 — Lessor obligations
-The lessor must:
-1. Pay the supplier the agreed price on time;
-2. Maintain leased goods free of embargoes during the term, to ensure peaceful possession;
-3. Sanitize for evicción;
-4. Other contractual obligations.
+### Art. 5 — Obligaciones del arrendador
+El arrendador debe:
+1. Pagar al proveedor el precio acordado en tiempo;
+2. Mantener los bienes arrendados libres de embargos durante el plazo, para asegurar la posesión pacífica;
+3. Sanear por evicción;
+4. Las demás obligaciones contractuales.
 
-The lessor may, with party agreement, **assign to the lessee its rights and actions** against the supplier. When the lessor is also the supplier, both sets of obligations apply.
+El arrendador podrá, con acuerdo de las partes, **ceder al arrendatario sus derechos y acciones** frente al proveedor. Cuando el arrendador sea también el proveedor, ambos conjuntos de obligaciones le son aplicables.
 
-> **Casa Segura signal:** a leasing contract that lets the lessor encumber the property during the term in ways that disturb the lessee's possession violates art. 5(b). Flag.
+> **Señal Casa Segura:** un contrato de leasing que permita al arrendador gravar el inmueble durante el plazo de formas que perturben la posesión del arrendatario vulnera el art. 5(b). Marcar.
 
-### Art. 6 — Lessee obligations
-During the term, the lessee must:
-1. Pay canons in agreed time;
-2. Assume risks and benefits of the asset's physical/economic nature;
-3. Respond civilly and criminally for use of the leased asset;
-4. Respect the lessor's property right and assert it against third parties — therefore in bankruptcy, concurso, or restructuring, **leased assets are NOT part of the lessee's estate** and are excluded for legal effects;
-5. Other contractual obligations.
+### Art. 6 — Obligaciones del arrendatario
+Durante el plazo, el arrendatario debe:
+1. Pagar los cánones en el tiempo acordado;
+2. Asumir los riesgos y beneficios de la naturaleza física/económica del bien;
+3. Responder civil y penalmente por el uso del bien arrendado;
+4. Respetar el derecho de propiedad del arrendador y hacerlo valer frente a terceros — por consiguiente, en quiebra, concurso o reestructuración, **los bienes arrendados NO forman parte de la masa** del arrendatario y se excluyen para efectos legales;
+5. Las demás obligaciones contractuales.
 
-### Art. 7 — Formality and registration (CRITICAL)
-The financial leasing contract must be in writing — **public deed or authenticated private document**. To be enforceable against third parties, it must be **inscribed in the Registro de Comercio**. Inscription costs are paid by the lessee unless otherwise agreed. The fee is **$0.23 per thousand**, capped at **$2,300**.
+### Art. 7 — Formalidad e inscripción (CRÍTICO)
+El contrato de arrendamiento financiero debe constar por escrito — **escritura pública o documento privado autenticado**. Para ser oponible frente a terceros, debe **inscribirse en el Registro de Comercio**. Los costos de inscripción los paga el arrendatario salvo pacto en contrario. La tarifa es de **$0.23 por mil**, con un tope de **$2,300**.
 
-> **Casa Segura signal:** an unregistered leasing contract is risky — third-party purchasers without notice could prevail. Verify Registro de Comercio inscription. Cite art. 7.
+> **Señal Casa Segura:** un contrato de leasing no inscrito es riesgoso — terceros adquirentes sin noticia podrían prevalecer. Verificar la inscripción en el Registro de Comercio. Citar art. 7.
 
-### Art. 8 — Prohibitions on lessee
-The lessee may NOT:
-- Transfer or transmit the leased goods;
-- Constitute real guarantees on them for own obligations;
-- Include them in insolvency, bankruptcy, dissolution, liquidation, or reorganization estates.
+### Art. 8 — Prohibiciones al arrendatario
+El arrendatario NO puede:
+- Transferir o transmitir los bienes arrendados;
+- Constituir garantías reales sobre ellos por obligaciones propias;
+- Incluirlos en masas de insolvencia, quiebra, disolución, liquidación o reorganización.
 
-Lessor may seek indemnification + criminal sanctions for violations.
+El arrendador puede reclamar indemnización + sanciones penales por las violaciones.
 
-### Art. 9 — Term and unconditionality (CRITICAL)
-**The contract term is a right of the lessor**, modifiable only with lessor's acceptance and full compensation for damages. Damages are presumed to equal the sums the lessor would have received during the original term, and may be set contractually.
+### Art. 9 — Plazo e incondicionalidad (CRÍTICO)
+**El plazo del contrato es un derecho del arrendador**, modificable únicamente con la aceptación del arrendador y plena indemnización de daños. Se presume que los daños equivalen a las sumas que el arrendador habría recibido durante el plazo original y pueden fijarse contractualmente.
 
-The lessee's obligation to pay canons is **unconditional**: payable whether or not the lessee is exploiting the asset, since exploitation risks are entirely the lessee's. Exception: when non-use is the lessor's fault.
+La obligación del arrendatario de pagar los cánones es **incondicional**: exigible esté o no explotando el bien, ya que los riesgos de la explotación corresponden exclusivamente al arrendatario. Excepción: cuando el no uso sea por culpa del arrendador.
 
-> **Casa Segura signal:** if a "buyer" in a contract presented as a sale finds an art. 9-style penalty (e.g. early-cancellation = full remaining canons), that's a strong indicator it's a financial lease, not a sale.
+> **Señal Casa Segura:** si un "comprador" en un contrato presentado como venta encuentra una penalización al estilo del art. 9 (p. ej., cancelación anticipada = cánones restantes íntegros), es un indicador fuerte de que se trata de un arrendamiento financiero, no de una venta.
 
-### Art. 10 — Insurance
-Parties may agree on insurable risks per asset nature. **All risks (insured or not) are the lessee's**. The lessor is the policy beneficiary. The lessee covers any deductible. Excess after lessor's costs is returned to the lessee.
+### Art. 10 — Seguros
+Las partes pueden acordar los riesgos asegurables según la naturaleza del bien. **Todos los riesgos (asegurados o no) son del arrendatario**. El arrendador es el beneficiario de la póliza. El arrendatario cubre cualquier deducible. El remanente, después de los costos del arrendador, se devuelve al arrendatario.
 
-### Art. 11 — Taxes and obligations
-**All taxes, fees, fines, and penalties on tenure, possession, exploitation, or circulation of the asset** are paid by the **lessee**.
+### Art. 11 — Impuestos y obligaciones
+**Todos los impuestos, tasas, multas y sanciones sobre la tenencia, posesión, explotación o circulación del bien** los paga el **arrendatario**.
 
-> **Casa Segura signal:** if a leasing contract presented as a sale shifts all property taxes and fines to the "buyer", that's the lessee allocation under art. 11 — supports the leasing reclassification.
+> **Señal Casa Segura:** si un contrato de leasing presentado como venta traslada todos los impuestos prediales y multas al "comprador", esa es la asignación al arrendatario bajo el art. 11 — apoya la reclasificación como leasing.
 
-### Art. 12 — Sale and lease-back
-Lessors may also do **venta y retroarriendo** (sale and lease-back), which is NOT a financial leasing operation and follows tax legislation.
+### Art. 12 — Venta y retroarriendo
+Los arrendadores también pueden realizar **venta y retroarriendo** (sale and lease-back), que NO es una operación de arrendamiento financiero y se rige por la legislación tributaria.
 
-### Art. 13 — Accounting
-Financial leasing accounting follows the dispositions of the Consejo de Vigilancia de la Profesión de Contaduría Pública y Auditoría.
+### Art. 13 — Contabilidad
+La contabilidad del arrendamiento financiero sigue las disposiciones del Consejo de Vigilancia de la Profesión de Contaduría Pública y Auditoría.
 
-## Tax provisions (Title III)
+## Disposiciones tributarias (Título III)
 
-### Art. 14 — Lessee deductions (Income Tax)
-Lessees may deduct canons against income from contracts on assets directly producing taxable income. If income is partly taxable and partly exempt, only the taxable share is deductible.
+### Art. 14 — Deducciones del arrendatario (Impuesto sobre la Renta)
+Los arrendatarios pueden deducir los cánones contra los ingresos provenientes de contratos sobre bienes que producen directamente renta gravable. Si la renta es parcialmente gravable y parcialmente exenta, sólo es deducible la proporción gravable.
 
-### Art. 15 — Lessor depreciation
-Lessor may deduct depreciation of owned assets. **For real estate (immovable goods), depreciation must be over the contract term** but **never less than 7 years**. Less than 7 years → art. 30 of Ley de Impuesto sobre la Renta applies.
+### Art. 15 — Depreciación del arrendador
+El arrendador puede deducir la depreciación de los bienes de su propiedad. **Para bienes inmuebles, la depreciación debe realizarse durante el plazo del contrato** pero **nunca por un período menor a 7 años**. Plazos menores a 7 años → se aplica el art. 30 de la Ley de Impuesto sobre la Renta.
 
-When the lessee exercises the immovable purchase option, they may deduct the last canon under art. 30 ISR. For movable goods, lessee gets the depreciation deduction on subsequent ownership.
+Cuando el arrendatario ejerce la opción de compra del inmueble, puede deducir el último canon bajo el art. 30 ISR. Para bienes muebles, el arrendatario obtiene la deducción por depreciación a partir de su posterior titularidad.
 
-### Art. 16 — International leasing
-Subject to Código Tributario and tax laws. Special rules for machinery/equipment imports under leasing for State-tendered works (D.L. 647/2005).
+### Art. 16 — Arrendamiento internacional
+Sujeto al Código Tributario y a las leyes tributarias. Reglas especiales para importaciones de maquinaria/equipo bajo arrendamiento para obras licitadas por el Estado (D.L. 647/2005).
 
-### Art. 17 — Real estate leasing tax (CRITICAL)
-**Impuesto sobre Transferencia de Bienes Raíces** is owed only **at the lessor's acquisition** of the property — base = real or commercial value at acquisition.
+### Art. 17 — Impuesto al arrendamiento de bienes inmuebles (CRÍTICO)
+El **Impuesto sobre Transferencia de Bienes Raíces** se causa únicamente **al momento de la adquisición del inmueble por parte del arrendador** — base = valor real o comercial al momento de la adquisición.
 
-**When the lessee exercises the purchase option, the transfer tax is NOT owed.**
+**Cuando el arrendatario ejerce la opción de compra, el impuesto a la transferencia NO se causa.**
 
-Subsequent transfers after lessee acquisition do owe the tax.
+Las transferencias posteriores a la adquisición por parte del arrendatario sí causan el impuesto.
 
-> **Casa Segura signal:** a fraudulent seller may misuse this exemption. Verify it's actually a registered leasing operation — not a fake leasing wrapper to evade transfer tax.
+> **Señal Casa Segura:** un vendedor fraudulento puede hacer mal uso de esta exención. Verificar que efectivamente se trate de una operación de leasing inscrita — no de una envoltura ficticia de leasing para evadir el impuesto a la transferencia.
 
-## Special dispositions (Title IV)
+## Disposiciones especiales (Título IV)
 
-### Art. 18 — Executive force
-On lessee default, leasing contracts have **executive force** and follow the executive procedure of the Ley de Procedimientos Mercantiles. With the suit, the lessor must attach a contador's certification of the debit balance.
+### Art. 18 — Fuerza ejecutiva
+Ante el incumplimiento del arrendatario, los contratos de leasing tienen **fuerza ejecutiva** y siguen el procedimiento ejecutivo de la Ley de Procedimientos Mercantiles. Con la demanda, el arrendador debe acompañar una certificación de contador del saldo deudor.
 
-The lessor may request **seizure of the leased asset as precautionary measure** — must be decreed within 3 working days. To dispose of the seized asset, the lessor must post a bond equal to the asset value.
+El arrendador puede solicitar el **secuestro del bien arrendado como medida cautelar** — debe decretarse dentro de los 3 días hábiles. Para disponer del bien secuestrado, el arrendador debe rendir caución equivalente al valor del bien.
 
 ### Art. 19 — Inembargabilidad
-Disputes over including leased assets in lessee's bankruptcy estate must resolve **recognizing the lessor's exclusive ownership and excluding leased assets from the estate**. Lessor's bankruptcy: cannot include leased-out assets in own estate.
+Las disputas sobre la inclusión de los bienes arrendados en la masa concursal del arrendatario deben resolverse **reconociendo la propiedad exclusiva del arrendador y excluyendo los bienes arrendados de la masa**. Quiebra del arrendador: no puede incluir los bienes dados en arrendamiento en su propia masa.
 
-## Supplementary application (Title V)
+## Aplicación supletoria (Título V)
 
 ### Art. 20 — Supletoriedad
-For everything not in this law: mercantile, civil, tax, registry, cadastral, consumer protection, and environmental norms apply if not contrary to this law.
+Para todo lo no contemplado en esta ley: se aplican las normas mercantiles, civiles, tributarias, registrales, catastrales, de protección al consumidor y ambientales, en lo que no sean contrarias a esta ley.
 
-## Final dispositions (Title VI)
+## Disposiciones finales (Título VI)
 
-### Art. 21 — Preferential application
-By special character, this law prevails over any contrary law.
+### Art. 21 — Aplicación preferente
+Por su carácter especial, esta ley prevalece sobre cualquier ley contraria.
 
-### Art. 22 — Effective date
-Decree entered into force 60 days after Diario Oficial publication (effectively September 2002).
+### Art. 22 — Vigencia
+El decreto entró en vigencia 60 días después de su publicación en el Diario Oficial (efectivamente en septiembre de 2002).
 
-## Practical fraud patterns to watch
+## Patrones de fraude prácticos a vigilar
 
-| Pattern | Article |
+| Patrón | Artículo |
 |---|---|
-| "Sale" contract has forced term + canons + purchase option (financial lease characteristics) | art. 2 |
-| "Sale" contract shifts all taxes, fees, risks to "buyer" | arts. 6, 10, 11 |
-| "Sale" contract has art. 9-style early-termination penalty | art. 9 |
-| Leasing contract not registered in Registro de Comercio | art. 7 |
-| Contract claims real estate transfer tax exemption without being a registered leasing | art. 17 |
-| Civil rental dressed up as "leasing" to escape Ley de Inquilinato | art. 1 |
-| Lessee tries to be made responsible for lessor's encumbrances on the property | art. 5(b) |
-| Contract requires lessee to include leased asset as guarantee for other debts | art. 8 |
+| El contrato de "venta" tiene plazo forzoso + cánones + opción de compra (características de leasing financiero) | art. 2 |
+| El contrato de "venta" traslada todos los impuestos, tasas y riesgos al "comprador" | arts. 6, 10, 11 |
+| El contrato de "venta" contiene una penalización por terminación anticipada al estilo del art. 9 | art. 9 |
+| Contrato de leasing no inscrito en el Registro de Comercio | art. 7 |
+| Contrato que reclama exención del impuesto a la transferencia de bienes raíces sin ser un leasing inscrito | art. 17 |
+| Arrendamiento civil disfrazado de "leasing" para eludir la Ley de Inquilinato | art. 1 |
+| Se pretende responsabilizar al arrendatario por gravámenes del arrendador sobre el inmueble | art. 5(b) |
+| El contrato exige al arrendatario incluir el bien arrendado como garantía de otras deudas | art. 8 |
 
-## Cross-references
+## Referencias cruzadas
 
-- **Civil rentals**: see `01-ley-inquilinato.md` (NOT covered by this law).
-- **Real estate transfer tax**: Ley del Impuesto sobre Transferencia de Bienes Raíces.
-- **Mercantile registration**: Código de Comercio + Ley de Procedimientos Mercantiles (for executive process).
-- **Consumer protection**: Ley de Protección al Consumidor.
+- **Arrendamientos civiles**: ver `01-ley-inquilinato.md` (NO cubiertos por esta ley).
+- **Impuesto a la transferencia de bienes raíces**: Ley del Impuesto sobre Transferencia de Bienes Raíces.
+- **Inscripción mercantil**: Código de Comercio + Ley de Procedimientos Mercantiles (para el proceso ejecutivo).
+- **Protección al consumidor**: Ley de Protección al Consumidor.
 
-## Citation format for findings
+## Formato de citación para findings
 
 ```json
 {

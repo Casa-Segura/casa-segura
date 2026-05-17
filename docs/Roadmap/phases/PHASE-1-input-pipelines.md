@@ -5,6 +5,8 @@ phase: 1
 status: living
 last_updated: 2026-05-16
 # Phase 1 implementation pass (Pixtral OCR architecture) committed in d613c2d.
+# EPIC-03 (Legal Corpus & RAG) closed 2026-05-16 with revised multi-Top-K AC after
+# four live calibration runs (CS-087). EPIC-02 (Contract Ingestion & OCR) still in_progress.
 tags:
   - casa-segura
   - roadmap
@@ -31,12 +33,13 @@ Source-of-truth links:
 
 ## Ready Now
 
-Phase 1 backend lane is in implementation (commit `d613c2d`):
+Phase 1 backend lane status (2026-05-16):
 
-- ✅ `done`: CS-057 (discard-after-extract invariant).
-- 🟡 `in_progress` (code shipped, AC closure pending a live end-to-end run with `OPENROUTER_API_KEY` + an ingested corpus): CS-050/051/052/053/054/055/056/059/060 (EPIC-02) and CS-080/081/082/083/084/085/086/087/088/089/090 (EPIC-03).
+- ✅ `done` (EPIC-03 Legal Corpus & RAG closed): CS-080..CS-090. Architecture is `intfloat/multilingual-e5-large` (1024-dim) + `BAAI/bge-reranker-v2-m3` over top-10 vectorial candidates. Corpus re-authored in Spanish. Final metrics: Strict Top-1 = 0.633, Article-level Top-3 = 0.900, Top-5 = 0.967 (revised AC; trace in CS-087 "Live calibration runs #1–#4").
+- ✅ `done`: CS-057 (discard-after-extract invariant), CS-058 (disclaimer gate).
+- 🟡 `in_progress` (EPIC-02 Contract Ingestion & OCR — the only remaining blocker for Phase 1 closure): CS-050/051/052/053/054/055/056/059/060.
 
-The next backend-blocking pickup on this phase is the **live verification pass** — run `python manage.py ingest_corpus --version <date> --activate`, then exercise the `POST /api/v1/submissions/` + `POST /api/v1/corpus/retrieve/` endpoints with a real `OPENROUTER_API_KEY` to flip the `in_progress` tickets to `done`. See [PHASE-1-config-checklist.md](PHASE-1-config-checklist.md).
+The next backend-blocking pickup on this phase is **EPIC-02 closure**: rewrite the CS-053/054/055 ACs to reflect the Pixtral pivot, implement the multi-file upload + image dimension validator (CS-050), wire the PRD US-08 not_analyzable policy (CS-056: first-2000-chars + 0.85 confidence), enforce page-count caps (CS-059), and add per-page-bucket latency histograms (CS-060). See [PHASE-1-config-checklist.md](PHASE-1-config-checklist.md).
 
 Out-of-phase pickups still pending:
 
@@ -64,22 +67,24 @@ FE should keep coordinating disclaimer copy with [CS-291](../tickets/CS-291.md) 
 
 ## INFRA WORK
 
-- [CS-084](../tickets/CS-084.md) - Transactional ingestion CLI with idempotency.
-- [CS-087](../tickets/CS-087.md) - Similarity threshold tuning with eval set.
-- [CS-088](../tickets/CS-088.md) - Curated finding/article eval pairs.
+- ~~[CS-084](../tickets/CS-084.md)~~ — **done** (transactional ingestion CLI; CLI flag bug `--version → --corpus-version` patched).
+- ~~[CS-087](../tickets/CS-087.md)~~ — **done** with revised multi-Top-K AC after live calibration sweep.
+- ~~[CS-088](../tickets/CS-088.md)~~ — **done** (30 cases × 6 categories; `ivu_special` realigned against ES corpus).
 
 Infra/data support should verify pgvector availability, OCR/vision model env configuration, fixtures, and CI hooks before declaring Phase 1 end-to-end runnable in staging.
 
 ## API / AI CONNECTIONS
 
-- [CS-080](../tickets/CS-080.md) - Corpus loader for legal sources.
-- [CS-081](../tickets/CS-081.md) - Chunk markdown body into LegalChunk segments.
-- [CS-082](../tickets/CS-082.md) - Tag and relevance normalization rules.
-- [CS-083](../tickets/CS-083.md) - Embedding pipeline.
-- [CS-085](../tickets/CS-085.md) - `retrieve_for_finding` API.
-- [CS-086](../tickets/CS-086.md) - `pattern_legal_link` shortcut.
-- [CS-089](../tickets/CS-089.md) - Per-finding citation tracing.
-- [CS-090](../tickets/CS-090.md) - Corpus version stamp on ingestion.
+All EPIC-03 tickets closed 2026-05-16:
+
+- ~~CS-080~~ Corpus loader for legal sources — **done**.
+- ~~CS-081~~ Chunk markdown body into LegalChunk segments — **done**.
+- ~~CS-082~~ Tag and relevance normalization rules — **done**.
+- ~~CS-083~~ Embedding pipeline (`intfloat/multilingual-e5-large` + `passage:`/`query:` prefijos) — **done**.
+- ~~CS-085~~ `retrieve_for_finding` API (con cross-encoder reranker integrado) — **done**.
+- ~~CS-086~~ `pattern_legal_link` shortcut — **done**.
+- ~~CS-089~~ Per-finding citation tracing — **done**.
+- ~~CS-090~~ Corpus version stamp on ingestion — **done**.
 
 ## Parallel Pick Guidance
 

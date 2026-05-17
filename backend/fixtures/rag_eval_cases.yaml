@@ -133,23 +133,26 @@ categories:
   ivu_special:
     description: Reglas especiales aplicables a contratos del IVU y arrendamiento financiero.
     cases:
+      # Realineadas 2026-05-16 contra el corpus ES traducido (CS-087 live calibration #3).
+      # Las anclas originales (art-1, art-2, art-4 de las respectivas leyes) no contenían
+      # el material legal que las queries describen; se reapuntan al artículo correcto.
       - finding: "El contrato es del Instituto de Vivienda Urbana y omite la cláusula de bien de familia."
         expected:
           law_id: ley-ivu
-          anchor: art-2
+          anchor: art-3              # Restricciones del Bien de Familia (CRÍTICO)
       - finding: "Contrato IVU sin las garantías procesales especiales del instituto."
         expected:
           law_id: ley-ivu
-          anchor: art-1
+          anchor: art-9              # Representación procesal
       - finding: "Arrendamiento financiero sin previsión expresa para liquidación anticipada."
         expected:
           law_id: ley-arrendamiento-financiero
-          anchor: art-4
+          anchor: art-9              # Plazo e incondicionalidad
       - finding: "El contrato IVU permite ejecución sin respetar las causales legales propias."
         expected:
           law_id: ley-ivu
-          anchor: art-1
+          anchor: art-4              # Causales de terminación
       - finding: "Arrendamiento financiero que no respeta los plazos mínimos legales."
         expected:
           law_id: ley-arrendamiento-financiero
-          anchor: art-4
+          anchor: art-2              # Definición (incluye plazo de cumplimiento forzoso)
