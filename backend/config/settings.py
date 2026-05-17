@@ -267,6 +267,9 @@ ZAVU_WEBHOOK_SECRET = env("ZAVU_WEBHOOK_SECRET", default="")
 ZAVUDEV_API_KEY = env("ZAVUDEV_API_KEY", default="") or env("ZAVU_API_KEY", default="")
 ZAVU_SENDER_ID = env("ZAVU_SENDER_ID", default="")
 
+# ─── Public HTML report link TTL — worker ``web_link`` + GET `/r/<id>/` (maps ``REPORT_LINK_TTL_DAYS``) ───
+PUBLIC_REPORT_LINK_TTL_DAYS = env.int("REPORT_LINK_TTL_DAYS", default=30)
+
 
 # ─── Optional project verification (EPIC-12 / CS-356) ───
 # Mirrors `frontend` `PROJECT_VERIFICATION_ENABLED`; default-off for safe prod rollouts.

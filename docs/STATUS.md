@@ -122,7 +122,7 @@
 
 | ID | Title | Owner | Status |
 |---|---|---|---|
-| T060 | `POST /webhook/zavu` with signature validation | C + A | ☐ |
+| T060 | `POST /api/v1/webhooks/zavu/` — Zavu webhook HMAC (`ZAVU_WEBHOOK_SECRET`) + outbound API (`ZAVUDEV_API_KEY`) | C + A | ◐ |
 | T061 | Phone number → session mapping in Redis | A | ☐ |
 | T062 | Inbound photo handler → call /check-project | C | ☐ |
 | T063 | Inbound PDF handler → call /check-contract | C | ☐ |

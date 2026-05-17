@@ -78,6 +78,13 @@ class DeliveryRequest(models.Model):
         default=_delivery_default_expiry,
         help_text="Cleanup job purges rows past this timestamp (default +7d)",
     )
+    provider_message_id = models.CharField(
+        max_length=128,
+        blank=True,
+        default="",
+        db_index=True,
+        help_text="Outbound provider message id (e.g. Zavu) for delivery webhook correlation",
+    )
 
     class Meta:
         db_table = "delivery_request"

@@ -12,15 +12,16 @@ from rest_framework.views import APIView
 
 from django.conf import settings
 
+from delivery.application.zavu_webhook import process_zavu_webhook_dict
 from delivery.interfaces.api.zavu_signature import verify_zavu_signature
 
 logger = logging.getLogger(__name__)
 
 
 class ZavuWebhookView(APIView):
-    """`POST /api/v1/webhooks/zavu/` — acknowledge Zavu delivery / inbound events (MVP).
+    """`POST /api/v1/webhooks/zavu/` — verify signature and reconcile delivery rows ([[CS-357]]).
 
-    Verifies ``X-Zavu-Signature`` per Zavu docs; does not persist payload contents.
+    Verifies ``X-Zavu-Signature`` per Zavu docs; applies coarse metadata to ``DeliveryRequest``.
     """
 
     authentication_classes = ()
@@ -42,20 +43,25 @@ class ZavuWebhookView(APIView):
         ):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
+        payload_dict: dict | None = None
         event_type = None
         if raw_body:
             try:
                 payload = json.loads(raw_body.decode("utf-8"))
                 if isinstance(payload, dict):
+                    payload_dict = payload
                     raw_type = payload.get("type")
                     if isinstance(raw_type, str):
                         event_type = raw_type
             except (UnicodeDecodeError, json.JSONDecodeError, TypeError):
-                pass
+                payload_dict = None
 
         if event_type:
             logger.info("zavu_webhook event_type=%s bytes=%s", event_type, len(raw_body))
         else:
             logger.info("zavu_webhook received bytes=%s", len(raw_body))
+
+        if payload_dict is not None:
+            process_zavu_webhook_dict(payload_dict)
 
         return Response({"status": "received"}, status=status.HTTP_200_OK)

@@ -309,7 +309,7 @@ class DeliveryRequestFactory(factory.django.DjangoModelFactory):
     analysis = factory.SubFactory(ContractAnalysisFactory)
     channel = DeliveryChannel.EMAIL_PDF.value
     target_hash = factory.Sequence(lambda n: f"hash{n:028x}")
-    target_value_encrypted = factory.LazyAttribute(lambda o: f"enc::{o.target_hash}")
+    target_value_encrypted = factory.Sequence(lambda n: f"enc::user{n}@example.com")
     delivered_at = None
     attempt_count = 0
     max_attempts = 3
