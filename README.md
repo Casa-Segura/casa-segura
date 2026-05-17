@@ -1,118 +1,165 @@
-# Casa Segura
+<p align="center">
+  <img src="docs/assets/casa-segura-logo.png" alt="Casa Segura — marca de una casa estilizada sobre fondo verde azulado" width="140" height="140" />
+</p>
 
-**Automated analysis of Salvadoran real estate contracts** — upload a PDF or photos, get a structured report (rubric score, findings, economic context, citations) so you can decide whether to negotiate or talk to a lawyer **before** signing. User-facing experiences use Spanish in the informal **tú** register.
+<h1 align="center">Casa Segura</h1>
+
+<p align="center">
+  <strong>Automated analysis of Salvadoran real estate contracts</strong> — upload a PDF or clear photos and get a structured report (rubric score, findings, economic context, citations) so you can decide whether to negotiate or talk to a lawyer <strong>before</strong> signing. User-facing experiences use Spanish in the informal <strong>tú</strong> register.
+</p>
+
+<p align="center">
+  <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-16.2-000000?style=flat-square&logo=nextdotjs&logoColor=white" alt="Next.js 16" /></a>
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React 19" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript 5" /></a>
+  <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4" /></a>
+  <img src="https://img.shields.io/badge/ESLint-9-4B32C3?style=flat-square&logo=eslint&logoColor=white" alt="ESLint 9" />
+  <a href="https://vitest.dev/"><img src="https://img.shields.io/badge/Vitest-3-6E9F18?style=flat-square&logo=vitest&logoColor=white" alt="Vitest 3" /></a>
+</p>
+
+<p align="center">
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.11+" /></a>
+  <a href="https://www.djangoproject.com/"><img src="https://img.shields.io/badge/Django-5.2-092E20?style=flat-square&logo=django&logoColor=white" alt="Django 5.2" /></a>
+  <a href="https://www.django-rest-framework.org/"><img src="https://img.shields.io/badge/Django_REST_Framework-3.15+-ED462F?style=flat-square&logo=django&logoColor=white" alt="Django REST Framework" /></a>
+  <a href="https://docs.pydantic.dev/"><img src="https://img.shields.io/badge/Pydantic-v2-E92063?style=flat-square&logo=pydantic&logoColor=white" alt="Pydantic v2" /></a>
+  <a href="https://docs.celeryq.dev/"><img src="https://img.shields.io/badge/Celery-5-37814A?style=flat-square&logo=celery&logoColor=white" alt="Celery 5" /></a>
+  <a href="https://redis.io/"><img src="https://img.shields.io/badge/Redis-7-DC382D?style=flat-square&logo=redis&logoColor=white" alt="Redis 7" /></a>
+  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL 16" />
+  <img src="https://img.shields.io/badge/pgvector-extension-111827?style=flat-square" alt="pgvector" />
+  <a href="https://docs.docker.com/compose/"><img src="https://img.shields.io/badge/Docker_Compose-dev_stack-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker Compose" /></a>
+  <img src="https://img.shields.io/badge/OpenAPI-drf--spectacular-6BA539?style=flat-square&logo=openapiinitiative&logoColor=white" alt="OpenAPI via drf-spectacular" />
+  <img src="https://img.shields.io/badge/observability-structlog_%2B_Prometheus-111827?style=flat-square" alt="structlog and Prometheus" />
+</p>
+
+<p align="center">
+  Código en <a href="https://github.com/Casa-Segura/casa-segura"><strong>github.com/Casa-Segura/casa-segura</strong></a> (público, sin autenticación para lectura)
+</p>
+
+<p align="center">
+  Documentación formal en <a href="docs/"><code>docs/</code></a> · <a href="docs/Roadmap/README.md">Roadmap</a> · <a href="AGENTS.md"><code>AGENTS.md</code></a> · <a href="AGENTS.md#commit-signing-policy">Política de firmado de commits</a>
+</p>
+
+---
 
 > [!IMPORTANT]
 > **Aviso legal (BR-07):** Todo lo que vea el usuario debe incluir la frase exacta **«Esto no es asesoría legal»**. Este repositorio es código y documentación de producto; **no** sustituye asesoría jurídica.
 
-## What this project is (and is not)
+## Qué es este proyecto (y qué no es)
 
-**In scope:** ingestion + OCR, classification, rubric-driven evaluation, report generation, and multichannel delivery (SMS summary, email PDF, web link) aligned with the formal PRDs — focused on **understanding the contract text**, not on validating people or projects against government registries.
+**Dentro del alcance:** ingestión + OCR, clasificación, evaluación con rúbrica, generación de informes y entrega multicanal (resumen por SMS, PDF por correo, enlace web), alineado con los PRDs formales — centrado en **entender el texto del contrato**, no en validar personas ni proyectos contra registros del Estado.
 
-**Explicitly out of scope for MVP:** material registry checks, billboard / “valla” verification as a gate, blacklists, user accounts as a primary model, personalized legal advice, permanent storage of raw contract blobs, and non-Salvadoran contracts. Details: [PRD General](docs/Casa%20Segura%20Formal%20PRDs/PRD_GENERAL.md).
+**Fuera de alcance para el MVP:** comprobaciones materiales en registros, verificación de vallas como requisito, listas negras, cuentas de usuario como modelo principal, asesoría legal personalizada, almacenamiento permanente de contratos en bruto y contratos fuera de El Salvador. Detalle: [PRD General](docs/Casa%20Segura%20Formal%20PRDs/PRD_GENERAL.md).
 
-## How we ship work
+## Documentación y roadmap
 
-Requirements are decomposed into **features F1–F8**, **epics**, and **tickets (`CS-*`)** with `depends_on`, acceptance criteria, and `status`. We add capability **incrementally**; the roadmap—not this README—is the checklist for what is actually done.
+Los requisitos se descomponen en **funciones F1–F8**, **épicas** y **tickets (`CS-*`)** con `depends_on`, criterios de aceptación y `status`. La capacidad se añade **de forma incremental**; el roadmap — no este README — es la lista de lo que está realmente hecho.
 
-| Resource | Use it for |
-|----------|------------|
-| [Roadmap index](docs/Roadmap/README.md) | PRD → epic → ticket mapping and numbering blocks |
-| [Phase index](docs/Roadmap/phases/README.md) | Picking work by delivery phase |
-| [Parallel work plan](docs/Roadmap/PARALLEL_WORK_PLAN.md) | Lanes: `FE WORK`, `BE WORK`, `INFRA WORK`, `API / AI CONNECTIONS` |
-| [AGENTS.md](AGENTS.md) | Ticket/epic hygiene, canonical paths (`backend/`, `frontend/`), privacy norms |
+| Recurso                                                        | Para qué usarlo                                                                            |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| [Índice del roadmap](docs/Roadmap/README.md)                   | Mapeo PRD → épica → ticket y bloques de numeración                                         |
+| [Índice de fases](docs/Roadmap/phases/README.md)               | Elegir trabajo por fase de entrega                                                         |
+| [Plan de trabajo paralelo](docs/Roadmap/PARALLEL_WORK_PLAN.md) | Carriles: `FE WORK`, `BE WORK`, `INFRA WORK`, `API / AI CONNECTIONS`                       |
+| [Estado del proyecto (manual)](docs/meta/PROJECT_STATUS.md)    | Narrativa y highlights (los tickets siguen siendo la fuente de verdad del `status`)        |
+| [`AGENTS.md`](AGENTS.md)                                       | Higiene de tickets/épicas, rutas canónicas (`backend/`, `frontend/`), normas de privacidad |
 
-Supporting references: [Feature map](docs/Casa%20Segura%20Formal%20PRDs/FEATURES_MAP.md), [Architecture](docs/ARCHITECTURE.md), [Domain model](docs/Casa%20Segura%20Formal%20PRDs/DOMAIN_MODEL.md).
+Referencias de arquitectura y dominio: [Mapa de funciones](docs/Casa%20Segura%20Formal%20PRDs/FEATURES_MAP.md), [Arquitectura](docs/ARCHITECTURE.md), [Modelo de dominio](docs/Casa%20Segura%20Formal%20PRDs/DOMAIN_MODEL.md).
 
-## Technology
+### Identidad visual en el repo
 
-| Layer | Stack |
-|-------|--------|
-| **Web** | [Next.js](https://nextjs.org/) 16 (App Router), React 19, TypeScript 5, Tailwind CSS 4, ESLint, Vitest |
-| **API & domain** | [Django](https://www.djangoproject.com/) 5.2 LTS, [Django REST Framework](https://www.django-rest-framework.org/), **Pydantic v2**, drf-spectacular (OpenAPI) |
-| **Async / jobs** | Celery, Redis |
-| **Database** | PostgreSQL 16 + **pgvector** (vectors + relational data per PRDs) |
-| **Local dependencies** | [Docker Compose](docker-compose.dev.yml) — Postgres + Redis for development |
+| Artefacto                     | Ubicación                                                                                                                     |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Logo (README y documentación) | [`docs/assets/casa-segura-logo.png`](docs/assets/casa-segura-logo.png)                                                        |
+| Favicon (app web Next.js)     | [`frontend/src/app/favicon.ico`](frontend/src/app/favicon.ico) — convención App Router; el navegador lo sirve automáticamente |
 
-Backend stack decisions live in [`docs/adr/`](docs/adr/): [ADR-0001 — Django backend](docs/adr/ADR-0001-django-backend-stack.md) · [ADR-0002 — `platform_core` rename](docs/adr/ADR-0002-rename-platform-module-to-platform_core.md) · [ADR-0003 — CS-031 normalization](docs/adr/ADR-0003-cs031-project-name-normalization-divergence.md) · [ADR-0004 — Versioning strategy](docs/adr/ADR-0004-versioning.md) · [ADR-0005 — Retention scheduling (Celery Beat)](docs/adr/ADR-0005-retention-job-scheduling.md).
+Diseño / tokens UX: [`docs/Design/casa-segura.pen`](docs/Design/casa-segura.pen) (Pencil); notas formales de UI en PRDs y `docs/`.
 
-Responsible disclosure: **[`SECURITY.md`](SECURITY.md)**.
+## Tecnología (resumen)
 
-Service-level guides: [backend/README.md](backend/README.md) (Django/DRF API, ORM conventions, migrations, transactions) · [frontend/README.md](frontend/README.md) (Next.js app) · [RAILWAY.md](RAILWAY.md) (Railway deployment for `web` / `worker` / `beat` services).
+| Capa              | Stack                                                                                                                                                         |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Web**           | [Next.js](https://nextjs.org/) 16 (App Router), React 19, TypeScript 5, Tailwind CSS 4, ESLint, Vitest                                                        |
+| **API y dominio** | [Django](https://www.djangoproject.com/) 5.2 LTS, [Django REST Framework](https://www.django-rest-framework.org/), **Pydantic v2**, drf-spectacular (OpenAPI) |
+| **Async / jobs**  | Celery, Redis                                                                                                                                                 |
+| **Base de datos** | PostgreSQL 16 + **pgvector** (vectores + datos relacionales según PRDs)                                                                                       |
+| **Entorno local** | [Docker Compose](docker-compose.dev.yml) — Postgres + Redis para desarrollo                                                                                   |
 
-Design tokens and UX references: [`docs/Design/casa-segura.pen`](docs/Design/casa-segura.pen) (Pencil), formal UI notes under PRDs / `docs/`.
+Decisiones de backend: [`docs/adr/`](docs/adr/) — [ADR-0001 — Django](docs/adr/ADR-0001-django-backend-stack.md) · [ADR-0002 — `platform_core`](docs/adr/ADR-0002-rename-platform-module-to-platform_core.md) · [ADR-0003 — CS-031](docs/adr/ADR-0003-cs031-project-name-normalization-divergence.md) · [ADR-0004 — Versionado](docs/adr/ADR-0004-versioning.md) · [ADR-0005 — Retención (Celery Beat)](docs/adr/ADR-0005-retention-job-scheduling.md).
 
-## Repository layout
+Divulgación responsable: **[`SECURITY.md`](SECURITY.md)**.
+
+Guías por servicio: [backend/README.md](backend/README.md) · [frontend/README.md](frontend/README.md) · [RAILWAY.md](RAILWAY.md).
+
+## Estructura del repositorio
 
 ```text
-backend/     # Django project, ORM, DRF, Celery tasks, ingestion/analysis services
-frontend/    # Next.js app — landing, upload, delivery selection, report viewing
-docs/        # Formal PRDs, roadmap (tickets/epics), ADRs, analysis notes
-infra/       # Local dev helpers (e.g. Postgres init)
+backend/     # Django, ORM, DRF, Celery, ingestión y servicios de análisis
+frontend/    # Next.js — landing, subida, selección de entrega, informe
+docs/        # PRDs formales, roadmap (tickets/épicas), ADRs, activos de documentación
+infra/       # Ayudas para desarrollo local (p. ej. init de Postgres)
 ```
 
-## Quick start (development)
+## Inicio rápido (desarrollo)
 
 > [!NOTE]
-> Adjust environment using `backend/.env`, `frontend/.env`, and examples in each package. Never commit secrets.
+> Ajusta variables en `backend/.env`, `frontend/.env` y los `.env.example` de cada parte. No subas secretos al repositorio.
 
-1. **Start Postgres and Redis**
+1. **Postgres y Redis**
 
    ```bash
    docker compose -f docker-compose.dev.yml up -d
    ```
 
-2. **Backend** — from `backend/`, install dependencies (e.g. with Poetry), run migrations, then start the Django dev server (see project settings under `backend/config`).
+2. **Backend** — desde `backend/`, instala dependencias (p. ej. con Poetry), migra y arranca el servidor de desarrollo Django (ajustes en `backend/config`). Detalle: [backend/README.md](backend/README.md).
 
 3. **Frontend**
 
    ```bash
    cd frontend
    npm install
-   cp .env.example .env   # set CASASEGURA_API_BASE_URL and related vars
+   cp .env.example .env   # CASASEGURA_API_BASE_URL y variables relacionadas
    npm run dev
    ```
 
-   Open [http://localhost:3000](http://localhost:3000). More detail: [frontend/README.md](frontend/README.md).
+   Abre [http://localhost:3000](http://localhost:3000). Más detalle: [frontend/README.md](frontend/README.md).
 
-### Pre-commit hooks (CS-005)
+### Pre-commit (CS-005)
 
-Local hooks defined in [`.pre-commit-config.yaml`](.pre-commit-config.yaml) run `ruff` (lint + format) on `backend/**/*.py`, `prettier --check` on `frontend/**/*.{ts,tsx,js,jsx,json,md}`, plus generic hygiene (end-of-file, trailing whitespace, YAML/TOML/merge-conflict checks). All hook versions are pinned to match `backend/pyproject.toml`. ESLint and mypy are deferred to CI for speed/path reasons (notes inline in the config). Install once per clone:
+Los hooks locales en [`.pre-commit-config.yaml`](.pre-commit-config.yaml) ejecutan `ruff` (lint + formato) sobre `backend/**/*.py`, `prettier --check` sobre `frontend/**/*.{ts,tsx,js,jsx,json,md}`, y comprobaciones genéricas (fin de archivo, espacios finales, YAML/TOML/conflictos). Versiones alineadas con `backend/pyproject.toml`. ESLint y mypy siguen orientados a CI (notas en el propio config). Instalación única por clon:
 
 ```bash
-pip install pre-commit          # or: pipx install pre-commit
-pre-commit install              # registers the git hook
-pre-commit run --all-files      # one-time sweep, optional
+pip install pre-commit          # o: pipx install pre-commit
+pre-commit install
+pre-commit run --all-files      # opcional, barrido inicial
 ```
 
 > [!CAUTION]
-> **Privacy:** Treat OCR payloads, delivery targets (SMS/email/link), report text, prompts, logs, and error bodies as **sensitive**. Do not log PII or raw files beyond what the API needs.
+> **Privacidad:** Trata como **sensibles** los contenidos OCR, destinos de entrega (SMS/correo/enlace), texto de informes, prompts, registros y cuerpos de error. No registres PII ni archivos en bruto más allá de lo que la API requiera.
 
-## Backend API contract
+## Contrato de la API backend
 
-### Health and readiness
+### Salud y disponibilidad
 
 ```
 GET /api/health/   →  200 { "status": "ok", "service": "casa-segura-api", "schema_version": "1.0.0", "hostname": "..." }
 GET /api/ready/    →  200 { "status": "ok", "schema_version": "1.0.0", "checks": { "database": "ok", "redis": "ok" }, "reasons": [] }
-                   →  503 if DB or Redis unreachable, with `reasons` array of failure codes.
+                   →  503 si la base de datos o Redis no están disponibles, con arreglo `reasons` de códigos de fallo.
 ```
 
-### Error envelope (CS-009)
+### Sobre de errores (CS-009)
 
-Every response — success or failure — mirrors the inbound `X-Request-ID` header (or generates a UUID4 fallback). Failures additionally return the same value in the body as `correlation_id`.
+Toda respuesta — éxito o fallo — devuelve la cabecera entrante `X-Request-ID` (o un UUID4 generado). En errores, el mismo valor aparece en el cuerpo como `correlation_id`.
 
-**Success example:**
+**Ejemplo de éxito:**
 
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
 X-Request-ID: 5e8f1f6c-23a1-4f3a-9c0e-1b2a3c4d5e6f
 
-{ ...domain payload... }
+{ ...carga útil... }
 ```
 
-**Failure example** (canonical envelope from `backend/config/exception_handler.py`):
+**Ejemplo de fallo** (sobre canónico desde `backend/config/exception_handler.py`):
 
 ```http
 HTTP/1.1 400 Bad Request
@@ -128,15 +175,15 @@ X-Request-ID: 5e8f1f6c-23a1-4f3a-9c0e-1b2a3c4d5e6f
 }
 ```
 
-Public error codes registered in `backend/shared/domain/exceptions.py::PUBLIC_ERROR_CODES`. Feature modules may extend by adding to that registry (no shadowing).
+Códigos públicos registrados en `backend/shared/domain/exceptions.py::PUBLIC_ERROR_CODES`. Los módulos pueden ampliar el registro sin sombrear entradas existentes.
 
-## Observability (CS-007)
+## Observabilidad (CS-007)
 
-`backend/shared/observability/logging.py::configure_logging` ships structured JSON logs in production (one record per line) with a stable shape: `timestamp`, `level`, `service`, `correlation_id`, `schema_version`, `rubric_version`, `corpus_version`, plus event-specific fields the caller binds.
+`backend/shared/observability/logging.py::configure_logging` emite logs JSON estructurados en producción (un registro por línea) con forma estable: `timestamp`, `level`, `service`, `correlation_id`, `schema_version`, `rubric_version`, `corpus_version`, más campos que el llamador añade.
 
-`backend/shared/observability/middleware.py::CorrelationIdMiddleware` pulls `X-Request-ID` from the request (or generates UUID4), binds it to structlog contextvars for the request lifetime, and echoes it on the response header. Limit: 128 chars; empty/oversized values fall back to UUID4.
+`backend/shared/observability/middleware.py::CorrelationIdMiddleware` lee `X-Request-ID` (o genera UUID4), lo enlaza a contextvars de structlog durante la petición y lo repite en la respuesta. Límite: 128 caracteres; valores vacíos o demasiado largos caen a UUID4.
 
-Minimal usage:
+Ejemplo mínimo:
 
 ```python
 import structlog
@@ -145,9 +192,6 @@ logger = structlog.get_logger(__name__)
 
 def handle_submission(submission_id):
     logger.info("submission_received", submission_id=str(submission_id), strategy="pypdf")
-    # → {"timestamp": "...", "level": "info", "event": "submission_received",
-    #    "service": "casa-segura-api", "correlation_id": "...", "schema_version": "1.0.0",
-    #    "submission_id": "...", "strategy": "pypdf", "rubric_version": null, "corpus_version": null}
 ```
 
-Metrics exposed at `/metrics/` via `django-prometheus`.
+Métricas en `/metrics/` vía `django-prometheus`.

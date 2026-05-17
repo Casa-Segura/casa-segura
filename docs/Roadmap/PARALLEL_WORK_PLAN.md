@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: parallel_work_plan
 status: living
-last_updated: 2026-05-16
+last_updated: 2026-05-17
 tags:
   - casa-segura
   - roadmap
@@ -25,7 +25,7 @@ Use this plan to decide who owns which folder, which tickets are safe to start, 
 
 **EPIC-05 (Economic Analysis & Benchmarks) cerrada 2026-05-16.** CS-130..CS-137 → `done`. Pipeline determinístico (sin LLM, PRD_F5 BR-13) en `backend/economics/`: catálogo `economic_benchmarks_2026q2.yaml` versionado con seeder + loader (CS-130), normalizador de tasa compuesto `(1+m)^12-1` (CS-131), ratio cuota/línea-base con banda `MonthlyRatioBand` (CS-132), `TotalCostBundle` con amortización francesa y coherence BR-07 al 5% (CS-133), `BenchmarkComparison` y `Overcost` con asimetría BR-02 / BR-11 (CS-134), assembler `analyze()` que emite el contrato `ECONOMIC_SUMMARY_CONTRACT.md` con dedup por `(code, related_field)` (CS-135), stamping byte-equal de `benchmark_version` + señal de stale BR-12 (CS-136), y cross-checks `down_payment_inconsistent` + `total_cost_not_disclosed` + honestidad BR-09 (CS-137). 103 tests en la suite económica.
 
-**`CS-001`** (repo posture and README skeleton) is **`in_progress`**, not `ready`. Completing **`CS-001`** unblocks both scaffolds. Backend/FE foundation work flows through **`CS-002`** and **`CS-003`**.
+**`CS-001`** (repo posture, README, canonical GitHub URL, commit-signing policy) is **`done`** (2026-05-17). Backend scaffold landed via **`CS-002`** (**`done`**); frontend scaffold continues through **`CS-003`** (**`in_progress`**).
 
 Keep this list synchronized with `docs/Roadmap/phases/README.md`.
 
@@ -148,7 +148,7 @@ Start this lane when its backing BE or Infra foundation exists. Early API / AI w
 
 ### Round 1 - Unblock Folders
 
-- One engineer completes or confirms `CS-001`.
+- **`CS-001`** — **`done`** (2026-05-17 — public repo + README + signing policy in `AGENTS.md`).
 - Backend engineer starts `CS-002` and lands the **`backend/`** scaffold.
 - Frontend engineer prepares `CS-003` and then lands the **`frontend/`** scaffold.
 - Infra engineer starts `CS-270` in `docs/adr` with no app dependency.
@@ -333,4 +333,3 @@ The roadmap standardizes on a **Django 5.2 LTS** + **DRF** Python backend ([ADR-
 - SMS outbound integration in `CS-238` through `CS-244`.
 
 When starting BE work, search for Python, Django, DRF, **Pydantic v2**, Django ORM, Postgres/pgvector, **Redis**/Celery, OCR, RAG, and SMS provider skills before implementation.
-
