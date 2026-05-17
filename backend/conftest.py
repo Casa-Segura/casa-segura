@@ -15,7 +15,9 @@ a fresh container per run (see CS-035)."""
 
 from __future__ import annotations
 
+import httpx
 import pytest
+import respx
 
 
 @pytest.fixture(autouse=True)
@@ -30,3 +32,53 @@ def _enable_db_for_marker(request, db):
         return db
     """
     return None
+
+
+# ---------------------------------------------------------------------------
+# OpenRouter test plumbing (CS-110 PR-2). Consolidates the respx + sleep
+# patches that previously lived inline in each LLM-touching test module
+# (see `tests/test_openrouter_client.py`, `tests/test_ingestion_pixtral.py`).
+# Callers opt in by depending on `mock_openrouter`; the fixture also patches
+# `time.sleep` so retry backoffs do not actually sleep.
+# ---------------------------------------------------------------------------
+
+
+OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
+
+
+@pytest.fixture
+def mock_openrouter(monkeypatch):
+    """Yield a respx MockRouter with neutralized retry sleep.
+
+    Usage:
+
+        def test_x(mock_openrouter):
+            mock_openrouter.post(f"{OPENROUTER_BASE_URL}/chat/completions").mock(
+                return_value=httpx.Response(200, json={...})
+            )
+
+    The fixture is intentionally not autouse: tests that exercise real HTTP
+    paths (or want to assert real backoff timing) opt out by not depending
+    on it.
+    """
+    monkeypatch.setattr("shared.llm.openrouter.time.sleep", lambda _: None)
+    with respx.mock(assert_all_called=False) as router:
+        yield router
+
+
+def openrouter_response(payload: dict, *, status: int = 200) -> httpx.Response:
+    """Build the canonical OpenRouter chat-completion envelope around `payload`.
+
+    `payload` is the JSON the LLM is supposed to have returned in
+    ``choices[0].message.content``. The helper renders it as a JSON string
+    inside the envelope so callers do not duplicate the wrapping boilerplate.
+    """
+    import json as _json
+
+    return httpx.Response(
+        status,
+        json={
+            "choices": [{"message": {"content": _json.dumps(payload)}}],
+            "usage": {"prompt_tokens": 10, "completion_tokens": 5, "cost": 0.0001},
+        },
+    )

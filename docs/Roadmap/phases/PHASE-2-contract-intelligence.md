@@ -2,9 +2,9 @@
 project: Casa Segura
 doc_type: phase_index
 phase: 2
-status: living
-last_updated: 2026-05-16
-# Phase 2 BE/API kickoff: CS-110 + CS-114 first-pass shipped in 2026-05-16 batch.
+status: done
+last_updated: 2026-05-17
+# Phase 2 closed 2026-05-17: EPIC-04 fully shipped via 8 PRs (PR-0..PR-7).
 tags:
   - casa-segura
   - roadmap
@@ -28,6 +28,22 @@ Source-of-truth links:
 - [DOMAIN_MODEL](../../Casa%20Segura%20Formal%20PRDs/DOMAIN_MODEL.md) - contract analysis fields and project identity.
 - [F2 analysis plan](../../analysis/F2_clasificacion/IMPLEMENTATION_PLAN.md) - implementation breakdown and flow assumptions.
 - [ADR-0001 - Django backend stack](../../adr/ADR-0001-django-backend-stack.md) - backend boundary for services, DTOs, and persistence.
+
+## Phase 2 closed (2026-05-17)
+
+EPIC-04 shipped via 8 PRs (PR-0..PR-7) per the [EPIC-04 completion plan](../EPIC-04-classification.md). Every Phase 2 ticket is `done`:
+
+- **CS-110** confidence-band orchestration + §8.3 validator (PR-2).
+- **CS-111** leasing severity envelope + 4-of-6 invariant (PR-3).
+- **CS-112** project name + linkage; CS-031 AC4 closed in the same PR (PR-4).
+- **CS-113** AMBIGUOUS extraction signal + golden tests (PR-5).
+- **CS-114** `ElementsDetected` + `IndicatorsFound` schemas (PR-1).
+- **CS-115** classification eval gate + nightly cron workflow (PR-7).
+- **CS-116** aggregator status precedence + precursor (PR-6).
+
+The F2 orchestrator (`backend/classification/application/orchestrator.py::F2Orchestrator`) chains the four sub-services into a single transactional pass and persists to `ContractAnalysis` via the columns added by `platform_core/0005_classification_f2_fields.py`. Public QA surface: `POST /api/v1/internal/classify` (DRF, `IsInternal` permission). 349 backend tests pass; ruff clean. The eval workflow (`.github/workflows/classification-eval.yml`) gates on the §9 thresholds on label / cron / manual dispatch.
+
+Phase 2 status: `done`. EPIC-06 (Rubric Engine) is now unblocked with stable input shape on `ContractAnalysis` — `contract_type`, `contract_type_declared`, `reclassification_indicators`, `classification_confidence`, `elements_detected`, `project_id`, `project_name_canonical`, `economic_fields_raw`, `economic_summary` (precursor).
 
 ## Ready Now
 

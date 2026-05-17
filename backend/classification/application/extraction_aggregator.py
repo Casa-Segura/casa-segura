@@ -87,11 +87,14 @@ def aggregate_extraction(extraction: ContractExtraction) -> AggregatedExtraction
     # Build the set of slots to materialise: required for the type plus fields
     # the extractor actually populated. Fields that the extractor demoted
     # to `unverifiable` are kept too so callers see the INVALID slot even
-    # if it is not in the required set for this contract type.
+    # if it is not in the required set for this contract type. Ambiguous
+    # fields are also kept so the AMBIGUOUS slot is visible even when the
+    # field is neither required nor populated.
     required = set(REQUIRED_FIELDS_BY_TYPE.get(contract_type, set()))
     extractor_populated = {name for name in ExtractedFields.model_fields if getattr(extracted, name) is not None}
     demoted_invalid = set(extraction.unverifiable_fields)
-    relevant_fields = required | extractor_populated | demoted_invalid
+    ambiguous_set = set(extraction.ambiguous_fields)
+    relevant_fields = required | extractor_populated | demoted_invalid | ambiguous_set
 
     invalid_set = _invalid_field_names(extraction)
 
@@ -107,6 +110,7 @@ def aggregate_extraction(extraction: ContractExtraction) -> AggregatedExtraction
             value=value,
             confidence=confidence_score,
             invalid_set=invalid_set,
+            ambiguous_set=ambiguous_set,
         )
 
         slots[field_name] = EconomicSlot(
@@ -136,22 +140,25 @@ def _derive_status(
     value: float | int | str | None,
     confidence: float | None,
     invalid_set: set[str],
+    ambiguous_set: set[str],
 ) -> ExtractionStatus:
     """Compute the :class:`ExtractionStatus` for a single field.
 
-    Precedence (CS-116 AC1):
-        1. ``INVALID`` if CS-113 demoted the field due to validator
+    Precedence (CS-116 AC1, CS-113 PR-5):
+        1. ``AMBIGUOUS`` if the extractor explicitly flagged this field
+           (LLM `extraction_status="ambiguous"` or detected conflicting
+           figures). Takes precedence over INVALID / NOT_PRESENT because
+           ambiguity carries different signal — the contract had data;
+           we just cannot trust it.
+        2. ``INVALID`` if CS-113 demoted the field due to validator
            failure (i.e. the field name is in ``unverifiable_fields`` AND
            no value survived on `extracted_fields`).
-        2. ``NOT_PRESENT`` if the value is ``None`` (contract silent) OR
+        3. ``NOT_PRESENT`` if the value is ``None`` (contract silent) OR
            confidence is missing OR ``confidence < 0.5`` (PRD F5 US-01).
-        3. ``PRESENT`` otherwise.
-
-    ``AMBIGUOUS`` is intentionally NOT produced here: CS-113 does not yet
-    surface an ambiguity signal. TODO(CS-113-followup): extend the
-    extractor to publish ambiguity, then map it here before the
-    ``NOT_PRESENT`` branch so it overrides confidence-based demotion.
+        4. ``PRESENT`` otherwise.
     """
+    if field_name in ambiguous_set:
+        return ExtractionStatus.AMBIGUOUS
     if value is None and field_name in invalid_set:
         return ExtractionStatus.INVALID
     if value is None:
@@ -214,7 +221,11 @@ def _compute_warning_precursors(slots: dict[str, EconomicSlot]) -> list[str]:
 
     base_slot = slots.get("interest_calculation_base")
     if base_slot is not None and base_slot.status is ExtractionStatus.PRESENT and base_slot.value == "total_balance":
-        rate_unverifiable = any(
+        # Precursor fires only when ALL rate slots are non-PRESENT, i.e.
+        # the contract carries the Art. 12 LPC risk AND no rate is
+        # known (monthly OR annual). Knowing one is enough — they
+        # convert via `(1+m)^12 - 1` (PRD F2 BR-08).
+        rate_unverifiable = all(
             ((rate_slot := slots.get(rate_name)) is None or rate_slot.status is not ExtractionStatus.PRESENT)
             for rate_name in _RATE_SLOTS_FOR_INTEREST_BASE
         )

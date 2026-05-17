@@ -26,11 +26,25 @@ api_v1_url_patterns = [
 ]
 
 
+# Internal-only QA / eval surface (EPIC-04 PR-6). Gated by IsInternal
+# (shared-secret header X-Internal-Token vs settings.INTERNAL_API_TOKEN).
+api_v1_internal_url_patterns = [
+    path(
+        "",
+        include(
+            ("classification.interfaces.api.urls", "classification"),
+            namespace="classification",
+        ),
+    ),
+]
+
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/health/", health, name="health"),
     path("api/ready/", ready, name="ready"),
     path("api/v1/schema/", include(swagger_url_patterns)),
     path("api/v1/", include((api_v1_url_patterns, "v1"))),
+    path("api/v1/internal/", include((api_v1_internal_url_patterns, "v1_internal"))),
     path("metrics/", include("django_prometheus.urls")),
 ]

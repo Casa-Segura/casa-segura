@@ -1,0 +1,137 @@
+# EPIC-04 PR-7 — F2 classification eval harness (CS-115 AC4 CI gate).
+#
+# Runs `python manage.py eval_classification` against the curated
+# fixture corpus (backend/fixtures/classification_eval_cases.yaml) and
+# fails when macro accuracy falls below the per-fixture threshold.
+#
+# Triggers:
+#   * workflow_dispatch — manual; the default knob for capturing a fresh
+#     baseline before tightening the threshold.
+#   * schedule (nightly @ 02:00 UTC) — captures a baseline drift signal.
+#   * pull_request labelled `eval:classification` — opt-in per-PR run
+#     when somebody touches the classifier / prompt / fixtures.
+#
+# Costs:
+#   * The harness issues at most one OpenRouter call per non-NOT_CLASSIFIABLE
+#     fixture for the primary classifier, plus one per purchase fixture
+#     for the leasing detector — currently ~50 calls per run for the
+#     31-case corpus. Keep an eye on it in the OpenRouter dashboard.
+#
+# Secret:
+#   * OPENROUTER_API_KEY — must be configured on the repo. The job will
+#     skip with a clear message when the secret is unset.
+
+name: Classification eval (CS-115)
+
+on:
+  workflow_dispatch:
+    inputs:
+      threshold:
+        description: 'Macro-accuracy floor (overrides fixture default)'
+        required: false
+        default: ''
+  schedule:
+    # Nightly @ 02:00 UTC — late enough that any merges queued during
+    # the day have settled.
+    - cron: '0 2 * * *'
+  pull_request:
+    branches: [main, development]
+    types: [labeled]
+
+concurrency:
+  group: classification-eval-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  POETRY_VERSION: '2.4.1'
+
+jobs:
+  eval:
+    name: Run F2 eval harness
+    # Skip unless the user explicitly opted in (manual trigger, scheduled
+    # cron, OR pull_request gained the `eval:classification` label).
+    if: >-
+      github.event_name == 'workflow_dispatch'
+      || github.event_name == 'schedule'
+      || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'eval:classification'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      SECRET_KEY: ci-secret
+      DEBUG: 'False'
+      DB_ENGINE: postgresql
+      DB_NAME: casasegura
+      DB_USER: postgres
+      DB_PASSWORD: administrador
+      DB_HOST: localhost
+      DB_PORT: '5432'
+      CELERY_BROKER_URL: redis://localhost:6379/0
+      CELERY_RESULT_BACKEND: redis://localhost:6379/0
+      ALLOWED_HOSTS: '*'
+      LOG_LEVEL: WARNING
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      OPENROUTER_BASE_URL: https://openrouter.ai/api/v1
+      OPENROUTER_HTTP_REFERER: https://casa-segura.local
+      OPENROUTER_X_TITLE: Casa Segura CI eval
+      OPENROUTER_TIMEOUT_SECONDS: '90'
+      OPENROUTER_MAX_RETRIES: '2'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Poetry
+        run: pip install "poetry==${POETRY_VERSION}"
+        working-directory: .
+
+      - name: Cache Poetry virtualenv
+        uses: actions/cache@v4
+        with:
+          path: backend/.venv
+          key: poetry-${{ runner.os }}-${{ env.POETRY_VERSION }}-${{ hashFiles('backend/poetry.lock') }}
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Guard against missing secret (dry-run fallback)
+        id: secret-guard
+        run: |
+          if [ -z "${OPENROUTER_API_KEY}" ]; then
+            echo "OPENROUTER_API_KEY is unset; falling back to --dry-run."
+            echo "mode=dry-run" >> "$GITHUB_OUTPUT"
+          else
+            echo "Real eval mode."
+            echo "mode=live" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run eval (dry-run, no LLM calls)
+        if: steps.secret-guard.outputs.mode == 'dry-run'
+        run: poetry run python manage.py eval_classification --dry-run
+
+      - name: Run eval (live, threshold gate)
+        if: steps.secret-guard.outputs.mode == 'live'
+        run: |
+          mkdir -p artifacts
+          THRESHOLD_FLAG=""
+          if [ -n "${{ github.event.inputs.threshold }}" ]; then
+            THRESHOLD_FLAG="--threshold ${{ github.event.inputs.threshold }}"
+          fi
+          poetry run python manage.py eval_classification \
+            --out artifacts/eval.json \
+            $THRESHOLD_FLAG
+
+      - name: Upload eval artifact
+        if: steps.secret-guard.outputs.mode == 'live'
+        uses: actions/upload-artifact@v4
+        with:
+          name: classification-eval-report
+          path: backend/artifacts/eval.json
+          if-no-files-found: error
+          retention-days: 30
