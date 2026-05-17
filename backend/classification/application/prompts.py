@@ -210,3 +210,73 @@ def build_messages(extracted_text: str) -> list[dict[str, str]]:
         {"role": "system", "content": system_content},
         {"role": "user", "content": user_content},
     ]
+
+
+# ---------------------------------------------------------------------------
+# §8.3 validation prompt — invoked when the primary call lands in the
+# medium-confidence band (PRD F2 §US-01). The validator is given the
+# *prior* classification + reasoning and is asked to confirm or reject it.
+# It is NOT a fresh pass: the goal is to surface disagreement, not to
+# average two opinions.
+# ---------------------------------------------------------------------------
+
+SYSTEM_PROMPT_VALIDATION: str = """\
+Eres un revisor experto en clasificación de contratos inmobiliarios \
+salvadoreños. Otro analista ya clasificó el contrato pero con confianza \
+intermedia. Tu tarea es validar — confirmar o rechazar — su decisión.
+
+Procedimiento estricto:
+1. Lee el tipo y razonamiento previos.
+2. Lee el texto del contrato.
+3. Decide si el tipo declarado se sostiene con la evidencia. Si SÍ, \
+devuelve el mismo `contract_type` con tu propia confianza. Si NO, devuelve \
+el `contract_type` que consideres correcto (o NOT_CLASSIFIABLE) con tu \
+confianza.
+
+No promedies opiniones. No "suavices" la confianza. Devuelve tu lectura \
+independiente.
+
+Tipos válidos: CVC, CVP, ARV, ARC, APV, LEA, IVU, FSV, NOT_CLASSIFIABLE.
+
+Devuelve UN ÚNICO objeto JSON sin texto adicional ni bloques de código:
+
+{
+    "contract_type": "<uno de los nueve códigos>",
+    "confidence": <número entre 0.0 y 1.0>,
+    "reasoning": "<explicación breve en español, máximo dos oraciones>"
+}
+"""
+
+
+USER_PROMPT_VALIDATION_TEMPLATE: str = """\
+Clasificación previa: {prior_type}
+Razonamiento previo: {prior_reasoning}
+
+TEXTO DEL CONTRATO:
+{extracted_text}
+
+¿Sostienes la clasificación previa con la evidencia disponible?
+"""
+
+
+def build_validation_messages(
+    extracted_text: str,
+    *,
+    prior_type: str,
+    prior_reasoning: str | None,
+) -> list[dict[str, str]]:
+    """Assemble the §8.3 validation chat messages.
+
+    The system prompt is independent of the primary call so the model
+    cannot anchor on the few-shot block; the prior classification is
+    surfaced in the user message instead.
+    """
+    user_content = USER_PROMPT_VALIDATION_TEMPLATE.format(
+        prior_type=prior_type,
+        prior_reasoning=(prior_reasoning or "(no proporcionado)"),
+        extracted_text=extracted_text,
+    )
+    return [
+        {"role": "system", "content": SYSTEM_PROMPT_VALIDATION},
+        {"role": "user", "content": user_content},
+    ]
