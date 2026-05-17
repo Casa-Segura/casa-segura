@@ -252,6 +252,15 @@ ACTIVE_CORPUS_VERSION = env("ACTIVE_CORPUS_VERSION", default=env("ACTIVE_CORPUSF
 ACTIVE_BENCHMARK_VERSION = env("ACTIVE_BENCHMARK_VERSION", default="")
 
 
+# ─── Zavu webhooks (delivery / inbound notifications) ───
+ZAVU_WEBHOOK_SECRET = env("ZAVU_WEBHOOK_SECRET", default="")
+
+# ─── Zavu outbound (SMS / email via api.zavu.dev) ───
+# Prefer ZAVUDEV_API_KEY (SDK name); fall back to ZAVU_API_KEY for compatibility.
+ZAVUDEV_API_KEY = env("ZAVUDEV_API_KEY", default="") or env("ZAVU_API_KEY", default="")
+ZAVU_SENDER_ID = env("ZAVU_SENDER_ID", default="")
+
+
 # ─── Optional project verification (EPIC-12 / CS-356) ───
 # Mirrors `frontend` `PROJECT_VERIFICATION_ENABLED`; default-off for safe prod rollouts.
 PROJECT_VERIFICATION_ENABLED = env.bool(

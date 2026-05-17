@@ -14,6 +14,7 @@ swagger_url_patterns = [
 # its DRF urls under `<app>.interfaces.api.urls`.
 api_v1_url_patterns = [
     path("", include("ingestion.interfaces.api.urls", namespace="ingestion")),
+    path("webhooks/zavu/", include("delivery.interfaces.api.urls")),
     path("corpus/", include("corpus.interfaces.api.urls", namespace="corpus")),
     path(
         "project-verification/",
