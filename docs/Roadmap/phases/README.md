@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: phase_index
 status: living
-last_updated: 2026-05-17  # EPIC-04 cerrada (PR-0..PR-7)
+last_updated: 2026-05-17  # EPIC-06/07 cerrados en índice; Phase 6 picks refresh
 tags:
   - casa-segura
   - roadmap
@@ -39,7 +39,11 @@ Use this folder as a phase-first pick list for parallel work:
 - [[CS-270]](../tickets/CS-270.md) — **`done`** (2026-05-16) — retention scheduler ADR landed; harness + CI documented in [`ADR-0005`](../adr/ADR-0005-retention-job-scheduling.md).
 - [EPIC-10 - Frontend Web App](../EPIC-10-frontend.md) - **`done` (2026-05-16).** Deploy + device QA tracked in [CS-298](../tickets/CS-298.md) and [CS-299](../tickets/CS-299.md).
 
-**EPIC-04 (Classification & Field Extraction) cerrada 2026-05-17.** CS-110..CS-116 + CS-031 AC4 → `done`. Pipeline F2 (`backend/classification/application/orchestrator.py::F2Orchestrator`) encadena clasificación + leasing + project + economic + aggregate, persiste en `ContractAnalysis` vía las columnas F2 §5.1 añadidas por `platform_core/0005_classification_f2_fields.py`. Endpoint interno `POST /api/v1/internal/classify` (DRF, `IsInternal`); CI gate `.github/workflows/classification-eval.yml`. Phase 2 cerrada; EPIC-06 (Rubric) desbloqueada.
+**EPIC-04 (Classification & Field Extraction) cerrada 2026-05-17.** CS-110..CS-116 + CS-031 AC4 → `done`. Pipeline F2 (`backend/classification/application/orchestrator.py::F2Orchestrator`) encadena clasificación + leasing + project + economic + aggregate, persiste en `ContractAnalysis` vía las columnas F2 §5.1 añadidas por `platform_core/0005_classification_f2_fields.py`. Endpoint interno `POST /api/v1/internal/classify` (DRF, `IsInternal`); CI gate `.github/workflows/classification-eval.yml`. Phase 2 cerrada.
+
+**Phase 4–5 closure (2026-05-17):** [[EPIC-06-rubric-engine]] → **`done`** (Definition of done all `[x]`). [[EPIC-07-report-generation]] → **`done`** (canonical HTML/PDF + `/r/` TTL parity via `CS-247`). Remaining **Phase 5** product gap: [[EPIC-08-multichannel-delivery]] **submission-time channel picker** (Epic DoD line 1 — still `[ ]`).
+
+**Phase 6 — next queue:** [[CS-270]](../tickets/CS-270.md) scheduler ADR + harness → **`done`**. Ready **`CS-271`** / **`CS-272`** (both `depends_on: CS-270`) plus **`CS-273`–`CS-276`** per ticket chains — see [Phase 6](PHASE-6-privacy-closure.md).
 
 **In flight:** EPIC-12 optional verification work: [CS-356](../tickets/CS-356.md), [CS-351](../tickets/CS-351.md), [CS-355](../tickets/CS-355.md) are **`in_progress`** across `frontend/` and gated Django stubs under `PROJECT_VERIFICATION_ENABLED` (matrix: [`project-verification-fe-be-gates.md`](../../guides/project-verification-fe-be-gates.md)).
 

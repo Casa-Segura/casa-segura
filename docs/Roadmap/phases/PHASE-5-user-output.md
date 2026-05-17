@@ -29,7 +29,7 @@ Source-of-truth links:
 
 ## Ready Now
 
-**Backend (2026-05-17):** Multi-channel delivery core for [[EPIC-08-multichannel-delivery]] is implemented under `backend/delivery/` (schemas, dispatcher, Celery task, email/SMS/web-link workers, public `/r/…/`, Zavu + SMS webhooks, resend). End-to-end channel selection at upload remains a separate integration item (see EPIC-08 DoD).
+**Backend (2026-05-17):** [[EPIC-07-report-generation]] is **`done`** (canonical renderer). [[EPIC-08-multichannel-delivery]] backend paths (email/SMS/web link, `/r/…/`, webhooks, resend) are shipped; **remaining Phase 5 gap:** **submission-time channel selection** (`sms_summary` / `email_pdf` / `web_link` — EPIC-08 DoD). Follow-up QA: **`CS-210`** CI automation bullets remain optional per ticket.
 
 ## FE WORK
 

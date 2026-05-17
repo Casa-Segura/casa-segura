@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: roadmap_index
 status: living
-last_updated: 2026-05-16
+last_updated: 2026-05-17
 tags:
   - casa-segura
   - roadmap
@@ -44,14 +44,14 @@ For day-to-day pickup, start with the phase-first team index in [phases/README.m
 
 | Epic | Name | Feature | Status |
 |---|---|---|---|
-| [[EPIC-00-foundation]] | Foundation & Tooling | — | Backlog |
-| [[EPIC-01-persistence]] | Persistence & Schema | F8 part 1 | Backlog |
+| [[EPIC-00-foundation]] | Foundation & Tooling | — | Done |
+| [[EPIC-01-persistence]] | Persistence & Schema | F8 part 1 | Done |
 | [[EPIC-02-ingestion-ocr]] | Contract Ingestion & OCR | F1 | Done — Phase 1 closed 2026‑05‑16 (see Phase index recap). |
 | [[EPIC-03-corpus-rag]] | Legal Corpus & RAG | F3 | Done — Phase 1 closed 2026‑05‑16 (see Phase index recap). |
-| [[EPIC-04-classification]] | Classification & Field Extraction | F2 | Backlog (stub) |
+| [[EPIC-04-classification]] | Classification & Field Extraction | F2 | Done — Phase 2 closed 2026-05-17 (`CS-110`..`CS-116`; internal classify endpoint + CI eval gate). |
 | [[EPIC-05-economic-analysis]] | Economic Analysis & Benchmarks | F5 | Done — closed 2026‑05‑17 (CS-130..CS-137 shipped; deterministic F5 pipeline live in `backend/economics/`, 103 tests, zero LLM calls per BR-13). |
-| [[EPIC-06-rubric-engine]] | Rubric Engine & Scoring | F4 | In progress — BVA + override matrix + Hypothesis (`CS-167`..`CS-171` done); BR-16 rubric version stamping remains open on DoD. |
-| [[EPIC-07-report-generation]] | Report Generation | F6 | Backlog (stub) |
+| [[EPIC-06-rubric-engine]] | Rubric Engine & Scoring | F4 | Done — Definition of done complete (38 criteria + overrides + BVA / Hypothesis + BR-16 scoring stamp + public TTL HTML wired to canonical `generate_report_html`). |
+| [[EPIC-07-report-generation]] | Report Generation | F6 | Done — HTML/PDF in `backend/reports/`; delivery TTL route uses same façade (`CS-247`). |
 | [[EPIC-08-multichannel-delivery]] | Multi-Channel Delivery | F7 | In progress — backend delivery stack shipped (`CS-230`..`CS-248`, `CS-357`); channel picker at submission still open (see EPIC-08 DoD). |
 | [[EPIC-09-retention-privacy]] | Retention & Privacy Jobs | F8 part 2 | Backlog — scheduler contract shipped ([[CS-270]] / [`ADR-0005`](../adr/ADR-0005-retention-job-scheduling.md); execution jobs queued per tickets). |
 | [[EPIC-10-frontend]] | Frontend Web App | — | Done |

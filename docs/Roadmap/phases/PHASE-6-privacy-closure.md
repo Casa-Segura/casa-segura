@@ -3,7 +3,7 @@ project: Casa Segura
 doc_type: phase_index
 phase: 6
 status: living
-last_updated: 2026-05-15
+last_updated: 2026-05-17
 tags:
   - casa-segura
   - roadmap
@@ -28,7 +28,8 @@ Source-of-truth links:
 
 ## Ready Now
 
-- `CS-270` is ready now; see `INFRA WORK`.
+- **`CS-270`** — **`done`** (scheduler ADR + harness + CI gate — [`ADR-0005`](../../adr/ADR-0005-retention-job-scheduling.md)).
+- **Next backend picks (all depend on `CS-270`):** **`CS-271`** (submission/OCR cleanup) and **`CS-272`** (delivery-target erasure) can start in parallel; then **`CS-273`–`CS-276`** per each ticket’s `depends_on` chain — confirm on the ticket before pickup.
 
 ## FE WORK
 
