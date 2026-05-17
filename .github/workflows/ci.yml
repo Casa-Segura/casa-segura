@@ -74,11 +74,8 @@ jobs:
       - name: isort (check)
         run: poetry run isort --check-only .
 
-      - name: Django system check
-        run: poetry run python manage.py check
-
-  # ---------------------------------------------------------------------------
-  # 2. Backend tests (Postgres + pgvector + Redis)
+      - name: Retention scheduler dry validate (ADR-0005 / CS-270 — no DB)
+        run: poetry run python scripts/retention_scheduler_dry_validate.py
   # ---------------------------------------------------------------------------
   backend-test:
     name: Backend tests

@@ -34,7 +34,9 @@ Supporting references: [Feature map](docs/Casa%20Segura%20Formal%20PRDs/FEATURES
 | **Database** | PostgreSQL 16 + **pgvector** (vectors + relational data per PRDs) |
 | **Local dependencies** | [Docker Compose](docker-compose.dev.yml) — Postgres + Redis for development |
 
-Backend stack decisions live in [`docs/adr/`](docs/adr/): [ADR-0001 — Django backend](docs/adr/ADR-0001-django-backend-stack.md) · [ADR-0002 — `platform_core` rename](docs/adr/ADR-0002-rename-platform-module-to-platform_core.md) · [ADR-0003 — CS-031 normalization](docs/adr/ADR-0003-cs031-project-name-normalization-divergence.md) · [ADR-0004 — Versioning strategy](docs/adr/ADR-0004-versioning.md).
+Backend stack decisions live in [`docs/adr/`](docs/adr/): [ADR-0001 — Django backend](docs/adr/ADR-0001-django-backend-stack.md) · [ADR-0002 — `platform_core` rename](docs/adr/ADR-0002-rename-platform-module-to-platform_core.md) · [ADR-0003 — CS-031 normalization](docs/adr/ADR-0003-cs031-project-name-normalization-divergence.md) · [ADR-0004 — Versioning strategy](docs/adr/ADR-0004-versioning.md) · [ADR-0005 — Retention scheduling (Celery Beat)](docs/adr/ADR-0005-retention-job-scheduling.md).
+
+Responsible disclosure: **[`SECURITY.md`](SECURITY.md)**.
 
 Service-level guides: [backend/README.md](backend/README.md) (Django/DRF API, ORM conventions, migrations, transactions) · [frontend/README.md](frontend/README.md) (Next.js app) · [RAILWAY.md](RAILWAY.md) (Railway deployment for `web` / `worker` / `beat` services).
 

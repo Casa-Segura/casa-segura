@@ -17,7 +17,7 @@ Use this plan to decide who owns which folder, which tickets are safe to start, 
 
 ## Current Ready Picks
 
-- **`CS-270`** — retention scheduler ADR ([`CS-270.md`](tickets/CS-270.md)) — `ready`.
+- **`CS-270`** — retention scheduler ADR + harness — **`done`** (2026-05-16). [ADR-0005](../adr/ADR-0005-retention-job-scheduling.md); `backend/scripts/retention_scheduler_dry_validate.py`; `make retention-scheduler-dry-validate`; CI `backend-lint` gate.
 - **EPIC-10 (Frontend Web App)** — **`done` (2026-05-16).** [`CS-298`](tickets/CS-298.md) Vercel production + previews; [`CS-299`](tickets/CS-299.md) physical Android QA (360px / 4G) per checklist (`frontend/docs/CS-299-mobile-qa-checklist.md`).
 - **EPIC-12 (FE)** — Optional project verification shells: [`CS-356`](tickets/CS-356.md) / [`CS-351`](tickets/CS-351.md) / [`CS-355`](tickets/CS-355.md) are **`in_progress`**; enable locally with `PROJECT_VERIFICATION_ENABLED=true` ([`frontend/README.md`](../../frontend/README.md)).
 

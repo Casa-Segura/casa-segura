@@ -5,7 +5,8 @@ The Casa Segura API and async pipeline. Layered DDD per
 §1. See ADRs [0001](../docs/adr/ADR-0001-django-backend-stack.md) ·
 [0002](../docs/adr/ADR-0002-rename-platform-module-to-platform_core.md) ·
 [0003](../docs/adr/ADR-0003-cs031-project-name-normalization-divergence.md) ·
-[0004](../docs/adr/ADR-0004-versioning.md).
+[0004](../docs/adr/ADR-0004-versioning.md) ·
+[0005](../docs/adr/ADR-0005-retention-job-scheduling.md).
 
 ## Layout
 
@@ -60,6 +61,7 @@ make runserver
 | `make test` | pytest (whole suite) |
 | `make seed-rubric` | Idempotent `seed_rubric_version --activate` |
 | `make seed-corpus` | Idempotent `seed_corpus_version --activate` |
+| `make retention-scheduler-dry-validate` | ADR-0005 / CS-270: SLA + TZ sanity (no DB) |
 | `make runserver` | Django dev server on :8000 |
 | `make celery-worker` / `make celery-beat` | Async runtime |
 | `make dev-up` / `make dev-down` / `make dev-logs` | Wrapper around `docker compose -f ../docker-compose.dev.yml ...` |

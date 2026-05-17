@@ -1,4 +1,4 @@
-.PHONY: help install migrate makemigrations migrations-check rollback fresh-db check format lint type-check test test-smoke seed-rubric seed-corpus runserver shell celery-worker celery-beat dev-up dev-down dev-logs
+.PHONY: help install migrate makemigrations migrations-check rollback fresh-db check format lint type-check test test-smoke seed-rubric seed-corpus retention-scheduler-dry-validate runserver shell celery-worker celery-beat dev-up dev-down dev-logs
 
 help:                ## Show this help.
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -54,6 +54,9 @@ seed-rubric:         ## python manage.py seed_rubric_version
 
 seed-corpus:         ## python manage.py seed_corpus_version
 	poetry run python manage.py seed_corpus_version
+
+retention-scheduler-dry-validate: ## ADR-0005 harness (CS-270): SLA constants + TZ, no DB
+	poetry run python scripts/retention_scheduler_dry_validate.py
 
 runserver:           ## Django dev server on :8000
 	poetry run python manage.py runserver 0.0.0.0:8000
