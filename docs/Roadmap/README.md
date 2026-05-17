@@ -46,17 +46,17 @@ For day-to-day pickup, start with the phase-first team index in [phases/README.m
 |---|---|---|---|
 | [[EPIC-00-foundation]] | Foundation & Tooling | — | Backlog |
 | [[EPIC-01-persistence]] | Persistence & Schema | F8 part 1 | Backlog |
-| [[EPIC-02-ingestion-ocr]] | Contract Ingestion & OCR | F1 | Backlog (stub) |
-| [[EPIC-03-corpus-rag]] | Legal Corpus & RAG | F3 | Backlog (stub) |
+| [[EPIC-02-ingestion-ocr]] | Contract Ingestion & OCR | F1 | Done — Phase 1 closed 2026‑05‑16 (see Phase index recap). |
+| [[EPIC-03-corpus-rag]] | Legal Corpus & RAG | F3 | Done — Phase 1 closed 2026‑05‑16 (see Phase index recap). |
 | [[EPIC-04-classification]] | Classification & Field Extraction | F2 | Backlog (stub) |
 | [[EPIC-05-economic-analysis]] | Economic Analysis & Benchmarks | F5 | Backlog (stub) |
 | [[EPIC-06-rubric-engine]] | Rubric Engine & Scoring | F4 | Backlog |
 | [[EPIC-07-report-generation]] | Report Generation | F6 | Backlog (stub) |
 | [[EPIC-08-multichannel-delivery]] | Multi-Channel Delivery | F7 | Backlog |
-| [[EPIC-09-retention-privacy]] | Retention & Privacy Jobs | F8 part 2 | Backlog (stub) |
+| [[EPIC-09-retention-privacy]] | Retention & Privacy Jobs | F8 part 2 | Backlog — scheduler contract shipped ([[CS-270]] / [`ADR-0005`](../adr/ADR-0005-retention-job-scheduling.md); execution jobs queued per tickets). |
 | [[EPIC-10-frontend]] | Frontend Web App | — | Done |
 | [[EPIC-11-observability]] | Observability, Security, Disclaimers | — | Backlog (stub) |
-| [[EPIC-12-project-verification]] | Project Verification (Billboard OCR + Form) | — (separate flow) | Backlog (stub) |
+| [[EPIC-12-project-verification]] | Project Verification (Billboard OCR + Form) | — (separate flow) | In progress — guarded Next.js flows + gated Django stubs (see Parallel Work Plan + [`project-verification-fe-be-gates.md`](../guides/project-verification-fe-be-gates.md)). |
 
 ## Ticket numbering
 

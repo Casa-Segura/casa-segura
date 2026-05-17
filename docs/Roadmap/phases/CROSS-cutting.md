@@ -69,7 +69,7 @@ This lane owns backend-facing support for consistent disclaimers, privacy-safe e
 - [CS-353](../tickets/CS-353.md) - Reputation lookup interface.
 - [CS-354](../tickets/CS-354.md) - Verdict synthesis for project check.
 - [CS-355](../tickets/CS-355.md) - Project verification results page — **in_progress** (demo fixtures + CTA; snapshots + real DTO open).
-- [CS-356](../tickets/CS-356.md) - `PROJECT_VERIFICATION_ENABLED` feature flag and route enablement — **in_progress** (FE gate + docs; BE/integration open).
+- [CS-356](../tickets/CS-356.md) - `PROJECT_VERIFICATION_ENABLED` feature flag and route enablement — **in_progress** (FE gate + Django stubs documented in [`docs/guides/project-verification-fe-be-gates.md`](../../guides/project-verification-fe-be-gates.md); OCR/reputation integrations still deferred per EPIC‑12 backlog).
 
 Project verification is optional and separate. These tickets must not gate contract upload, analysis, report generation, or delivery.
 
