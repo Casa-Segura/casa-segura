@@ -17,7 +17,11 @@ Exercises the persisted envelope EPIC-06 will consume:
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
+
+from django.conf import settings
 
 from classification.application.orchestrator import (
     F2Orchestrator,
@@ -26,6 +30,8 @@ from classification.application.orchestrator import (
 from classification.domain.contract_type import ContractType
 from classification.domain.reclassification import LeasingSeverity
 from conftest import OPENROUTER_BASE_URL, openrouter_response
+from economics.application.benchmark_loader import load_yaml, upsert_benchmarks
+from economics.domain.economic_summary import EconomicSummary
 from ingestion.domain.enums import ProcessingStatus
 from platform_core.infrastructure.django.models import ContractAnalysis
 from shared.llm.openrouter import OpenRouterClient
@@ -59,12 +65,27 @@ def _stage_calls(router, *payloads: dict):
     )
 
 
+BENCHMARK_FIXTURE = Path(settings.BASE_DIR) / "fixtures" / "economic_benchmarks_2026q2.yaml"
+
+
 @pytest.fixture
-def active_catalog(db):
-    """Ensure an active RubricVersion + CorpusVersion exist for the orchestrator."""
+def active_benchmark(db):
+    """Seed + activate the canonical benchmark catalog from the prod YAML fixture.
+
+    Using the real fixture (rather than synthetic factory rows) keeps the test
+    aligned with the catalog the orchestrator hydrates in production.
+    """
+    payload = load_yaml(BENCHMARK_FIXTURE)
+    version_obj, _, _ = upsert_benchmarks(payload, activate=True)
+    return version_obj
+
+
+@pytest.fixture
+def active_catalog(db, active_benchmark):
+    """Ensure an active RubricVersion + CorpusVersion + BenchmarkVersion exist."""
     rubric = RubricVersionFactory(version="1.0.0", is_active=True)
     corpus = CorpusVersionFactory(version="1.0.0", is_active=True)
-    return rubric, corpus
+    return rubric, corpus, active_benchmark
 
 
 def _classification_payload(
@@ -170,6 +191,19 @@ def test_happy_cvp_persists_contract_analysis(mock_openrouter, active_catalog):
     assert analysis.economic_fields_raw["fields"]["purchase_price_usd"] == 80000.0
     # Transient identifiers MUST be filtered out (BR-04).
     assert "seller_name" not in analysis.economic_fields_raw["fields"]
+    # CS-138: F5 envelope is persisted (not the slot precursor) and the FK
+    # echoes the active benchmark version byte-equal with the JSON stamp.
+    assert analysis.economic_summary is not None
+    envelope = EconomicSummary.model_validate(analysis.economic_summary)
+    assert envelope.benchmark_version == active_catalog[2].version
+    assert analysis.benchmark_version_id == active_catalog[2].version
+    # CS-139: CVP routes through the developer-direct rate band per PRD_F5
+    # BR-10 (the §8.1 prompt definition of CVP excludes bank financing).
+    rate_comparisons = [
+        c for c in envelope.benchmark_comparisons if c.metric == "annual_rate"
+    ]
+    assert rate_comparisons, "CVP happy path must produce a rate-band comparison"
+    assert rate_comparisons[0].metric_label == "Tasa efectiva anual vs financiamiento directo"
 
 
 # ---------------------------------------------------------------------------
@@ -236,6 +270,9 @@ def test_low_confidence_returns_not_classifiable_envelope(mock_openrouter, activ
     assert analysis.contract_type == "NOT_CLASSIFIABLE"
     assert analysis.economic_fields_raw is None
     assert analysis.economic_summary is None
+    # CS-138: NOT_CLASSIFIABLE skips F5 entirely — the FK is left null even
+    # though an active BenchmarkVersion exists.
+    assert analysis.benchmark_version_id is None
 
 
 # ---------------------------------------------------------------------------
@@ -309,7 +346,7 @@ def test_idempotent_when_same_submission_hash(mock_openrouter, active_catalog):
 
 
 @pytest.mark.django_db
-def test_missing_active_rubric_raises_typed_error(mock_openrouter):
+def test_missing_active_rubric_raises_typed_error(mock_openrouter, active_benchmark):
     # No active catalog rows. Stage the LLM responses anyway; the failure
     # surfaces at the persist step.
     CorpusVersionFactory(version="1.0.0", is_active=True)
@@ -326,6 +363,27 @@ def test_missing_active_rubric_raises_typed_error(mock_openrouter):
             orchestrator.run(submission_hash=SUBMISSION_HASH, extracted_text=TEXT)
 
     assert exc.value.code == "NO_ACTIVE_RUBRIC"
+    assert ContractAnalysis.objects.filter(submission_hash=SUBMISSION_HASH).count() == 0
+
+
+@pytest.mark.django_db
+def test_missing_active_benchmark_raises_typed_error(mock_openrouter):
+    """CS-138: persistence requires an active BenchmarkVersion."""
+    RubricVersionFactory(version="1.0.0", is_active=True)
+    CorpusVersionFactory(version="1.0.0", is_active=True)
+    _stage_calls(
+        mock_openrouter,
+        _classification_payload(),
+        _leasing_skip_payload(),
+        _project_name_payload(),
+        _economic_payload_full(),
+    )
+
+    with F2Orchestrator(client=_client()) as orchestrator:
+        with pytest.raises(F2OrchestratorError) as exc:
+            orchestrator.run(submission_hash=SUBMISSION_HASH, extracted_text=TEXT)
+
+    assert exc.value.code == "NO_ACTIVE_BENCHMARK"
     assert ContractAnalysis.objects.filter(submission_hash=SUBMISSION_HASH).count() == 0
 
 

@@ -98,6 +98,15 @@ from classification.domain.reclassification import (
     LeasingSeverity,
 )
 from corpus.infrastructure.django.models import CorpusVersion
+from economics.application.analyzer import analyze as economics_analyze
+from economics.application.catalog import BenchmarkCatalog
+from economics.application.version import (
+    assert_freshness as assert_benchmark_freshness,
+)
+from economics.application.version import (
+    latest_active as latest_active_benchmark,
+)
+from economics.infrastructure.django.models import BenchmarkVersion
 from ingestion.domain.enums import ProcessingStatus
 from ingestion.infrastructure.django.models import ContractSubmission
 from platform_core.infrastructure.django.models import ContractAnalysis
@@ -158,6 +167,16 @@ def _active_corpus_version() -> CorpusVersion:
     return version
 
 
+def _active_benchmark_version() -> BenchmarkVersion:
+    version = latest_active_benchmark()
+    if version is None:
+        raise F2OrchestratorError(
+            "no active BenchmarkVersion (run seed_benchmark_version --activate)",
+            code="NO_ACTIVE_BENCHMARK",
+        )
+    return version
+
+
 @dataclass(frozen=True)
 class F2OrchestratorResult:
     """Envelope returned by `F2Orchestrator.run` (and serialized by the
@@ -179,7 +198,8 @@ class F2OrchestratorError(RuntimeError):
     The ``code`` attribute mirrors the canonical PRD F2 error codes
     (``LLM_PARSE_FAILED``, ``LLM_TRANSIENT_FAILURE``,
     ``FAILED_CLASSIFICATION``, ``NO_ACTIVE_RUBRIC``,
-    ``NO_ACTIVE_CORPUS``, ``EMPTY_INPUT``, ``SUBMISSION_NOT_FOUND``).
+    ``NO_ACTIVE_CORPUS``, ``NO_ACTIVE_BENCHMARK``, ``EMPTY_INPUT``,
+    ``SUBMISSION_NOT_FOUND``).
     """
 
     def __init__(self, message: str, *, code: str | None = None) -> None:
@@ -391,6 +411,11 @@ class F2Orchestrator:
         """
         rubric = _active_rubric_version()
         corpus = _active_corpus_version()
+        benchmark = _active_benchmark_version()
+        # BR-12: surface a structured warning when the catalog is past its
+        # review window without blocking the analysis.
+        assert_benchmark_freshness(benchmark)
+        catalog = BenchmarkCatalog.from_db(benchmark)
 
         reclassification_envelope: dict[str, Any] | None = None
         if leasing.severity is not LeasingSeverity.NONE:
@@ -407,7 +432,10 @@ class F2Orchestrator:
         elements_detected = classification.elements_detected.model_dump()
 
         economic_fields_raw = self._build_economic_fields_raw(extraction)
-        economic_summary = self._build_economic_summary_precursor(aggregated)
+        economic_summary = self._build_economic_summary(aggregated, catalog)
+        # The FK is nullable for NOT_CLASSIFIABLE (no economics) — mirror the
+        # null envelope so the row stays internally consistent.
+        benchmark_fk = benchmark if economic_summary is not None else None
 
         defaults: dict[str, Any] = {
             "public_short_id": _generate_public_short_id(),
@@ -426,6 +454,7 @@ class F2Orchestrator:
             "unverifiable_count": len(aggregated.unverifiable_fields),
             "rubric_version": rubric,
             "corpus_version": corpus,
+            "benchmark_version": benchmark_fk,
         }
 
         with transaction.atomic():
@@ -472,27 +501,35 @@ class F2Orchestrator:
         }
 
     @staticmethod
-    def _build_economic_summary_precursor(aggregated: AggregatedExtraction) -> dict[str, Any] | None:
-        """Per-slot status payload that EPIC-05 will refine into the final summary.
+    def _build_economic_summary(
+        aggregated: AggregatedExtraction,
+        catalog: BenchmarkCatalog,
+    ) -> dict[str, Any] | None:
+        """Run F5 ``analyze()`` and dump the contract envelope for persistence.
 
-        Returns ``None`` for NOT_CLASSIFIABLE so the JSONB column stays
-        empty. Otherwise produces ``{slots, unverifiable_fields, ambiguous_count, warning_precursors}``.
+        Returns ``None`` for NOT_CLASSIFIABLE so both the JSONB column and the
+        ``benchmark_version`` FK stay empty. Otherwise emits the full
+        ``EconomicSummary`` envelope described by
+        ``docs/analysis/F5_analisis_economico/ECONOMIC_SUMMARY_CONTRACT.md``.
+
+        CS-139: ``has_developer_direct_hint`` is derived deterministically
+        from ``contract_type``. The §8.1 classifier prompt defines CVP as
+        "directo con vendedor o desarrollador, sin que sea financiamiento
+        bancario regulado", so PRD_F5 BR-10's developer-direct band is the
+        correct comparison anchor for every CVP. APV / LEA / CVC keep the
+        ``BANK_PURCHASE`` default: their financing arrangement is not fixed
+        by the contract type alone, and the bank band is the conservative
+        pick until a clause-level financier signal lands.
         """
         if aggregated.contract_type is ContractType.NOT_CLASSIFIABLE:
             return None
-        return {
-            "slots": {
-                name: {
-                    "status": slot.status.value,
-                    "value": slot.value,
-                    "confidence": slot.confidence,
-                }
-                for name, slot in aggregated.slots.items()
-            },
-            "unverifiable_fields": list(aggregated.unverifiable_fields),
-            "ambiguous_count": aggregated.ambiguous_count,
-            "warning_precursors": list(aggregated.warning_precursors),
-        }
+        has_developer_direct_hint = aggregated.contract_type is ContractType.CVP
+        summary = economics_analyze(
+            aggregated,
+            catalog=catalog,
+            has_developer_direct_hint=has_developer_direct_hint,
+        )
+        return summary.model_dump(mode="json")
 
 
 __all__ = [

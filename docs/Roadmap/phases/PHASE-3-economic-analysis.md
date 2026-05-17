@@ -3,7 +3,7 @@ project: Casa Segura
 doc_type: phase_index
 phase: 3
 status: living
-last_updated: 2026-05-16
+last_updated: 2026-05-17
 tags:
   - casa-segura
   - roadmap
@@ -28,7 +28,7 @@ Source-of-truth links:
 
 ## Ready Now
 
-**EPIC-05 closed 2026-05-16.** All 8 tickets (CS-130..CS-137) shipped. The deterministic F5 pipeline is live: `backend/economics/application/analyzer.py::analyze(extraction, *, catalog)` returns an `EconomicSummary` matching `docs/analysis/F5_analisis_economico/ECONOMIC_SUMMARY_CONTRACT.md`, with version stamping (CS-136), BR-09 honesty guard (CS-137), and zero LLM calls anywhere in `backend/economics/` (PRD_F5 BR-13). Next phase: EPIC-06 rubric engine consumes `EconomicSummary.fields_derived` + `benchmark_comparisons` for category B scoring.
+**EPIC-05 closed 2026-05-17.** All 9 tickets (CS-130..CS-138) shipped. The deterministic F5 pipeline is live: `backend/economics/application/analyzer.py::analyze(extraction, *, catalog)` returns an `EconomicSummary` matching `docs/analysis/F5_analisis_economico/ECONOMIC_SUMMARY_CONTRACT.md`, with version stamping (CS-136), BR-09 honesty guard (CS-137), and zero LLM calls anywhere in `backend/economics/` (PRD_F5 BR-13). CS-138 wired the F2 orchestrator to hydrate the active `BenchmarkCatalog`, call `analyze()`, and persist both the envelope to `ContractAnalysis.economic_summary` and the `benchmark_version` FK. Next phase: EPIC-06 rubric engine consumes `EconomicSummary.fields_derived` + `benchmark_comparisons` for category B scoring.
 
 ## FE WORK
 
@@ -43,6 +43,7 @@ No primary FE tickets live in this phase. FE consumes these outputs later in rep
 - [CS-135](../tickets/CS-135.md) - `EconomicSummary` Pydantic model.
 - [CS-136](../tickets/CS-136.md) - Benchmark version stamp on summary.
 - [CS-137](../tickets/CS-137.md) - Renormalization when fields are unverifiable.
+- [CS-138](../tickets/CS-138.md) - Wire F2 → F5 inside the orchestrator (persist the envelope + FK).
 
 ## INFRA WORK
 
