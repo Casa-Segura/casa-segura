@@ -6,7 +6,7 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, SecretStr, computed_field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, SecretStr, computed_field, field_validator, model_validator
 
 # ─── Mirrors PostgreSQL CHECK constraints on delivery_request ───────────────
 
@@ -67,8 +67,18 @@ class EnqueueDeliveryPayload(BaseModel):
 
     analysis_id: str
     channel: DeliveryChannelDTO
-    target_hash: str
+    target_hash: str = ""
     target_value_encrypted: str | None = None
+    attempt_count: int = Field(default=0, ge=0)
+    max_attempts: int = Field(default=3, ge=1)
+
+    @model_validator(mode="after")
+    def _channel_and_attempt_rules(self) -> EnqueueDeliveryPayload:
+        if self.attempt_count >= self.max_attempts:
+            raise ValueError("enqueue_attempts_exhausted")
+        if self.channel != DeliveryChannelDTO.WEB_LINK and not (self.target_hash or "").strip():
+            raise ValueError("target_hash_required")
+        return self
 
 
 class ZavuWebhookMessage(BaseModel):
@@ -116,6 +126,7 @@ class RetryScheduleInput(BaseModel):
 LiteralChannel = Literal["sms_summary", "email_pdf", "web_link"]
 LiteralDeliveryStatus = Literal["queued", "sending", "delivered", "failed", "expired"]
 
+
 def assert_whatsapp_summary_rejected(channel: str) -> str:
     """whatsapp_summary was removed — migrations rewrote rows."""
     if channel == "whatsapp_summary":
@@ -137,4 +148,3 @@ class StrictDeliveryChannel(BaseModel):
         if v not in CHANNEL_VALUES:
             raise ValueError("delivery_channel_invalid")
         return v
-

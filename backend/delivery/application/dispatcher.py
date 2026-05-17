@@ -18,6 +18,7 @@ def create_and_enqueue_delivery_request(
     channel: str,
     target_hash: str,
     target_value_encrypted: str | None = None,
+    is_resend: bool = False,
 ):
     """Persist queued DeliveryRequest and schedule Celery after transaction commits."""
 
@@ -26,6 +27,7 @@ def create_and_enqueue_delivery_request(
         channel=channel,
         target_hash=target_hash,
         target_value_encrypted=target_value_encrypted,
+        is_resend=is_resend,
     )
 
     dr_id = str(dr.id)

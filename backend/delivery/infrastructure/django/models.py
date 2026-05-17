@@ -85,6 +85,10 @@ class DeliveryRequest(models.Model):
         db_index=True,
         help_text="Outbound provider message id (e.g. Zavu) for delivery webhook correlation",
     )
+    is_resend = models.BooleanField(
+        default=False,
+        help_text="True when enqueued via guarded resend endpoint (CS-248)",
+    )
 
     class Meta:
         db_table = "delivery_request"

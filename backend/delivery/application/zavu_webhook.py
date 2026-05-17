@@ -30,11 +30,7 @@ def process_zavu_webhook_dict(payload: dict) -> None:
 
     event = envelope.type.lower()
     with transaction.atomic():
-        row = (
-            DeliveryRequest.objects.select_for_update()
-            .filter(provider_message_id=message_id)
-            .first()
-        )
+        row = DeliveryRequest.objects.select_for_update().filter(provider_message_id=message_id).first()
         if row is None:
             logger.info(
                 "zavu_webhook_orphan_event",

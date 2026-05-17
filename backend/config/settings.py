@@ -267,6 +267,18 @@ ZAVU_WEBHOOK_SECRET = env("ZAVU_WEBHOOK_SECRET", default="")
 ZAVUDEV_API_KEY = env("ZAVUDEV_API_KEY", default="") or env("ZAVU_API_KEY", default="")
 ZAVU_SENDER_ID = env("ZAVU_SENDER_ID", default="")
 
+# ─── Delivery targets & SMS ───
+DELIVERY_TARGET_HASH_SALT = env("DELIVERY_TARGET_HASH_SALT", default="dev-local-salt-change-me")
+PUBLIC_APP_BASE_URL = env("PUBLIC_APP_BASE_URL", default="http://localhost:8000")
+SMS_PROVIDER = env("SMS_PROVIDER", default="stub")
+SMS_API_BASE_URL = env("SMS_API_BASE_URL", default="")
+SMS_API_KEY = env("SMS_API_KEY", default="")
+SMS_FROM = env("SMS_FROM", default="")
+SMS_TIMEOUT_SECONDS = env.float("SMS_TIMEOUT_SECONDS", default=15.0)
+SMS_MAX_SENDS_PER_SECOND = env.int("SMS_MAX_SENDS_PER_SECOND", default=5)
+SMS_SEGMENT_CHAR_BUDGET = env.int("SMS_SEGMENT_CHAR_BUDGET", default=480)
+SMS_WEBHOOK_SECRET = env("SMS_WEBHOOK_SECRET", default="")
+
 # ─── Public HTML report link TTL — worker ``web_link`` + GET `/r/<id>/` (maps ``REPORT_LINK_TTL_DAYS``) ───
 PUBLIC_REPORT_LINK_TTL_DAYS = env.int("REPORT_LINK_TTL_DAYS", default=30)
 

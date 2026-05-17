@@ -74,6 +74,39 @@ def test_zavu_webhook_accepts_valid_signature():
     assert resp.json() == {"status": "received"}
 
 
+@pytest.mark.django_db
+def test_zavu_signed_http_webhook_marks_delivery_delivered():
+    """CS-357: full HTTP + signature path updates ``DeliveryRequest``."""
+    from delivery.domain.enums import DeliveryRequestStatus
+    from tests.factories import ContractAnalysisFactory, DeliveryRequestFactory
+
+    analysis = ContractAnalysisFactory()
+    dr = DeliveryRequestFactory(
+        analysis=analysis,
+        channel="email_pdf",
+        provider_message_id="msg_signed_http",
+        status=DeliveryRequestStatus.SENDING.value,
+    )
+    body = json.dumps(
+        {"type": "message.delivered", "data": {"message": {"id": "msg_signed_http"}}},
+    ).encode()
+    secret = "whsec_signed_http"
+    ts = int(time.time())
+    hdr = _sign(secret=secret, raw_body=body, ts=ts)
+    client = APIClient()
+    with override_settings(ZAVU_WEBHOOK_SECRET=secret):
+        resp = client.generic(
+            "POST",
+            "/api/v1/webhooks/zavu/",
+            data=body,
+            content_type="application/json",
+            HTTP_X_ZAVU_SIGNATURE=hdr,
+        )
+    assert resp.status_code == 200
+    dr.refresh_from_db()
+    assert dr.status == DeliveryRequestStatus.DELIVERED.value
+
+
 def test_verify_zavu_signature_true_for_docs_shape():
     secret = "whsec_x"
     raw = b'{"type":"ping"}'
