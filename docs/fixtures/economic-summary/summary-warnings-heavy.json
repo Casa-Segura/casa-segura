@@ -1,0 +1,69 @@
+{
+  "contract_type": "FSV",
+  "currency": "USD",
+  "currency_conversion_note": null,
+  "fields_extracted": {
+    "price_cash": 120000,
+    "down_payment": 12000,
+    "down_payment_pct": 0.1,
+    "financed_amount": 108000,
+    "term_months": 300,
+    "annual_rate_pct": 0.12,
+    "monthly_payment": 1150,
+    "payment_periodicity": "monthly"
+  },
+  "fields_derived": {
+    "total_cost_paid": 357500,
+    "total_cost_vs_cash_multiplier": 2.98,
+    "monthly_payment_theoretical": 1100,
+    "monthly_payment_coherent": false
+  },
+  "benchmark_comparisons": [
+    {
+      "metric": "annual_rate",
+      "metric_label": "Tasa efectiva anual",
+      "contract_value": 0.12,
+      "benchmark_value": 0.06,
+      "benchmark_key": "fsv_rate_mid",
+      "benchmark_source": "FSV tasas subsidio — ilustrativo, 2026-Q2",
+      "delta_pct_points": 6.0,
+      "assessment": "above_market"
+    },
+    {
+      "metric": "monthly_payment_ratio",
+      "metric_label": "Cuota mensual vs. línea base lineal",
+      "contract_value": 1.28,
+      "benchmark_value": 1.2,
+      "benchmark_key": "monthly_payment_ratio_healthy_max",
+      "benchmark_source": "Rúbrica §14 ratios — placeholders hasta CS-130",
+      "delta_pct_points": null,
+      "assessment": "within_market"
+    }
+  ],
+  "overcost": {
+    "vs_benchmark_usd": 18500,
+    "explanation": "Fixture de demostración con varios avisos: el exceso en USD puede variar con la amortización efectiva cuando exista backend.",
+    "what_changes_would_save": ["Revisá coherencia entre cuota y tasa."]
+  },
+  "warnings": [
+    {
+      "code": "monthly_payment_higher_than_theoretical",
+      "severity_suggested": "yellow",
+      "description": "La cuota mensual difiere más de un 5% de la cuota amortizable teórica a la misma tasa y plazo.",
+      "related_field": "monthly_payment"
+    },
+    {
+      "code": "down_payment_inconsistent",
+      "severity_suggested": "yellow",
+      "description": "El porcentaje y el monto de la prima no cuadran con el precio al contado.",
+      "related_field": "down_payment"
+    },
+    {
+      "code": "total_cost_not_disclosed",
+      "severity_suggested": "red",
+      "description": "No se encuentra una cifra clara del costo total en el texto analizado.",
+      "related_field": null
+    }
+  ],
+  "benchmark_version": "2026-Q2"
+}

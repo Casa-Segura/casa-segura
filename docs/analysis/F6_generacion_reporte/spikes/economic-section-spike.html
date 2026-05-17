@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Spike — Sección económica (ECONOMIC_SUMMARY)</title>
+    <style>
+      :root {
+        --bg: #0f1419;
+        --panel: #1a2230;
+        --border: #2e3a4d;
+        --text: #e8eef7;
+        --muted: #8b99ad;
+        --accent: #4d9fff;
+        --warn: #eab308;
+        --bad: #f87171;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.55;
+      }
+      .wrap {
+        max-width: 56rem;
+        margin: 0 auto;
+        padding: 2rem 1.25rem 3rem;
+      }
+      header h1 {
+        font-size: 1.35rem;
+        font-weight: 650;
+        margin: 0 0 0.35rem;
+        letter-spacing: -0.02em;
+      }
+      header p.banner {
+        font-size: 0.8125rem;
+        color: var(--muted);
+        margin: 0 0 1.75rem;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.25rem 1.35rem;
+        margin-bottom: 1.25rem;
+      }
+      .card h2 {
+        margin: 0 0 0.75rem;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      dl.grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+        gap: 0.75rem 1.25rem;
+        margin: 0;
+      }
+      dl.grid dt {
+        font-size: 0.72rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      dl.grid dd {
+        margin: 0.15rem 0 0;
+        font-variant-numeric: tabular-nums;
+        font-size: 0.975rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.6rem 0.5rem;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+      th {
+        color: var(--muted);
+        font-weight: 500;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        padding: 0.2rem 0.45rem;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        color: var(--muted);
+      }
+      .assessment-above_market .tag-eval {
+        color: var(--bad);
+        border-color: #7f1d1d;
+        background: rgba(248, 113, 113, 0.08);
+      }
+      .assessment-within_market .tag-eval {
+        color: #34d399;
+        border-color: #064e3b;
+        background: rgba(52, 211, 153, 0.08);
+      }
+      .warnings-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .warnings-list li {
+        padding: 0.65rem 0;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+      }
+      .warnings-list li:last-child {
+        border-bottom: none;
+      }
+      .severity {
+        flex-shrink: 0;
+        width: 0.45rem;
+        border-radius: 2px;
+        min-height: 2.75rem;
+        margin-top: 0.25rem;
+      }
+      .severity-yellow {
+        background: var(--warn);
+      }
+      .severity-red {
+        background: var(--bad);
+      }
+      footer {
+        margin-top: 2rem;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+      footer code {
+        color: var(--accent);
+      }
+      main :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .tips-list {
+        margin: 0.35rem 0 0;
+        padding-left: 1.2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="economics-report-slice-main" class="wrap">
+      <header>
+        <h1>Panorama económico</h1>
+        <p id="banner" class="banner">
+          Spike CS-203: contenido desde JSON inlined (misma forma que summary-warnings-heavy.json).
+        </p>
+      </header>
+
+      <section id="sec-contrato" class="card" aria-labelledby="sec-contrato-heading">
+        <h2 id="sec-contrato-heading">Contrato</h2>
+        <dl class="grid" id="headline-fields"></dl>
+      </section>
+
+      <section id="sec-benchmarks" class="card" aria-labelledby="sec-benchmarks-heading">
+        <h2 id="sec-benchmarks-heading">Referencias de mercado</h2>
+        <table>
+          <caption class="sr-only">
+            Comparativa de valores del contrato frente a referencias de mercado, incluye diferencias en puntos
+            porcentuales cuando existan.
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Métrica</th>
+              <th scope="col">Valor contrato</th>
+              <th scope="col">Referencia</th>
+              <th scope="col">Diferencia (puntos %)</th>
+              <th scope="col">Evaluación</th>
+              <th scope="col"><code>benchmark_key</code></th>
+            </tr>
+          </thead>
+          <tbody id="comparison-body"></tbody>
+        </table>
+      </section>
+
+      <section id="sec-overcost" class="card" aria-labelledby="sec-overcost-heading">
+        <h2 id="sec-overcost-heading">Costo incremental vs referencia</h2>
+        <div id="overcost-block"></div>
+      </section>
+
+      <section id="sec-alertas" class="card" aria-labelledby="sec-alertas-heading">
+        <h2 id="sec-alertas-heading">Alertas</h2>
+        <ul class="warnings-list" id="warnings-ul"></ul>
+      </section>
+
+      <footer aria-label="Metadatos de fixture técnico">
+        <span class="sr-only">Prototipo: nombre del archivo fuente JSON embebido.</span>
+        <span aria-hidden="true">Fixture:</span>
+        <code id="fixture-name">summary-warnings-heavy.json</code>
+        <span aria-hidden="true"> · Versión benchmarks </span>
+        <code id="bench-version"></code>
+      </footer>
+    </main>
+
+    <script type="application/json" id="economic-summary-fixture">
+      {
+        "contract_type": "FSV",
+        "currency": "USD",
+        "currency_conversion_note": null,
+        "fields_extracted": {
+          "price_cash": 120000,
+          "down_payment": 12000,
+          "down_payment_pct": 0.1,
+          "financed_amount": 108000,
+          "term_months": 300,
+          "annual_rate_pct": 0.12,
+          "monthly_payment": 1150,
+          "payment_periodicity": "monthly"
+        },
+        "fields_derived": {
+          "total_cost_paid": 357500,
+          "total_cost_vs_cash_multiplier": 2.98,
+          "monthly_payment_theoretical": 1100,
+          "monthly_payment_coherent": false
+        },
+        "benchmark_comparisons": [
+          {
+            "metric": "annual_rate",
+            "metric_label": "Tasa efectiva anual",
+            "contract_value": 0.12,
+            "benchmark_value": 0.06,
+            "benchmark_key": "fsv_rate_mid",
+            "benchmark_source": "FSV tasas subsidio — ilustrativo, 2026-Q2",
+            "delta_pct_points": 6,
+            "assessment": "above_market"
+          },
+          {
+            "metric": "monthly_payment_ratio",
+            "metric_label": "Cuota mensual vs. línea base lineal",
+            "contract_value": 1.28,
+            "benchmark_value": 1.2,
+            "benchmark_key": "monthly_payment_ratio_healthy_max",
+            "benchmark_source": "Rúbrica §14 ratios — placeholders hasta CS-130",
+            "delta_pct_points": null,
+            "assessment": "within_market"
+          }
+        ],
+        "overcost": {
+          "vs_benchmark_usd": 18500,
+          "explanation": "Fixture de demostración con varios avisos: el exceso en USD puede variar con la amortización efectiva cuando exista backend.",
+          "what_changes_would_save": ["Revisá coherencia entre cuota y tasa."]
+        },
+        "warnings": [
+          {
+            "code": "monthly_payment_higher_than_theoretical",
+            "severity_suggested": "yellow",
+            "description": "La cuota mensual difiere más de un 5% de la cuota amortizable teórica a la misma tasa y plazo.",
+            "related_field": "monthly_payment"
+          },
+          {
+            "code": "down_payment_inconsistent",
+            "severity_suggested": "yellow",
+            "description": "El porcentaje y el monto de la prima no cuadran con el precio al contado.",
+            "related_field": "down_payment"
+          },
+          {
+            "code": "total_cost_not_disclosed",
+            "severity_suggested": "red",
+            "description": "No se encuentra una cifra clara del costo total en el texto analizado.",
+            "related_field": null
+          }
+        ],
+        "benchmark_version": "2026-Q2"
+      }
+    </script>
+
+    <script>
+      (function () {
+        function escapeHtml(text) {
+          return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        function cssSafeClassToken(s) {
+          return String(s).replace(/[^a-zA-Z0-9_-]/g, "_");
+        }
+
+        var rawEl = document.getElementById("economic-summary-fixture");
+        var data = JSON.parse(rawEl.textContent);
+
+        var assessmentLabel = {
+          above_market: "Sobre mercado referencial",
+          within_market: "Dentro de rango",
+          below_market: "Bajo referencia",
+          unknown: "Sin evaluar"
+        };
+
+        var currency = typeof data.currency === "string" ? data.currency : "USD";
+
+        function fmtMoney(val) {
+          if (typeof val !== "number" || Number.isNaN(val)) {
+            return "—";
+          }
+          try {
+            return new Intl.NumberFormat("es-GT", { style: "currency", currency: currency }).format(val);
+          } catch (_e) {
+            return val.toLocaleString("es-GT") + " " + currency;
+          }
+        }
+
+        function fmtPct(fraction) {
+          if (typeof fraction !== "number" || Number.isNaN(fraction)) {
+            return "—";
+          }
+          return (fraction * 100).toFixed(2).replace(/\.00$/, "") + " %";
+        }
+
+        function fmtNum(n) {
+          if (typeof n !== "number" || Number.isNaN(n)) {
+            return "—";
+          }
+          return n.toLocaleString("es-GT");
+        }
+
+        var banner = document.querySelector("#banner");
+        var benchVer = typeof data.benchmark_version === "string" ? data.benchmark_version : "—";
+        if (banner) {
+          banner.textContent =
+            "Spike CS-203 · Version " +
+            benchVer +
+            " · Tipo " +
+            (typeof data.contract_type === "string" ? data.contract_type : "?");
+        }
+        document.getElementById("bench-version").textContent = benchVer;
+
+        var ff = data.fields_extracted || {};
+        var fd = data.fields_derived || {};
+
+        var pairs = [];
+        pairs.push(["Precio efectivo / al contado", fmtMoney(ff.price_cash)]);
+        pairs.push(["Prima", fmtMoney(ff.down_payment)]);
+        pairs.push(["Tasa efectiva anual", fmtPct(ff.annual_rate_pct)]);
+        pairs.push(["Plazo", fmtNum(ff.term_months) + " meses"]);
+        pairs.push(["Cuota mensual", fmtMoney(ff.monthly_payment)]);
+        pairs.push(["Costo total estimado pagado", fmtMoney(Number(fd.total_cost_paid)))]);
+        var mult =
+          typeof fd.total_cost_vs_cash_multiplier === "number"
+            ? fd.total_cost_vs_cash_multiplier.toFixed(2).replace(/\.00$/, "")
+            : "—";
+        pairs.push(["Multiplicador costo vs. efectivo", mult + "\u00d7"]);
+        var coherent = fd.monthly_payment_coherent === true;
+        pairs.push(["Coherencia cuota/te\u00f3rico", coherent ? "S\u00ed" : "No"]);
+
+        document.getElementById("headline-fields").innerHTML = pairs
+          .map(function (kv) {
+            return "<dt>" + escapeHtml(kv[0]) + "</dt><dd>" + escapeHtml(String(kv[1])) + "</dd>";
+          })
+          .join("");
+
+        var comparisons = Array.isArray(data.benchmark_comparisons) ? data.benchmark_comparisons : [];
+        document.getElementById("comparison-body").innerHTML = comparisons
+          .map(function (row) {
+            var r = row && typeof row === "object" ? row : {};
+            var metric =
+              typeof r.metric_label === "string" ? r.metric_label : r.metric !== undefined ? String(r.metric) : "";
+            var contractCell;
+            var benchCell;
+            var mStr = typeof r.metric === "string" ? r.metric : "";
+            if (
+              mStr.indexOf("annual_rate") !== -1 ||
+              mStr.indexOf("pct") !== -1 ||
+              mStr.indexOf("ratio") !== -1
+            ) {
+              contractCell = fmtPct(Number(r.contract_value));
+              benchCell = fmtPct(Number(r.benchmark_value));
+            } else {
+              contractCell = fmtMoney(Number(r.contract_value));
+              benchCell = fmtMoney(Number(r.benchmark_value));
+            }
+            var delta =
+              r.delta_pct_points === null || r.delta_pct_points === undefined
+                ? "\u2014"
+                : String(r.delta_pct_points) + " pp";
+            var ass = typeof r.assessment === "string" ? r.assessment : "unknown";
+            var assText = assessmentLabel[ass] !== undefined ? assessmentLabel[ass] : ass;
+            var key = typeof r.benchmark_key === "string" ? r.benchmark_key : "";
+            var sourceHtml =
+              typeof r.benchmark_source === "string"
+                ? '<span class="tag">' + escapeHtml(r.benchmark_source) + "</span>"
+                : "";
+
+            var trCls = "assessment-" + cssSafeClassToken(ass);
+            return (
+              '<tr class="' +
+              escapeHtml(trCls) +
+              '">' +
+              "<td><strong>" +
+              escapeHtml(metric) +
+              "</strong>" +
+              (sourceHtml ? "<br/>" + sourceHtml : "") +
+              "</td>" +
+              "<td>" +
+              escapeHtml(contractCell) +
+              "</td>" +
+              "<td>" +
+              escapeHtml(benchCell) +
+              "</td>" +
+              "<td>" +
+              escapeHtml(delta) +
+              "</td>" +
+              '<td><span class="tag tag-eval">' +
+              escapeHtml(assText) +
+              "</span></td>" +
+              "<td><code>" +
+              escapeHtml(key) +
+              "</code></td>" +
+              "</tr>"
+            );
+          })
+          .join("");
+
+        var ov = data.overcost && typeof data.overcost === "object" ? data.overcost : {};
+        var ocUsd = ov.vs_benchmark_usd;
+        var expl = typeof ov.explanation === "string" ? ov.explanation : "";
+        var tips = [];
+        if (Array.isArray(ov.what_changes_would_save)) {
+          ov.what_changes_would_save.forEach(function (x) {
+            if (typeof x === "string") tips.push(x);
+          });
+        }
+
+        var ocMoney = typeof ocUsd === "number" ? fmtMoney(ocUsd) : "\u2014";
+        document.getElementById("overcost-block").innerHTML =
+          '<p style="margin:0 0 0.75rem;font-size:1.05rem"><strong>' +
+          escapeHtml(ocMoney) +
+          "</strong> sobre referencia declarada.</p>" +
+          (expl
+            ? '<p style="margin:0 0 0.85rem;color:var(--muted)">' + escapeHtml(expl) + "</p>"
+            : "") +
+          (tips.length
+            ? '<p id="overcost-tips-label" style="margin:0 0 0.35rem;color:var(--muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em">Qu\u00e9 revisar\u00edas</p><ul class="tips-list" aria-labelledby="overcost-tips-label">' +
+              tips
+                .map(function (t) {
+                  return "<li>" + escapeHtml(t) + "</li>";
+                })
+                .join("") +
+              "</ul>"
+            : "");
+
+        var warns = Array.isArray(data.warnings) ? data.warnings : [];
+        document.getElementById("warnings-ul").innerHTML = warns
+          .map(function (w) {
+            var ww = w && typeof w === "object" ? w : {};
+            var sev = ww.severity_suggested === "red" ? "red" : "yellow";
+            var desc = typeof ww.description === "string" ? ww.description : "";
+            var code = typeof ww.code === "string" ? ww.code : "";
+            var rel = ww.related_field != null ? String(ww.related_field) : "";
+            var sevLabel = sev === "red" ? "alta" : "moderada";
+            var meta =
+              "<div style=\"font-size:0.8125rem;color:var(--muted);margin-top:0.35rem\">" +
+              escapeHtml("Código `" + code + "` · Severidad: " + sevLabel) +
+              (rel ? escapeHtml(" · Campo relacionado `" + rel + "`") : "") +
+              "</div>";
+            return (
+              "<li>" +
+              '<span class="sr-only">Alerta · severidad ' +
+              escapeHtml(sevLabel) +
+              ". </span>" +
+              '<div class="severity severity-' +
+              escapeHtml(sev) +
+              '" aria-hidden="true"></div><div>' +
+              "<strong>" +
+              escapeHtml(desc) +
+              "</strong>" +
+              meta +
+              "</div></li>"
+            );
+          })
+          .join("");
+      })();
+    </script>
+  </body>
+</html>

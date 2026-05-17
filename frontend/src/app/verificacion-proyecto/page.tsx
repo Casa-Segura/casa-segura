@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DisclaimerFooter } from "@/components/disclaimer-footer";
-import { DISCLAIMER_SHORT } from "@/legal/disclaimer";
+import { DISCLAIMER_SHORT } from "@/legal/disclaimer-registry";
+import { buildManualVerificationHandoffPath } from "@/lib/project-verification-manual-handoff";
+
+const manualHubHref = buildManualVerificationHandoffPath({
+  source: "verification_hub",
+});
 
 export const metadata: Metadata = {
   title: `Verificación de proyecto (opcional) — Casa Segura`,
@@ -38,7 +43,7 @@ export default function ProjectVerificationHubPage() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-accent">
                   <span translate="no">Casa Segura</span> beta opcional
                 </p>
-                <h1 className="mt-3 max-w-[12ch] text-balance text-4xl font-semibold leading-[0.98] tracking-tight text-text-primary sm:text-5xl lg:text-6xl">
+                <h1 className="mt-3 max-w-[18ch] text-balance text-4xl font-semibold leading-[0.98] tracking-tight text-text-primary sm:max-w-[22ch] sm:text-5xl lg:text-6xl xl:max-w-[28ch]">
                   Verificá señales antes de apartar una vivienda
                 </h1>
                 <p className="mt-5 max-w-[62ch] text-base leading-relaxed text-text-secondary sm:text-lg">
@@ -60,7 +65,7 @@ export default function ProjectVerificationHubPage() {
                   Sacar o subir foto
                 </Link>
                 <Link
-                  href="/verificacion-proyecto/manual"
+                  href={manualHubHref}
                   className="flex min-h-[56px] items-center justify-center rounded-[var(--radius-input)] border border-border bg-surface px-5 py-4 text-center text-base font-semibold text-accent shadow-sm transition-colors hover:bg-accent-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 >
                   Completar a mano

@@ -4,6 +4,8 @@
 > Stack: Django 5.2 LTS + Celery + Postgres (no LLM)
 > Module: `economics/`
 > Depends: F2 (raw fields), F8 (schema), uses F4's barrier indirectly
+>
+> **JSON contract (FE / BE parity):** [`ECONOMIC_SUMMARY_CONTRACT.md`](./ECONOMIC_SUMMARY_CONTRACT.md) · [`docs/fixtures/economic-summary/`](../../fixtures/economic-summary/README.md)
 
 ---
 

@@ -1,0 +1,51 @@
+{
+  "contract_type": "CVP",
+  "currency": "USD",
+  "currency_conversion_note": null,
+  "fields_extracted": {
+    "price_cash": 80000,
+    "down_payment": 8000,
+    "down_payment_pct": 0.1,
+    "financed_amount": 72000,
+    "term_months": 240,
+    "annual_rate_pct": 0.18,
+    "monthly_rate_pct": 0.015,
+    "monthly_payment": 1083.5,
+    "payment_periodicity": "monthly",
+    "interest_calculation_base": "total_balance"
+  },
+  "fields_derived": {
+    "total_cost_paid": 268040,
+    "total_cost_vs_cash_multiplier": 3.35,
+    "monthly_payment_theoretical": 1083.5,
+    "monthly_payment_coherent": true
+  },
+  "benchmark_comparisons": [
+    {
+      "metric": "annual_rate",
+      "metric_label": "Tasa efectiva anual",
+      "contract_value": 0.18,
+      "benchmark_value": 0.09,
+      "benchmark_key": "bank_mortgage_rate_mid",
+      "benchmark_source": "BCR, tasas vigentes ilustrativas, 2026-Q2",
+      "delta_pct_points": 9.0,
+      "assessment": "well_above_market"
+    }
+  ],
+  "overcost": {
+    "vs_benchmark_usd": 95000,
+    "explanation": "Si la tasa fuera del 9% en lugar del 18%, pagarías 173 040 USD en total. Con el contrato indicado el costo nominal acumulado es 268 040 USD (ejemplo fixture).",
+    "what_changes_would_save": [
+      "Negociá bajar la tasa anual del 18% al rango cercano al 9% (referencia bancaria de mercado)."
+    ]
+  },
+  "warnings": [
+    {
+      "code": "interest_calculation_base_unfavorable",
+      "severity_suggested": "red",
+      "description": "Los intereses se calculan sobre el saldo total y no sobre el saldo pendiente. Verificá el texto contractual con un abogado.",
+      "related_field": "interest_calculation_base"
+    }
+  ],
+  "benchmark_version": "2026-Q2"
+}

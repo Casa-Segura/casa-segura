@@ -66,12 +66,22 @@ Additional optional toggles mirror [`frontend/src/server/contract-env.ts`](src/s
 | Variable                       | When set                                | Behavior                                                                                                   |
 | ------------------------------ | --------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `PROJECT_VERIFICATION_ENABLED` | `true` / `1` / `yes` (case-insensitive) | Exposes `/verificacion-proyecto` (stub hub, manual form shell, demo result page) and a footer link on `/`. |
+| `PROJECT_VERIFICATION_TELEMETRY_LOG` | `true` / `1` / `yes` (case-insensitive) | Server-only: writes **JSON lines** to stdout for optional PV events (manual form handoff, optional contract CTA impression). **No** OCR text, addresses, filenames, or form bodies. |
 
-**Default:** unset → off. Half-enabled flows are avoided: disabled builds return **404** for those routes with a friendly [`not-found`](src/app/verificacion-proyecto/not-found.tsx) message. Stub pages validate the manual form on the server but do not call Django yet.
+**Default:** `PROJECT_VERIFICATION_ENABLED` unset → off. Half-enabled flows are avoided: disabled deployments return **404** for that segment with a friendly [`not-found`](src/app/verificacion-proyecto/not-found.tsx) message.
 
-**Backend (optional):** Django mirrors this flag as `PROJECT_VERIFICATION_ENABLED` (`backend/.env`). Stub JSON API under `/api/v1/project-verification/…` — see [`backend/.env.example`](../../backend/.env.example) and **CS-356** repo notes. Point a server action at `CASASEGURA_API_BASE_URL` + `/api/v1/project-verification/manual/` when FE–BE integration is ready.
+**Manual form + stubs:** When `CASASEGURA_API_BASE_URL` is configured and the gate is on, `POST /api/v1/project-verification/manual/` is called from the server action; when the base URL is missing, the action returns a deterministic configuration message instead of calling upstream.
 
-**Backend (optional):** Django mirrors this flag as `PROJECT_VERIFICATION_ENABLED` (`backend/.env`). Stub JSON API under `POST/GET /api/v1/project-verification/...` — see [`backend/.env.example`](../backend/.env.example) and ticket **CS-356** repo notes. Point a server action at `CASASEGURA_API_BASE_URL` + `/api/v1/project-verification/manual/` when FE–BE integration is ready.
+**Prefetch vs feature gate (Next.js App Router / Next 16):**
+
+- `<Link>` may **prefetch** routes that enter the viewport (shared layouts + RSC payloads). Use [`prefetch={false}`](https://nextjs.org/docs/app/api-reference/components/link#prefetch) on a link to opt out.
+- When the gate is **off**, [`src/app/page.tsx`](src/app/page.tsx) **does not render** links to `/verificacion-proyecto`, so the landing page does not trigger those prefetches.
+- The segment layout runs `notFound()` when disabled ([`src/app/verificacion-proyecto/layout.tsx`](src/app/verificacion-proyecto/layout.tsx)) with `dynamic = "force-dynamic"` so the flag is evaluated per request, not baked at build time.
+- The framework **cannot** guarantee zero prefetch for user-typed URLs or arbitrary deep links; correctness still relies on the **404 layout guard**, not on hiding chunks alone.
+
+**Backend (optional):** Django mirrors `PROJECT_VERIFICATION_ENABLED` (`backend/.env`). Stub JSON API under `POST/GET /api/v1/project-verification/...` — see [`backend/.env.example`](../../backend/.env.example) and ticket **CS-356**.
+
+**E2E:** A dedicated Playwright matrix for `{ gate on / off }` is deferred until the repo wires a browser runner; the FE guard remains the layout + conditional nav above.
 
 ### Placeholder `CASASEGURA_API_BASE_URL` (backend not deployed yet)
 

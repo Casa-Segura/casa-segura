@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useEffect, useRef } from "react";
 import {
   submitProjectVerificationManual,
   type ManualFormState,
 } from "@/app/verificacion-proyecto/manual/actions";
+import { cx, focusRing } from "@/components/casa-ui";
 
 const initialState: ManualFormState | null = null;
 
@@ -96,6 +98,9 @@ export function ProjectVerificationManualForm({
         >
           Desarrollador / constructor
         </label>
+        <p id="developer-hint" className="text-xs leading-snug text-text-secondary">
+          Usá el nombre visible en el cartel o material del proyecto.
+        </p>
         <input
           id="developer"
           name="developer"
@@ -105,10 +110,10 @@ export function ProjectVerificationManualForm({
           aria-invalid={Boolean(fieldErrors?.developer)}
           aria-describedby={
             fieldErrors?.developer
-              ? "developer-err"
+              ? "developer-err developer-hint"
               : formError
-                ? `manual-form-error ${baseDescription}`
-                : baseDescription
+                ? `manual-form-error developer-hint ${baseDescription}`
+                : `developer-hint ${baseDescription}`
           }
           className="min-h-[44px] rounded-[var(--radius-input)] border border-border bg-surface px-3 py-2 text-base text-text-primary outline-none focus-visible:ring-2 focus-visible:ring-accent"
         />
@@ -160,6 +165,9 @@ export function ProjectVerificationManualForm({
         >
           Permiso / expediente
         </label>
+        <p id="permit-hint" className="text-xs leading-snug text-text-secondary">
+          Números y guiones tal como aparecen en la valla, si los tenés.
+        </p>
         <input
           id="permit"
           name="permit"
@@ -169,10 +177,10 @@ export function ProjectVerificationManualForm({
           aria-invalid={Boolean(fieldErrors?.permit)}
           aria-describedby={
             fieldErrors?.permit
-              ? "permit-err"
+              ? "permit-err permit-hint"
               : formError
-                ? `manual-form-error ${baseDescription}`
-                : baseDescription
+                ? `manual-form-error permit-hint ${baseDescription}`
+                : `permit-hint ${baseDescription}`
           }
           className="min-h-[44px] rounded-[var(--radius-input)] border border-border bg-surface px-3 py-2 text-base text-text-primary outline-none focus-visible:ring-2 focus-visible:ring-accent"
         />
@@ -190,21 +198,24 @@ export function ProjectVerificationManualForm({
         >
           Dirección aproximada
         </label>
-        <input
+        <p id="address-hint" className="text-xs leading-snug text-text-secondary">
+          Municipio o punto de referencia; no necesitamos la dirección catastral completa.
+        </p>
+        <textarea
           id="address"
           name="address"
-          type="text"
+          rows={3}
           autoComplete="street-address"
           defaultValue={initialValues?.address ?? ""}
           aria-invalid={Boolean(fieldErrors?.address)}
           aria-describedby={
             fieldErrors?.address
-              ? "address-err"
+              ? "address-err address-hint"
               : formError
-                ? `manual-form-error ${baseDescription}`
-                : baseDescription
+                ? `manual-form-error address-hint ${baseDescription}`
+                : `address-hint ${baseDescription}`
           }
-          className="min-h-[44px] rounded-[var(--radius-input)] border border-border bg-surface px-3 py-2 text-base text-text-primary outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="min-h-[88px] w-full resize-y rounded-[var(--radius-input)] border border-border bg-surface px-3 py-2 text-base leading-relaxed text-text-primary outline-none focus-visible:ring-2 focus-visible:ring-accent"
         />
         {fieldErrors?.address ? (
           <p id="address-err" role="alert" className="text-sm text-verdict-red">
@@ -216,10 +227,31 @@ export function ProjectVerificationManualForm({
       <button
         type="submit"
         disabled={pending}
+        aria-busy={pending}
         className="flex min-h-[44px] w-full items-center justify-center rounded-[var(--radius-input)] bg-accent px-4 py-3 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
-        {pending ? "Enviando…" : "Enviar verificación"}
+        {pending ? (
+          <>
+            <span aria-hidden className="mr-2 inline-block size-4 animate-spin rounded-full border-2 border-white/40 border-t-white motion-reduce:animate-none" />
+            Verificando…
+          </>
+        ) : (
+          "Verificar proyecto"
+        )}
       </button>
+
+      <p className="text-center">
+        <Link
+          href="/verificacion-proyecto/foto"
+          className={cx(
+            "inline-flex min-h-[44px] items-center justify-center text-sm font-medium text-accent underline-offset-4 hover:underline",
+            focusRing,
+            "rounded-sm px-1",
+          )}
+        >
+          Cancelar: volver a la foto
+        </Link>
+      </p>
 
       {state?.ok ? (
         <p

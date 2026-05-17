@@ -26,4 +26,13 @@ describe("validateManualVerificationFields", () => {
     const r = validateManualVerificationFields({ ...okRow, developer: long });
     expect(r?.developer).toMatch(/Máximo/);
   });
+
+  it("accepts multiline address after trim", () => {
+    expect(
+      validateManualVerificationFields({
+        ...okRow,
+        address: "  Barrio Centro\nentre calles 1 y 3  ",
+      }),
+    ).toBeNull();
+  });
 });

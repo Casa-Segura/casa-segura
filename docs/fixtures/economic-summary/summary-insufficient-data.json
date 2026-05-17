@@ -1,0 +1,12 @@
+{
+  "contract_type": "CVP",
+  "currency": "USD",
+  "currency_conversion_note": null,
+  "derivation_status": "insufficient_data",
+  "fields_extracted": {},
+  "fields_derived": {},
+  "benchmark_comparisons": [],
+  "overcost": null,
+  "warnings": [],
+  "benchmark_version": "2026-Q2"
+}

@@ -1,21 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DisclaimerFooter } from "@/components/disclaimer-footer";
-import { DISCLAIMER_SHORT } from "@/legal/disclaimer";
+import { ProjectVerificationFlowShell } from "@/components/project-verification-flow-shell";
+import { ProjectVerificationOptionalContractCta } from "@/components/project-verification-optional-contract-cta";
+import { ProjectVerificationVerdictIcon } from "@/components/project-verification-verdict-icon";
+import { DISCLAIMER_SHORT } from "@/legal/disclaimer-registry";
 import { getProjectVerificationFixture } from "@/lib/project-verification-fixtures";
 import type { ProjectVerificationVerdict } from "@/lib/project-verification-types";
+import { verdictVisualTone } from "@/lib/project-verification-verdict-styles";
 import { fetchProjectVerificationDemoResult } from "@/server/project-verification-backend";
-
-function verdictBannerClass(verdict: ProjectVerificationVerdict): string {
-  switch (verdict) {
-    case "green":
-      return "border-verdict-green bg-verdict-green-bg text-verdict-green";
-    case "red":
-      return "border-verdict-red bg-verdict-red-bg text-verdict-red";
-    default:
-      return "border-verdict-yellow bg-verdict-yellow-bg text-verdict-yellow";
-  }
-}
 
 export const metadata: Metadata = {
   title: `Resultado (demo) — verificación de proyecto — Casa Segura`,
@@ -26,6 +19,38 @@ type ResultPageProps = {
   searchParams?: Promise<{ v?: string; id?: string }>;
 };
 
+function verdictBandSwitchLinks() {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="font-medium text-text-primary">Otros demos:</span>
+      <Link
+        href="/verificacion-proyecto/resultado?v=green"
+        className="font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      >
+        verde
+      </Link>
+      <span aria-hidden className="text-text-secondary">
+        ·
+      </span>
+      <Link
+        href="/verificacion-proyecto/resultado?v=yellow"
+        className="font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      >
+        amarillo
+      </Link>
+      <span aria-hidden className="text-text-secondary">
+        ·
+      </span>
+      <Link
+        href="/verificacion-proyecto/resultado?v=red"
+        className="font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      >
+        rojo
+      </Link>
+    </div>
+  );
+}
+
 export default async function ProjectVerificationResultPage({
   searchParams,
 }: ResultPageProps) {
@@ -33,54 +58,72 @@ export default async function ProjectVerificationResultPage({
   const remote = await fetchProjectVerificationDemoResult(sp.v);
   const preview = remote ?? getProjectVerificationFixture(sp.v);
   const referenceId = sp.id?.trim() || null;
+  const tone = verdictVisualTone(preview.verdict as ProjectVerificationVerdict);
 
   return (
-    <div className="flex min-h-dvh flex-1 flex-col bg-bg px-4 py-6 sm:px-6">
-      <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-6">
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-          <Link
-            href="/verificacion-proyecto"
-            className="inline-flex min-h-[44px] max-w-fit items-center text-sm font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            Volver a verificación
-          </Link>
-          <Link
-            href="/"
-            className="inline-flex min-h-[44px] max-w-fit items-center text-sm font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            Inicio
-          </Link>
-        </div>
-
-        <main
-          id="main-content"
-          tabIndex={-1}
-          className="flex flex-1 flex-col gap-6 outline-none"
+    <ProjectVerificationFlowShell maxWidth="2xl">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+        <Link
+          href="/verificacion-proyecto"
+          className="inline-flex min-h-[44px] max-w-fit items-center text-sm font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
+          Volver a verificación
+        </Link>
+        <Link
+          href="/"
+          className="inline-flex min-h-[44px] max-w-fit items-center text-sm font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          Inicio
+        </Link>
+      </div>
+
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex flex-1 flex-col gap-6 outline-none lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(260px,1fr)] lg:items-start lg:gap-x-10"
+      >
+        <div className="flex flex-col gap-6">
           <header
-            className={`rounded-[var(--radius-card)] border-2 p-5 shadow-sm ${verdictBannerClass(preview.verdict)}`}
+            className={`rounded-[var(--radius-card)] p-5 shadow-sm ${tone.container}`}
           >
-            <p className="text-xs font-semibold uppercase tracking-wide opacity-90">
-              Resultado demo
-            </p>
-            <h1 className="mt-2 text-balance text-xl font-semibold leading-snug">
-              {preview.headline}
-            </h1>
-            <p className="mt-3 text-sm leading-relaxed opacity-90">
-              Esta pantalla muestra la forma del resultado, no una consulta real
-              de permisos o reputación. Cuando exista un job de backend, podrá
-              abrirse con una referencia o ID de estado.
-            </p>
-            {referenceId ? (
-              <p className="mt-3 rounded-[var(--radius-input)] border border-current/30 px-3 py-2 font-mono text-xs break-words opacity-90">
-                ID solicitado: {referenceId}
-              </p>
-            ) : null}
-            {preview.dataFreshnessNote ? (
-              <p className="mt-3 text-xs leading-snug opacity-90">
-                {preview.dataFreshnessNote}
-              </p>
-            ) : null}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+              <div
+                className={`flex shrink-0 items-center justify-center rounded-[var(--radius-hero)] p-3 shadow-sm ${tone.iconRing}`}
+              >
+                <ProjectVerificationVerdictIcon verdict={preview.verdict} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p
+                  className={`text-xs font-semibold uppercase tracking-wide ${tone.title}`}
+                >
+                  Resultado demo
+                </p>
+                <h1
+                  className={`mt-2 text-balance text-xl font-semibold leading-snug sm:text-[22px] ${tone.title}`}
+                >
+                  {preview.headline}
+                </h1>
+                <p className="mt-3 text-sm leading-relaxed text-text-secondary">
+                  Esta pantalla solo muestra el formato esperado cuando exista
+                  backend; en demo, el texto de la valla{" "}
+                  <strong className="font-semibold text-text-primary">
+                    no se cruza con registros externos
+                  </strong>
+                  . Cuando el job esté listo, vas a abrir el estado real desde una
+                  referencia o ID sin cambiar cómo cargás los datos.
+                </p>
+                {referenceId ? (
+                  <p className="mt-3 rounded-[var(--radius-input)] border border-border bg-white/70 px-3 py-2 font-mono text-xs break-words text-text-primary">
+                    Referencia solicitada: <span>{referenceId}</span>
+                  </p>
+                ) : null}
+                {preview.dataFreshnessNote ? (
+                  <p className="mt-3 text-xs leading-snug text-text-secondary">
+                    {preview.dataFreshnessNote}
+                  </p>
+                ) : null}
+              </div>
+            </div>
           </header>
 
           <section
@@ -111,53 +154,47 @@ export default async function ProjectVerificationResultPage({
               Cómo se conectará después
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-text-secondary">
-              El diseño ya separa la vista demo de un resultado real. Más
-              adelante `/resultado?id=...` o una ruta por referencia podrá
-              consultar el estado del job sin cambiar el flujo de captura.
+              El diseño ya separa la vista demo de un resultado real. Más adelante
+              `/resultado?id=...` u otra ruta por referencia podrá consultar el
+              estado del job sin cambiar el flujo de captura.
             </p>
           </section>
 
-          <nav aria-label="Siguientes pasos" className="flex flex-col gap-3">
-            <Link
-              href="/subir"
-              className="flex min-h-[44px] w-full items-center justify-center rounded-[var(--radius-input)] bg-accent px-4 py-3 text-center text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              Analizar un contrato (opcional)
-            </Link>
-            <p className="text-center text-sm text-text-secondary">
-              Podés ignorar esta pantalla; el flujo principal sigue siendo
-              independiente.
-            </p>
-            <div className="flex flex-wrap justify-center gap-2 text-xs text-text-secondary">
-              <span>Otras demos:</span>
-              <Link
-                href="/verificacion-proyecto/resultado?v=green"
-                className="font-medium text-accent underline-offset-4 hover:underline"
-              >
-                verde
-              </Link>
-              <span aria-hidden>·</span>
-              <Link
-                href="/verificacion-proyecto/resultado?v=yellow"
-                className="font-medium text-accent underline-offset-4 hover:underline"
-              >
-                amarillo
-              </Link>
-              <span aria-hidden>·</span>
-              <Link
-                href="/verificacion-proyecto/resultado?v=red"
-                className="font-medium text-accent underline-offset-4 hover:underline"
-              >
-                rojo
-              </Link>
-            </div>
+          <nav
+            aria-label="Ejemplos de resultado por banda"
+            className="rounded-[var(--radius-input)] border border-border bg-surface px-4 py-3 text-xs lg:hidden"
+          >
+            <div className="text-text-secondary">{verdictBandSwitchLinks()}</div>
           </nav>
-        </main>
+        </div>
 
-        <footer className="mt-auto border-t border-border pt-6 pb-2">
-          <DisclaimerFooter />
-        </footer>
-      </div>
-    </div>
+        <aside
+          className="flex flex-col gap-6 lg:sticky lg:top-6"
+          aria-label="Atajos y opciones"
+        >
+          <nav
+            aria-label="Ejemplos de resultado por banda"
+            className="rounded-[var(--radius-input)] border border-border bg-surface px-4 py-3 text-xs max-lg:hidden"
+          >
+            <div className="text-text-secondary">{verdictBandSwitchLinks()}</div>
+          </nav>
+
+          <nav
+            aria-label="Siguientes pasos opcionales"
+            className="flex flex-col gap-3 rounded-[var(--radius-card)] border border-dashed border-border bg-surface p-5 shadow-sm"
+          >
+            <ProjectVerificationOptionalContractCta />
+            <p className="text-center text-sm text-text-secondary">
+              Podés ignorar estas sugerencias: el contrato ya es accesible desde el
+              inicio y desde el pie de página.
+            </p>
+          </nav>
+        </aside>
+      </main>
+
+      <footer className="mt-auto border-t border-border pt-6 pb-2">
+        <DisclaimerFooter />
+      </footer>
+    </ProjectVerificationFlowShell>
   );
 }

@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DisclaimerFooter } from "@/components/disclaimer-footer";
+import { ManualVerificationEntryAssist } from "@/components/manual-verification-entry-assist";
+import { ProjectVerificationFlowShell } from "@/components/project-verification-flow-shell";
 import { ProjectVerificationManualForm } from "@/components/project-verification-manual-form";
-import { DISCLAIMER_SHORT } from "@/legal/disclaimer";
+import { DISCLAIMER_SHORT } from "@/legal/disclaimer-registry";
+import {
+  impliesOcrRecoverySource,
+  parseManualVerificationHandoffSearchParams,
+} from "@/lib/project-verification-manual-handoff";
 
 export const metadata: Metadata = {
   title: `Formulario manual — verificación de proyecto — Casa Segura`,
@@ -19,55 +25,55 @@ type ManualPageProps = {
   }>;
 };
 
-function cleanParam(value: string | undefined): string | undefined {
-  const clean = value?.trim();
-  return clean ? clean.slice(0, 240) : undefined;
-}
-
 export default async function ProjectVerificationManualPage({
   searchParams,
 }: ManualPageProps) {
   const sp = (await searchParams) ?? {};
-  const initialValues = {
-    developer: cleanParam(sp.developer),
-    project: cleanParam(sp.project),
-    permit: cleanParam(sp.permit),
-    address: cleanParam(sp.address),
-  };
-  const hasPrefill = Object.values(initialValues).some(Boolean);
-  const prefillNote = hasPrefill
-    ? "Trajimos datos sugeridos desde la lectura de valla. Revisalos antes de enviar; podés corregir cualquier campo."
-    : undefined;
+  const { initialValues, source, hasPrefill } =
+    parseManualVerificationHandoffSearchParams(sp);
+
+  let prefillNote: string | undefined;
+  if (hasPrefill) {
+    prefillNote =
+      impliesOcrRecoverySource(source) || source === "billboard_stub_continue"
+        ? "La lectura automática fue incierta o incompleta. Revisá los campos sugeridos antes de enviar y corregí lo que necesites antes de mandar los datos."
+        : "Trajimos datos sugeridos desde la lectura de valla. Revisalos antes de enviar; podés corregir cualquier campo.";
+  } else if (impliesOcrRecoverySource(source)) {
+    prefillNote =
+      "Pasaste al formulario manual porque la lectura automática falló. Completá lo que puedas desde la valla o tus recuerdos; después validamos en servidor.";
+  }
 
   return (
-    <div className="flex min-h-dvh flex-1 flex-col bg-bg px-4 py-6 sm:px-6">
-      <div className="mx-auto flex w-full max-w-[480px] flex-1 flex-col gap-6">
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-          <Link
-            href="/verificacion-proyecto"
-            className="text-sm font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            Volver a verificación
-          </Link>
-          <Link
-            href="/"
-            className="text-sm font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            Inicio
-          </Link>
-        </div>
-
-        <main
-          id="main-content"
-          tabIndex={-1}
-          className="flex flex-1 flex-col rounded-[var(--radius-card)] border border-border bg-surface p-6 shadow-sm outline-none"
+    <ProjectVerificationFlowShell>
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+        <Link
+          href="/verificacion-proyecto"
+          className="inline-flex min-h-[44px] max-w-fit items-center text-sm font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
+          Volver a verificación
+        </Link>
+        <Link
+          href="/"
+          className="inline-flex min-h-[44px] max-w-fit items-center text-sm font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          Inicio
+        </Link>
+      </div>
+
+      <ManualVerificationEntryAssist source={source} />
+
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex flex-1 flex-col gap-6 outline-none lg:justify-center"
+      >
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-6 shadow-sm">
           <h1 className="text-xl font-semibold text-text-primary">
-            Datos del proyecto
+            Datos del proyecto (manual)
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-            Flujo de respaldo cuando la lectura automática de valla falle más
-            adelante. Hoy solo validamos en el servidor sin guardar datos.
+            Respaldo cuando la lectura automática de la valla falle. Hoy solo
+            validamos en el servidor sin guardar datos permanentes hasta que exista API.
           </p>
           <div className="mt-6">
             <ProjectVerificationManualForm
@@ -75,12 +81,12 @@ export default async function ProjectVerificationManualPage({
               prefillNote={prefillNote}
             />
           </div>
-        </main>
+        </div>
+      </main>
 
-        <footer className="mt-auto border-t border-border pt-6 pb-2">
-          <DisclaimerFooter />
-        </footer>
-      </div>
-    </div>
+      <footer className="mt-auto border-t border-border pt-6 pb-2">
+        <DisclaimerFooter />
+      </footer>
+    </ProjectVerificationFlowShell>
   );
 }

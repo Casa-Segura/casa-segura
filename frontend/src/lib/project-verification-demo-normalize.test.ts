@@ -46,4 +46,39 @@ describe("normalizeProjectVerificationDemoResult", () => {
       }),
     ).toBeNull();
   });
+
+  it("drops non-string rationale entries without failing", () => {
+    const raw = {
+      verdict: "green",
+      headline: "H",
+      rationale: ["ok", null, 2, "fine", {}],
+    };
+    expect(normalizeProjectVerificationDemoResult(raw)).toEqual({
+      verdict: "green",
+      headline: "H",
+      rationale: ["ok", "fine"],
+    });
+  });
+
+  it("prefers snake_case data_freshness_note when both casing keys appear", () => {
+    expect(
+      normalizeProjectVerificationDemoResult({
+        verdict: "yellow",
+        headline: "H",
+        rationale: [],
+        data_freshness_note: "snake",
+        dataFreshnessNote: "camel",
+      }),
+    ).toMatchObject({ dataFreshnessNote: "snake" });
+  });
+
+  it("trims whitespace on headline", () => {
+    expect(
+      normalizeProjectVerificationDemoResult({
+        verdict: "yellow",
+        headline: "  ok  ",
+        rationale: [],
+      }),
+    ).toMatchObject({ headline: "ok" });
+  });
 });

@@ -9,6 +9,11 @@ import {
   type BillboardUploadFormState,
 } from "@/app/verificacion-proyecto/foto/actions";
 import { cx, focusRing } from "@/components/casa-ui";
+import { buildManualVerificationHandoffPath } from "@/lib/project-verification-manual-handoff";
+
+const manualAfterBillboardHref = buildManualVerificationHandoffPath({
+  source: "billboard_stub_continue",
+});
 
 const initialState: BillboardUploadFormState | null = null;
 
@@ -211,7 +216,7 @@ export function ProjectVerificationBillboardUploadForm({
             <p className="mt-2 text-text-secondary">{state.detail}</p>
           ) : null}
           <Link
-            href="/verificacion-proyecto/manual"
+            href={manualAfterBillboardHref}
             className="mt-3 inline-flex min-h-[44px] items-center justify-center rounded-[var(--radius-input)] border border-border bg-surface px-4 py-2 font-semibold text-accent shadow-sm transition-colors hover:bg-accent-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Completar o corregir a mano

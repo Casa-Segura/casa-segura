@@ -10,7 +10,8 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "legal:disclaimer-scan": "node scripts/check-br07-literal-duplicates.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
