@@ -2,7 +2,7 @@
 id: EPIC-05
 name: Economic Analysis & Benchmarks
 phase: 3
-status: backlog
+status: in_progress
 depends_on:
   - EPIC-04
 prd_refs:
@@ -15,12 +15,11 @@ tags:
   - casa-segura
   - epic
   - epic-05
-  - stub
 ---
 
 # EPIC-05 — Economic Analysis & Benchmarks
 
-> **Stub.** Epic-level only. Tickets fleshed out in second pass.
+> **In progress.** CS-130 (`economic_benchmarks.yaml` + loader + seed) shipped 2026-05-16; the deterministic computation pipeline (CS-131..CS-137) lands ticket-by-ticket.
 
 ## Goal
 
@@ -28,7 +27,7 @@ Compute derived economic figures from extracted fields (effective annual rate, m
 
 ## Definition of done
 
-- [ ] `economic_benchmarks.yaml` lives in repo with source-cited values per [[RUBRICA_CONTRATO]] §14
+- [x] `economic_benchmarks.yaml` lives in repo with source-cited values per [[RUBRICA_CONTRATO]] §14 _(CS-130 — 18-row seed at `backend/fixtures/economic_benchmarks_2026q2.yaml`; loader + management commands shipped; all rows still flagged `source_status: pending_verification` until legal sign-off)_
 - [ ] Derived figures: effective annual rate (from any expressed form), monthly payment ratio, total cost multiplier, overcost in USD
 - [ ] Comparison against benchmarks produces a tagged `EconomicSummary`
 - [ ] Benchmark version stamped on every analysis ([[PRD_GENERAL]] BR-13)

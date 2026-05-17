@@ -34,7 +34,7 @@ Cross-reference: **`ECONOMIC_SUMMARY_CONTRACT`** ([link](../../analysis/F5_anali
 
 ## Review checklist once CS-130 merges
 
-- [ ] Every YAML **`benchmark_key`** has one row above (or rationale for omission).
-- [ ] Spanish labels match **`metric_label`** style in **`benchmark_comparisons`** where applicable.
-- [ ] BR-07 / disclaimers unaffected (registry remains single source).
+- [x] Every YAML **`benchmark_key`** has one row above (or rationale for omission). _(`backend/fixtures/economic_benchmarks_2026q2.yaml` ships the 21 keys mapped here. Per-row source attributions live in the YAML itself.)_
+- [ ] Spanish labels match **`metric_label`** style in **`benchmark_comparisons`** where applicable. _(Owned by CS-134 — the YAML does not store user-facing labels; this row is consumed by the comparator's metric_label dictionary.)_
+- [x] BR-07 / disclaimers unaffected (registry remains single source). _(CS-130 only adds backend benchmarks; no copy / disclaimer change.)_
 

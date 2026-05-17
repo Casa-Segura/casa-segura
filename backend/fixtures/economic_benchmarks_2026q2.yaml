@@ -1,0 +1,248 @@
+# Casa Segura — Economic Benchmarks Catalog (CS-130)
+#
+# Source-of-truth bindings:
+#   - PRD_F5_ANALISIS_ECONOMICO §6.4 (YAML exemplar shape + key list)
+#   - PRD_F5_ANALISIS_ECONOMICO US-03 (Required benchmarks — minimum list)
+#   - RUBRICA_CONTRATO §14 (numeric values + segment ranges)
+#   - PRD_GENERAL BR-13 (every benchmark row carries a cited source)
+#   - docs/fixtures/economic-summary/BENCHMARK_KEY_GLOSSARY.md (downstream report copy)
+#
+# Schema contract enforced by `economics/application/benchmark_loader.py`:
+#   Top-level keys: version, released_at, next_review_due, changelog (optional), benchmarks
+#   Each `benchmarks.<key>` row: value_default | (value_min, value_max), unit, applicable_contract_types,
+#                                source, source_url (optional), last_updated, next_review_due, notes (optional)
+#
+# Open product follow-up (recorded in CS-130 ticket Notes): RUBRICA §5 B4 references a 1.5 / 1.8 / 2.0 / 2.5
+# four-band ladder for total-cost multiplier; PRD F5 §6.4 only names two thresholds (healthy_max / excessive_min).
+# This fixture seeds the three F5 keys (`total_cost_multiplier_healthy_max`, `_high_max`, `_excessive_min`).
+# The 1.8 mid-band is owned by EPIC-06 B4 evaluator wiring, not by F5 overcost math, and stays an open
+# product question until rubric lands. See CS-130 Notes for the resolution trail.
+
+version: "2026-Q2"
+released_at: "2026-04-01T00:00:00Z"
+next_review_due: "2026-07-01"
+changelog: |
+  Initial bootstrap of Casa Segura economic benchmarks for the Salvadoran housing market
+  (CS-130 — EPIC-05). Numeric seeds transcribed from RUBRICA_CONTRATO §14 and PRD_F5
+  §6.4 exemplar. Key names align with docs/fixtures/economic-summary/BENCHMARK_KEY_GLOSSARY.md.
+  All rows currently carry `source_status: pending_verification` in notes until ABANSA / BCR /
+  Superintendencia citation review lands (RUBRICA §17 open decision). Coverage targets the
+  US-03 Required benchmarks (minimum list).
+
+benchmarks:
+  # ── Down payment ──────────────────────────────────────────────────────────
+  standard_down_payment_bank_purchase:
+    value_default: 0.10
+    unit: pct
+    applicable_contract_types: [CVC, CVP, APV]
+    source: "RUBRICA_CONTRATO §14 — Standard 10% down payment for bank-financed purchases (SSF mortgage origination practice)"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "source_status: pending_verification. Standard cuota inicial for bank-financed CVC/CVP/APV."
+
+  standard_down_payment_direct_developer_min:
+    value_default: 0.05
+    unit: pct
+    applicable_contract_types: [CVC, CVP, APV]
+    source: "RUBRICA_CONTRATO §14 — Direct-developer purchase down payment range lower bound"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "source_status: pending_verification. Used with _max for BR-10 segment selection."
+
+  standard_down_payment_direct_developer_mid:
+    value_default: 0.10
+    unit: pct
+    applicable_contract_types: [CVC, CVP, APV]
+    source: "Derived: midpoint of standard_down_payment_direct_developer_min/_max (PRD_F5 §US-03 derivation rule)"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "Average of min and max. Stored as a separate row so report copy can cite a single typical figure."
+
+  standard_down_payment_direct_developer_max:
+    value_default: 0.15
+    unit: pct
+    applicable_contract_types: [CVC, CVP, APV]
+    source: "RUBRICA_CONTRATO §14 — Direct-developer purchase down payment range upper bound"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "source_status: pending_verification."
+
+  # ── Interest rates: bank mortgage ─────────────────────────────────────────
+  bank_mortgage_rate_min:
+    value_default: 0.07
+    unit: pct
+    applicable_contract_types: [CVC, CVP, APV]
+    source: "RUBRICA_CONTRATO §14 — Bank mortgage effective annual rate, lower bound (BCR housing-loan series)"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "source_status: pending_verification."
+
+  bank_mortgage_rate_max:
+    value_default: 0.09
+    unit: pct
+    applicable_contract_types: [CVC, CVP, APV]
+    source: "RUBRICA_CONTRATO §14 — Bank mortgage effective annual rate, upper bound (BCR housing-loan series)"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "source_status: pending_verification."
+
+  bank_mortgage_rate_mid:
+    value_default: 0.08
+    unit: pct
+    applicable_contract_types: [CVC, CVP, APV]
+    source: "Derived: average of bank_mortgage_rate_min and bank_mortgage_rate_max (PRD_F5 §US-03 derivation rule)"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "Average of min and max per PRD_F5 §US-03. Used as the substitution rate for CS-134 overcost computation."
+
+  # ── Interest rates: FSV ───────────────────────────────────────────────────
+  fsv_rate_min:
+    value_default: 0.05
+    unit: pct
+    applicable_contract_types: [FSV]
+    source: "RUBRICA_CONTRATO §14 — Fondo Social para la Vivienda effective annual rate, lower bound"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "source_status: pending_verification. BR-11 — FSV rates inside this band are NOT compared against the bank ladder."
+
+  fsv_rate_mid:
+    value_default: 0.06
+    unit: pct
+    applicable_contract_types: [FSV]
+    source: "Derived: midpoint of fsv_rate_min and fsv_rate_max"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "Average of min and max. Used for report comparison labels."
+
+  fsv_rate_max:
+    value_default: 0.07
+    unit: pct
+    applicable_contract_types: [FSV]
+    source: "RUBRICA_CONTRATO §14 — Fondo Social para la Vivienda effective annual rate, upper bound"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "source_status: pending_verification."
+
+  # ── Interest rates: developer-direct ──────────────────────────────────────
+  developer_direct_rate_min:
+    value_default: 0.08
+    unit: pct
+    applicable_contract_types: [CVC, CVP, APV]
+    source: "RUBRICA_CONTRATO §14 — Developer-direct financing effective annual rate, lower bound"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "source_status: pending_verification. BR-10 — developer-direct contracts compared against this band, not the bank ladder."
+
+  developer_direct_rate_max:
+    value_default: 0.12
+    unit: pct
+    applicable_contract_types: [CVC, CVP, APV]
+    source: "RUBRICA_CONTRATO §14 — Developer-direct financing effective annual rate, upper bound"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "source_status: pending_verification."
+
+  # ── Credit term ───────────────────────────────────────────────────────────
+  credit_term_reasonable_min_months:
+    value_default: 60
+    unit: months
+    applicable_contract_types: [CVC, CVP, APV, IVU, FSV]
+    source: "RUBRICA_CONTRATO §14 — Reasonable mortgage term lower bound (5 years = 60 months)"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "source_status: pending_verification. RUBRICA §14 reasonable_range = [5, 25] years; min stored in months."
+
+  credit_term_reasonable_max_months:
+    value_default: 300
+    unit: months
+    applicable_contract_types: [CVC, CVP, APV, IVU, FSV]
+    source: "RUBRICA_CONTRATO §14 — Reasonable mortgage term upper bound (25 years = 300 months)"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "source_status: pending_verification. Stored in months for direct comparison against extracted term_months."
+
+  credit_term_ivu_max_months:
+    value_default: 360
+    unit: months
+    applicable_contract_types: [IVU]
+    source: "RUBRICA_CONTRATO §14 — Industria de la Vivienda Urbana legal maximum term (30 years = 360 months)"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "source_status: pending_verification. Legal cap; values >360 must trigger CS-133 term_excessive warning."
+
+  # ── Total cost multiplier (cumulative outlay ÷ price_cash) ────────────────
+  total_cost_multiplier_healthy_max:
+    value_default: 1.5
+    unit: multiplier
+    applicable_contract_types: [CVC, CVP, APV, FSV]
+    source: "RUBRICA_CONTRATO §5 B4 / §14 — Healthy cumulative-cost multiplier upper bound"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "Bands ≤ 1.5×. Used by CS-134 storytelling layer."
+
+  total_cost_multiplier_high_max:
+    value_default: 2.0
+    unit: multiplier
+    applicable_contract_types: [CVC, CVP, APV, FSV]
+    source: "RUBRICA_CONTRATO §5 B4 / §14 — High cumulative-cost multiplier upper bound"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "RUBRICA §5 B4 also references a 1.8 mid-band; that decision belongs to the rubric evaluator (EPIC-06), not to F5 overcost math. Tracked as open product question in CS-130 ticket Notes."
+
+  total_cost_multiplier_excessive_min:
+    value_default: 2.5
+    unit: multiplier
+    applicable_contract_types: [CVC, CVP, APV, FSV]
+    source: "RUBRICA_CONTRATO §5 B4 / §14 — Excessive cumulative-cost multiplier lower bound"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "Values ≥ 2.5× trigger the excessive band."
+
+  # ── Monthly payment ratio (extracted_monthly ÷ linear baseline) ───────────
+  monthly_payment_ratio_healthy_max:
+    value_default: 1.2
+    unit: ratio
+    applicable_contract_types: [CVC, CVP, APV, LEA, FSV]
+    source: "RUBRICA_CONTRATO §5 B5 / §14 — Healthy monthly-payment-vs-linear-baseline ratio upper bound"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "Linear baseline = price_cash / term_months. CS-132 emits MonthlyRatioBand.HEALTHY for ratio ≤ 1.2."
+
+  monthly_payment_ratio_high_max:
+    value_default: 1.4
+    unit: ratio
+    applicable_contract_types: [CVC, CVP, APV, LEA, FSV]
+    source: "RUBRICA_CONTRATO §5 B5 / §14 — High monthly-payment-vs-linear-baseline ratio upper bound"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "Band edge (1.2, 1.4]."
+
+  monthly_payment_ratio_excessive_min:
+    value_default: 1.7
+    unit: ratio
+    applicable_contract_types: [CVC, CVP, APV, LEA, FSV]
+    source: "RUBRICA_CONTRATO §5 B5 / §14 — Excessive monthly-payment-vs-linear-baseline ratio lower bound"
+    source_url: ""
+    last_updated: 2026-04-01
+    next_review_due: 2026-07-01
+    notes: "Ratios ≥ 1.7 trigger MonthlyRatioBand.EXCESSIVE."

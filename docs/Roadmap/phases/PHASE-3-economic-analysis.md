@@ -3,7 +3,7 @@ project: Casa Segura
 doc_type: phase_index
 phase: 3
 status: living
-last_updated: 2026-05-15
+last_updated: 2026-05-16
 tags:
   - casa-segura
   - roadmap
@@ -28,7 +28,9 @@ Source-of-truth links:
 
 ## Ready Now
 
-No Phase 3 tickets are ready yet. Start after Phase 2 extraction fields are stable.
+- **CS-131** — Effective annual rate normalization. Inputs (`AggregatedExtraction.slots`) and benchmarks (`BenchmarkVersion 2026-Q2`) are both wired; pick up `backend/economics/application/rate_normalizer.py`.
+
+**CS-130 closed 2026-05-16.** 18-row catalog at `backend/fixtures/economic_benchmarks_2026q2.yaml`; `manage.py seed_benchmark_version` + `manage.py load_benchmark_catalog --activate` boot the active benchmark version. `economics.application.version.latest_active()` exposes the singleton for downstream tickets.
 
 ## FE WORK
 
@@ -46,9 +48,9 @@ No primary FE tickets live in this phase. FE consumes these outputs later in rep
 
 ## INFRA WORK
 
-- [CS-130](../tickets/CS-130.md) - `economic_benchmarks.yaml` schema and initial values.
+- [CS-130](../tickets/CS-130.md) — `economic_benchmarks.yaml` schema and initial values. **`done` (2026-05-16).**
 
-Benchmark data needs versioning, fixture coverage, and reviewable source notes before computations depend on it.
+Benchmark data is versioned (`BenchmarkVersion.version`), fixture-covered (`economic_benchmarks_2026q2.yaml`), and every row carries a `source` citation. Legal verification of the seed values remains an open follow-up (RUBRICA §17); rows currently carry `source_status: pending_verification` in `notes`.
 
 ## API / AI CONNECTIONS
 
