@@ -40,6 +40,7 @@ Identify the contract type (8 enum values + NOT_CLASSIFIABLE), extract project n
 - [[CS-114]] — Confidence-per-field schema → **done** 2026-05-17
 - [[CS-115]] — Classification eval set (≥20 contracts) + CI gate → **done** 2026-05-17
 - [[CS-116]] — Unverifiable bookkeeping for missing fields → **done** 2026-05-17
+- [[CS-139]] — Derive `has_developer_direct_hint` from `contract_type` for F5 benchmarking → **done** 2026-05-17
 
 ## Notes
 

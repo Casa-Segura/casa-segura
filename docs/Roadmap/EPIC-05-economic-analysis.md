@@ -19,7 +19,7 @@ tags:
 
 # EPIC-05 — Economic Analysis & Benchmarks
 
-> **Done — 2026-05-16.** All 8 tickets (CS-130..CS-137) landed. The deterministic F5 pipeline produces `EconomicSummary` envelopes matching `docs/analysis/F5_analisis_economico/ECONOMIC_SUMMARY_CONTRACT.md`. No LLM calls anywhere in `backend/economics/` (PRD_F5 BR-13). Wiring from classification into `analyze()` is owned by CS-112 (EPIC-04 orchestrator).
+> **Done — 2026-05-17.** All 9 tickets (CS-130..CS-138) landed. The deterministic F5 pipeline produces `EconomicSummary` envelopes matching `docs/analysis/F5_analisis_economico/ECONOMIC_SUMMARY_CONTRACT.md`, and `F2Orchestrator._persist` now hydrates the active `BenchmarkCatalog`, invokes `analyze()`, and writes both the envelope and the `ContractAnalysis.benchmark_version_id` FK (CS-138). No LLM calls anywhere in `backend/economics/` (PRD_F5 BR-13).
 
 ## Goal
 
@@ -32,6 +32,7 @@ Compute derived economic figures from extracted fields (effective annual rate, m
 - [x] Comparison against benchmarks produces a tagged `EconomicSummary` _(CS-135 `analyze()` assembler emits the envelope shape from `ECONOMIC_SUMMARY_CONTRACT.md` with `derivation_status`, deduped `warnings`, and `benchmark_comparisons`)_
 - [x] Benchmark version stamped on every analysis ([[PRD_GENERAL]] BR-13) _(CS-136 — byte-equal echo between active `BenchmarkVersion.version` and `summary.benchmark_version`; structlog default-versions processor now also injects `benchmark_version`; BR-12 non-blocking stale signal via `assert_freshness`)_
 - [x] Insufficient-data path remains schema-valid without zero substitution _(CS-137 — `_derive_status` returns `INSUFFICIENT_DATA` when nothing usable came through; renormalizer cross-slot precursors `down_payment_inconsistent` + `total_cost_not_disclosed`; BR-09 honesty guard pinned by Rule 9 test)_
+- [x] F2 orchestrator persists the envelope + benchmark FK on every analysis _(CS-138 — `F2Orchestrator._persist` hydrates `BenchmarkCatalog.from_db`, calls `analyze()`, writes `EconomicSummary.model_dump(mode="json")` and `ContractAnalysis.benchmark_version_id`; new `NO_ACTIVE_BENCHMARK` config error mirrors corpus / rubric)_
 
 ## Tickets (titles only — stubs)
 
@@ -43,6 +44,7 @@ Compute derived economic figures from extracted fields (effective annual rate, m
 - [[CS-135]] — `EconomicSummary` pydantic model
 - [[CS-136]] — Benchmark version stamp on summary
 - [[CS-137]] — Renormalization when fields are unverifiable
+- [[CS-138]] — Wire F2 → F5 inside the orchestrator (persist the envelope + FK)
 
 ## Notes
 
