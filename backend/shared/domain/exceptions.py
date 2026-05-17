@@ -88,5 +88,8 @@ PUBLIC_ERROR_CODES: dict[str, str] = {
     "internal_error": "Unhandled server error.",
     "upstream_error": "Upstream provider failed.",
     "throttled": "Rate limit exceeded.",
+    "unsupported_media": "MIME type not supported by this endpoint.",
+    "billboard_payload_too_large": "Billboard image exceeds configured byte limit.",
+    "billboard_dimensions_rejected": "Billboard image dimensions exceed supported limits.",
     "project_verification_disabled": "Optional project verification stubs are disabled for this deployment.",
 }

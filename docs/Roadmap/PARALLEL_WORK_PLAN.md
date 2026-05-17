@@ -22,7 +22,7 @@ Use this plan to decide who owns which folder, which tickets are safe to start, 
 - **EPIC-06 / EPIC-07** — **`done`** (2026-05-17). Rubric engine Definition of done complete; F6 HTML/PDF in `backend/reports/`; public TTL `/r/` uses canonical [`generate_report_html`](../../backend/reports/application/services/html_renderer.py) ([`CS-247`](tickets/CS-247.md)).
 - **Phase 6 — EPIC-09 retention lane:** **`CS-271`**, **`CS-272`**, **`CS-274`**, **`CS-273`**, **`CS-275`**, **`CS-276`** → **`done`** (2026-05-17). See [`EPIC-09-retention-privacy.md`](EPIC-09-retention-privacy.md) and [`PHASE-6-privacy-closure.md`](phases/PHASE-6-privacy-closure.md).
 - **EPIC-08 gap:** submission-time channel picker (`sms_summary` / `email_pdf` / `web_link`) — Epic DoD line 1 still `[ ]`.
-- **EPIC-12** — Optional project verification: [`CS-356`](tickets/CS-356.md) / [`CS-351`](tickets/CS-351.md) / [`CS-355`](tickets/CS-355.md) are **`in_progress`** (`frontend/` + gated Django stubs; enable FE/BE independently only with awareness of mismatch behaviour documented in [`project-verification-fe-be-gates.md`](../guides/project-verification-fe-be-gates.md)).
+- **EPIC-12** — Optional project verification is **`done` (2026‑05‑17).** Bills of work: **`CS-350`**–**`CS-356`** (vision OCR, permit/reputation adapters, deterministic synthesis, resultado flash UX, mirrored env gates — see [`project-verification-fe-be-gates.md`](../guides/project-verification-fe-be-gates.md)).
 
 **EPIC-03 (Legal Corpus & RAG) cerrado 2026-05-16.** CS-080..CS-090 → `done`. Stack productivo: `intfloat/multilingual-e5-large` (1024-dim, prefijos `passage:`/`query:`) + `BAAI/bge-reranker-v2-m3` sobre top-10 pgvector. AC revisado: Top-1 ≥ 0.60 ∧ Top-3 ≥ 0.85 ∧ Top-5 ≥ 0.95 (lo cumple en 0.633 / 0.900 / 0.967). Trace en [`CS-087`](tickets/CS-087.md) — "Live calibration runs #1–#4". **Phase 1 cerrada 2026-05-16.** EPIC-02 (Contract Ingestion & OCR) → `done`. CS-050..CS-060 todos cerrados (multi-file `files[]` 1–50 + image dims + batch caps; router 100-char threshold + `force_strategy`; pypdf separators + normalization + 30s watchdog + 500-char vision escalation; Pixtral single-call; Tesseract mean-confidence gate; PRD §US-08 language gate + HTTP 422; multi-file SHA-256 idempotency; 15 MB byte cap; latency-budget instrumentation). Único AC diferido: CS-051 HTTP 409 `is_duplicate=true` envelope — bloqueado por EPIC-04 / EPIC-06 (ContractAnalysis lookup).
 
@@ -91,7 +91,7 @@ Next picks after `CS-003`:
 - `CS-297` - Single-source disclaimer module — **done** (`frontend/src/legal`).
 - `CS-298` - Vercel deploy (`frontend/README.md`, headers/`robots`, env gate) — **done**.
 - `CS-299` - Physical Android QA (360px / 4G) — **done** (`frontend/docs/CS-299-mobile-qa-checklist.md`).
-- **EPIC-12 (optional)** - Project verification shells — **`CS-356` / `CS-351` / `CS-355`** are **`in_progress`** (`frontend/src/app/verificacion-proyecto/` + `backend/project_verification/` stubs; gates + matrix in [`docs/guides/project-verification-fe-be-gates.md`](../../guides/project-verification-fe-be-gates.md)).
+- **EPIC-12 (optional)** - Project verification — **`done` (2026‑05‑17)** spanning **`CS-350`–`CS-356`** (`frontend/src/app/verificacion-proyecto/` + `backend/project_verification/`; gates/matrix in [`docs/guides/project-verification-fe-be-gates.md`](../../guides/project-verification-fe-be-gates.md)).
 
 Constraints:
 

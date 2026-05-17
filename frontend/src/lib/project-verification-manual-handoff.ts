@@ -1,4 +1,4 @@
-/** Deep-link query contract for OCR-degraded manual handoff (CS-351 until CS-350 wiring). */
+/** Deep-link query contract for OCR-degraded manual handoff (CS-351 / CS-350). */
 
 export const MANUAL_VERIFICATION_ROUTE =
   "/verificacion-proyecto/manual" as const;
@@ -30,9 +30,12 @@ export type ManualVerificationHandoffInput = {
   permit?: string;
   address?: string;
   source?: ManualHandoffSource;
+  /** Hint passed back to Django as `ocr_quality` for billboard OCR follow-ups only. */
+  ocr_quality?: string;
 };
 
 const MAX_PREFILL_CHARS = 240;
+const MAX_OCR_QUALITY_CHARS = 24;
 
 export type ManualVerificationHandoffPrefill = {
   developer?: string;
@@ -45,6 +48,7 @@ export type ParsedManualVerificationHandoff = {
   initialValues: ManualVerificationHandoffPrefill;
   source: ManualHandoffSource | undefined;
   hasPrefill: boolean;
+  ocr_quality?: string;
 };
 
 export function clampHandoffField(
@@ -53,6 +57,13 @@ export function clampHandoffField(
   const t = value?.trim();
   if (!t) return undefined;
   return t.slice(0, MAX_PREFILL_CHARS);
+}
+
+function clampHandoffMeta(value: string | undefined): string | undefined {
+  const t = value?.trim().toLowerCase();
+  if (!t) return undefined;
+  if (!/^[a-z0-9._-]+$/.test(t)) return undefined;
+  return t.slice(0, MAX_OCR_QUALITY_CHARS);
 }
 
 function isManualHandoffSource(raw: string): raw is ManualHandoffSource {
@@ -81,6 +92,8 @@ export function buildManualVerificationHandoffSearchParams(
   if (permit) p.set("permit", permit);
   if (address) p.set("address", address);
   if (input.source) p.set("source", input.source);
+  const q = clampHandoffMeta(input.ocr_quality);
+  if (q) p.set("ocr_quality", q);
 
   return p;
 }
@@ -100,6 +113,7 @@ export function parseManualVerificationHandoffSearchParams(sp: {
   permit?: string | string[];
   address?: string | string[];
   source?: string | string[];
+  ocr_quality?: string | string[];
 }): ParsedManualVerificationHandoff {
   const pick = (k: keyof typeof sp): string | undefined => {
     const v = sp[k];
@@ -123,7 +137,13 @@ export function parseManualVerificationHandoffSearchParams(sp: {
     !!initialValues.permit ||
     !!initialValues.address;
 
-  return { initialValues, source, hasPrefill };
+  const oqRaw = Array.isArray(sp.ocr_quality)
+    ? sp.ocr_quality[0]
+    : sp.ocr_quality;
+  const ocr_quality =
+    clampHandoffMeta(typeof oqRaw === "string" ? oqRaw : undefined);
+
+  return { initialValues, source, hasPrefill, ocr_quality };
 }
 
 export function impliesOcrRecoverySource(

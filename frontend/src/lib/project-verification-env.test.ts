@@ -1,14 +1,27 @@
 import { describe, expect, it, afterEach } from "vitest";
-import { isProjectVerificationEnabled } from "./project-verification-env";
+import {
+  isProjectVerificationDemoLinksEnabled,
+  isProjectVerificationEnabled,
+} from "./project-verification-env";
 
-const original = process.env.PROJECT_VERIFICATION_ENABLED;
+const originalPv = process.env.PROJECT_VERIFICATION_ENABLED;
+const originalDemoLinks = process.env.PROJECT_VERIFICATION_DEMO_LINKS;
+const originalNodeEnv = process.env.NODE_ENV;
 
 afterEach(() => {
-  if (original === undefined) {
+  if (originalPv === undefined) {
     delete process.env.PROJECT_VERIFICATION_ENABLED;
   } else {
-    process.env.PROJECT_VERIFICATION_ENABLED = original;
+    process.env.PROJECT_VERIFICATION_ENABLED = originalPv;
   }
+
+  if (originalDemoLinks === undefined) {
+    delete process.env.PROJECT_VERIFICATION_DEMO_LINKS;
+  } else {
+    process.env.PROJECT_VERIFICATION_DEMO_LINKS = originalDemoLinks;
+  }
+
+  process.env.NODE_ENV = originalNodeEnv;
 });
 
 describe("isProjectVerificationEnabled", () => {
@@ -45,5 +58,26 @@ describe("isProjectVerificationEnabled", () => {
   it("ignores leading and trailing whitespace for allowlisted on values", () => {
     process.env.PROJECT_VERIFICATION_ENABLED = "  TRUE  ";
     expect(isProjectVerificationEnabled()).toBe(true);
+  });
+});
+
+describe("isProjectVerificationDemoLinksEnabled", () => {
+  it("defaults to true in development", () => {
+    process.env.NODE_ENV = "development";
+    delete process.env.PROJECT_VERIFICATION_DEMO_LINKS;
+    expect(isProjectVerificationDemoLinksEnabled()).toBe(true);
+  });
+
+  it("defaults to off in production unless explicitly enabled", () => {
+    process.env.NODE_ENV = "production";
+    delete process.env.PROJECT_VERIFICATION_DEMO_LINKS;
+    expect(isProjectVerificationDemoLinksEnabled()).toBe(false);
+
+    process.env.PROJECT_VERIFICATION_DEMO_LINKS = "TRUE";
+    expect(isProjectVerificationDemoLinksEnabled()).toBe(true);
+
+    delete process.env.PROJECT_VERIFICATION_DEMO_LINKS;
+    process.env.PROJECT_VERIFICATION_DEMO_LINKS = "0";
+    expect(isProjectVerificationDemoLinksEnabled()).toBe(false);
   });
 });

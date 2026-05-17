@@ -3,11 +3,11 @@ import Link from "next/link";
 import { DisclaimerFooter } from "@/components/disclaimer-footer";
 import { ManualVerificationSuccessBadge } from "@/components/manual-verification-success-badge";
 import { ProjectVerificationFlowShell } from "@/components/project-verification-flow-shell";
-import { DISCLAIMER_SHORT } from "@/legal/disclaimer";
+import { DISCLAIMER_SHORT } from "@/legal/disclaimer-registry";
 
 export const metadata: Metadata = {
   title: `Datos recibidos — verificación de proyecto — Casa Segura`,
-  description: `Confirmación del formulario manual opcional. ${DISCLAIMER_SHORT}.`,
+  description: `Confirmación opcional después del formulario manual. ${DISCLAIMER_SHORT}.`,
 };
 
 type ManualDonePageProps = {
@@ -54,9 +54,9 @@ export default async function ProjectVerificationManualDonePage({
                   Datos del proyecto recibidos
                 </h1>
                 <p className="mt-3 max-w-xl text-base leading-relaxed text-text-secondary">
-                  Guardá esta referencia cuando coordinés con tu equipo o
-                  soporte técnico sobre este envío. El análisis de contratos
-                  sigue siendo un flujo aparte.
+                  Si venías desde otro navegador, podés llegar igual al resultado usando
+                  el flujo habitual: el servidor entrega primero una referencia y te
+                  deja revisar antes de cualquier archivo adicional.
                 </p>
                 {referenceId ? (
                   <p className="mt-4 rounded-[var(--radius-input)] border border-border bg-accent-light/50 p-3 font-mono text-sm text-text-primary break-words">
@@ -75,16 +75,14 @@ export default async function ProjectVerificationManualDonePage({
               id="next-heading"
               className="text-base font-semibold text-text-primary"
             >
-              Qué esperar
+              Qué seguir usando
             </h2>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-text-secondary">
               <li>
-                Esta versión valida y entrega una referencia; todavía no cruza
-                registros reales de permisos o reputación.
+                En entornos con verificación ligada el resultado aparece apenas enviás manual o foto.
               </li>
               <li>
-                Cuando exista resultado real por ID, esta referencia podrá abrir
-                una pantalla de estado en lugar de la demo.
+                Si seguís en esta página, la referencia de arriba sirve igual para coordinar soporte técnico.
               </li>
             </ul>
           </section>
@@ -94,10 +92,7 @@ export default async function ProjectVerificationManualDonePage({
           className="flex flex-col gap-3 lg:sticky lg:top-6"
           aria-label="Siguientes pasos"
         >
-          <nav
-            className="flex flex-col gap-3"
-            aria-labelledby="manual-done-nav-h"
-          >
+          <nav className="flex flex-col gap-3" aria-labelledby="manual-done-nav-h">
             <p id="manual-done-nav-h" className="sr-only">
               Acciones rápidas
             </p>
@@ -105,7 +100,7 @@ export default async function ProjectVerificationManualDonePage({
               href="/verificacion-proyecto/resultado"
               className="flex min-h-[44px] w-full items-center justify-center rounded-[var(--radius-input)] bg-accent px-4 py-3 text-center text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
-              Ver resultado demo
+              Ver resultado
             </Link>
             <Link
               href="/subir"

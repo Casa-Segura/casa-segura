@@ -8,3 +8,10 @@ export function isProjectVerificationEnabled(): boolean {
   if (!raw) return false;
   return raw === "true" || raw === "1" || raw === "yes";
 }
+
+/** Enables demo band switchers on resultado (staging/prod stays off unless explicitly enabled). */
+export function isProjectVerificationDemoLinksEnabled(): boolean {
+  if (process.env.NODE_ENV === "development") return true;
+  const raw = process.env.PROJECT_VERIFICATION_DEMO_LINKS?.trim().toLowerCase();
+  return raw === "true" || raw === "1" || raw === "yes";
+}

@@ -3,7 +3,7 @@ project: Casa Segura
 doc_type: phase_index
 phase: cross
 status: living
-last_updated: 2026-05-16
+last_updated: 2026-05-17
 tags:
   - casa-segura
   - roadmap
@@ -30,7 +30,7 @@ Source-of-truth links:
 
 ## Ready Now
 
-- **EPIC-10 (Frontend Web App)** — **`done` (2026-05-16).** Vercel ([[CS-298]]) + physical Android QA ([[CS-299]]) verified. Continue cross-cutting frontend polish via follow-up tickets or optional [[EPIC-12-project-verification]] shells.
+- Continue cross-cutting frontend polish via follow-up tickets; [[EPIC-12-project-verification]] is **`done`** (2026‑05‑17) for optional billboard + manual flows.
 
 ## FE WORK
 
@@ -63,15 +63,15 @@ This lane owns backend-facing support for consistent disclaimers, privacy-safe e
 
 ## API / AI CONNECTIONS
 
-- [CS-350](../tickets/CS-350.md) - Billboard OCR extraction.
-- [CS-351](../tickets/CS-351.md) - Manual project verification form fallback — **in_progress** (FE shell + validation stub; OCR handoff + backend DTO open).
-- [CS-352](../tickets/CS-352.md) - Permit format validator.
-- [CS-353](../tickets/CS-353.md) - Reputation lookup interface.
-- [CS-354](../tickets/CS-354.md) - Verdict synthesis for project check.
-- [CS-355](../tickets/CS-355.md) - Project verification results page — **in_progress** (demo fixtures + CTA; snapshots + real DTO open).
-- [CS-356](../tickets/CS-356.md) - `PROJECT_VERIFICATION_ENABLED` feature flag and route enablement — **in_progress** (FE gate + Django stubs documented in [`docs/guides/project-verification-fe-be-gates.md`](../../guides/project-verification-fe-be-gates.md); OCR/reputation integrations still deferred per EPIC‑12 backlog).
+- [CS-350](../tickets/CS-350.md) - Billboard OCR extraction — **`done`**.
+- [CS-351](../tickets/CS-351.md) - Manual project verification form fallback — **`done`** (OCR handoff + Django DTO + telemetry-safe routing).
+- [CS-352](../tickets/CS-352.md) - Permit format validator — **`done`**.
+- [CS-353](../tickets/CS-353.md) - Reputation lookup interface — **`done`** (`none|stub|http` registry + SSRF guard + Prometheus counters).
+- [CS-354](../tickets/CS-354.md) - Verdict synthesis for project check — **`done`** (deterministic heuristic + exported JSON Schema; narration hook scaffold only).
+- [CS-355](../tickets/CS-355.md) - Project verification results page — **`done`** (verdict flash cookie + demo link gating).
+- [CS-356](../tickets/CS-356.md) - `PROJECT_VERIFICATION_ENABLED` feature flag — **`done`** (matrix + Django checks).
 
-Project verification is optional and separate. These tickets must not gate contract upload, analysis, report generation, or delivery.
+Project verification remains optional — it must not gate contract upload, analysis, report generation, or delivery.
 
 ## Parallel Pick Guidance
 

@@ -127,7 +127,7 @@ export function ProjectVerificationBillboardUploadForm({
             id="billboard"
             name="billboard"
             type="file"
-            accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif"
+            accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
             capture="environment"
             aria-describedby={
               formError
@@ -165,8 +165,8 @@ export function ProjectVerificationBillboardUploadForm({
           id="billboard-help"
           className="text-sm leading-relaxed text-text-secondary"
         >
-          JPEG, PNG, WEBP o HEIC. Máximo 15 MB. En móvil podés abrir la cámara
-          desde este campo.
+          JPEG, PNG o WEBP. Máximo 15 MB. En móvil podés abrir la cámara desde
+          este campo.
         </p>
       </div>
 

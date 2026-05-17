@@ -12,7 +12,7 @@ Hand-curated, low-frequency digest. **`docs/Roadmap/tickets/CS-*.md` frontmatter
 - **Phase 3 economic analysis:** EPIC‑05 closed 2026‑05‑17 (CS-130..CS-137). Deterministic F5 pipeline lives in `backend/economics/`: versioned `economic_benchmarks_2026q2.yaml` catalog + seeder/loader, compound rate normalizer (BR-05), French amortization + BR-07 coherence, asymmetric benchmark comparisons (BR-02/BR-11), USD overcost, `EconomicSummary` assembler matching [`ECONOMIC_SUMMARY_CONTRACT.md`](../analysis/F5_analisis_economico/ECONOMIC_SUMMARY_CONTRACT.md), byte-equal `benchmark_version` stamping + BR-12 freshness signal, and BR-09 honesty guard. 103 tests, zero LLM calls (BR-13). Pipeline-level wiring (`analyze()` invocation post-classification) deferred until EPIC-04 orchestrator lands.
 - **Frontend web:** EPIC‑10 marked done; canonical app lives under `frontend/`.
 - **Retention scheduler architecture:** [`CS-270`](../Roadmap/tickets/CS-270.md) landed with [`ADR-0005`](../adr/ADR-0005-retention-job-scheduling.md) (dry-validate CLI + CI guard).
-- **EPIC‑12 stubs:** Django DRF stubs under `/api/v1/project-verification/*` gated by backend `PROJECT_VERIFICATION_ENABLED`; App Router flows under `/verificacion-proyecto` gated by frontend flag (both default-off).
+- **EPIC‑12 optional verification:** billboard vision + deterministic synthesis + guarded reputation lookups + resultado flash UX under `frontend/src/app/verificacion-proyecto/` (`PROJECT_VERIFICATION_ENABLED` mirrored server-side); tickets **`CS-350`–`CS-356`** → `done` (gates in [`docs/guides/project-verification-fe-be-gates.md`](../guides/project-verification-fe-be-gates.md)).
 
 ## Phases ([FEATURES_MAP](../Casa%20Segura%20Formal%20PRDs/FEATURES_MAP.md) §3)
 
@@ -47,7 +47,7 @@ Canonical catalog lives in [`docs/Roadmap/README.md`](../Roadmap/README.md#epic-
 | EPIC‑09 | [`EPIC-09-retention-privacy`](../Roadmap/EPIC-09-retention-privacy.md)         | Retention & privacy (**F8 p2**)          | **ADR + scheduler groundwork** (**CS‑270** `done`); execution jobs **`CS‑271`–`CS‑275`** not started here              |
 | EPIC‑10 | [`EPIC-10-frontend`](../Roadmap/EPIC-10-frontend.md)                           | Frontend web app                         | **`done`** (deploy + QA: **CS‑298**, **CS‑299**)                                                                       |
 | EPIC‑11 | [`EPIC-11-observability`](../Roadmap/EPIC-11-observability.md)                 | Observability · security · disclaimers   | Backlog (stub) · ticket band **CS‑330–CS‑349**                                                                         |
-| EPIC‑12 | [`EPIC-12-project-verification`](../Roadmap/EPIC-12-project-verification.md)   | Optional billboard / manual verification | **In flight** · ticket band **CS‑350–CS‑379** (gates + stubs landed; OCR/reputation backlog)                           |
+| EPIC‑12 | [`EPIC-12-project-verification`](../Roadmap/EPIC-12-project-verification.md)   | Optional billboard / manual verification | **`done` · 2026‑05‑17 · CS‑350–CS‑356** (vision OCR, permit/reputation/synthesis stack, resultado flash UX — matrix [`project-verification-fe-be-gates.md`](../guides/project-verification-fe-be-gates.md)) |
 
 **Ticket numbering ↔ epic ownership** — same mapping as roadmap index (`CS‑001–019` → EPIC‑00 … `CS‑350–379` → EPIC‑12).
 
@@ -89,20 +89,16 @@ Grouped for reading order; **open each ticket** for current `depends_on`, AC, an
 |              [`ADR-0005`](../adr/ADR-0005-retention-job-scheduling.md)              | EPIC‑09 | Celery Beat / job entry contracts                                              |
 | [`CS-271`](../Roadmap/tickets/CS-271.md) … [`CS-275`](../Roadmap/tickets/CS-275.md) | EPIC‑09 | **Deferred in this snapshot** until F8 persistence priorities and model review |
 
-### EPIC‑12 optional project verification (CS‑350–CS‑379)
+### EPIC‑12 optional project verification (CS‑350–CS‑356)
 
-| Ticket                                   | Role in snapshot                                                                                                                                                   |
-| :--------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`CS-350`](../Roadmap/tickets/CS-350.md) | Billboard OCR / structured outcomes (upstream of manual handoff quality)                                                                                           |
-| [`CS-351`](../Roadmap/tickets/CS-351.md) | Manual form · validation · OCR → manual telemetry/prefill                                                                                                          |
-| [`CS-355`](../Roadmap/tickets/CS-355.md) | Result surface · BR‑07 via registry · CTAs                                                                                                                         |
-| [`CS-356`](../Roadmap/tickets/CS-356.md) | **`PROJECT_VERIFICATION_ENABLED`** gates · FE/BE pairing — companion matrix [`project-verification-fe-be-gates.md`](../guides/project-verification-fe-be-gates.md) |
+| Ticket span | Snapshot |
+| :--- | :--- |
+| [`CS-350`](../Roadmap/tickets/CS-350.md) … [`CS-356`](../Roadmap/tickets/CS-356.md) | **`done` (2026‑05‑17)** · billboard vision extraction · OCR→manual parity · SSRF‑guarded reputation · deterministic verdict synthesis · resultado flash UX · mirrored gates ([`project-verification-fe-be-gates.md`](../guides/project-verification-fe-be-gates.md)). |
 
-Implementation pointers: guarded UI under `frontend/src/app/verificacion-proyecto/`, stubs under `backend/project_verification/`.
+Implementation pointers: `frontend/src/app/verificacion-proyecto/`, `backend/project_verification/`.
 
 ## Active lanes
 
-- **EPIC‑12 productisation:** billboard OCR correctness ([`CS-350`](../Roadmap/tickets/CS-350.md)), manual ↔ OCR telemetry/prefills ([`CS-351`](../Roadmap/tickets/CS-351.md)), resultado polish/registry ([`CS-355`](../Roadmap/tickets/CS-355.md)), gate conformance ([`CS-356`](../Roadmap/tickets/CS-356.md)).
 - **Foundational repo tickets:** CI/secrets/postgres ergonomics ([`CS-004`](../Roadmap/tickets/CS-004.md) … [`CS-020`](../Roadmap/tickets/CS-020.md)) remain active lanes once unblocked.
 
 ## Deferred / risks
@@ -115,4 +111,3 @@ Implementation pointers: guarded UI under `frontend/src/app/verificacion-proyect
 ## Next pickups
 
 - INFRA hygiene: secrets baseline [`CS-006`](../Roadmap/tickets/CS-006.md), CI pipeline [`CS-004`](../Roadmap/tickets/CS-004.md), hooks [`CS-005`](../Roadmap/tickets/CS-005.md), Postgres/pgvector ergonomics [`CS-020`](../Roadmap/tickets/CS-020.md) once foundation tickets close.
-- EPIC‑12: advance OCR/manual integration after billboard failure enums ([`CS-350`](../Roadmap/tickets/CS-350.md)) stabilize.

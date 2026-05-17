@@ -31,12 +31,24 @@ function formErrorFromState(state: ManualFormState | null): string | null {
   return null;
 }
 
+type ManualFormVerificationMeta =
+  | {
+      submissionSource: "manual";
+    }
+  | {
+      submissionSource: "billboard_ocr";
+      /** Normalized OCR quality hint passed back into Django evaluate. */
+      ocrQuality: string | undefined;
+    };
+
 export function ProjectVerificationManualForm({
   initialValues,
   prefillNote,
+  verificationMeta = { submissionSource: "manual" },
 }: {
   initialValues?: ManualFormInitialValues;
   prefillNote?: string;
+  verificationMeta?: ManualFormVerificationMeta;
 }) {
   const [state, formAction, pending] = useActionState(
     submitProjectVerificationManual,
@@ -62,6 +74,12 @@ export function ProjectVerificationManualForm({
 
   return (
     <form action={formAction} className="flex flex-col gap-5" noValidate>
+      <input
+        type="hidden"
+        name="submission_source"
+        value={verificationMeta.submissionSource}
+      />
+
       <p
         id="manual-form-desc"
         className="text-sm leading-relaxed text-text-secondary"
@@ -233,6 +251,15 @@ export function ProjectVerificationManualForm({
           </p>
         ) : null}
       </div>
+
+      {verificationMeta.submissionSource === "billboard_ocr" &&
+      verificationMeta.ocrQuality?.trim() ? (
+        <input
+          type="hidden"
+          name="ocr_quality"
+          value={verificationMeta.ocrQuality.trim().toLowerCase()}
+        />
+      ) : null}
 
       <button
         type="submit"

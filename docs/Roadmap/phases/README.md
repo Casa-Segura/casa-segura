@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: phase_index
 status: living
-last_updated: 2026-05-17  # Phase 6 EPIC-09 closure; EPIC-06/07 index sync
+last_updated: 2026-05-17  # EPIC-12 optional verification closure sync
 tags:
   - casa-segura
   - roadmap
@@ -45,7 +45,7 @@ Use this folder as a phase-first pick list for parallel work:
 
 **Phase 6 — EPIC-09:** [[EPIC-09-retention-privacy]](../EPIC-09-retention-privacy.md) → **`done`** (2026-05-17); tickets **`CS-271`**–**`CS-276`** closed — see [Phase 6](PHASE-6-privacy-closure.md). Follow-up (ops / FE): expired-link UX coordination + optional §6.2 audit-row purge automation if not already tracked.
 
-**In flight:** EPIC-12 optional verification work: [CS-356](../tickets/CS-356.md), [CS-351](../tickets/CS-351.md), [CS-355](../tickets/CS-355.md) are **`in_progress`** across `frontend/` and gated Django stubs under `PROJECT_VERIFICATION_ENABLED` (matrix: [`project-verification-fe-be-gates.md`](../../guides/project-verification-fe-be-gates.md)).
+**EPIC‑12 optional verification — `done` (2026‑05‑17):** billboard vision + deterministic verdict path + guarded reputation lookups + resultado flash UX shipped (`frontend/src/app/verificacion-proyecto/`, `backend/project_verification/`, gates: [`project-verification-fe-be-gates.md`](../../guides/project-verification-fe-be-gates.md); tickets **`CS-350`**–**`CS-356`** marked `done`).
 
 **Phase 1 progress (2026-05-16):** EPIC-03 (Legal Corpus & RAG, CS-080..CS-090) closed with revised multi-Top-K AC after four live calibration runs (final: e5-large + bge-reranker-v2-m3 + ES corpus → Strict Top-1 = 0.633, Top-3 = 0.900, Top-5 = 0.967). **Phase 1 closed 2026-05-16.** EPIC-02 (Contract Ingestion & OCR) and EPIC-03 (Legal Corpus & RAG) both `done`. EPIC-02 ships CS-050..CS-060 (multi-file `files[]` 1–50 + image dimensions + batch caps; router 100-char threshold; pypdf separators/normalization/watchdog/vision-escalation; Pixtral single-call; Tesseract mean-confidence gate; PRD §US-08 language gate + HTTP 422; multi-file SHA-256 idempotency; 15 MB byte cap; latency budget instrumentation). One AC deferred to EPIC-04 / EPIC-06: CS-051 HTTP 409 `is_duplicate` envelope (needs ContractAnalysis lookup). See [PHASE-1-input-pipelines.md](PHASE-1-input-pipelines.md).
 

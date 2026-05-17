@@ -1,6 +1,6 @@
 /**
- * Server-only calls to optional project verification stub API (CS-356).
- * Do not log raw form payloads beyond what errors require.
+ * Server-only calls to optional project verification API (EPIC-12).
+ * Do not log raw payloads beyond what errors require.
  */
 
 import {
@@ -8,7 +8,10 @@ import {
   missingBaseUrlFallback,
 } from "@/lib/backend-error-map";
 import { normalizeProjectVerificationDemoResult } from "@/lib/project-verification-demo-normalize";
-import type { ProjectVerificationResultPreview } from "@/lib/project-verification-types";
+import type {
+  ProjectVerificationResultPreview,
+  ProjectVerificationVerdict,
+} from "@/lib/project-verification-types";
 import { readContractApiBase } from "@/server/contract-env";
 
 const MANUAL_PATH = "/api/v1/project-verification/manual/";
@@ -30,9 +33,16 @@ export type ManualVerificationEcho = {
 export type ManualVerificationPostOk = {
   ok: true;
   referenceId: string;
+  verdict: ProjectVerificationVerdict;
+  rationaleKeys: string[];
+  headlineKey: string;
+  heuristicScore: number;
+  reputationOutcome?: string;
+  reputationFetchedAt?: string | null;
+  dataFreshnessNoteKey?: string | null;
+  permitFindingKey?: string;
   echo: ManualVerificationEcho;
   detail?: string;
-  stub?: boolean;
 };
 
 export type ManualVerificationPostFail = {
@@ -47,10 +57,11 @@ export type ManualVerificationPostResult =
 
 export type BillboardUploadPostOk = {
   ok: true;
+  ocrStatus: string;
+  ocrQualityHint: string;
+  fields: Partial<ManualVerificationEcho>;
+  manualPrefill: Partial<ManualVerificationEcho>;
   detail?: string;
-  stub?: boolean;
-  /** OCR / stubs may attach structured hints for `/manual`. */
-  prefills?: Partial<ManualVerificationEcho>;
 };
 
 export type BillboardUploadPostFail = {
@@ -78,6 +89,7 @@ function readEchoFields(
     for (const key of [k, ...alts]) {
       const v = e[key];
       if (typeof v === "string") return v.trim();
+      if (v === null || v === undefined) return "";
     }
     return "";
   };
@@ -114,10 +126,36 @@ export function parseManualVerificationEcho(
   envelope: Record<string, unknown>,
 ): ManualVerificationEcho | null {
   const nested = pickEchoEnvelope(envelope);
-  if (nested) {
-    return readEchoFields(nested);
+  if (nested) return readEchoFields(nested);
+
+  const fields = envelope.fields;
+  if (typeof fields === "object" && fields !== null) {
+    return readEchoFields(fields as Record<string, unknown>);
   }
   return readEchoFields(envelope);
+}
+
+function readString(v: unknown): string | undefined {
+  return typeof v === "string" && v.trim() ? v.trim() : undefined;
+}
+
+function readOptionalStringRecord(
+  o: Record<string, unknown>,
+  snake: string,
+  camel: string,
+): string | null | undefined {
+  const raw = o[snake] ?? o[camel];
+  if (raw === null) return null;
+  if (typeof raw === "string") return raw;
+  return undefined;
+}
+
+function parseVerdict(
+  raw: string | undefined,
+): ProjectVerificationVerdict | undefined {
+  if (!raw) return undefined;
+  if (raw === "green" || raw === "yellow" || raw === "red") return raw;
+  return undefined;
 }
 
 export async function postProjectVerificationManual(payload: {
@@ -125,14 +163,31 @@ export async function postProjectVerificationManual(payload: {
   project: string;
   permit: string;
   address: string;
+  submission_source?: "manual" | "billboard_ocr";
+  ocr_quality?: string | null;
 }): Promise<ManualVerificationPostResult> {
   const base = readContractApiBase();
-  if (!base)
+  if (!base) {
     return {
       ok: false,
       status: 0,
       body: { error_code: "configuration_missing" },
     };
+  }
+
+  const bodyPayload: Record<string, unknown> = {
+    developer: payload.developer,
+    project: payload.project,
+    permit: payload.permit,
+    address: payload.address,
+  };
+
+  if (payload.submission_source) {
+    bodyPayload.submission_source = payload.submission_source;
+  }
+  if (payload.ocr_quality !== undefined) {
+    bodyPayload.ocr_quality = payload.ocr_quality;
+  }
 
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), MANUAL_POST_TIMEOUT_MS);
@@ -140,7 +195,7 @@ export async function postProjectVerificationManual(payload: {
     const res = await fetch(manualUrl(base), {
       method: "POST",
       headers: { ...DEFAULT_ACCEPT, "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(bodyPayload),
       cache: "no-store",
       redirect: "follow",
       signal: controller.signal,
@@ -154,31 +209,76 @@ export async function postProjectVerificationManual(payload: {
     }
     if (!res.ok) return { ok: false, status: res.status, body: jsonBody };
 
-    const body = jsonBody as Record<string, unknown>;
-    const refRaw = body.reference_id ?? body.referenceId;
+    const record = jsonBody as Record<string, unknown>;
+    const refRaw = record.reference_id ?? record.referenceId;
     const referenceId = typeof refRaw === "string" ? refRaw.trim() : "";
-    if (!referenceId)
-      return {
-        ok: false,
-        status: res.status || 502,
-        body: { error_code: "invalid_manual_response" },
-      };
 
-    const echo = parseManualVerificationEcho(body);
-    if (!echo)
+    const verdictRaw = parseVerdict(
+      typeof record.verdict === "string" ? record.verdict : undefined,
+    );
+    const headlineKey =
+      typeof record.headline_key === "string"
+        ? record.headline_key
+        : typeof record.headlineKey === "string"
+          ? record.headlineKey
+          : "";
+
+    const rationalesRaw =
+      record.rationale_keys ?? record.rationaleKeys ?? [];
+    const rationaleKeys = Array.isArray(rationalesRaw)
+      ? rationalesRaw.filter((x): x is string => typeof x === "string")
+      : [];
+
+    const heuristicScore = Number(record.heuristic_score ?? record.heuristicScore);
+
+    if (!referenceId || !verdictRaw || !Number.isFinite(heuristicScore)) {
       return {
         ok: false,
         status: res.status || 502,
         body: { error_code: "invalid_manual_response" },
       };
+    }
+
+    const echo = parseManualVerificationEcho(record);
+    if (!echo) {
+      return {
+        ok: false,
+        status: res.status || 502,
+        body: { error_code: "invalid_manual_response" },
+      };
+    }
 
     const detail =
-      typeof body.detail === "string" && body.detail.trim()
-        ? body.detail.trim()
+      typeof record.detail === "string" && record.detail.trim()
+        ? record.detail.trim()
         : undefined;
-    const stub = body.stub === true;
 
-    return { ok: true, referenceId, echo, detail, stub };
+    return {
+      ok: true,
+      referenceId,
+      verdict: verdictRaw,
+      rationaleKeys,
+      headlineKey,
+      heuristicScore,
+
+      reputationOutcome:
+        readString(record.reputation_outcome) ??
+        readString(record.reputationOutcome),
+      reputationFetchedAt: readOptionalStringRecord(
+        record,
+        "reputation_fetched_at",
+        "reputationFetchedAt",
+      ),
+      dataFreshnessNoteKey:
+        readString(record.data_freshness_note_key) ??
+        readString(record.dataFreshnessNoteKey),
+      permitFindingKey:
+        readString(record.permit_finding_key) ??
+        readString(record.permitFindingKey),
+
+      echo,
+      detail,
+    };
   } catch {
     clearTimeout(t);
     return { ok: false, status: 0, body: null };
@@ -207,12 +307,13 @@ export async function postProjectVerificationBillboardUpload(
   image: File,
 ): Promise<BillboardUploadPostResult> {
   const base = readContractApiBase();
-  if (!base)
+  if (!base) {
     return {
       ok: false,
       status: 0,
       body: { error_code: "configuration_missing" },
     };
+  }
 
   const body = new FormData();
   body.append("image", image, image.name || "billboard-upload");
@@ -238,27 +339,76 @@ export async function postProjectVerificationBillboardUpload(
     }
     if (!res.ok) return { ok: false, status: res.status, body: jsonBody };
 
-    const raw = jsonBody as Record<string, unknown> | null;
+    const raw = jsonBody as Record<string, unknown>;
+
+    const ocrStatus =
+      typeof raw.ocr_status === "string"
+        ? raw.ocr_status
+        : typeof raw.ocrStatus === "string"
+          ? raw.ocrStatus
+          : "";
+
+    const ocrQualityHint =
+      typeof raw.ocr_quality_hint === "string"
+        ? raw.ocr_quality_hint
+        : typeof raw.ocrQualityHint === "string"
+          ? raw.ocrQualityHint
+          : "";
+
+    const nestedFields = raw.fields;
+    const parsedFromNested =
+      typeof nestedFields === "object" && nestedFields !== null
+        ? parseManualVerificationEcho({ fields: nestedFields })
+        : parseManualVerificationEcho(raw);
+
+    const fieldsParsed =
+      parsedFromNested ?? {
+        developer: "",
+        project: "",
+        permit: "",
+        address: "",
+      };
+
+    const preFrom = raw.manual_prefill ?? raw.manualPrefill;
+    const parsedPref =
+      typeof preFrom === "object" && preFrom !== null
+        ? readEchoFields(preFrom as Record<string, unknown>)
+        : null;
+
+    const manualPrefill: Partial<ManualVerificationEcho> = {};
+
+    const assign = (k: keyof ManualVerificationEcho) => {
+      const fv = fieldsParsed[k];
+      const pv = parsedPref?.[k];
+      if (typeof fv === "string" && fv.trim()) {
+        manualPrefill[k] = fv;
+      }
+      if (!(k in manualPrefill) && typeof pv === "string" && pv.trim()) {
+        manualPrefill[k] = pv;
+      }
+    };
+    assign("developer");
+    assign("project");
+    assign("permit");
+    assign("address");
+
     const detail =
-      raw && typeof raw.detail === "string" && raw.detail.trim()
+      typeof raw.detail === "string" && raw.detail.trim()
         ? raw.detail.trim()
         : undefined;
-    const stub = Boolean(raw && raw.stub === true);
-    const parsedEcho = raw ? parseManualVerificationEcho(raw) : null;
-    const prefills: Partial<ManualVerificationEcho> = {};
-    if (parsedEcho) {
-      if (parsedEcho.developer.trim())
-        prefills.developer = parsedEcho.developer;
-      if (parsedEcho.project.trim()) prefills.project = parsedEcho.project;
-      if (parsedEcho.permit.trim()) prefills.permit = parsedEcho.permit;
-      if (parsedEcho.address.trim()) prefills.address = parsedEcho.address;
-    }
-    const hasPrefills = Object.keys(prefills).length > 0;
+
     return {
       ok: true,
+      ocrStatus: ocrStatus || "failure",
+      ocrQualityHint: ocrQualityHint || "low",
+      fields: {
+        developer: fieldsParsed.developer,
+        project: fieldsParsed.project,
+        permit: fieldsParsed.permit,
+        address: fieldsParsed.address,
+      },
+      manualPrefill,
       detail,
-      stub,
-      ...(hasPrefills ? { prefills } : {}),
     };
   } catch {
     clearTimeout(t);
@@ -266,7 +416,6 @@ export async function postProjectVerificationBillboardUpload(
   }
 }
 
-/** Returns mapped UX message for failed billboard upload POST (403 disabled, network, etc.). */
 export function mapBillboardUploadPostFailure(fail: BillboardUploadPostFail): {
   uiMessage: string;
   category: ReturnType<typeof mapBackendError>["category"];
@@ -287,6 +436,7 @@ export async function fetchProjectVerificationDemoResult(
 ): Promise<ProjectVerificationResultPreview | null> {
   const base = readContractApiBase();
   if (!base) return null;
+
   const v = (verdictParam ?? "yellow").trim().toLowerCase() || "yellow";
   const url = `${base}${DEMO_RESULT_PATH}?${new URLSearchParams({ v })}`;
   try {

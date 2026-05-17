@@ -34,7 +34,7 @@ describe("postProjectVerificationManual", () => {
     }
   });
 
-  it("POSTs JSON and parses 201 stub", async () => {
+  it("POSTs JSON and parses 201 evaluation payload", async () => {
     process.env.CASASEGURA_API_BASE_URL = "http://example.test";
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
@@ -43,14 +43,18 @@ describe("postProjectVerificationManual", () => {
         json: () =>
           Promise.resolve({
             reference_id: "pv-manual-1",
+            verdict: "yellow",
+            headline_key: "pv.headline.yellow",
+            rationale_keys: ["pv.reputation.skipped_disabled"],
+            heuristic_score: 6.25,
+            data_freshness_note_key: "pv.freshness.demo",
             echo: {
               developer: "Dev",
               project: "Proj",
               permit: "P1",
               address: "Addr",
             },
-            detail: "Sin filas",
-            stub: true,
+            detail: "OK",
           }),
       }),
     });
@@ -61,11 +65,16 @@ describe("postProjectVerificationManual", () => {
       project: "Proj",
       permit: "P1",
       address: "Addr",
+      submission_source: "billboard_ocr",
+      ocr_quality: "medium",
     });
     expect(r.ok).toBe(true);
     if (r.ok) {
       expect(r.referenceId).toBe("pv-manual-1");
       expect(r.echo.project).toBe("Proj");
+      expect(r.verdict).toBe("yellow");
+      expect(r.headlineKey).toBe("pv.headline.yellow");
+      expect(r.rationaleKeys).toContain("pv.reputation.skipped_disabled");
     }
     expect(fetchMock).toHaveBeenCalledWith(
       "http://example.test/api/v1/project-verification/manual/",
@@ -78,11 +87,13 @@ describe("postProjectVerificationManual", () => {
     );
     const [, init] = fetchMock.mock.calls[0]!;
     const body = JSON.parse((init as RequestInit).body as string);
-    expect(body).toEqual({
+    expect(body).toMatchObject({
       developer: "Dev",
       project: "Proj",
       permit: "P1",
       address: "Addr",
+      submission_source: "billboard_ocr",
+      ocr_quality: "medium",
     });
   });
 });
@@ -100,17 +111,27 @@ describe("postProjectVerificationBillboardUpload", () => {
     }
   });
 
-  it("POSTs multipart and parses 202 stub", async () => {
+  it("POSTs multipart and parses 200 vision payload", async () => {
     process.env.CASASEGURA_API_BASE_URL = "http://example.test";
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
-      status: 202,
+      status: 200,
       clone: () => ({
         json: () =>
           Promise.resolve({
-            status: "stub_accepted",
-            detail: "Imagen recibida",
-            stub: true,
+            ocr_status: "success",
+            fields: {
+              developer: "Dev",
+              project: "Proj",
+              permit: "P1",
+              address: "Addr",
+            },
+            ocr_high_confidence: true,
+            ocr_medium_confidence: false,
+            ocr_low_confidence: false,
+            ocr_quality_hint: "high",
+            manual_prefill: {},
+            detail: "OK",
           }),
       }),
     });
@@ -121,8 +142,9 @@ describe("postProjectVerificationBillboardUpload", () => {
     );
     expect(r.ok).toBe(true);
     if (r.ok) {
-      expect(r.detail).toBe("Imagen recibida");
-      expect(r.stub).toBe(true);
+      expect(r.ocrStatus).toBe("success");
+      expect(r.ocrQualityHint).toBe("high");
+      expect(r.manualPrefill.developer).toBe("Dev");
     }
     expect(fetchMock).toHaveBeenCalledWith(
       "http://example.test/api/v1/project-verification/billboard-upload/",
@@ -144,7 +166,7 @@ describe("fetchProjectVerificationDemoResult", () => {
     expect(await fetchProjectVerificationDemoResult("green")).toBeNull();
   });
 
-  it("normalizes GET payload", async () => {
+  it("normalizes headline/rationale payloads (strings)", async () => {
     process.env.CASASEGURA_API_BASE_URL = "http://example.test";
     vi.stubGlobal(
       "fetch",
@@ -166,6 +188,27 @@ describe("fetchProjectVerificationDemoResult", () => {
       rationale: ["r"],
       dataFreshnessNote: "N",
     });
+  });
+
+  it("normalizes headline/rationale key envelopes", async () => {
+    process.env.CASASEGURA_API_BASE_URL = "http://example.test";
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            verdict: "green",
+            headline_key: "pv.headline.green.demo",
+            rationale_keys: ["pv.reputation.skipped_disabled"],
+            data_freshness_note_key: "pv.freshness.demo",
+          }),
+      }),
+    );
+    const out = await fetchProjectVerificationDemoResult(undefined);
+    expect(out?.verdict).toBe("green");
+    expect(out?.headline?.length ?? 0).toBeGreaterThan(0);
+    expect(out?.rationale.length ?? 0).toBeGreaterThan(0);
   });
 });
 

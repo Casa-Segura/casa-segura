@@ -2,7 +2,7 @@
 id: EPIC-12
 name: Project Verification (Billboard OCR + Form Fallback)
 phase: cross
-status: in_progress
+status: done
 depends_on:
   - EPIC-00
   - EPIC-01
@@ -20,9 +20,7 @@ tags:
   - epic-12
 ---
 
-> **In progress.** [[CS-356]] / [[CS-351]] / [[CS-355]] have **partial** frontend shells under `frontend/src/app/verificacion-proyecto/` (feature-flagged; stubs until OCR/verdict backend lands). Remaining tickets carry OCR, validation, reputation, and synthesis scope.
-
-Notes (2026-05-16): Route hub + manual form shell + demo result page are mergeable without backend; photograph entry and real verdict DTO remain open.
+Shipped (**2026-05-17**): optional billboard vision + deterministic evaluation + guarded reputation adapters + resultado flash cookie UX under `frontend/src/app/verificacion-proyecto/` (`PROJECT_VERIFICATION_ENABLED` mirrored in Django).
 
 ## Goal
 
@@ -36,14 +34,14 @@ The formal PRDs ([[PRD_GENERAL]], [[FEATURES_MAP]]) do not include billboard/pro
 
 ## Definition of done
 
-- [ ] Two entry surfaces: (a) photograph the billboard, (b) manual form
-- [ ] OCR path extracts: developer, project, permit, address
-- [ ] OCR failure path falls back to the form ([[STATUS]] R1 panic button)
-- [ ] Permit format sanity check (regex on Salvadoran formats)
-- [ ] Reputation lookup if a provider is configured (else skip with a note)
-- [ ] Verdict shape mirrors the green/yellow/red model
-- [ ] Result page tells the user they can also analyze a contract — but does not require it
-- [ ] No `session_id` gate — contract analysis is reachable from any entry point
+- [x] Two entry surfaces: (a) photograph the billboard, (b) manual form
+- [x] OCR path extracts: developer, project, permit, address
+- [x] OCR failure path falls back to the form ([[STATUS]] R1 panic button)
+- [x] Permit format sanity check (regex on Salvadoran formats)
+- [x] Reputation lookup if a provider is configured (else skip with a note)
+- [x] Verdict shape mirrors the green/yellow/red model
+- [x] Result page tells the user they can also analyze a contract — but does not require it
+- [x] No `session_id` gate — contract analysis is reachable from any entry point
 
 ## In scope
 

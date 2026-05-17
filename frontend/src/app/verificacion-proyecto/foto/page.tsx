@@ -48,9 +48,9 @@ export default function ProjectVerificationBillboardPhotoPage() {
               Subí una foto clara de la valla
             </h1>
             <p className="mt-3 max-w-xl text-base leading-relaxed text-text-secondary">
-              Este camino prepara la lectura automática. Por ahora el stub
-              confirma que el archivo llega; después el OCR podrá completar o
-              sugerir los campos del formulario manual.
+              La foto se procesa una sola vez y no se guarda en el servidor. Si la
+              lectura no alcanza, podés complementar desde el manual con los mismos
+              datos estructurados.
             </p>
           </header>
 

@@ -1,4 +1,4 @@
-"""EPIC-12 optional project-verification DRF stubs (CS-356)."""
+"""EPIC-12 optional project-verification DRF API (gates + OCR + verdict)."""
 
 from __future__ import annotations
 
@@ -25,10 +25,10 @@ def api_client() -> APIClient:
 
 
 _MANUAL_PAYLOAD = {
-    "developer": "DevCo",
-    "project": "Torre ejemplo",
-    "permit": "P-1024",
-    "address": "Colonia Escalón, San Salvador",
+    "developer": "Torre Alta",
+    "project": "Reserva Lomas",
+    "permit": "P-2024-001",
+    "address": "Zona cercana al redondel ejemplo",
 }
 
 
@@ -59,7 +59,7 @@ def test_project_verification_forbidden_when_disabled(api_client: APIClient, pat
 
 @pytest.mark.django_db
 @override_settings(PROJECT_VERIFICATION_ENABLED=True)
-def test_manual_returns_reference_and_echo(api_client: APIClient):
+def test_manual_returns_verdict_bundle(api_client: APIClient):
     resp = api_client.post(
         "/api/v1/project-verification/manual/",
         _MANUAL_PAYLOAD,
@@ -69,7 +69,7 @@ def test_manual_returns_reference_and_echo(api_client: APIClient):
     data = resp.json()
     ref = data.get("reference_id")
     assert isinstance(ref, str) and len(ref) >= 32
-    assert data.get("stub") is True
+    assert data.get("verdict") in {"green", "yellow", "red"}
     echo = data.get("echo")
     assert isinstance(echo, dict)
     for key in ("developer", "project", "permit", "address"):
@@ -110,32 +110,67 @@ def test_manual_rejects_overflow_fields(api_client: APIClient):
 
 
 @pytest.mark.django_db
-@override_settings(PROJECT_VERIFICATION_ENABLED=True)
-def test_billboard_upload_returns_202_stub(api_client: APIClient):
+@override_settings(
+    PROJECT_VERIFICATION_ENABLED=True,
+    OPENROUTER_API_KEY="",
+)
+def test_billboard_upload_handles_missing_openrouter_without_500(api_client: APIClient):
     resp = api_client.post(
         "/api/v1/project-verification/billboard-upload/",
         {"image": _tiny_png_upload()},
         format="multipart",
     )
-    assert resp.status_code == 202
+    assert resp.status_code == 200
     data = resp.json()
-    assert data.get("stub") is True
+    assert data.get("ocr_status") == "failure"
+    assert isinstance(data.get("fields"), dict)
+    assert isinstance(data.get("manual_prefill"), dict)
 
 
 @pytest.mark.django_db
 @override_settings(PROJECT_VERIFICATION_ENABLED=True)
-@pytest.mark.parametrize(
-    ("verdict", "headline_kw"),
-    [("green", "alentadora"), ("red", "Riesgos")],
-)
-def test_demo_result_returns_fixture_aligned_json(api_client: APIClient, verdict: str, headline_kw: str):
+def test_billboard_rejects_bad_mime(api_client: APIClient):
+    bad = SimpleUploadedFile(
+        "x.bin",
+        b"not-an-image",
+        content_type="application/octet-stream",
+    )
+    resp = api_client.post(
+        "/api/v1/project-verification/billboard-upload/",
+        {"image": bad},
+        format="multipart",
+    )
+    assert resp.status_code == 415
+    assert resp.json().get("error_code") == "unsupported_media"
+
+
+@pytest.mark.django_db
+@override_settings(PROJECT_VERIFICATION_ENABLED=True)
+@pytest.mark.parametrize("verdict_key", ["green", "yellow", "red"])
+def test_demo_result_returns_fixture_keys(api_client: APIClient, verdict_key: str):
     resp = api_client.get(
         "/api/v1/project-verification/demo-result/",
-        {"v": verdict},
+        {"v": verdict_key},
     )
     assert resp.status_code == 200
     data = resp.json()
-    assert data["verdict"] == verdict
-    assert headline_kw in data["headline"]
-    assert isinstance(data["rationale"], list)
-    assert "data_freshness_note" in data
+    assert data["verdict"] == verdict_key
+    assert data.get("headline_key")
+    assert isinstance(data.get("rationale_keys"), list)
+
+
+@pytest.mark.django_db
+@override_settings(PROJECT_VERIFICATION_ENABLED=True)
+def test_submission_source_billboard_keeps_evaluation_path(api_client: APIClient):
+    payload = {
+        **_MANUAL_PAYLOAD,
+        "submission_source": "billboard_ocr",
+        "ocr_quality": "high",
+    }
+    resp = api_client.post(
+        "/api/v1/project-verification/manual/",
+        payload,
+        format="json",
+    )
+    assert resp.status_code == 201
+
