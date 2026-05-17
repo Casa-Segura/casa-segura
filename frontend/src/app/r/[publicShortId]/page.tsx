@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AnalysisWorkbench } from "@/components/analysis-workbench";
 import { DisclaimerFooter } from "@/components/disclaimer-footer";
 import { ReportPublicFrame } from "@/components/report-public-frame";
 import { buildPublicReportUrl } from "@/server/contract-env";
@@ -78,8 +79,8 @@ export default async function PublicReportPage({
     : null;
 
   return (
-    <div className="flex min-h-dvh flex-col bg-bg px-4 py-6 print:bg-white sm:px-6">
-      <div className="mx-auto flex w-full max-w-[480px] flex-1 flex-col gap-5 print:max-w-none">
+    <div className="flex min-h-dvh flex-col bg-bg px-4 py-6 print:bg-white sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 print:max-w-none">
         <Link
           href="/"
           className="text-sm font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent print:hidden"
@@ -92,7 +93,7 @@ export default async function PublicReportPage({
           tabIndex={-1}
           className="flex min-w-0 flex-1 flex-col gap-5 outline-none print:gap-4"
         >
-          <header className="shrink-0 print:shrink">
+          <header className="mx-auto w-full max-w-[640px] shrink-0 lg:mx-0 lg:max-w-none print:shrink">
             <h1 className="text-xl font-semibold text-text-primary">
               Tu informe
             </h1>
@@ -112,11 +113,19 @@ export default async function PublicReportPage({
             ) : null}
           </header>
 
-          <div className="min-w-0 flex-1 overflow-x-auto print:overflow-visible print:max-w-none">
+          <div className="min-w-0 flex-1 overflow-x-auto lg:hidden print:block print:overflow-visible print:max-w-none">
             <ReportPublicFrame
               src={url}
               title={`Informe de análisis ${publicShortId}`}
             />
+          </div>
+          <div className="hidden lg:block print:hidden">
+            <AnalysisWorkbench mode="complete" publicShortId={publicShortId} />
+            <p className="mt-3 text-sm leading-relaxed text-text-secondary">
+              La vista completa del backend sigue disponible en el enlace
+              seguro; esta mesa de trabajo resume los puntos clave para revisión
+              en escritorio.
+            </p>
           </div>
         </main>
 
