@@ -6,7 +6,8 @@ status: living
 last_updated: 2026-05-16
 # Phase 1 implementation pass (Pixtral OCR architecture) committed in d613c2d.
 # EPIC-03 (Legal Corpus & RAG) closed 2026-05-16 with revised multi-Top-K AC after
-# four live calibration runs (CS-087). EPIC-02 (Contract Ingestion & OCR) still in_progress.
+# four live calibration runs (CS-087). EPIC-02 (Contract Ingestion & OCR) still in_progress;
+# CS-054 closed 2026-05-16 with AC re-anchored to single-call Pixtral architecture.
 tags:
   - casa-segura
   - roadmap
@@ -36,10 +37,10 @@ Source-of-truth links:
 Phase 1 backend lane status (2026-05-16):
 
 - ✅ `done` (EPIC-03 Legal Corpus & RAG closed): CS-080..CS-090. Architecture is `intfloat/multilingual-e5-large` (1024-dim) + `BAAI/bge-reranker-v2-m3` over top-10 vectorial candidates. Corpus re-authored in Spanish. Final metrics: Strict Top-1 = 0.633, Article-level Top-3 = 0.900, Top-5 = 0.967 (revised AC; trace in CS-087 "Live calibration runs #1–#4").
-- ✅ `done`: CS-057 (discard-after-extract invariant), CS-058 (disclaimer gate).
-- 🟡 `in_progress` (EPIC-02 Contract Ingestion & OCR — the only remaining blocker for Phase 1 closure): CS-050/051/052/053/054/055/056/059/060.
+- ✅ `done`: CS-054 (Pixtral single-call extraction — AC re-anchored), CS-057 (discard-after-extract invariant), CS-058 (disclaimer gate).
+- 🟡 `in_progress` (EPIC-02 Contract Ingestion & OCR — the only remaining blocker for Phase 1 closure): CS-050/051/052/053/055/056/059/060.
 
-The next backend-blocking pickup on this phase is **EPIC-02 closure**: rewrite the CS-053/054/055 ACs to reflect the Pixtral pivot, implement the multi-file upload + image dimension validator (CS-050), wire the PRD US-08 not_analyzable policy (CS-056: first-2000-chars + 0.85 confidence), enforce page-count caps (CS-059), and add per-page-bucket latency histograms (CS-060). See [PHASE-1-config-checklist.md](PHASE-1-config-checklist.md).
+The next backend-blocking pickup on this phase is **EPIC-02 closure**: ship the CS-052 100-char threshold + `force_strategy`, the CS-055 mean-confidence gate, the CS-053 page separators + 500-char vision retry + 30s timeout, the multi-file upload + image dimension validator (CS-050), wire the PRD US-08 not_analyzable policy (CS-056: first-2000-chars + 0.85 confidence + HTTP 422), enforce page-count caps + 15 MB byte cap (CS-059), and add per-page-bucket latency histograms + fake-clock CI test (CS-060). See [PHASE-1-config-checklist.md](PHASE-1-config-checklist.md).
 
 Out-of-phase pickups still pending:
 
@@ -58,7 +59,7 @@ FE should keep coordinating disclaimer copy with [CS-291](../tickets/CS-291.md) 
 - [CS-051](../tickets/CS-051.md) - Content hash for idempotency.
 - [CS-052](../tickets/CS-052.md) - `ocr.detect_kind` routing.
 - [CS-053](../tickets/CS-053.md) - Text-PDF extraction with pypdf.
-- [CS-054](../tickets/CS-054.md) - Scanned-PDF extraction via vision LLM.
+- ~~[CS-054](../tickets/CS-054.md)~~ — **done** (single-call Pixtral via OpenRouter `file-parser` plugin for PDFs + direct `image_url` for images; AC re-anchored to single-call architecture per EPIC-02 audit).
 - [CS-055](../tickets/CS-055.md) - Tesseract Spanish fallback path.
 - [CS-056](../tickets/CS-056.md) - `not_analyzable` error envelope and reasons.
 - [CS-057](../tickets/CS-057.md) - Discard-after-extract invariant and test.
