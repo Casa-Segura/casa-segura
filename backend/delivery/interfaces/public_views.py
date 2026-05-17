@@ -8,7 +8,12 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.views import View
 
-from delivery.application.report_html import AnalysisNotReady, ReportNotFound, generate_report_html_for_analysis
+from delivery.application.report_html import (
+    AnalysisNotReady,
+    ReportNotFound,
+    ReportRenderFailed,
+    generate_report_html_for_analysis,
+)
 from platform_core.domain.enums import DeliveryStatus
 from platform_core.infrastructure.django.models import ContractAnalysis
 
@@ -34,6 +39,13 @@ _NOT_FOUND_HTML = """<!DOCTYPE html>
 <title>No encontrado</title>
 <style>body{font-family:system-ui,sans-serif;margin:1rem;max-width:360px}</style>
 </head><body><p>Análisis no encontrado.</p><p><a href="/">Inicio</a></p></body></html>"""
+
+_SERVER_ERROR_HTML = """<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Error temporal</title>
+<style>body{font-family:system-ui,sans-serif;margin:1rem;max-width:360px;line-height:1.5}</style>
+</head><body><p>No pudimos generar el informe en este momento.</p><p><a href="/">Inicio</a></p></body></html>"""
 
 
 def _privacy_headers(resp: HttpResponse) -> HttpResponse:
@@ -62,13 +74,19 @@ def _public_report_access_gate(analysis: ContractAnalysis, sid: str) -> HttpResp
     return None
 
 
-def _public_report_body(sid: str) -> HttpResponse:
+def _public_report_body(sid: str, analysis: ContractAnalysis) -> HttpResponse:
     try:
-        html, stats = generate_report_html_for_analysis(public_short_id=sid)
+        html, stats = generate_report_html_for_analysis(public_short_id=sid, analysis=analysis)
     except ReportNotFound:
         return _html_page(_NOT_FOUND_HTML, status_code=404)
     except AnalysisNotReady:
         return _html_page(_NOT_FOUND_HTML, status_code=404)
+    except ReportRenderFailed as exc:
+        logger.error(
+            "public_report_render_failed",
+            extra={"public_short_id": sid, "code": exc.code},
+        )
+        return _html_page(_SERVER_ERROR_HTML, status_code=500)
 
     logger.info(
         "public_report_served",
@@ -88,7 +106,7 @@ def _resolve_public_report(sid: str) -> HttpResponse:
     blocked = _public_report_access_gate(analysis, sid)
     if blocked is not None:
         return blocked
-    return _public_report_body(sid)
+    return _public_report_body(sid, analysis)
 
 
 class PublicReportHtmlView(View):

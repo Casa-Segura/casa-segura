@@ -44,7 +44,8 @@ Delivering [[PRD_GENERAL]] US-03 ("System applies the rubric and produces the sc
 - [x] Every `Finding` produced carries: severity, title, description, optional cited clause, optional `LegalReference` (from RAG), recommendation
 - [x] BVA test suite passes for all numeric thresholds (see ticket-level BVA tables)
 - [x] [[PRD_GENERAL]] BR-16 (scoring path): criterion specs for `rubric.evaluate_analysis` resolve from `ContractAnalysis.rubric_version` (snapshot at ingest); Celery retries do not silently follow globally active catalog drift ([[CS-358]], [[ADR-0004-versioning]])
-- [ ] [[PRD_GENERAL]] BR-16 (report/regeneration copy): criterion labels and version footer for on-demand reports use the analysis stamp + `Criterion` rows for that version — [[EPIC-07-report-generation]] / [[CS-208]] (out of scope for EPIC-06)
+- [x] [[PRD_GENERAL]] BR-16 (**canonical F6 HTML/PDF**, `backend/reports/`): footer versions and integrity hash use persisted `ContractAnalysis.rubric_version_id` / corpus / benchmark; per-criterion rows come from **`criterion_evaluations`** (scoring snapshot — no `load_active_specs()`). Category titles/weights in the template use static F6 copy in `section_builders` (not live catalog).
+- [x] **Public TTL link ([[CS-247]]) / `delivery.application.report_html`:** `GET /r/<public_short_id>/` delegates to `reports.application.services.html_renderer.generate_report_html` (same BR-16 stamping as Celery HTML/PDF tasks; verified in `backend/tests/test_public_report_route.py`).
 
 ## In scope
 

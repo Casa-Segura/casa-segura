@@ -2,7 +2,7 @@
 id: EPIC-07
 name: Report Generation
 phase: 5
-status: in_progress
+status: done
 depends_on:
   - EPIC-06
   - EPIC-05
@@ -16,12 +16,9 @@ tags:
   - casa-segura
   - epic
   - epic-07
-  - stub
 ---
 
 # EPIC-07 — Report Generation
-
-> **Stub.** Epic-level only. Tickets fleshed out in second pass.
 
 ## Goal
 
@@ -29,23 +26,14 @@ Compose the responsive HTML report per [[RUBRICA_CONTRATO]] §11 and render to P
 
 ## Definition of done
 
-<<<<<<< HEAD
-- [ ] HTML template covers the 8 sections in [[RUBRICA_CONTRATO]] §11.1
-- [ ] PDF renderer (WeasyPrint or similar) produces a legible PDF at print density
-- [ ] Disclaimer in header and footer ([[PRD_GENERAL]] BR-07)
-- [ ] Override box prominent when override active
-- [ ] Findings rendered with collapsible legal-reference card per [[BE-SERVICES]] §5
-- [ ] Art. 1686 CC warning always shown ([[PRD_GENERAL]] open question #5 — recommended yes)
-- [ ] Rubric and corpus version visible in footer (**sourced from persisted `ContractAnalysis` and version-scoped catalog rows** — not `load_active_specs()`; [[CS-358]], [[CS-208]])
-=======
 - [x] HTML template covers the 8 sections in [[RUBRICA_CONTRATO]] §11.1
 - [x] PDF renderer (WeasyPrint or similar) produces a legible PDF at print density
 - [x] Disclaimer in header and footer ([[PRD_GENERAL]] BR-07)
 - [x] Override box prominent when override active
 - [x] Findings rendered with collapsible legal-reference card per [[BE-SERVICES]] §5
 - [x] Art. 1686 CC warning always shown ([[PRD_GENERAL]] open question #5 — recommended yes)
-- [x] Rubric and corpus version visible in footer
-- [ ] Mobile renders correctly from 360px width
+- [x] Rubric and corpus version visible in footer (**from persisted `ContractAnalysis` + version-scoped catalog** — not `load_active_specs()`; [[CS-358]], [[CS-208]])
+- [x] Mobile renders correctly from 360px width ([[CS-210]] — handset sign-off; CI hardening tracked in ticket follow-up)
 
 ## Tickets (titles only — stubs)
 
@@ -63,6 +51,6 @@ Compose the responsive HTML report per [[RUBRICA_CONTRATO]] §11 and render to P
 
 ## Notes
 
-- **BR-16:** On-demand HTML/PDF must not call `load_active_specs()` for content tied to a specific analysis; use `analysis.rubric_version` and `Criterion` rows for that semver (see [[CS-358]]).
+- **BR-16:** Canonical renderer (`backend/reports/`) reads version triple from `ContractAnalysis` and criterion rows from the persisted **`criterion_evaluations`** snapshot (never `load_active_specs()`). The public TTL HTML route (**`delivery.application.report_html`**, `GET /r/<public_short_id>/`) calls the same **`generate_report_html`** façade as Celery ([[EPIC-06-rubric-engine]] BR-16 public-link item).
 - The example finding format in [[RUBRICA_CONTRATO]] §11.2 is the visual reference for [[CS-205]]
 - "Tú" register, not "usted" ([[STATUS]] D8)
