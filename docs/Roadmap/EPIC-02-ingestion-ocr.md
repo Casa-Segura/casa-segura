@@ -33,7 +33,7 @@ Receive contract uploads (PDF, JPG, PNG, HEIC, WEBP), detect document kind, extr
 - [x] Disclaimer "Esto no es asesoría legal" presented and accepted before processing (CS-058 — BE persists `disclaimer_accepted_at` / method and rejects missing acceptance with **`DISCLAIMER_REQUIRED`**; FE `/subir` gate + multipart aliases aligned)
 - [ ] Failure modes (unreadable, non-Spanish, oversized) return `not_analyzable` with reason (CS-056 — `NotAnalyzableError` envelope present with stable error codes; PRD §US-08 first-2000-chars + 0.85 confidence policy pending)
 - [x] Original file discarded immediately after extraction ([[PRD_GENERAL]] BR-01); meta-test asserts no model exposes `extracted_text` (CS-057)
-- [ ] P95 ingestion+OCR latency instrumented per stage with Prometheus histograms against the 90s budget (CS-060 — stage histograms + outcome counters present; page-bucket labels + full SLA roll-up test still pending)
+- [x] P95 ingestion+OCR latency instrumented per stage with Prometheus histograms against the 90s budget (CS-060 — **done**: `casa_segura_ingest_stage_duration_seconds{stage,strategy}` + page-bucket histogram `casa_segura_ingest_extract_pages_duration_seconds{strategy,page_bucket}` (1/2-10/11+/unknown) + `casa_segura_ingest_timeouts_total{stage,strategy}` counter; fake-clock CI test verifies bucket increments)
 
 ## In scope
 

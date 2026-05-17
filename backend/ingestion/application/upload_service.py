@@ -35,7 +35,13 @@ from ingestion.application.ocr.errors import (
 from ingestion.application.ocr.extractors.pixtral import extract_via_pixtral
 from ingestion.application.ocr.extractors.pypdf_extractor import extract_text_pdf
 from ingestion.application.ocr.extractors.tesseract import extract_via_tesseract
-from ingestion.application.ocr.metrics import INGEST_OUTCOMES, INGEST_STAGE_DURATION
+from ingestion.application.ocr.metrics import (
+    INGEST_EXTRACT_PAGES_DURATION,
+    INGEST_OUTCOMES,
+    INGEST_STAGE_DURATION,
+    INGEST_TIMEOUTS,
+    page_bucket,
+)
 from ingestion.application.ocr.router import detect_kind
 from ingestion.domain.enums import (
     DisclaimerAcceptanceMethod,
@@ -102,14 +108,21 @@ def ingest_upload(req: UploadRequest) -> IngestOutcome:
     )
 
     try:
-        result = _attempt_extraction(submission, req=req, primary=routing.strategy)
+        result, extract_elapsed, winning_strategy = _attempt_extraction(
+            submission, req=req, primary=routing.strategy
+        )
         _enforce_page_cap(result)
     except NotAnalyzableError as exc:
         _mark_failed(submission, exc)
         INGEST_OUTCOMES.labels(outcome="rejected", error_code=exc.reason.value).inc()
         return IngestOutcome(submission=submission, created=True)
 
-    _persist_success(submission, result=result)
+    _persist_success(
+        submission,
+        result=result,
+        extract_elapsed=extract_elapsed,
+        strategy=winning_strategy,
+    )
     INGEST_OUTCOMES.labels(outcome="success", error_code="").inc()
     return IngestOutcome(submission=submission, created=True)
 
@@ -192,10 +205,15 @@ def _attempt_extraction(
     *,
     req: UploadRequest,
     primary: ExtractionStrategy,
-) -> ExtractionResult:
+) -> tuple[ExtractionResult, float, ExtractionStrategy]:
     """Try the primary strategy; fall back to Tesseract for image-likely
     failures when the LLM path errors. PDFs that fail Pixtral are NOT
-    fed to Tesseract (rasterisation is out of scope for Phase 1)."""
+    fed to Tesseract (rasterisation is out of scope for Phase 1).
+
+    Returns ``(result, elapsed_seconds, winning_strategy)`` for the
+    intent that finally succeeded, so the caller can emit the
+    page-bucket histogram against the right strategy without re-timing.
+    """
 
     order: list[ExtractionStrategy] = [primary]
     if primary == ExtractionStrategy.VISION_LLM and _is_image_mime(req.content_type):
@@ -208,15 +226,14 @@ def _attempt_extraction(
             strategy=strategy.value,
             attempt_number=submission.ocr_jobs.count() + 1,
         )
+        start = time.perf_counter()
         try:
-            result = _timed(
-                "extract",
-                strategy.value,
-                _run_extractor,
-                strategy=strategy,
-                req=req,
-            )
+            result = _run_extractor(strategy=strategy, req=req)
         except NotAnalyzableError as exc:
+            elapsed = time.perf_counter() - start
+            INGEST_STAGE_DURATION.labels(stage="extract", strategy=strategy.value).observe(elapsed)
+            if exc.reason == NotAnalyzableReason.TIMEOUT:
+                INGEST_TIMEOUTS.labels(stage="extract", strategy=strategy.value).inc()
             job.status = _job_status_for(exc.reason)
             job.error = str(exc)
             job.error_code = exc.reason.value
@@ -225,6 +242,8 @@ def _attempt_extraction(
             last_error = exc
             continue
         else:
+            elapsed = time.perf_counter() - start
+            INGEST_STAGE_DURATION.labels(stage="extract", strategy=strategy.value).observe(elapsed)
             job.status = OcrJobStatus.SUCCESS.value
             job.completed_at = timezone.now()
             job.tokens_consumed = result.tokens_consumed
@@ -239,7 +258,7 @@ def _attempt_extraction(
             )
             submission.extraction_strategy_successful = strategy.value
             submission.save(update_fields=["extraction_strategy_successful"])
-            return result
+            return result, elapsed, strategy
 
     if last_error is None:
         raise NotAnalyzableError(
@@ -276,9 +295,19 @@ def _job_status_for(reason: NotAnalyzableReason) -> str:
     return OcrJobStatus.FAILED.value
 
 
-def _persist_success(submission: ContractSubmission, *, result: ExtractionResult) -> None:
+def _persist_success(
+    submission: ContractSubmission,
+    *,
+    result: ExtractionResult,
+    extract_elapsed: float,
+    strategy: ExtractionStrategy,
+) -> None:
     """Persist ONLY metadata. The text is intentionally not stored
-    anywhere (CS-057 invariant: no `extracted_text` column exists)."""
+    anywhere (CS-057 invariant: no `extracted_text` column exists).
+
+    Also emit the page-bucket-labelled extraction-duration histogram
+    (CS-060) using ``extract_elapsed`` measured on the winning attempt.
+    """
 
     submission.processing_status = ProcessingStatus.EXTRACTED.value
     submission.extracted_text_token_count = result.token_count
@@ -292,6 +321,11 @@ def _persist_success(submission: ContractSubmission, *, result: ExtractionResult
             "page_count",
         ]
     )
+
+    INGEST_EXTRACT_PAGES_DURATION.labels(
+        strategy=strategy.value,
+        page_bucket=page_bucket(result.page_count),
+    ).observe(extract_elapsed)
 
 
 def _mark_failed(submission: ContractSubmission, exc: NotAnalyzableError) -> None:
