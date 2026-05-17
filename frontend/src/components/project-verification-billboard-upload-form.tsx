@@ -1,16 +1,23 @@
 "use client";
 
+import { Trash } from "@phosphor-icons/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState } from "react";
 import {
   submitProjectVerificationBillboardUpload,
   type BillboardUploadFormState,
 } from "@/app/verificacion-proyecto/foto/actions";
+import { cx, focusRing } from "@/components/casa-ui";
 
 const initialState: BillboardUploadFormState | null = null;
 
 export type BillboardDesktopCompanionPhase = "idle" | "loading" | "complete";
+
+export type BillboardPhotoPreviewPayload = {
+  objectUrl: string | null;
+  fileName: string | null;
+};
 
 function formErrorFromState(
   state: BillboardUploadFormState | null,
@@ -21,9 +28,12 @@ function formErrorFromState(
 
 export function ProjectVerificationBillboardUploadForm({
   onCompanionPhaseChange,
+  onPreviewChange,
 }: {
   /** Sincroniza la mesa de escritorio `/subir` (valla) con el estado del envío. */
   onCompanionPhaseChange?: (phase: BillboardDesktopCompanionPhase) => void;
+  /** Vista previa en la mesa de escritorio (blob URL + nombre). */
+  onPreviewChange?: (preview: BillboardPhotoPreviewPayload) => void;
 } = {}) {
   const [state, formAction, pending] = useActionState(
     submitProjectVerificationBillboardUpload,
@@ -31,6 +41,7 @@ export function ProjectVerificationBillboardUploadForm({
   );
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const billboardInputRef = useRef<HTMLInputElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
   const formErrorRef = useRef<HTMLParagraphElement>(null);
 
@@ -61,6 +72,20 @@ export function ProjectVerificationBillboardUploadForm({
     onCompanionPhaseChange(phase);
   }, [pending, state?.ok, onCompanionPhaseChange]);
 
+  useEffect(() => {
+    onPreviewChange?.({ objectUrl: previewUrl, fileName });
+  }, [previewUrl, fileName, onPreviewChange]);
+
+  const clearSelectedPhoto = useCallback(() => {
+    setPreviewUrl((current) => {
+      if (current) URL.revokeObjectURL(current);
+      return null;
+    });
+    setFileName(null);
+    const input = billboardInputRef.current;
+    if (input) input.value = "";
+  }, []);
+
   return (
     <form action={formAction} className="flex flex-col gap-5" noValidate>
       <div className="rounded-[var(--radius-card)] border border-border bg-accent-light/50 p-4 text-sm leading-relaxed text-text-primary">
@@ -90,28 +115,46 @@ export function ProjectVerificationBillboardUploadForm({
         >
           Foto de la valla
         </label>
-        <input
-          id="billboard"
-          name="billboard"
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif"
-          capture="environment"
-          aria-describedby={
-            formError
-              ? "billboard-upload-error billboard-help"
-              : "billboard-help"
-          }
-          aria-invalid={Boolean(formError)}
-          onChange={(event) => {
-            const file = event.currentTarget.files?.[0] ?? null;
-            setFileName(file?.name ?? null);
-            setPreviewUrl((current) => {
-              if (current) URL.revokeObjectURL(current);
-              return file ? URL.createObjectURL(file) : null;
-            });
-          }}
-          className="min-h-[44px] rounded-[var(--radius-input)] border border-border bg-surface px-3 py-2 text-base text-text-primary file:mr-3 file:min-h-[36px] file:rounded-[var(--radius-input)] file:border-0 file:bg-accent file:px-3 file:text-sm file:font-semibold file:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        />
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch sm:gap-3">
+          <input
+            ref={billboardInputRef}
+            id="billboard"
+            name="billboard"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif"
+            capture="environment"
+            aria-describedby={
+              formError
+                ? "billboard-upload-error billboard-help"
+                : "billboard-help"
+            }
+            aria-invalid={Boolean(formError)}
+            onChange={(event) => {
+              const file = event.currentTarget.files?.[0] ?? null;
+              setFileName(file?.name ?? null);
+              setPreviewUrl((current) => {
+                if (current) URL.revokeObjectURL(current);
+                return file ? URL.createObjectURL(file) : null;
+              });
+            }}
+            className="min-h-[44px] min-w-0 flex-1 rounded-[var(--radius-input)] border border-border bg-surface px-3 py-2 text-base text-text-primary file:mr-3 file:min-h-[36px] file:rounded-[var(--radius-input)] file:border-0 file:bg-accent file:px-3 file:text-sm file:font-semibold file:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          />
+          {previewUrl ? (
+            <button
+              type="button"
+              onClick={clearSelectedPhoto}
+              disabled={pending}
+              aria-label="Quitar foto seleccionada"
+              className={cx(
+                "inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-[var(--radius-input)] border border-border bg-surface px-4 text-sm font-semibold text-text-primary shadow-sm transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50",
+                focusRing,
+              )}
+            >
+              <Trash size={18} aria-hidden />
+              Quitar foto
+            </button>
+          ) : null}
+        </div>
         <p
           id="billboard-help"
           className="text-sm leading-relaxed text-text-secondary"
@@ -125,10 +168,15 @@ export function ProjectVerificationBillboardUploadForm({
         <figure className="overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface shadow-sm">
           <Image
             src={previewUrl}
-            alt="Vista previa de la foto seleccionada"
+            alt={
+              fileName?.trim()
+                ? `Vista previa del archivo seleccionado: ${fileName}`
+                : "Vista previa del archivo seleccionado"
+            }
             width={720}
             height={480}
             unoptimized
+            sizes="(max-width: 768px) 100vw, 560px"
             className="aspect-[3/2] w-full object-cover"
           />
           <figcaption className="border-t border-border px-4 py-3 text-sm text-text-secondary">

@@ -1,7 +1,8 @@
 "use client";
 
 import { ArrowCounterClockwise, Camera, CheckCircle } from "@phosphor-icons/react";
-import { useState } from "react";
+import Image from "next/image";
+import { useCallback, useState } from "react";
 import {
   CasaButton,
   DisclaimerPanel,
@@ -16,6 +17,7 @@ import { ContractUploadFlow } from "@/components/contract-upload-flow";
 import {
   ProjectVerificationBillboardUploadForm,
   type BillboardDesktopCompanionPhase,
+  type BillboardPhotoPreviewPayload,
 } from "@/components/project-verification-billboard-upload-form";
 import {
   ScanIntentSelector,
@@ -91,6 +93,15 @@ export function ScanFlowShell() {
 function BillboardBranch() {
   const [companionPhase, setCompanionPhase] =
     useState<BillboardDesktopCompanionPhase>("idle");
+  const [photoPreview, setPhotoPreview] =
+    useState<BillboardPhotoPreviewPayload | null>(null);
+
+  const handleBillboardPreviewChange = useCallback(
+    (preview: BillboardPhotoPreviewPayload) => {
+      setPhotoPreview(preview);
+    },
+    [],
+  );
 
   return (
     <div className={scanFlowDesktopSplitGridClass}>
@@ -108,6 +119,7 @@ function BillboardBranch() {
 
         <ProjectVerificationBillboardUploadForm
           onCompanionPhaseChange={setCompanionPhase}
+          onPreviewChange={handleBillboardPreviewChange}
         />
 
         <DisclaimerPanel tone="neutral">
@@ -121,14 +133,21 @@ function BillboardBranch() {
         </DisclaimerPanel>
       </section>
 
-      <BillboardWorkbench phase={companionPhase} />
+      <BillboardWorkbench phase={companionPhase} photoPreview={photoPreview} />
     </div>
   );
 }
 
-function BillboardWorkbench({ phase }: { phase: BillboardDesktopCompanionPhase }) {
+function BillboardWorkbench({
+  phase,
+  photoPreview,
+}: {
+  phase: BillboardDesktopCompanionPhase;
+  photoPreview: BillboardPhotoPreviewPayload | null;
+}) {
   const idle = phase === "idle";
   const loading = phase === "loading";
+  const livePhotoUrl = photoPreview?.objectUrl ?? null;
 
   return (
     <section
@@ -139,29 +158,36 @@ function BillboardWorkbench({ phase }: { phase: BillboardDesktopCompanionPhase }
       aria-label="Mesa de verificación de valla"
     >
       <div className="flex min-h-0 min-w-0 flex-col border-r border-border bg-surface">
-        <header className="flex min-h-[52px] items-center justify-between border-b border-border px-5">
-          <div className="flex min-w-0 items-center gap-2 text-sm font-semibold text-text-primary">
-            <Camera size={18} className="shrink-0 text-accent" aria-hidden />
-            <span className="truncate">Valla publicitaria</span>
+        <header className="flex min-h-[52px] items-center border-b border-border px-5">
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+            <div className="flex min-w-0 items-center gap-2 text-sm font-semibold text-text-primary">
+              <Camera size={18} className="shrink-0 text-accent" aria-hidden />
+              <span className="truncate">Valla publicitaria</span>
+            </div>
+            <span className="truncate pl-[26px] text-xs font-medium text-text-secondary">
+              {photoPreview?.fileName?.trim()
+                ? photoPreview.fileName
+                : "Sin foto aún"}
+            </span>
           </div>
-          {idle ? (
-            <StatusPill tone="accent">Vista previa</StatusPill>
-          ) : loading ? (
-            <StatusPill tone="yellow" pulse>
-              Leyendo foto
-            </StatusPill>
-          ) : (
-            <StatusPill tone="green">Foto recibida</StatusPill>
-          )}
         </header>
-        <div className="flex flex-1 items-center justify-center bg-[#111111] p-6">
-          <BillboardPhotoFrame phase={phase} />
+        <div className="flex flex-1 items-center justify-center overflow-auto bg-[#111111] p-6">
+          <BillboardPhotoFrame phase={phase} photoPreview={photoPreview} />
         </div>
       </div>
 
       <aside className="flex min-h-0 min-w-0 flex-col bg-surface-muted">
-        <header className="border-b border-border bg-surface px-5 py-3">
-          <span className="text-xs font-medium text-text-secondary">
+        <header className="flex min-h-[52px] items-center justify-between gap-3 border-b border-border bg-surface px-5">
+          {loading ? (
+            <StatusPill tone="yellow" pulse>
+              Leyendo foto
+            </StatusPill>
+          ) : !idle ? (
+            <StatusPill tone="green">Foto recibida</StatusPill>
+          ) : (
+            <StatusPill tone="accent">Vista previa</StatusPill>
+          )}
+          <span className="min-w-0 max-w-[58%] truncate text-right text-xs font-medium text-text-secondary">
             {idle
               ? "Sin envío aún"
               : loading
@@ -171,7 +197,7 @@ function BillboardWorkbench({ phase }: { phase: BillboardDesktopCompanionPhase }
         </header>
         <div className="min-h-0 flex-1 overflow-y-auto p-5">
           {idle ? (
-            <BillboardCompanionIdle />
+            <BillboardCompanionIdle hasLivePhoto={Boolean(livePhotoUrl)} />
           ) : loading ? (
             <div className="flex flex-col gap-5">
               <div>
@@ -230,7 +256,7 @@ function BillboardWorkbench({ phase }: { phase: BillboardDesktopCompanionPhase }
   );
 }
 
-function BillboardCompanionIdle() {
+function BillboardCompanionIdle({ hasLivePhoto }: { hasLivePhoto: boolean }) {
   const bullets = [
     "Vista amplia de la valla después del envío.",
     "Pasos de lectura alineados al flujo real.",
@@ -247,9 +273,9 @@ function BillboardCompanionIdle() {
           Mesa de trabajo para la valla
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-          Esta columna muestra progreso animado sólo mientras se envía y procesa
-          la foto. Ahora es una vista previa vacía: no hay datos de tu imagen
-          todavía.
+          {hasLivePhoto
+            ? "Tu foto ya aparece en la mesa de la izquierda. Cuando envíes, verás el progreso de lectura aquí."
+            : "Esta columna muestra progreso animado sólo mientras se envía y procesa la foto. Elegí una imagen en el formulario para verla también en grande en la mesa."}
         </p>
       </div>
       <section className="rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-[var(--shadow-soft)]">
@@ -274,13 +300,43 @@ function BillboardCompanionIdle() {
   );
 }
 
+function billboardPreviewAlt(fileName: string | null | undefined) {
+  if (fileName?.trim()) {
+    return `Vista previa de ${fileName}`;
+  }
+  return "Vista previa del archivo seleccionado";
+}
+
 function BillboardPhotoFrame({
   phase,
+  photoPreview,
 }: {
   phase: BillboardDesktopCompanionPhase;
+  photoPreview: BillboardPhotoPreviewPayload | null;
 }) {
   const idle = phase === "idle";
   const loading = phase === "loading";
+  const url = photoPreview?.objectUrl ?? null;
+  const alt = billboardPreviewAlt(photoPreview?.fileName);
+
+  const frameShell =
+    "w-full max-w-[560px] overflow-hidden rounded-[var(--radius-panel)] border border-white/10 bg-[#1A1A1A] p-4 shadow-[var(--shadow-panel)]";
+
+  if (idle && url) {
+    return (
+      <figure className={frameShell}>
+        <Image
+          src={url}
+          alt={alt}
+          width={1120}
+          height={840}
+          unoptimized
+          sizes="(max-width: 1280px) 90vw, 560px"
+          className="aspect-[4/3] w-full rounded-[var(--radius-card)] object-contain"
+        />
+      </figure>
+    );
+  }
 
   if (idle) {
     return (
@@ -292,8 +348,7 @@ function BillboardPhotoFrame({
           Tu foto aparecerá aquí
         </p>
         <p className="mt-2 text-sm leading-relaxed text-white/65">
-          Después del envío verás la vista amplia y el estado de lectura; ahora
-          no hay imagen en proceso.
+          Elegí una imagen en el formulario para verla en grande en esta mesa.
         </p>
       </div>
     );
@@ -301,9 +356,28 @@ function BillboardPhotoFrame({
 
   if (loading) {
     return (
-      <div className="w-full max-w-[560px] overflow-hidden rounded-[var(--radius-panel)] border border-white/10 bg-[#1A1A1A] p-4 shadow-[var(--shadow-panel)]">
+      <div className={frameShell}>
         <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] bg-[#252525]">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#374151]/90 via-[#1A1A1A] to-[#0F766E]/50 motion-safe:animate-pulse motion-reduce:animate-none" />
+          {url ? (
+            <Image
+              src={url}
+              alt=""
+              aria-hidden
+              width={1120}
+              height={840}
+              unoptimized
+              sizes="(max-width: 1280px) 90vw, 560px"
+              className="absolute inset-0 h-full w-full object-contain opacity-35"
+            />
+          ) : null}
+          <div
+            className={
+              url
+                ? "absolute inset-0 bg-gradient-to-br from-[#374151]/85 via-[#1A1A1A]/70 to-[#0F766E]/45 motion-safe:animate-pulse motion-reduce:animate-none"
+                : "absolute inset-0 bg-gradient-to-br from-[#374151]/90 via-[#1A1A1A] to-[#0F766E]/50 motion-safe:animate-pulse motion-reduce:animate-none"
+            }
+            aria-hidden
+          />
           <div className="relative flex h-full flex-col justify-between p-5">
             <div className="space-y-3">
               <SkeletonBlock
@@ -331,12 +405,31 @@ function BillboardPhotoFrame({
             </div>
           </div>
         </div>
+        <figcaption className="sr-only" aria-live="polite">
+          Leyendo la foto seleccionada
+        </figcaption>
       </div>
     );
   }
 
+  if (url) {
+    return (
+      <figure className={frameShell}>
+        <Image
+          src={url}
+          alt={alt}
+          width={1120}
+          height={840}
+          unoptimized
+          sizes="(max-width: 1280px) 90vw, 560px"
+          className="aspect-[4/3] w-full rounded-[var(--radius-card)] object-contain"
+        />
+      </figure>
+    );
+  }
+
   return (
-    <div className="w-full max-w-[560px] overflow-hidden rounded-[var(--radius-panel)] border border-white/10 bg-[#1A1A1A] p-4 shadow-[var(--shadow-panel)]">
+    <div className={frameShell}>
       <div className="aspect-[4/3] rounded-[var(--radius-card)] bg-gradient-to-br from-[#374151] via-[#1A1A1A] to-[#0F766E] p-5">
         <div className="flex h-full flex-col justify-between rounded-[var(--radius-card)] border border-white/20 bg-white/10 p-5 text-white backdrop-blur-[2px]">
           <div>
@@ -348,7 +441,7 @@ function BillboardPhotoFrame({
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3 text-xs text-white/75">
-            <span>Ilustración posterior al envío exitoso</span>
+            <span>Ilustración cuando no hay vista previa local</span>
             <span>Zona: San Salvador</span>
           </div>
         </div>

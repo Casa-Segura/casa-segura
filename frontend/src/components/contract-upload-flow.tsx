@@ -1,17 +1,23 @@
 "use client";
 
 import type { DragEvent } from "react";
-import { useCallback, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { FileArrowUp, Trash } from "@phosphor-icons/react";
 import { submitContractUploadFlow } from "@/actions/contract-flow";
 import { AnalysisWorkbench } from "@/components/analysis-workbench";
 import { ContractAnalysisLoadingPanel } from "@/components/contract-analysis-loading-panel";
 import {
+  contractFilePreviewKind,
+  defaultContractPreviewFileIndex,
+} from "@/components/contract-upload-preview.helpers";
+import {
   CasaButton,
   DisclaimerPanel,
   FindingCard,
   LegalSummary,
+  SkeletonBlock,
   StepPill,
   cx,
   focusRing,
@@ -31,6 +37,23 @@ import {
   type DeliveryDraft,
   validateDeliveryForSubmit,
 } from "@/domain/delivery-channel";
+
+const ContractUploadPreview = dynamic(
+  () => import("@/components/contract-upload-preview"),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="flex min-h-[min(50vh,420px)] flex-col justify-center gap-3 rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-[var(--shadow-soft)]"
+        aria-busy="true"
+      >
+        <SkeletonBlock className="h-4 w-2/5" label="Cargando vista previa" />
+        <SkeletonBlock className="h-48 w-full" label="Cargando documento" />
+        <SkeletonBlock className="h-4 w-3/5" label="Cargando vista previa" />
+      </div>
+    ),
+  },
+);
 
 type Phase = "empty" | "selected";
 
@@ -84,6 +107,7 @@ export function ContractUploadFlow() {
   const [phase, setPhase] = useState<Phase>("empty");
   const [busy, setBusy] = useState(false);
   const [loadingSession, setLoadingSession] = useState(0);
+  const [previewFileIndex, setPreviewFileIndex] = useState(0);
 
   const [globalError, setGlobalError] = useState("");
   const [disclaimerReminder, setDisclaimerReminder] = useState(false);
@@ -97,6 +121,39 @@ export function ContractUploadFlow() {
     () => CONTRACT_ACCEPTABLE_MIME_TYPES.join(","),
     [],
   );
+
+  const resolvedPreviewFileIndex = useMemo(() => {
+    if (files.length === 0) return 0;
+    if (previewFileIndex >= 0 && previewFileIndex < files.length) {
+      return previewFileIndex;
+    }
+    return defaultContractPreviewFileIndex(files);
+  }, [files, previewFileIndex]);
+
+  const previewTargetFile =
+    busy || files.length === 0
+      ? null
+      : (files[resolvedPreviewFileIndex] ?? null);
+
+  const previewObjectUrl = useMemo(
+    () => (previewTargetFile ? URL.createObjectURL(previewTargetFile) : null),
+    [previewTargetFile],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+    };
+  }, [previewObjectUrl]);
+
+  const mesaAssetPreview =
+    !busy && previewObjectUrl && previewTargetFile
+      ? {
+          kind: contractFilePreviewKind(previewTargetFile),
+          objectUrl: previewObjectUrl,
+          fileName: previewTargetFile.name,
+        }
+      : null;
 
   const ingestClientFiles = useCallback(
     (incoming: readonly File[]) => {
@@ -125,12 +182,27 @@ export function ContractUploadFlow() {
       }
       if (errors.length) setGlobalError(errors[0] ?? "");
 
+      const safeFocusedIdx =
+        files.length === 0
+          ? 0
+          : previewFileIndex >= 0 && previewFileIndex < files.length
+            ? previewFileIndex
+            : defaultContractPreviewFileIndex(files);
+      const prevFocused = files[safeFocusedIdx] ?? null;
+
       next.sort((a, b) => a.name.localeCompare(b.name));
       setFiles(next);
       setPhase(next.length ? "selected" : "empty");
+      if (next.length === 0) {
+        setPreviewFileIndex(0);
+      } else if (prevFocused && next.includes(prevFocused)) {
+        setPreviewFileIndex(next.indexOf(prevFocused));
+      } else {
+        setPreviewFileIndex(defaultContractPreviewFileIndex(next));
+      }
       if (!errors.length) setGlobalError("");
     },
-    [files],
+    [files, previewFileIndex],
   );
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -246,6 +318,12 @@ export function ContractUploadFlow() {
     const next = files.filter((_, i) => i !== idx);
     setFiles(next);
     setPhase(next.length ? "selected" : "empty");
+    setPreviewFileIndex((pi) => {
+      if (next.length === 0) return 0;
+      if (idx < pi) return pi - 1;
+      if (idx === pi) return Math.min(pi, next.length - 1);
+      return pi;
+    });
   };
 
   return (
@@ -364,23 +442,57 @@ export function ContractUploadFlow() {
               {files.map((f, i) => (
                 <li
                   key={`${f.name}-${f.lastModified}-${i}`}
-                  className="flex items-start justify-between gap-3 px-3 py-3"
+                  className={cx(
+                    "flex flex-wrap items-start justify-between gap-2 px-3 py-3 transition-colors duration-[var(--motion-fast)]",
+                    resolvedPreviewFileIndex === i
+                      ? "bg-accent-light/40 ring-2 ring-accent/20 ring-inset"
+                      : "",
+                  )}
                 >
-                  <span className="min-w-0 flex-1 break-words text-sm text-text-primary">
+                  <span className="min-w-0 flex-1 basis-[min(100%,220px)] break-words text-sm text-text-primary">
                     {f.name}
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => removeAt(i)}
-                    className={`inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-[var(--radius-input)] text-accent transition-[background-color,transform] duration-[var(--motion-fast)] hover:bg-accent-light active:translate-y-px disabled:opacity-45 ${focusRing}`}
-                    disabled={busy}
-                    aria-label={`Quitar archivo ${f.name}`}
-                  >
-                    <Trash size={18} aria-hidden />
-                  </button>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewFileIndex(i)}
+                      disabled={busy}
+                      aria-current={
+                        resolvedPreviewFileIndex === i ? "true" : undefined
+                      }
+                      className={cx(
+                        "inline-flex min-h-[44px] items-center rounded-[var(--radius-input)] px-3 text-sm font-semibold text-accent transition-[background-color,transform] duration-[var(--motion-fast)] hover:bg-accent-light active:translate-y-px disabled:opacity-45",
+                        focusRing,
+                      )}
+                    >
+                      Vista previa
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeAt(i)}
+                      className={`inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-[var(--radius-input)] text-accent transition-[background-color,transform] duration-[var(--motion-fast)] hover:bg-accent-light active:translate-y-px disabled:opacity-45 ${focusRing}`}
+                      disabled={busy}
+                      aria-label={`Quitar archivo ${f.name}`}
+                    >
+                      <Trash size={18} aria-hidden />
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
+          ) : null}
+
+          {!busy && previewObjectUrl && files.length > 0 ? (
+            <ContractUploadPreview
+              key={previewObjectUrl}
+              kind={contractFilePreviewKind(
+                files[resolvedPreviewFileIndex]!,
+              )}
+              objectUrl={previewObjectUrl}
+              fileName={
+                files[resolvedPreviewFileIndex]!.name
+              }
+            />
           ) : null}
         </section>
 
@@ -476,6 +588,7 @@ export function ContractUploadFlow() {
               onClick={() => {
                 setResult(null);
                 setFiles([]);
+                setPreviewFileIndex(0);
                 setPhase("empty");
                 setGlobalError("");
                 setDisclaimerAccepted(false);
@@ -492,6 +605,7 @@ export function ContractUploadFlow() {
       <AnalysisWorkbench
         mode={busy ? "loading" : result?.kind === "success" ? "complete" : "preview"}
         publicShortId={result?.kind === "success" ? result.submissionId : undefined}
+        assetPreview={mesaAssetPreview ?? undefined}
       />
     </div>
   );

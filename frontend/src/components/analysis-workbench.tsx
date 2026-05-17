@@ -1,7 +1,12 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { CheckCircle, DownloadSimple, ShareNetwork } from "@phosphor-icons/react";
+import {
+  CheckCircle,
+  DownloadSimple,
+  ShareNetwork,
+} from "@phosphor-icons/react";
 import {
   BrandMark,
   CasaButton,
@@ -15,6 +20,28 @@ import {
   cx,
   type ProgressStep,
 } from "@/components/casa-ui";
+
+const ContractUploadPreview = dynamic(
+  () => import("@/components/contract-upload-preview"),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="flex min-h-0 flex-1 flex-col justify-center gap-3 rounded-[var(--radius-card)] border border-border bg-surface p-4"
+        aria-busy="true"
+      >
+        <SkeletonBlock className="h-3 w-28" label="Cargando vista previa" />
+        <SkeletonBlock className="h-40 w-full" label="Cargando documento" />
+      </div>
+    ),
+  },
+);
+
+export type AnalysisWorkbenchAssetPreview = {
+  kind: "pdf" | "image";
+  objectUrl: string;
+  fileName: string;
+};
 
 type WorkbenchMode = "loading" | "complete" | "preview";
 
@@ -59,14 +86,18 @@ const completedSteps: ProgressStep[] = defaultSteps.map((step) => ({
 export function AnalysisWorkbench({
   mode = "preview",
   publicShortId,
+  assetPreview,
 }: {
   mode?: WorkbenchMode;
   publicShortId?: string;
+  assetPreview?: AnalysisWorkbenchAssetPreview | null;
 }) {
   const complete = mode === "complete";
   const loading = mode === "loading";
   const preview = !loading && !complete;
+  const liveAsset = preview ? assetPreview ?? undefined : undefined;
   const showOutcomeActions = complete;
+  const showLivePreview = Boolean(liveAsset);
   const reduceMotion = useReducedMotion();
   const enter = reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 };
   const leave = reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -8 };
@@ -84,17 +115,37 @@ export function AnalysisWorkbench({
           <BrandMark />
           <span className="min-w-0 truncate text-xs font-medium text-text-secondary">
             {preview
-              ? "Sin documento aún"
+              ? liveAsset
+                ? liveAsset.fileName
+                : "Sin documento aún"
               : loading
                 ? "Leyendo tu contrato…"
                 : "Contrato_Venta_Rivas.pdf"}
           </span>
         </header>
-        <div className="flex flex-1 items-center justify-center bg-surface-muted p-6">
-          <DocumentPreview
-            phase={loading ? "scanning" : complete ? "result" : "idle"}
-            className="w-full max-w-[560px]"
-          />
+        <div
+          className={cx(
+            "flex min-h-0 flex-1 bg-surface-muted",
+            showLivePreview
+              ? "min-h-0 flex-col overflow-hidden p-3"
+              : "items-center justify-center p-6",
+          )}
+        >
+          {liveAsset ? (
+            <ContractUploadPreview
+              key={liveAsset.objectUrl}
+              kind={liveAsset.kind}
+              objectUrl={liveAsset.objectUrl}
+              fileName={liveAsset.fileName}
+              density="compact"
+              fillParent
+            />
+          ) : (
+            <DocumentPreview
+              phase={loading ? "scanning" : complete ? "result" : "idle"}
+              className="w-full max-w-[560px]"
+            />
+          )}
         </div>
       </div>
 
