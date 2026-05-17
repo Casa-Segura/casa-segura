@@ -1,0 +1,9 @@
+<footer class="cs-footer" data-section="footer">
+    <p>{{ ctx.footer.extended_disclaimer_es }}</p>
+    <p class="cs-muted">{{ ctx.footer.versions_line_es }}</p>
+    <p class="cs-muted">Hash del análisis: <code>{{ ctx.footer.integrity_hash_short }}</code></p>
+    {% if ctx.footer.aggregate_project_note_es %}
+        <p class="cs-muted">{{ ctx.footer.aggregate_project_note_es }}</p>
+    {% endif %}
+    <p class="cs-muted">{{ ctx.footer.error_report_es }}</p>
+</footer>

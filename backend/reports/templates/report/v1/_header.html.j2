@@ -1,0 +1,24 @@
+<header class="cs-header" data-section="header">
+    <div class="cs-wordmark">Casa Segura</div>
+    <h1 class="cs-section-title">Análisis de Contrato Inmobiliario</h1>
+    <div class="cs-meta">
+        <span><strong>ID:</strong> {{ ctx.header.public_short_id }}</span>
+        <span><strong>Fecha:</strong> {{ ctx.header.analysis_date_long_es }}</span>
+        <span><strong>Tipo detectado:</strong> {{ ctx.header.contract_type_label }}</span>
+        {% if ctx.header.project_canonical_name %}
+            <span><strong>Proyecto:</strong> {{ ctx.header.project_canonical_name }}</span>
+            <span class="cs-muted">{{ ctx.header.project_name_disclaimer }}</span>
+        {% endif %}
+    </div>
+    {% if ctx.header.contract_type_reclassified %}
+        <p class="cs-reclass">
+            <strong>Reclasificación:</strong>
+            {% if ctx.header.reclassification_reason %}
+                {{ ctx.header.reclassification_reason }}
+            {% else %}
+                El contrato fue reclasificado durante el análisis. Revisa la sección de hallazgos.
+            {% endif %}
+        </p>
+    {% endif %}
+    <p class="cs-disclaimer" role="note">{{ ctx.header.invariant_disclaimer }}</p>
+</header>

@@ -1,0 +1,28 @@
+<section class="cs-categories" data-section="categories" aria-labelledby="cs-categories-title">
+    <h2 id="cs-categories-title" class="cs-section-title">Desglose por categoría</h2>
+    {% for block in ctx.categories %}
+        <details>
+            <summary>
+                Categoría {{ block.code }} — {{ block.name_es }}
+                <span class="cs-muted">(peso global {{ block.weight_global_pct }}%)</span>
+            </summary>
+            <div style="padding: 8px 16px;">
+                <p><strong>Puntaje parcial:</strong> {{ block.score | round1 }} / 10</p>
+                <div class="cs-category-bar" aria-hidden="true">
+                    <span style="width: {{ block.bar_pct }}%;"></span>
+                </div>
+                {% if block.criterion_rows %}
+                    <ul>
+                        {% for row in block.criterion_rows %}
+                            <li>
+                                <span aria-hidden="true">{{ row.icon }}</span>
+                                <span><strong>{{ row.criterion_id }}</strong> · {{ row.state_label_es }} · {{ row.justification }}</span>
+                                <span class="cs-muted">{{ row.score | round1 }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </details>
+    {% endfor %}
+</section>

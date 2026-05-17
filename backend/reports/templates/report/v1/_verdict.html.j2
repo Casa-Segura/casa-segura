@@ -1,0 +1,24 @@
+<section class="cs-verdict" data-section="verdict" aria-labelledby="cs-verdict-title">
+    <h2 id="cs-verdict-title" class="cs-section-title">Veredicto general</h2>
+    <div class="cs-score-block" style="--band:{{ ctx.verdict.band_hex }}">
+        <span class="cs-score" aria-label="Puntaje {{ ctx.verdict.score_total | round1 }} sobre 10">
+            {{ ctx.verdict.score_total | round1 }}
+        </span>
+        <span class="cs-band">
+            <span aria-hidden="true">{{ ctx.verdict.band_icon }}</span>
+            {{ ctx.verdict.band_label_es }}
+        </span>
+    </div>
+    <p>{{ ctx.verdict.executive_summary }}</p>
+    {% if ctx.verdict.override_active %}
+        <div class="cs-override-box" role="alert">
+            <h3>Hallazgo crítico</h3>
+            <ul>
+                {% for entry in ctx.verdict.overrides %}
+                    <li><strong>{{ entry.code }}:</strong> {{ entry.title_es }}</li>
+                {% endfor %}
+            </ul>
+            <p>{{ ctx.verdict.override_warning_es }}</p>
+        </div>
+    {% endif %}
+</section>

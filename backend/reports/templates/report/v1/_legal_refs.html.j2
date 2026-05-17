@@ -1,0 +1,16 @@
+<section class="cs-legal-refs" data-section="legal-refs" aria-labelledby="cs-legal-refs-title">
+    <h2 id="cs-legal-refs-title" class="cs-section-title">Bases legales referenciadas</h2>
+    {% if ctx.legal_refs.entries %}
+        <ul>
+            {% for ref in ctx.legal_refs.entries %}
+                <li>
+                    <strong>{{ ref.law_title }}, {{ ref.article }}</strong>
+                    <p>{{ ref.paraphrased_quote }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="cs-muted">{{ ctx.legal_refs.empty_state_es }}</p>
+    {% endif %}
+    <p class="cs-muted">{{ ctx.legal_refs.stewardship_note_es }}</p>
+</section>

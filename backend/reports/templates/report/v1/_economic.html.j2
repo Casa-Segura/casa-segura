@@ -1,0 +1,57 @@
+<section class="cs-economic" data-section="economic" aria-labelledby="cs-economic-title">
+    <h2 id="cs-economic-title" class="cs-section-title">Análisis económico</h2>
+    {% if not ctx.economic.present %}
+        <p class="cs-muted">
+            Este tipo de contrato no requiere comparación económica detallada. Si esperabas
+            verla aquí, revisa que el documento incluya los datos financieros.
+        </p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Concepto</th>
+                    <th scope="col">Contrato</th>
+                    <th scope="col">Mercado</th>
+                    <th scope="col">Diferencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in ctx.economic.rows %}
+                    <tr>
+                        <th scope="row">{{ row.label_es }}</th>
+                        <td>{{ row.contract_value_es }}</td>
+                        <td>{{ row.benchmark_value_es or '—' }}</td>
+                        <td class="cs-assessment-{{ row.assessment }}">{{ row.delta_es or '—' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if ctx.economic.overcost_headline_es %}
+            <p><strong>{{ ctx.economic.overcost_headline_es }}</strong></p>
+        {% endif %}
+        {% if ctx.economic.what_changes_would_save_es %}
+            <h3>Qué cambios te ahorrarían dinero</h3>
+            <ul>
+                {% for item in ctx.economic.what_changes_would_save_es %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {# Inline SVG comparison bar: tasa contrato vs benchmark, if available. #}
+        {% set rate_row = (ctx.economic.rows | selectattr('label_es', 'equalto', 'Tasa efectiva anual') | list | first) %}
+        {% if rate_row and rate_row.benchmark_value_es %}
+            <h3>Comparación de tasa</h3>
+            <svg viewBox="0 0 320 80" role="img" aria-label="Comparación de tasa contrato vs mercado">
+                <text x="0" y="14" font-size="10" fill="#4B5563">Contrato: {{ rate_row.contract_value_es }}</text>
+                <rect x="0" y="20" width="280" height="14" fill="#EF4444" rx="3"></rect>
+                <text x="0" y="54" font-size="10" fill="#4B5563">Mercado: {{ rate_row.benchmark_value_es }}</text>
+                <rect x="0" y="60" width="140" height="14" fill="#10B981" rx="3"></rect>
+            </svg>
+        {% endif %}
+    {% endif %}
+    {% if ctx.economic.show_art_1686_warning %}
+        <div class="cs-art-1686" role="note">
+            <strong>Aviso Art. 1686 CC.</strong> {{ ctx.economic.art_1686_warning_es }}
+        </div>
+    {% endif %}
+</section>
