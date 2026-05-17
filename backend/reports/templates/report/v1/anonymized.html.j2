@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Análisis de Contrato Casa Segura — {{ ctx.public_short_id }}</title>
+    {% include "_styles.html.j2" %}
+</head>
+<body>
+{% include "_header.html.j2" %}
+<section class="cs-verdict" data-section="verdict" aria-labelledby="cs-verdict-title">
+    <h2 id="cs-verdict-title" class="cs-section-title">Resumen general</h2>
+    <div class="cs-score-block" style="--band:{{ ctx.verdict.band_hex }}">
+        <span class="cs-score">{{ ctx.verdict.score_total | round1 }}</span>
+        <span class="cs-band" aria-label="Banda {{ ctx.verdict.band_label_es }}">
+            {{ ctx.verdict.band_icon }} {{ ctx.verdict.band_label_es }}
+        </span>
+    </div>
+    <p>{{ ctx.verdict.executive_summary }}</p>
+</section>
+<section class="cs-anonymized-notice" role="note">
+    <h2 class="cs-section-title">Análisis anonimizado</h2>
+    <p>
+        Este análisis fue anonimizado{% if ctx.anonymized_at %} el {{ ctx.anonymized_at }}{% endif %}
+        para proteger tu privacidad. Solo conservamos el resumen agregado. Si necesitas el análisis
+        completo, sube el contrato de nuevo.
+    </p>
+</section>
+{% include "_footer.html.j2" %}
+{% include "_scripts.html.j2" %}
+</body>
+</html>

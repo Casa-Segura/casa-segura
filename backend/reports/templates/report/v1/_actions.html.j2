@@ -1,0 +1,36 @@
+<section class="cs-actions" data-section="actions" aria-labelledby="cs-actions-title">
+    <h2 id="cs-actions-title" class="cs-section-title">Acciones sugeridas</h2>
+    <div class="cs-actions-grid">
+        <div>
+            <h3>Antes de firmar, pídele al vendedor</h3>
+            {% if ctx.actions.green_band_substitute_es and not ctx.actions.seller_items %}
+                <p class="cs-muted">{{ ctx.actions.green_band_substitute_es }}</p>
+            {% else %}
+                <ol>
+                    {% for item in ctx.actions.seller_items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ol>
+            {% endif %}
+        </div>
+        <div>
+            <h3>Lleva esto a tu abogado</h3>
+            <ol>
+                {% for item in ctx.actions.lawyer_items %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ol>
+            {% if ctx.actions.lawyer_block_fallback_used %}
+                <p class="cs-muted">Estos puntos se generaron a partir de los hallazgos principales del análisis.</p>
+            {% endif %}
+        </div>
+        <div>
+            <h3>Documentos que debes exigir</h3>
+            <ol>
+                {% for item in ctx.actions.documents_items %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+</section>

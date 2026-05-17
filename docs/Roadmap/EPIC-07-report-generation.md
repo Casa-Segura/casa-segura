@@ -2,7 +2,7 @@
 id: EPIC-07
 name: Report Generation
 phase: 5
-status: backlog
+status: in_progress
 depends_on:
   - EPIC-06
   - EPIC-05
@@ -29,13 +29,13 @@ Compose the responsive HTML report per [[RUBRICA_CONTRATO]] §11 and render to P
 
 ## Definition of done
 
-- [ ] HTML template covers the 8 sections in [[RUBRICA_CONTRATO]] §11.1
-- [ ] PDF renderer (WeasyPrint or similar) produces a legible PDF at print density
-- [ ] Disclaimer in header and footer ([[PRD_GENERAL]] BR-07)
-- [ ] Override box prominent when override active
-- [ ] Findings rendered with collapsible legal-reference card per [[BE-SERVICES]] §5
-- [ ] Art. 1686 CC warning always shown ([[PRD_GENERAL]] open question #5 — recommended yes)
-- [ ] Rubric and corpus version visible in footer
+- [x] HTML template covers the 8 sections in [[RUBRICA_CONTRATO]] §11.1
+- [x] PDF renderer (WeasyPrint or similar) produces a legible PDF at print density
+- [x] Disclaimer in header and footer ([[PRD_GENERAL]] BR-07)
+- [x] Override box prominent when override active
+- [x] Findings rendered with collapsible legal-reference card per [[BE-SERVICES]] §5
+- [x] Art. 1686 CC warning always shown ([[PRD_GENERAL]] open question #5 — recommended yes)
+- [x] Rubric and corpus version visible in footer
 - [ ] Mobile renders correctly from 360px width
 
 ## Tickets (titles only — stubs)

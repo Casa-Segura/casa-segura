@@ -1,0 +1,54 @@
+<section class="cs-findings" data-section="findings" aria-labelledby="cs-findings-title">
+    <h2 id="cs-findings-title" class="cs-section-title">Hallazgos destacados</h2>
+    {% if ctx.findings.critical_disclaimer_es %}
+        <p class="cs-disclaimer" role="note">{{ ctx.findings.critical_disclaimer_es }}</p>
+    {% endif %}
+    {% for finding in ctx.findings.primary %}
+        <article class="cs-finding-card cs-severity-{{ finding.severity }}" id="finding-{{ finding.id }}" aria-labelledby="finding-title-{{ finding.id }}">
+            <h3 id="finding-title-{{ finding.id }}">
+                <span aria-hidden="true">{{ finding.severity_icon }}</span>
+                {{ finding.severity_label_es }} — {{ finding.title }}
+            </h3>
+            <p>{{ finding.description }}</p>
+            {% if finding.evidence_clause_snippet %}
+                <p class="cs-muted"><strong>Cláusula citada:</strong></p>
+                <div class="cs-evidence">{{ finding.evidence_clause_snippet }}</div>
+            {% endif %}
+            {% if finding.legal_basis %}
+                <h4>Bases legales</h4>
+                {% for ref in finding.legal_basis %}
+                    <div class="cs-legal-card">
+                        <strong>{{ ref.law_title }}, {{ ref.article }}</strong>
+                        <p>{{ ref.paraphrased_quote }}</p>
+                        <button type="button" data-cs-toggle="legal-{{ finding.id }}-{{ loop.index }}" aria-expanded="false">
+                            {{ ref.expand_label_es }}
+                        </button>
+                        <div id="legal-{{ finding.id }}-{{ loop.index }}" hidden>
+                            <p class="cs-muted">Texto íntegro no disponible en este reporte. Consulta el corpus o a tu abogado.</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% elif finding.grounding_tag_es %}
+                <p class="cs-muted">{{ finding.grounding_tag_es }}</p>
+            {% endif %}
+            <div class="cs-recommendation"><strong>Recomendación:</strong> {{ finding.recommendation }}</div>
+        </article>
+    {% endfor %}
+    {% if ctx.findings.collapsed_secondary %}
+        <details>
+            <summary>{{ ctx.findings.secondary_label_es }} ({{ ctx.findings.collapsed_secondary | length }})</summary>
+            {% for finding in ctx.findings.collapsed_secondary %}
+                <article class="cs-finding-card cs-severity-{{ finding.severity }}" id="finding-{{ finding.id }}">
+                    <h3>
+                        <span aria-hidden="true">{{ finding.severity_icon }}</span>
+                        {{ finding.severity_label_es }} — {{ finding.title }}
+                    </h3>
+                    <p>{{ finding.description }}</p>
+                    {% if finding.recommendation %}
+                        <p class="cs-muted"><strong>Recomendación:</strong> {{ finding.recommendation }}</p>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </details>
+    {% endif %}
+</section>

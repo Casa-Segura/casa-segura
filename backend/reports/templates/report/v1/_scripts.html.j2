@@ -1,0 +1,17 @@
+<script>
+// Expand/collapse helper — inline only, no external resources.
+document.addEventListener('click', function (event) {
+    var trigger = event.target.closest('[data-cs-toggle]');
+    if (!trigger) { return; }
+    var target = document.getElementById(trigger.getAttribute('data-cs-toggle'));
+    if (!target) { return; }
+    var collapsed = target.hasAttribute('hidden');
+    if (collapsed) {
+        target.removeAttribute('hidden');
+        trigger.setAttribute('aria-expanded', 'true');
+    } else {
+        target.setAttribute('hidden', '');
+        trigger.setAttribute('aria-expanded', 'false');
+    }
+});
+</script>
