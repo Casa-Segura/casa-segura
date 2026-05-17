@@ -3,8 +3,19 @@
 import type { DragEvent } from "react";
 import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FileArrowUp, Trash } from "@phosphor-icons/react";
 import { submitContractUploadFlow } from "@/actions/contract-flow";
+import { AnalysisWorkbench } from "@/components/analysis-workbench";
 import { ContractAnalysisLoadingPanel } from "@/components/contract-analysis-loading-panel";
+import {
+  CasaButton,
+  DisclaimerPanel,
+  FindingCard,
+  LegalSummary,
+  StepPill,
+  cx,
+  focusRing,
+} from "@/components/casa-ui";
 import { DisclaimerCallout } from "@/components/disclaimer-callout";
 import { DeliveryChannelFields } from "@/components/delivery-channel-fields";
 import {
@@ -19,9 +30,6 @@ import {
   type DeliveryDraft,
   validateDeliveryForSubmit,
 } from "@/domain/delivery-channel";
-
-const focusBtn =
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
 type Phase = "empty" | "selected";
 
@@ -240,236 +248,250 @@ export function ContractUploadFlow() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      {busy ? <ContractAnalysisLoadingPanel key={loadingSession} /> : null}
-      <header className="flex flex-col gap-2">
-        <h1
-          id={`${baseId}-h1`}
-          className="text-xl font-semibold text-text-primary"
+    <div className="grid w-full gap-6 lg:grid-cols-[minmax(360px,440px)_1fr] lg:items-start">
+      {busy ? (
+        <div className="lg:hidden">
+          <ContractAnalysisLoadingPanel key={loadingSession} />
+        </div>
+      ) : null}
+
+      <section className="flex flex-col gap-6 self-start rounded-[var(--radius-panel)] border border-border bg-surface p-5 shadow-[var(--shadow-soft)] sm:p-6">
+        <header className="flex flex-col gap-3">
+          <StepPill>Paso 2 de 4 · Subir contrato</StepPill>
+          <div>
+            <h1
+              id={`${baseId}-h1`}
+              className="text-balance text-2xl font-semibold tracking-tight text-text-primary"
+            >
+              Subí tu contrato
+            </h1>
+            <p className="mt-2 text-base leading-relaxed text-text-secondary">
+              Podés combinar PDF y fotos nítidas. Te avisamos por el canal que
+              elijas cuando el análisis quede listo.
+            </p>
+          </div>
+        </header>
+
+        <section
+          aria-labelledby={`${baseId}-zone-title`}
+          className="flex flex-col gap-3"
         >
-          Subí tu contrato
-        </h1>
-        <p className="text-base leading-relaxed text-text-secondary">
-          Podés combinar páginas en PDF y fotos nítidas. Te avisamos en el canal
-          que elijas cuando el análisis quede listo.
-        </p>
-      </header>
+          <div className="flex items-center justify-between gap-3">
+            <h2
+              id={`${baseId}-zone-title`}
+              className="text-base font-semibold text-text-primary"
+            >
+              Archivos
+            </h2>
+            <span className="rounded-[var(--radius-pill)] bg-surface-muted px-2.5 py-1 text-xs text-text-secondary">
+              PDF, JPEG, PNG, HEIC, WEBP
+            </span>
+          </div>
 
-      <DeliveryChannelFields
-        idPrefix={`${baseId}-dlv`}
-        value={delivery}
-        fieldErrors={fieldErrors}
-        deliveryError={deliveryBanner}
-        onChange={(d) => {
-          setDelivery(d);
-          setFieldErrors({});
-          setDeliveryBanner("");
-        }}
-      />
+          <div
+            onDragEnter={(e) => {
+              e.preventDefault();
+            }}
+            onDragOver={(e) => {
+              e.preventDefault();
+            }}
+            onDrop={disclaimerAccepted ? onDrop : undefined}
+            aria-disabled={!disclaimerAccepted}
+            className={cx(
+              "rounded-[var(--radius-card)] border border-dashed px-4 py-6 transition-[background-color,border-color,opacity] duration-[var(--motion-base)]",
+              disclaimerAccepted
+                ? "border-border-strong bg-surface-subtle"
+                : "cursor-not-allowed border-border bg-surface-muted/70 opacity-70",
+            )}
+          >
+            <div className="flex flex-col items-center gap-4 text-center">
+              <span className="inline-flex size-12 items-center justify-center rounded-full bg-accent-light text-accent">
+                <FileArrowUp size={24} aria-hidden />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-text-primary">
+                  Arrastrá el archivo o elegilo desde tu dispositivo
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-text-secondary">
+                  Máximo 15 MB por archivo. La lectura funciona mejor con texto
+                  seleccionable o fotos bien iluminadas.
+                </p>
+              </div>
+              <CasaButton
+                disabled={!disclaimerAccepted || busy}
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full"
+                aria-labelledby={`${baseId}-zone-title`}
+                aria-controls={`${baseId}-file-input`}
+              >
+                Seleccionar archivos
+              </CasaButton>
+              <input
+                ref={fileInputRef}
+                id={`${baseId}-file-input`}
+                type="file"
+                multiple
+                accept={acceptAttr}
+                aria-label="Selector de contrato (PDF e imágenes)"
+                disabled={!disclaimerAccepted || busy}
+                className="sr-only"
+                onChange={onInputChange}
+              />
+            </div>
+          </div>
 
-      <div ref={disclaimerScrollRef}>
-        <DisclaimerCallout
-          variant="gate"
-          accepted={disclaimerAccepted}
-          onAcceptedChange={(v) => {
-            setDisclaimerAccepted(v);
-            if (v) setDisclaimerReminder(false);
+          {!disclaimerAccepted ? (
+            <p className="text-sm leading-relaxed text-text-secondary">
+              Aceptá el aviso legal para habilitar la subida y confirmar el
+              tratamiento del documento.
+            </p>
+          ) : null}
+
+          <div aria-live="polite">
+            <p className="text-xs text-text-secondary">
+              Estado: archivos{" "}
+              <span>{phase === "empty" ? "sin seleccionar" : "listos"}</span>
+              {!busy ? null : <> · enviándose</>}
+            </p>
+          </div>
+
+          {files.length > 0 ? (
+            <ul
+              className="flex flex-col divide-y divide-border rounded-[var(--radius-input)] border border-border bg-surface"
+              aria-label="Archivos listos para enviar"
+            >
+              {files.map((f, i) => (
+                <li
+                  key={`${f.name}-${f.lastModified}-${i}`}
+                  className="flex items-start justify-between gap-3 px-3 py-3"
+                >
+                  <span className="min-w-0 flex-1 break-words text-sm text-text-primary">
+                    {f.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeAt(i)}
+                    className={`inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-[var(--radius-input)] text-accent transition-[background-color,transform] duration-[var(--motion-fast)] hover:bg-accent-light active:translate-y-px disabled:opacity-45 ${focusRing}`}
+                    disabled={busy}
+                    aria-label={`Quitar archivo ${f.name}`}
+                  >
+                    <Trash size={18} aria-hidden />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </section>
+
+        <div ref={disclaimerScrollRef}>
+          <DisclaimerCallout
+            variant="gate"
+            accepted={disclaimerAccepted}
+            onAcceptedChange={(v) => {
+              setDisclaimerAccepted(v);
+              if (v) setDisclaimerReminder(false);
+            }}
+          />
+        </div>
+
+        <DeliveryChannelFields
+          idPrefix={`${baseId}-dlv`}
+          value={delivery}
+          fieldErrors={fieldErrors}
+          deliveryError={deliveryBanner}
+          onChange={(d) => {
+            setDelivery(d);
+            setFieldErrors({});
+            setDeliveryBanner("");
           }}
         />
-      </div>
 
-      <section
-        aria-labelledby={`${baseId}-zone-title`}
-        className="flex flex-col gap-3"
-      >
-        <h2
-          id={`${baseId}-zone-title`}
-          className="text-base font-semibold text-text-primary"
-        >
-          Archivos
-        </h2>
-        {!disclaimerAccepted ? (
-          <p className="text-sm leading-relaxed text-text-secondary">
-            Marcá la casilla de aviso legal del bloque de arriba para habilitar
-            la subida y evitar tratamiento sin tu consentimiento explícito.
-          </p>
+        {(disclaimerReminder || globalError) ? (
+          <div aria-live="assertive" className="flex flex-col gap-2">
+            {disclaimerReminder ? (
+            <p role="alert" className="text-sm font-semibold text-verdict-red">
+              Confirmá primero la casilla de aviso legal; sin eso tu envío puede
+              ser rechazado por el servidor.
+            </p>
+            ) : null}
+            {globalError ? (
+            <p role="alert" className="text-sm font-semibold text-verdict-red">
+              {globalError}
+            </p>
+            ) : null}
+          </div>
         ) : null}
 
-        <div
-          onDragEnter={(e) => {
-            e.preventDefault();
-          }}
-          onDragOver={(e) => {
-            e.preventDefault();
-          }}
-          onDrop={disclaimerAccepted ? onDrop : undefined}
-          aria-disabled={!disclaimerAccepted}
-          className={`rounded-[var(--radius-card)] border border-dashed ${
-            disclaimerAccepted
-              ? "border-border bg-surface"
-              : "cursor-not-allowed border-border opacity-55"
-          } px-4 py-6`}
-        >
-          <div className="flex flex-col items-center gap-3 text-center">
-            <button
-              type="button"
-              disabled={!disclaimerAccepted || busy}
-              onClick={() => fileInputRef.current?.click()}
-              className={`flex min-h-[44px] w-full items-center justify-center rounded-[var(--radius-input)] border border-accent bg-accent px-4 py-2 text-base font-semibold text-white transition-opacity hover:opacity-92 disabled:cursor-not-allowed disabled:opacity-40 ${focusBtn}`}
-              aria-labelledby={`${baseId}-zone-title`}
-              aria-controls={`${baseId}-file-input`}
+        {result?.kind === "success" ? (
+          <DisclaimerPanel tone="green">
+            <p
+              id={`${baseId}-ok`}
+              className="text-base font-semibold text-text-primary"
             >
-              Elegí tus archivos
-            </button>
-            <span className="text-sm text-text-secondary">
-              o dejalos caer dentro de este recuadro.
-            </span>
-            <input
-              ref={fileInputRef}
-              id={`${baseId}-file-input`}
-              type="file"
-              multiple
-              accept={acceptAttr}
-              aria-label="Selector de contrato (PDF e imágenes)"
-              disabled={!disclaimerAccepted || busy}
-              className="sr-only"
-              onChange={onInputChange}
+              Recibimos tu envío para analizarlo
+            </p>
+            <p className="mt-2 text-sm text-text-secondary">
+              Referencia rápida:{" "}
+              <span className="select-all font-mono text-xs text-text-primary">
+                {result.submissionId}
+              </span>
+              .
+            </p>
+            <p className="mt-2 text-sm text-text-secondary">
+              Canal elegido: {result.hint}
+            </p>
+          </DisclaimerPanel>
+        ) : null}
+
+        {result?.kind === "reject" ? (
+          <div role="alert" className="flex flex-col gap-3">
+            <FindingCard
+              tone="yellow"
+              title="No pudimos producir tu informe"
+              body="El material no alcanzó la calidad mínima para un análisis confiable. Probá con fotos más contrastadas o un PDF con texto seleccionable."
             />
+            <LegalSummary title="Motivos detectados">
+              <ul className="list-disc space-y-2 pl-5">
+                {result.reasons.map((r) => (
+                  <li key={r}>{r}</li>
+                ))}
+              </ul>
+            </LegalSummary>
           </div>
-        </div>
+        ) : null}
 
-        <div aria-live="polite">
-          <p className="text-xs text-text-secondary">
-            Estados: Archivos&nbsp;
-            <span>{phase === "empty" ? "vacío" : "seleccionados"}</span>
-            {!busy ? null : <> · enviándose</>}
-          </p>
-        </div>
-
-        {files.length > 0 ? (
-          <ul
-            className="flex flex-col divide-y divide-border rounded-[var(--radius-input)] border border-border bg-surface"
-            aria-label="Archivos listos para enviar"
+        <div className="flex flex-col gap-3 border-t border-border pt-5">
+          <CasaButton
+            disabled={busy}
+            onClick={submit}
+            className="w-full"
+            aria-busy={busy ? true : undefined}
           >
-            {files.map((f, i) => (
-              <li
-                key={`${f.name}-${f.lastModified}-${i}`}
-                className="flex items-start justify-between gap-3 px-3 py-3"
-              >
-                <span className="min-w-0 flex-1 break-words text-sm text-text-primary">
-                  {f.name}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => removeAt(i)}
-                  className={`min-h-[44px] min-w-[44px] shrink-0 rounded-[var(--radius-input)] px-3 text-sm font-medium text-accent underline-offset-4 hover:underline disabled:opacity-45 ${focusBtn}`}
-                  disabled={busy}
-                  aria-label={`Quitar archivo ${f.name}`}
-                >
-                  Quitar
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-text-secondary">Sin archivos aún.</p>
-        )}
+            {busy ? "Enviando tu contrato…" : "Enviar análisis"}
+          </CasaButton>
+          {(result || globalError || files.length) && !busy ? (
+            <CasaButton
+              variant="secondary"
+              onClick={() => {
+                setResult(null);
+                setFiles([]);
+                setPhase("empty");
+                setGlobalError("");
+                setDisclaimerAccepted(false);
+                setDelivery(defaultDeliveryDraft());
+              }}
+              className="w-full"
+            >
+              Empezar de nuevo
+            </CasaButton>
+          ) : null}
+        </div>
       </section>
 
-      <div aria-live="assertive" className="min-h-[2.5rem]">
-        {disclaimerReminder ? (
-          <p role="alert" className="text-sm font-semibold text-verdict-red">
-            Confirmá primero la casilla de aviso legal; sin eso tu envío puede
-            ser rechazado por el servidor.
-          </p>
-        ) : null}
-        {globalError ? (
-          <p role="alert" className="text-sm font-semibold text-verdict-red">
-            {globalError}
-          </p>
-        ) : null}
-      </div>
-
-      {result?.kind === "success" ? (
-        <aside
-          className="rounded-[var(--radius-card)] border border-verdict-green bg-verdict-green-bg px-4 py-4 shadow-sm"
-          role="status"
-          aria-labelledby={`${baseId}-ok`}
-        >
-          <p
-            id={`${baseId}-ok`}
-            className="text-base font-semibold text-text-primary"
-          >
-            Recibimos tu envío para analizarlo
-          </p>
-          <p className="mt-2 text-sm text-text-secondary">
-            Seguimos el proceso en segundo plano. Referencia rápida:{" "}
-            <span className="font-mono text-xs text-text-primary select-all">
-              {result.submissionId}
-            </span>
-            .
-          </p>
-          <p className="mt-2 text-sm text-text-secondary">
-            Canal elegido: {result.hint}. Si no ves nada, revisá el SMS, filtros
-            del correo o abrí el enlace web según cómo lo configuraste.
-          </p>
-        </aside>
-      ) : null}
-
-      {result?.kind === "reject" ? (
-        <aside
-          className="rounded-[var(--radius-card)] border border-verdict-yellow bg-verdict-yellow-bg px-4 py-4 shadow-sm"
-          role="alert"
-          aria-labelledby={`${baseId}-rej`}
-        >
-          <p
-            id={`${baseId}-rej`}
-            className="text-base font-semibold text-text-primary"
-          >
-            No pudimos producir tu informe a partir del material que mandaste.
-          </p>
-          <p className="mt-3 text-sm text-text-secondary">
-            Motivos que marcó el servicio para orientarte mejor:
-          </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-base text-text-primary">
-            {result.reasons.map((r) => (
-              <li key={r}>{r}</li>
-            ))}
-          </ul>
-          <p className="mt-4 text-sm text-text-secondary">
-            Podés probar fotos más contrastadas y con buena luz o un PDF nuevo
-            exportado con texto seleccionable.
-          </p>
-        </aside>
-      ) : null}
-
-      <div className="flex flex-col gap-3">
-        <button
-          type="button"
-          disabled={busy}
-          onClick={submit}
-          className={`flex min-h-[44px] w-full items-center justify-center rounded-[var(--radius-input)] bg-accent px-4 py-3 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-92 disabled:cursor-wait disabled:opacity-65 ${focusBtn}`}
-          aria-busy={busy ? true : undefined}
-        >
-          {busy ? "Enviando tu contrato..." : "Enviar"}
-        </button>
-        {(result || globalError || files.length) && !busy ? (
-          <button
-            type="button"
-            onClick={() => {
-              setResult(null);
-              setFiles([]);
-              setPhase("empty");
-              setGlobalError("");
-              setDisclaimerAccepted(false);
-              setDelivery(defaultDeliveryDraft());
-            }}
-            className={`flex min-h-[44px] w-full items-center justify-center rounded-[var(--radius-input)] border border-border bg-surface px-4 py-3 text-base font-medium text-text-primary ${focusBtn}`}
-          >
-            Empezar de nuevo
-          </button>
-        ) : null}
-      </div>
+      <AnalysisWorkbench
+        mode={busy ? "loading" : result?.kind === "success" ? "complete" : "preview"}
+        publicShortId={result?.kind === "success" ? result.submissionId : undefined}
+      />
     </div>
   );
 }

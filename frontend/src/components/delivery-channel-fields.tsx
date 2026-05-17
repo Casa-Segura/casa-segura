@@ -3,6 +3,8 @@ import type {
   DeliveryDraft,
   DeliverySubmitParts,
 } from "@/domain/delivery-channel";
+import { ChatText, EnvelopeSimple, LinkSimple } from "@phosphor-icons/react";
+import { cx, focusRing } from "@/components/casa-ui";
 
 const LABEL_BY_CHANNEL: Record<DeliveryChannel, string> = {
   sms_summary: "Te mandaré un SMS breve con el resultado y el enlace.",
@@ -16,9 +18,6 @@ const SUBLABEL_BY_CHANNEL: Record<DeliveryChannel, string> = {
   web_link: "No hace falta correo ni teléfono en este momento.",
 };
 
-const focusRing =
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
-
 type Props = {
   idPrefix: string;
   value: DeliveryDraft;
@@ -31,6 +30,12 @@ type Props = {
 export function DeliveryChannelFields(props: Props) {
   const { idPrefix, value, deliveryError, fieldErrors, onChange } = props;
   const groupName = `${idPrefix}-delivery-channel`;
+
+  const iconByChannel = {
+    sms_summary: ChatText,
+    email_pdf: EnvelopeSimple,
+    web_link: LinkSimple,
+  } satisfies Record<DeliveryChannel, typeof ChatText>;
 
   function setChannel(c: DeliveryChannel) {
     onChange({
@@ -64,31 +69,44 @@ export function DeliveryChannelFields(props: Props) {
         {(Object.keys(LABEL_BY_CHANNEL) as DeliveryChannel[]).map((ch) => {
           const cid = `${idPrefix}-ch-${ch}`;
           const selected = value.channel === ch;
+          const Icon = iconByChannel[ch];
           return (
             <label
               key={ch}
               htmlFor={cid}
-              className={`flex min-h-[44px] cursor-pointer flex-col rounded-[var(--radius-input)] border px-4 py-3 transition-colors touch-manipulation ${focusRing} ${
+              className={cx(
+                "flex min-h-[76px] cursor-pointer rounded-[var(--radius-card)] border px-4 py-3 transition-[background-color,border-color,transform] duration-[var(--motion-fast)] touch-manipulation active:translate-y-px",
+                focusRing,
                 selected
                   ? "border-accent bg-accent-light"
-                  : "border-border bg-surface hover:bg-bg"
-              }`}
+                  : "border-border bg-surface hover:bg-bg",
+              )}
             >
-              <span className="flex items-start gap-3">
+              <span className="flex min-w-0 flex-1 items-start gap-3">
                 <input
                   id={cid}
                   type="radio"
                   name={groupName}
                   value={ch}
                   checked={selected}
-                  className={`mt-1 size-5 shrink-0 accent-accent ${focusRing}`}
+                  className={`sr-only mt-1 size-5 shrink-0 accent-accent ${focusRing}`}
                   aria-describedby={`${cid}-help`}
                   onChange={() => {
                     setChannel(ch);
                   }}
                 />
+                <span
+                  className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full ${
+                    selected
+                      ? "bg-accent text-white"
+                      : "bg-surface-muted text-text-secondary"
+                  }`}
+                  aria-hidden
+                >
+                  <Icon size={18} weight="regular" />
+                </span>
                 <span className="min-w-0 flex-1 text-base leading-snug text-text-primary">
-                  <span className="font-medium">
+                  <span className="block font-medium">
                     {ch === "sms_summary"
                       ? "SMS (resumen)"
                       : ch === "email_pdf"
@@ -99,6 +117,12 @@ export function DeliveryChannelFields(props: Props) {
                     {LABEL_BY_CHANNEL[ch]}
                   </span>
                 </span>
+                <span
+                  className={`mt-1 size-4 shrink-0 rounded-full border ${
+                    selected ? "border-accent bg-accent" : "border-border"
+                  }`}
+                  aria-hidden
+                />
               </span>
               <span id={`${cid}-help`} className="sr-only">
                 {SUBLABEL_BY_CHANNEL[ch]}
@@ -108,13 +132,13 @@ export function DeliveryChannelFields(props: Props) {
         })}
       </div>
 
-      <div aria-live="polite" className="min-h-[1rem]">
-        {deliveryError ? (
+      {deliveryError ? (
+        <div aria-live="polite">
           <p role="alert" className="text-sm font-medium text-verdict-red">
             {deliveryError}
           </p>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
 
       {value.channel === "email_pdf" ? (
         <div className="flex flex-col gap-2">
@@ -138,7 +162,7 @@ export function DeliveryChannelFields(props: Props) {
             onChange={(e) => onChange({ ...value, email: e.target.value })}
             onBlur={() => props.onBlurField?.("email")}
             className={`min-h-[44px] rounded-[var(--radius-input)] border border-border px-4 py-2 text-base text-text-primary outline-none placeholder:text-text-secondary ${focusRing}`}
-            placeholder="correo@ejemplo.com"
+            placeholder="correo@ejemplo.com…"
           />
           {fieldErrors.email ? (
             <p
@@ -180,7 +204,7 @@ export function DeliveryChannelFields(props: Props) {
             }
             onBlur={() => props.onBlurField?.("phone")}
             className={`min-h-[44px] rounded-[var(--radius-input)] border border-border px-4 py-2 text-base font-mono text-text-primary outline-none placeholder:text-text-secondary ${focusRing}`}
-            placeholder="+503XXXXXXXX"
+            placeholder="+503XXXXXXXX…"
           />
           {fieldErrors.phone ? (
             <p
