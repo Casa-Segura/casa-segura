@@ -88,4 +88,5 @@ PUBLIC_ERROR_CODES: dict[str, str] = {
     "internal_error": "Unhandled server error.",
     "upstream_error": "Upstream provider failed.",
     "throttled": "Rate limit exceeded.",
+    "project_verification_disabled": "Optional project verification stubs are disabled for this deployment.",
 }

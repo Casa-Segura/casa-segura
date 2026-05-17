@@ -64,6 +64,8 @@ INSTALLED_APPS = [
     "classification.infrastructure.django.apps.ClassificationConfig",
     "reports.infrastructure.django.apps.ReportsConfig",
     "delivery.infrastructure.django.apps.DeliveryConfig",
+    # EPIC-12 optional stubs (`/api/v1/project-verification/...`).
+    "project_verification.apps.ProjectVerificationConfig",
 ]
 
 
@@ -248,6 +250,14 @@ EMBEDDING_BATCH_SIZE = env.int("EMBEDDING_BATCH_SIZE", default=32)
 ACTIVE_RUBRIC_VERSION = env("ACTIVE_RUBRIC_VERSION", default="")
 ACTIVE_CORPUS_VERSION = env("ACTIVE_CORPUS_VERSION", default=env("ACTIVE_CORPUSF_VERSION", default=""))
 ACTIVE_BENCHMARK_VERSION = env("ACTIVE_BENCHMARK_VERSION", default="")
+
+
+# ─── Optional project verification (EPIC-12 / CS-356) ───
+# Mirrors `frontend` `PROJECT_VERIFICATION_ENABLED`; default-off for safe prod rollouts.
+PROJECT_VERIFICATION_ENABLED = env.bool(
+    "PROJECT_VERIFICATION_ENABLED",
+    default=False,
+)
 
 
 LANGUAGE_CODE = "en-us"

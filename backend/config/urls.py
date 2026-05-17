@@ -15,6 +15,13 @@ swagger_url_patterns = [
 api_v1_url_patterns = [
     path("", include("ingestion.interfaces.api.urls", namespace="ingestion")),
     path("corpus/", include("corpus.interfaces.api.urls", namespace="corpus")),
+    path(
+        "project-verification/",
+        include(
+            ("project_verification.interfaces.api.urls", "project_verification"),
+            namespace="project_verification",
+        ),
+    ),
 ]
 
 
