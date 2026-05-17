@@ -64,10 +64,20 @@ def test_size_zero_bytes_is_rejected_as_empty_file():
 
 @pytest.mark.django_db
 def test_size_one_byte_passes_validation_then_falls_to_routing():
-    # 1 byte is invalid as a PDF/image but it must clear the size cap (>0)
-    # and reach the routing step (which will eventually reject it).
-    with pytest.raises(NotAnalyzableError):
-        ingest_upload(_request(b"x"))
+    # 1 byte clears the size cap (>0). It must reach extraction and be
+    # rejected there — the orchestrator captures the NotAnalyzableError
+    # and persists the failure on the submission rather than re-raising.
+    with patch(
+        "ingestion.application.upload_service._run_extractor",
+        side_effect=NotAnalyzableError(
+            reason=NotAnalyzableReason.UPSTREAM_LLM_ERROR,
+            message="pixtral could not parse 1 byte",
+        ),
+    ):
+        outcome = ingest_upload(_request(b"x"))
+    assert outcome.created is True
+    assert outcome.submission.processing_status == ProcessingStatus.FAILED_EXTRACTION.value
+    assert outcome.submission.error_code == NotAnalyzableReason.UPSTREAM_LLM_ERROR.value
 
 
 @pytest.mark.django_db

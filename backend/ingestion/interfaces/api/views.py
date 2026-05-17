@@ -11,7 +11,11 @@ from rest_framework.views import APIView
 
 from ingestion.application.ocr.errors import NotAnalyzableError
 from ingestion.application.upload_service import UploadRequest, ingest_upload
-from ingestion.domain.enums import DisclaimerAcceptanceMethod, SubmissionSource
+from ingestion.domain.enums import (
+    DisclaimerAcceptanceMethod,
+    ExtractionStrategy,
+    SubmissionSource,
+)
 from ingestion.infrastructure.django.models import ContractSubmission
 from ingestion.interfaces.api.disclaimer_gate import (
     merge_submission_upload_aliases,
@@ -52,6 +56,25 @@ class SubmissionUploadView(APIView):
         )
         source = SubmissionSource(serializer.validated_data["source"])
 
+        forced = request.headers.get("X-Force-Strategy")
+        force_strategy: ExtractionStrategy | None = None
+        if forced:
+            try:
+                force_strategy = ExtractionStrategy(forced.strip().lower())
+            except ValueError:
+                allowed = sorted(s.value for s in ExtractionStrategy)
+                return Response(
+                    {
+                        "error": "validation_error",
+                        "error_code": "INVALID_FORCE_STRATEGY",
+                        "detail": (
+                            f"X-Force-Strategy={forced!r} is not a valid extraction "
+                            f"strategy. Allowed: {allowed}."
+                        ),
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         req = UploadRequest(
             file_bytes=file_bytes,
             filename=filename,
@@ -59,6 +82,7 @@ class SubmissionUploadView(APIView):
             disclaimer_accepted_at=disclaimer_at,
             disclaimer_method=disclaimer_method,
             source=source,
+            force_strategy=force_strategy,
         )
 
         try:

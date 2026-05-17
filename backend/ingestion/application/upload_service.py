@@ -62,6 +62,7 @@ class UploadRequest:
     disclaimer_accepted_at: datetime
     disclaimer_method: DisclaimerAcceptanceMethod = DisclaimerAcceptanceMethod.CHECKBOX
     source: SubmissionSource = SubmissionSource.WEB
+    force_strategy: ExtractionStrategy | None = None
 
 
 @dataclass(frozen=True)
@@ -90,7 +91,8 @@ def ingest_upload(req: UploadRequest) -> IngestOutcome:
     routing = _timed("route", "unknown", detect_kind,
                      content_type=req.content_type,
                      file_bytes=req.file_bytes,
-                     filename=req.filename)
+                     filename=req.filename,
+                     force_strategy=req.force_strategy)
 
     submission = _create_initial_submission(
         req=req,

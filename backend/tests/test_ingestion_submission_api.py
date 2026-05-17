@@ -100,6 +100,63 @@ def test_bogus_disclaimer_acceptance_method_alias_validation_error(api_client):
 
 
 @pytest.mark.django_db
+def test_invalid_x_force_strategy_header_returns_400(api_client):
+    """CS-052: bogus X-Force-Strategy header must fail fast with INVALID_FORCE_STRATEGY."""
+
+    pdf = _tiny_pdf()
+    resp = api_client.post(
+        "/api/v1/submissions/",
+        {
+            "file": pdf,
+            "disclaimer_accepted": "true",
+            "disclaimer_method": DisclaimerAcceptanceMethod.CHECKBOX.value,
+        },
+        format="multipart",
+        HTTP_X_FORCE_STRATEGY="not_a_strategy",
+    )
+    assert resp.status_code == 400
+    body = resp.json()
+    assert body["error_code"] == "INVALID_FORCE_STRATEGY"
+
+
+@pytest.mark.django_db
+def test_valid_x_force_strategy_header_routes_to_override(settings, api_client):
+    """CS-052: valid X-Force-Strategy header bypasses automatic detection.
+
+    The request asks for `tesseract` on a PDF that would normally route to
+    pypdf/vision; we patch the extractor to confirm the orchestrator obeys
+    the override.
+    """
+
+    settings.OCR_MAX_BYTES = 10 * 1024 * 1024
+    pdf = _tiny_pdf()
+    fake_extract = ExtractionResult(
+        text="texto de prueba en español suficiente",
+        token_count=10,
+        language="es",
+        page_count=1,
+    )
+    with patch(
+        "ingestion.application.upload_service._run_extractor",
+        return_value=fake_extract,
+    ) as run_extractor:
+        resp = api_client.post(
+            "/api/v1/submissions/",
+            {
+                "file": pdf,
+                "disclaimer_accepted": "true",
+                "disclaimer_method": DisclaimerAcceptanceMethod.CHECKBOX.value,
+            },
+            format="multipart",
+            HTTP_X_FORCE_STRATEGY="tesseract",
+        )
+
+    assert resp.status_code == 201, resp.content
+    forced_strategy = run_extractor.call_args.kwargs["strategy"]
+    assert forced_strategy.value == "tesseract"
+
+
+@pytest.mark.django_db
 def test_success_sets_disclaimer_accepted_at(settings, api_client):
     settings.OCR_MAX_BYTES = 10 * 1024 * 1024
     pdf = _tiny_pdf()
