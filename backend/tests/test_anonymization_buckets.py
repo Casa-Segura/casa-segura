@@ -133,9 +133,18 @@ def test_overcost_bucket_thresholds() -> None:
         "overcost": {"vs_benchmark_usd": "0", "explanation": "x", "what_changes_would_save": []},
     }
     assert anonymization.anonymize_economic_summary(raw_base)["overcost_label"] == "none"
-    raw_small = {**raw_base, "overcost": {"vs_benchmark_usd": "1000", "explanation": "x", "what_changes_would_save": []}}
+    raw_small = {
+        **raw_base,
+        "overcost": {"vs_benchmark_usd": "1000", "explanation": "x", "what_changes_would_save": []},
+    }
     assert anonymization.anonymize_economic_summary(raw_small)["overcost_label"] == "small"
-    raw_med = {**raw_base, "overcost": {"vs_benchmark_usd": "10000", "explanation": "x", "what_changes_would_save": []}}
+    raw_med = {
+        **raw_base,
+        "overcost": {"vs_benchmark_usd": "10000", "explanation": "x", "what_changes_would_save": []},
+    }
     assert anonymization.anonymize_economic_summary(raw_med)["overcost_label"] == "medium"
-    raw_large = {**raw_base, "overcost": {"vs_benchmark_usd": "30000", "explanation": "x", "what_changes_would_save": []}}
+    raw_large = {
+        **raw_base,
+        "overcost": {"vs_benchmark_usd": "30000", "explanation": "x", "what_changes_would_save": []},
+    }
     assert anonymization.anonymize_economic_summary(raw_large)["overcost_label"] == "large"

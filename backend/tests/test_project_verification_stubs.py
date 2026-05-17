@@ -173,4 +173,3 @@ def test_submission_source_billboard_keeps_evaluation_path(api_client: APIClient
         format="json",
     )
     assert resp.status_code == 201
-

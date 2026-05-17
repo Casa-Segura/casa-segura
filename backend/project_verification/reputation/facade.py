@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 from typing import Protocol, runtime_checkable
 
 import structlog
+
 from django.conf import settings
 
 from project_verification.infrastructure.metrics import PROJECT_VERIFICATION_REPUTATION_OUTCOMES
@@ -77,9 +78,7 @@ def lookup_reputation_signals(*, developer: str, project: str) -> ReputationSign
             freshness_note_key=None,
         )
 
-    outcome_label = (
-        out.outcome if out.outcome in ("skipped_disabled", "success") else out.outcome[:16]
-    )
+    outcome_label = out.outcome if out.outcome in ("skipped_disabled", "success") else out.outcome[:16]
     PROJECT_VERIFICATION_REPUTATION_OUTCOMES.labels(outcome=outcome_label[:16]).inc()
 
     return out

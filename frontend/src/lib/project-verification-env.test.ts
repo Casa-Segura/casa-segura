@@ -1,4 +1,4 @@
-import { describe, expect, it, afterEach } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   isProjectVerificationDemoLinksEnabled,
   isProjectVerificationEnabled,
@@ -6,9 +6,9 @@ import {
 
 const originalPv = process.env.PROJECT_VERIFICATION_ENABLED;
 const originalDemoLinks = process.env.PROJECT_VERIFICATION_DEMO_LINKS;
-const originalNodeEnv = process.env.NODE_ENV;
 
 afterEach(() => {
+  vi.unstubAllEnvs();
   if (originalPv === undefined) {
     delete process.env.PROJECT_VERIFICATION_ENABLED;
   } else {
@@ -20,8 +20,6 @@ afterEach(() => {
   } else {
     process.env.PROJECT_VERIFICATION_DEMO_LINKS = originalDemoLinks;
   }
-
-  process.env.NODE_ENV = originalNodeEnv;
 });
 
 describe("isProjectVerificationEnabled", () => {
@@ -63,13 +61,13 @@ describe("isProjectVerificationEnabled", () => {
 
 describe("isProjectVerificationDemoLinksEnabled", () => {
   it("defaults to true in development", () => {
-    process.env.NODE_ENV = "development";
+    vi.stubEnv("NODE_ENV", "development");
     delete process.env.PROJECT_VERIFICATION_DEMO_LINKS;
     expect(isProjectVerificationDemoLinksEnabled()).toBe(true);
   });
 
   it("defaults to off in production unless explicitly enabled", () => {
-    process.env.NODE_ENV = "production";
+    vi.stubEnv("NODE_ENV", "production");
     delete process.env.PROJECT_VERIFICATION_DEMO_LINKS;
     expect(isProjectVerificationDemoLinksEnabled()).toBe(false);
 

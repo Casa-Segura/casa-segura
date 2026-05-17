@@ -29,6 +29,13 @@ backend/
 Every module follows `domain/` (Pydantic), `application/`, `infrastructure/django/`,
 `infrastructure/celery/` layout.
 
+## Package manager
+
+Canonical dependency lock for this lane is **`poetry.lock`** (see CI). Experimental
+[`uv`](https://github.com/astral-sh/uv) lockfiles (`uv.lock`) are **not tracked** —
+`backend/uv.lock` is gitignored at the repo root until the maintainers intentionally
+switch the pipeline.
+
 ## Quick start
 
 ```bash

@@ -72,9 +72,7 @@ def evaluate_permit_format(
         if rx.fullmatch(token):
             return PermitFormatEvaluation(PermitFormatVerdict.OK, finding)
 
-    if _PATTERN_SUSPICIOUS.fullmatch(token) and not any(
-        rx.fullmatch(token) for rx, _ in _PATTERNS_OK
-    ):
+    if _PATTERN_SUSPICIOUS.fullmatch(token) and not any(rx.fullmatch(token) for rx, _ in _PATTERNS_OK):
         return PermitFormatEvaluation(PermitFormatVerdict.SUSPICIOUS, "permit.format_suspicious.generic")
 
     return PermitFormatEvaluation(PermitFormatVerdict.UNKNOWN, "permit.format_unknown.free_text")

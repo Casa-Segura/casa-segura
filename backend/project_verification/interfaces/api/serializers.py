@@ -18,7 +18,7 @@ def _max_len_message() -> str:
     return f"Máximo {_MANUAL_VERIFICATION_MAX_LEN} caracteres."
 
 
-class ManualVerificationStubSerializer(serializers.Serializer):
+class ManualVerificationRequestSerializer(serializers.Serializer):
     """Validated project-verification submission (manual fallback + billboard follow-up)."""
 
     developer = serializers.CharField(

@@ -5,7 +5,6 @@ from __future__ import annotations
 import uuid
 from typing import Literal
 
-
 from project_verification.domain.permit_format import evaluate_permit_format
 from project_verification.domain.verdict_synthesis import (
     VerdictBand,
@@ -64,29 +63,23 @@ def build_verdict_envelope(
         ocr_low_confidence=ocr_low,
         ocr_medium_confidence=ocr_medium,
         apply_unknown_permit_cap=submission_source == "billboard_ocr" and ocr_high,
-
     )
 
     hk = headline_key_for_band(verdict)
 
     rationale_keys_final = [*keys]
 
-
     freshness_key = rep.freshness_note_key
 
     fetched_iso = rep.fetched_at.isoformat().replace("+00:00", "Z") if rep.fetched_at else None
 
     return {
-
-
         "reference_id": str(uuid.uuid4()),
         "verdict": verdict,
         "heuristic_score": score,
         "rationale_keys": rationale_keys_final,
-
         "headline_key": hk,
         "permit_finding_key": permit_eval.finding_key,
-
         "reputation_outcome": rep.outcome,
         "reputation_fetched_at": fetched_iso,
         "data_freshness_note_key": freshness_key,
@@ -96,7 +89,6 @@ def build_verdict_envelope(
             "permit": permit,
             "address": address,
         },
-
         "narration": None,
         "stub": False,
     }

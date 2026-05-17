@@ -6,14 +6,13 @@ import base64
 import json
 import time
 from io import BytesIO
-
-from PIL import Image
 from typing import Any, Literal
 
 import structlog
+from PIL import Image
+from pydantic import BaseModel, Field, ValidationError as PydanticValidationError
+
 from django.conf import settings
-from pydantic import BaseModel, Field
-from pydantic import ValidationError as PydanticValidationError
 
 from project_verification.infrastructure.metrics import (
     PROJECT_VERIFICATION_OCR_OUTCOMES,
@@ -49,8 +48,8 @@ BILLBOARD_VISION_PROMPT = (
     "Analiza la foto de una valla inmobiliaria en El Salvador y devolvé únicamente un "
     'objeto JSON con las claves: "developer","project","permit","address","confidence". '
     "Cada campo de texto debe ser corto (<=240 caracteres) o null si no es legible. "
-    "\"confidence\" debe ser \"high\"|\"medium\"|\"low\"|\"unknown\" según nitidez. "
-    'No incluyas comentarios, markdown ni texto antes o después del JSON.'
+    '"confidence" debe ser "high"|"medium"|"low"|"unknown" según nitidez. '
+    "No incluyas comentarios, markdown ni texto antes o después del JSON."
 )
 
 
@@ -142,9 +141,9 @@ def extract_billboard_structured(  # noqa: PLR0911, PLR0915
 
     if not getattr(settings, "OPENROUTER_API_KEY", ""):
         duration = max(time.perf_counter() - started, 0)
-        PROJECT_VERIFICATION_VISION_SECONDS.labels(
-            flow="project_verification", stage="billboard_vision"
-        ).observe(duration)
+        PROJECT_VERIFICATION_VISION_SECONDS.labels(flow="project_verification", stage="billboard_vision").observe(
+            duration
+        )
         PROJECT_VERIFICATION_OCR_OUTCOMES.labels(outcome="upstream_unconfigured").inc()
         logger.warning("project_verification.billboard.missing_api_key")
 
@@ -191,9 +190,7 @@ def extract_billboard_structured(  # noqa: PLR0911, PLR0915
             ocr_low_confidence=True,
         )
 
-    model = getattr(settings, "PROJECT_VERIFICATION_VISION_MODEL", "") or getattr(
-        settings, "OPENROUTER_OCR_MODEL", ""
-    )
+    model = getattr(settings, "PROJECT_VERIFICATION_VISION_MODEL", "") or getattr(settings, "OPENROUTER_OCR_MODEL", "")
     timeout = int(getattr(settings, "PROJECT_VERIFICATION_VISION_TIMEOUT_SECONDS", 45))
 
     client = OpenRouterClient(timeout_seconds=timeout, max_retries=1)
@@ -209,9 +206,9 @@ def extract_billboard_structured(  # noqa: PLR0911, PLR0915
         except (OpenRouterError, OSError, TimeoutError) as exc:
             PROJECT_VERIFICATION_OCR_OUTCOMES.labels(outcome="timeout_upstream").inc()
             dur = max(time.perf_counter() - started, 0)
-            PROJECT_VERIFICATION_VISION_SECONDS.labels(
-                flow="project_verification", stage="billboard_vision"
-            ).observe(dur)
+            PROJECT_VERIFICATION_VISION_SECONDS.labels(flow="project_verification", stage="billboard_vision").observe(
+                dur
+            )
             logger.warning(
                 "project_verification.billboard.vision_upstream",
                 outcome="timeout_upstream",
@@ -227,9 +224,7 @@ def extract_billboard_structured(  # noqa: PLR0911, PLR0915
         client.close()
 
     duration = max(time.perf_counter() - started, 0)
-    PROJECT_VERIFICATION_VISION_SECONDS.labels(
-        flow="project_verification", stage="billboard_vision"
-    ).observe(duration)
+    PROJECT_VERIFICATION_VISION_SECONDS.labels(flow="project_verification", stage="billboard_vision").observe(duration)
 
     text = result.content.strip()
 

@@ -11,6 +11,7 @@ from urllib.parse import urlparse
 
 import httpx
 import structlog
+
 from django.conf import settings
 
 from project_verification.reputation.signals import ReputationSignals

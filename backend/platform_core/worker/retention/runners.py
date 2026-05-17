@@ -132,9 +132,7 @@ def _anonymize_single_analysis(analysis_id, *, policy_days: int) -> int:
 
     with transaction.atomic():
         locked = (
-            ContractAnalysis.objects.select_for_update()
-            .filter(pk=analysis_id, anonymized_at__isnull=True)
-            .first()
+            ContractAnalysis.objects.select_for_update().filter(pk=analysis_id, anonymized_at__isnull=True).first()
         )
         if locked is None:
             return 0
@@ -205,9 +203,7 @@ def run_recompute_project_metrics(*, batch_size: int) -> int:
     updates = 0
     while True:
         candidate_ids = list(
-            Project.objects.filter(
-                Q(last_recomputed_at__isnull=True) | Q(last_recomputed_at__lt=F("last_analyzed"))
-            )
+            Project.objects.filter(Q(last_recomputed_at__isnull=True) | Q(last_recomputed_at__lt=F("last_analyzed")))
             .exclude(metadata__contains={"placeholder": True})
             .order_by("pk")
             .values_list("pk", flat=True)[:batch_size]

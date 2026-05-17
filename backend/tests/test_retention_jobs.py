@@ -18,7 +18,14 @@ from ingestion.infrastructure.django.models import ContractSubmission
 from platform_core.domain.enums import Band, DeliveryStatus, PrivacyAuditEvent
 from platform_core.infrastructure.django.models import PrivacyAuditLog
 from platform_core.worker.retention import runners
-from tests.factories import ContractAnalysisFactory, ContractSubmissionFactory, DeliveryRequestFactory, ProjectFactory, age_to, expire_in
+from tests.factories import (
+    ContractAnalysisFactory,
+    ContractSubmissionFactory,
+    DeliveryRequestFactory,
+    ProjectFactory,
+    age_to,
+    expire_in,
+)
 
 ANCHOR = datetime(2026, 5, 17, 18, 0, 0, tzinfo=UTC)
 
@@ -164,7 +171,16 @@ def test_anonymize_eligible_when_older_than_threshold():
         analysis = ContractAnalysisFactory(
             delivery_target_hash="salt-hash",
             criterion_evaluations=[
-                {"criterion_id": "A1", "category": "A", "applicable": True, "evaluated": True, "unverifiable": False, "score": 5.0, "weight_in_category": 10.0, "justification": "j"}
+                {
+                    "criterion_id": "A1",
+                    "category": "A",
+                    "applicable": True,
+                    "evaluated": True,
+                    "unverifiable": False,
+                    "score": 5.0,
+                    "weight_in_category": 10.0,
+                    "justification": "j",
+                }
             ],
             findings=[
                 {
@@ -231,14 +247,26 @@ def test_anonymize_idempotent_second_pass():
         age_to(cutoff - timedelta(seconds=1), on=analysis)
         assert runners.run_anonymize_old_analyses(batch_size=50, policy_days=90) == 1
         assert runners.run_anonymize_old_analyses(batch_size=50, policy_days=90) == 0
-        assert PrivacyAuditLog.objects.filter(event_type=PrivacyAuditEvent.ANALYSIS_ANONYMIZED.value, related_id=analysis.pk).count() == 1
+        assert (
+            PrivacyAuditLog.objects.filter(
+                event_type=PrivacyAuditEvent.ANALYSIS_ANONYMIZED.value, related_id=analysis.pk
+            ).count()
+            == 1
+        )
 
 
 @pytest.mark.django_db
 def test_anonymize_writes_privacy_audit_without_pii_literals():
     with patch("django.utils.timezone.now", return_value=ANCHOR):
         cutoff = ANCHOR - timedelta(days=90)
-        analysis = ContractAnalysisFactory(economic_summary={"fields_extracted": {"price_cash": "50000"}, "benchmark_comparisons": [], "benchmark_version": "bv", "contract_type": "CVP"})
+        analysis = ContractAnalysisFactory(
+            economic_summary={
+                "fields_extracted": {"price_cash": "50000"},
+                "benchmark_comparisons": [],
+                "benchmark_version": "bv",
+                "contract_type": "CVP",
+            }
+        )
         age_to(cutoff - timedelta(seconds=1), on=analysis)
         runners.run_anonymize_old_analyses(batch_size=50, policy_days=60)
         row = PrivacyAuditLog.objects.get(related_id=analysis.pk)

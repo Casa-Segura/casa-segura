@@ -39,9 +39,7 @@ def _kw(**patch: object):
 
 
 def test_green_requires_permit_ok_and_positive_evidence():
-    score, band, _ = synthesize_verdict(
-        **_kw(permit=_o(), reputation_disabled=False, reputation_positive=True)
-    )
+    score, band, _ = synthesize_verdict(**_kw(permit=_o(), reputation_disabled=False, reputation_positive=True))
 
     assert score >= GREEN_MIN
     assert band == "green"

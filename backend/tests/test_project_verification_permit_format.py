@@ -26,9 +26,7 @@ def test_whitespace_normalized():
 
 
 def test_free_text_unknown():
-    assert (
-        evaluate_permit_format("texto muy libre sobre el permiso").verdict == PermitFormatVerdict.UNKNOWN
-    )
+    assert evaluate_permit_format("texto muy libre sobre el permiso").verdict == PermitFormatVerdict.UNKNOWN
 
 
 def test_case_fold_matches_year_serial():
