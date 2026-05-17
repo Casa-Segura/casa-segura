@@ -5,8 +5,9 @@ when DEBUG is False) or a colorized human-readable line (local dev). The
 `correlation_id` and `schema_version` keys are always present, sourced from
 contextvars populated by `CorrelationIdMiddleware`.
 
-Synthetic handlers may inject `rubric_version` and `corpus_version` into the
-context — those keys propagate verbatim and default to `None`."""
+Synthetic handlers may inject `rubric_version`, `corpus_version`, and
+`benchmark_version` into the context — those keys propagate verbatim and
+default to `None`."""
 
 from __future__ import annotations
 
@@ -33,9 +34,10 @@ def _add_service_context(
 def _add_default_versions(
     _: Any, __: str, event_dict: MutableMapping[str, Any]
 ) -> MutableMapping[str, Any]:
-    """Ensure rubric/corpus versions are present (default None) for log shape stability."""
+    """Ensure rubric/corpus/benchmark versions are present (default None) for log shape stability."""
     event_dict.setdefault("rubric_version", None)
     event_dict.setdefault("corpus_version", None)
+    event_dict.setdefault("benchmark_version", None)
     return event_dict
 
 
