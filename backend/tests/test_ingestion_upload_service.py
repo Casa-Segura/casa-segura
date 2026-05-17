@@ -16,7 +16,11 @@ from ingestion.application.ocr.errors import (
     NotAnalyzableError,
     NotAnalyzableReason,
 )
-from ingestion.application.upload_service import UploadRequest, ingest_upload
+from ingestion.application.upload_service import (
+    FileUpload,
+    UploadRequest,
+    ingest_upload,
+)
 from ingestion.domain.enums import (
     DisclaimerAcceptanceMethod,
     OcrJobStatus,
@@ -27,9 +31,13 @@ from ingestion.domain.enums import (
 
 def _request(file_bytes: bytes, *, filename="contract.pdf", content_type="application/pdf"):
     return UploadRequest(
-        file_bytes=file_bytes,
-        filename=filename,
-        content_type=content_type,
+        files=(
+            FileUpload(
+                file_bytes=file_bytes,
+                filename=filename,
+                content_type=content_type,
+            ),
+        ),
         disclaimer_accepted_at=timezone.now(),
         disclaimer_method=DisclaimerAcceptanceMethod.CHECKBOX,
         source=SubmissionSource.WEB,
@@ -98,7 +106,7 @@ def test_size_one_over_max_is_rejected(settings):
     settings.OCR_MAX_BYTES = 1024
     with pytest.raises(NotAnalyzableError) as exc:
         ingest_upload(_request(b"x" * 1025))
-    assert exc.value.reason == NotAnalyzableReason.SIZE_EXCEEDED
+    assert exc.value.reason == NotAnalyzableReason.FILE_TOO_LARGE
 
 
 # ─── CS-051: idempotency by SHA-256 ─────────────────────────────────────

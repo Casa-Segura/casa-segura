@@ -27,7 +27,7 @@ Receive contract uploads (PDF, JPG, PNG, HEIC, WEBP), detect document kind, extr
 
 ## Definition of done
 
-- [ ] `POST /api/v1/submissions/` accepts the five formats listed in US-01 (CS-050 — single-file MVP in place; multi-file 1–50, image dimension validator, PRD-canonical error codes beyond disclaimer still pending; CS-058 **`DISCLAIMER_REQUIRED`** enforced server-side)
+- [x] `POST /api/v1/submissions/` accepts the five formats listed in US-01 (CS-050 **done** — `files[]` multi-file 1–50, `MAX_TOTAL_BYTES=100 MB`, `MAX_TOTAL_PAGES=80`, image dimension validator 600×800..8000×10000, PRD-canonical error codes (`too_many_files`, `total_size_too_large`, `file_too_large`, `image_dimensions_invalid`); CS-058 **`DISCLAIMER_REQUIRED`** enforced server-side)
 - [x] `ocr.detect_kind` routes between pypdf / Pixtral / Tesseract per MIME + native-text probe (CS-052 — **done**: PRD-canonical strict `> 100`-char first-page threshold + `force_strategy` override via `X-Force-Strategy` header + BVA at 99/100/101; multi-file majority logic blocked by CS-050 payload shape)
 - [x] Text PDFs handled via pypdf; scanned PDFs and images via Pixtral Large 2411 (OpenRouter, single multimodal model + `file-parser` plugin with `mistral-ocr` engine for PDF); Tesseract Spanish as fallback (CS-053 + CS-054 + CS-055 **done** — pypdf with `--- PAGE N ---` separators + NFKC/CRLF/NBSP/soft-hyphen normalization + 30s wall-clock watchdog + 500-char escalation to vision; single-call Pixtral; Tesseract mean-confidence gate at 60.0)
 - [x] Disclaimer "Esto no es asesoría legal" presented and accepted before processing (CS-058 — BE persists `disclaimer_accepted_at` / method and rejects missing acceptance with **`DISCLAIMER_REQUIRED`**; FE `/subir` gate + multipart aliases aligned)

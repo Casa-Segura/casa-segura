@@ -7,11 +7,12 @@ last_updated: 2026-05-16
 # Phase 1 implementation pass (Pixtral OCR architecture) committed in d613c2d.
 # EPIC-03 (Legal Corpus & RAG) closed 2026-05-16 with revised multi-Top-K AC after
 # four live calibration runs (CS-087). EPIC-02 (Contract Ingestion & OCR) still in_progress;
-# CS-052 + CS-053 + CS-054 + CS-055 + CS-056 + CS-060 closed 2026-05-16 (router 100-char
-# threshold + force_strategy override; pypdf separators + normalization + 30s watchdog +
-# 500-char vision escalation; Pixtral single-call AC re-anchor; Tesseract mean-confidence
-# gate at 60.0; PRD §US-08 language gate + HTTP 422 envelopes; latency budget
-# instrumentation with page-bucket histogram + TIMEOUT counter).
+# CS-050 + CS-052 + CS-053 + CS-054 + CS-055 + CS-056 + CS-060 closed 2026-05-16
+# (multi-file `files[]` 1–50 + image dimension validator + batch caps; router 100-char
+# threshold + force_strategy override; pypdf separators + normalization + 30s watchdog
+# + 500-char vision escalation; Pixtral single-call AC re-anchor; Tesseract
+# mean-confidence gate at 60.0; PRD §US-08 language gate + HTTP 422 envelopes;
+# latency budget instrumentation with page-bucket histogram + TIMEOUT counter).
 tags:
   - casa-segura
   - roadmap
@@ -41,10 +42,10 @@ Source-of-truth links:
 Phase 1 backend lane status (2026-05-16):
 
 - ✅ `done` (EPIC-03 Legal Corpus & RAG closed): CS-080..CS-090. Architecture is `intfloat/multilingual-e5-large` (1024-dim) + `BAAI/bge-reranker-v2-m3` over top-10 vectorial candidates. Corpus re-authored in Spanish. Final metrics: Strict Top-1 = 0.633, Article-level Top-3 = 0.900, Top-5 = 0.967 (revised AC; trace in CS-087 "Live calibration runs #1–#4").
-- ✅ `done`: CS-052 (`ocr.detect_kind` 100-char threshold + `force_strategy` override), CS-053 (pypdf separators + normalization + 30s watchdog + 500-char vision escalation), CS-054 (Pixtral single-call extraction — AC re-anchored), CS-055 (Tesseract Spanish fallback mean-confidence gate at 60.0), CS-056 (language gate 2000-char window + 0.85 threshold + HTTP 422), CS-057 (discard-after-extract invariant), CS-058 (disclaimer gate), CS-060 (latency budget instrumentation with page-bucket histogram + TIMEOUT counter).
-- 🟡 `in_progress` (EPIC-02 Contract Ingestion & OCR — the only remaining blocker for Phase 1 closure): CS-050/051/059.
+- ✅ `done`: CS-050 (multi-file `files[]` 1–50 + image dimension validator + batch caps), CS-052 (`ocr.detect_kind` 100-char threshold + `force_strategy` override), CS-053 (pypdf separators + normalization + 30s watchdog + 500-char vision escalation), CS-054 (Pixtral single-call extraction — AC re-anchored), CS-055 (Tesseract Spanish fallback mean-confidence gate at 60.0), CS-056 (language gate 2000-char window + 0.85 threshold + HTTP 422), CS-057 (discard-after-extract invariant), CS-058 (disclaimer gate), CS-060 (latency budget instrumentation with page-bucket histogram + TIMEOUT counter).
+- 🟡 `in_progress` (EPIC-02 Contract Ingestion & OCR — the only remaining blocker for Phase 1 closure): CS-051/059.
 
-The next backend-blocking pickup on this phase is **EPIC-02 closure**: ship the multi-file upload + image dimension validator (CS-050) and enforce per-submission page-count caps + 15 MB byte cap (CS-059, CS-051 multi-file hash). See [PHASE-1-config-checklist.md](PHASE-1-config-checklist.md).
+The next backend-blocking pickup on this phase is **EPIC-02 closure**: enforce the 15 MB-per-file canonical byte cap (CS-059) and surface the multi-file SHA-256 composition in the response envelope (CS-051; 409 duplicate lookup remains blocked by EPIC-04). See [PHASE-1-config-checklist.md](PHASE-1-config-checklist.md).
 
 Out-of-phase pickups still pending:
 
@@ -59,7 +60,7 @@ FE should keep coordinating disclaimer copy with [CS-291](../tickets/CS-291.md) 
 
 ## BE WORK
 
-- [CS-050](../tickets/CS-050.md) - Upload endpoint with format and size validation.
+- ~~[CS-050](../tickets/CS-050.md)~~ — **done** (multi-file `files[]` 1–50 + image dimension validator 600×800..8000×10000 + batch caps 100 MB / 80 pages; PRD-canonical error codes `too_many_files` / `total_size_too_large` / `file_too_large` / `image_dimensions_invalid`).
 - [CS-051](../tickets/CS-051.md) - Content hash for idempotency.
 - ~~[CS-052](../tickets/CS-052.md)~~ — **done** (`ocr.detect_kind` with PRD §US-04 strict `> 100`-char threshold + `force_strategy` override via `X-Force-Strategy` header + BVA at 99/100/101).
 - ~~[CS-053](../tickets/CS-053.md)~~ — **done** (pypdf with `--- PAGE N ---` 1-indexed separators + NFKC/CRLF/NBSP/soft-hyphen normalization + 30s per-page wall-clock watchdog + 500-char escalation to vision via orchestrator).

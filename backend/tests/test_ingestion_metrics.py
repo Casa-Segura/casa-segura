@@ -21,7 +21,11 @@ from ingestion.application.ocr.errors import (
     NotAnalyzableReason,
 )
 from ingestion.application.ocr.metrics import page_bucket
-from ingestion.application.upload_service import UploadRequest, ingest_upload
+from ingestion.application.upload_service import (
+    FileUpload,
+    UploadRequest,
+    ingest_upload,
+)
 from ingestion.domain.enums import (
     DisclaimerAcceptanceMethod,
     ExtractionStrategy,
@@ -37,9 +41,13 @@ def _request(
     force_strategy: ExtractionStrategy | None = None,
 ):
     return UploadRequest(
-        file_bytes=file_bytes,
-        filename=filename,
-        content_type=content_type,
+        files=(
+            FileUpload(
+                file_bytes=file_bytes,
+                filename=filename,
+                content_type=content_type,
+            ),
+        ),
         disclaimer_accepted_at=timezone.now(),
         disclaimer_method=DisclaimerAcceptanceMethod.CHECKBOX,
         source=SubmissionSource.WEB,

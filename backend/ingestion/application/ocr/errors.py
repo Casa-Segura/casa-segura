@@ -30,6 +30,11 @@ class NotAnalyzableReason(StrEnum):
     UPSTREAM_LLM_ERROR = "upstream_llm_error"
     TIMEOUT = "timeout"
     TEXT_TOO_SHORT = "text_too_short"
+    # CS-050 multi-file batch caps.
+    TOO_MANY_FILES = "too_many_files"
+    TOTAL_SIZE_TOO_LARGE = "total_size_too_large"
+    IMAGE_DIMENSIONS_INVALID = "image_dimensions_invalid"
+    FILE_TOO_LARGE = "file_too_large"
 
 
 @dataclass(frozen=True)

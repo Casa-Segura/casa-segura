@@ -10,7 +10,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ingestion.application.ocr.errors import NotAnalyzableError, NotAnalyzableReason
-from ingestion.application.upload_service import UploadRequest, ingest_upload
+from ingestion.application.upload_service import (
+    FileUpload,
+    UploadRequest,
+    ingest_upload,
+)
 from ingestion.domain.enums import (
     DisclaimerAcceptanceMethod,
     ExtractionStrategy,
@@ -43,13 +47,36 @@ class SubmissionUploadView(APIView):
         merged = merge_submission_upload_aliases(request.data)
         require_disclaimer_accepted_or_raise(merged)
 
-        serializer = SubmissionUploadSerializer(data=merged)
+        # Multi-file shape: prefer `files[]` over the legacy single `file`
+        # field. Both are validated through the same SubmissionUploadSerializer.
+        files_list = request.FILES.getlist("files") or (
+            [request.FILES["file"]] if "file" in request.FILES else []
+        )
+
+        serializer = SubmissionUploadSerializer(
+            data=merged, context={"file_count": len(files_list)}
+        )
         serializer.is_valid(raise_exception=True)
 
-        upload = serializer.validated_data["file"]
-        file_bytes = upload.read()
-        content_type = (upload.content_type or "").lower()
-        filename = upload.name or ""
+        if not files_list:
+            return Response(
+                {
+                    "error": "validation_error",
+                    "error_code": "FILE_REQUIRED",
+                    "detail": "at least one file must be supplied (file= or files=)",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        uploads: list[FileUpload] = []
+        for upload in files_list:
+            uploads.append(
+                FileUpload(
+                    file_bytes=upload.read(),
+                    filename=upload.name or "",
+                    content_type=(upload.content_type or "").lower(),
+                )
+            )
 
         disclaimer_at = timezone.now()
         disclaimer_method = DisclaimerAcceptanceMethod(
@@ -77,9 +104,7 @@ class SubmissionUploadView(APIView):
                 )
 
         req = UploadRequest(
-            file_bytes=file_bytes,
-            filename=filename,
-            content_type=content_type,
+            files=tuple(uploads),
             disclaimer_accepted_at=disclaimer_at,
             disclaimer_method=disclaimer_method,
             source=source,

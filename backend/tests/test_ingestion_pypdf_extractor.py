@@ -15,7 +15,11 @@ from ingestion.application.ocr.errors import (
     NotAnalyzableReason,
 )
 from ingestion.application.ocr.extractors import pypdf_extractor as pypdf_ext
-from ingestion.application.upload_service import UploadRequest, ingest_upload
+from ingestion.application.upload_service import (
+    FileUpload,
+    UploadRequest,
+    ingest_upload,
+)
 from ingestion.domain.enums import (
     DisclaimerAcceptanceMethod,
     ExtractionStrategy,
@@ -26,9 +30,13 @@ from ingestion.domain.enums import (
 
 def _request(file_bytes: bytes, *, filename="contract.pdf", content_type="application/pdf"):
     return UploadRequest(
-        file_bytes=file_bytes,
-        filename=filename,
-        content_type=content_type,
+        files=(
+            FileUpload(
+                file_bytes=file_bytes,
+                filename=filename,
+                content_type=content_type,
+            ),
+        ),
         disclaimer_accepted_at=timezone.now(),
         disclaimer_method=DisclaimerAcceptanceMethod.CHECKBOX,
         source=SubmissionSource.WEB,

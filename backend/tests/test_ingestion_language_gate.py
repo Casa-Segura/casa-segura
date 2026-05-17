@@ -13,6 +13,7 @@ from ingestion.application.ocr.errors import (
     NotAnalyzableError,
     NotAnalyzableReason,
 )
+from ingestion.application.upload_service import FileUpload, UploadRequest, ingest_upload  # noqa: F401
 from ingestion.application.ocr.language import (
     LANGUAGE_DETECTION_WINDOW_CHARS,
     detect_language,
