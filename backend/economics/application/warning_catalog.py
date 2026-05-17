@@ -47,9 +47,7 @@ WARNING_CATALOG: dict[str, WarningSpec] = {
     ),
     "monthly_payment_higher_than_theoretical": WarningSpec(
         severity_suggested="yellow",
-        description=(
-            "La cuota mensual difiere más de un 5% de la cuota amortizable " "teórica a la misma tasa y plazo."
-        ),
+        description=("La cuota mensual difiere más de un 5% de la cuota amortizable teórica a la misma tasa y plazo."),
         related_field="monthly_payment",
     ),
     "interest_calculation_base_unfavorable": WarningSpec(
@@ -62,17 +60,17 @@ WARNING_CATALOG: dict[str, WarningSpec] = {
     ),
     "term_excessive": WarningSpec(
         severity_suggested="red",
-        description=("El plazo de financiamiento excede el máximo legal aplicable al " "tipo de inmueble."),
+        description=("El plazo de financiamiento excede el máximo legal aplicable al tipo de inmueble."),
         related_field="term_months",
     ),
     "down_payment_inconsistent": WarningSpec(
         severity_suggested="yellow",
-        description=("El porcentaje y el monto de la prima no cuadran con el precio al " "contado."),
+        description=("El porcentaje y el monto de la prima no cuadran con el precio al contado."),
         related_field="down_payment",
     ),
     "total_cost_not_disclosed": WarningSpec(
         severity_suggested="red",
-        description=("No se encuentra una cifra clara del costo total en el texto " "analizado."),
+        description=("No se encuentra una cifra clara del costo total en el texto analizado."),
         related_field=None,
     ),
 }

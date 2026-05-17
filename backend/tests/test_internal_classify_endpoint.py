@@ -7,14 +7,17 @@ the orchestrator wiring, and the response envelope shape.
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import httpx
 import pytest
 from rest_framework.test import APIClient
 
+from django.conf import settings
 from django.urls import reverse
 
 from conftest import OPENROUTER_BASE_URL, openrouter_response
+from economics.application.benchmark_loader import load_yaml, upsert_benchmarks
 from platform_core.infrastructure.django.models import ContractAnalysis
 from shared.security.internal_auth import INTERNAL_TOKEN_HEADER
 from tests.factories import CorpusVersionFactory, RubricVersionFactory
@@ -23,6 +26,8 @@ CHAT_URL = f"{OPENROUTER_BASE_URL}/chat/completions"
 
 INTERNAL_TOKEN = "test-internal-token-rotate-me"
 SUBMISSION_HASH = "b" * 64
+
+BENCHMARK_FIXTURE = Path(settings.BASE_DIR) / "fixtures" / "economic_benchmarks_2026q2.yaml"
 
 
 def _classify_url() -> str:
@@ -40,10 +45,18 @@ def _configure_internal_token(settings):
 
 
 @pytest.fixture
-def active_catalog(db):
+def active_benchmark(db):
+    """Hydrate the canonical benchmark YAML — ``F2Orchestrator._persist`` requires it."""
+    payload = load_yaml(BENCHMARK_FIXTURE)
+    version_obj, _, _ = upsert_benchmarks(payload, activate=True)
+    return version_obj
+
+
+@pytest.fixture
+def active_catalog(db, active_benchmark):
     rubric = RubricVersionFactory(version="1.0.0", is_active=True)
     corpus = CorpusVersionFactory(version="1.0.0", is_active=True)
-    return rubric, corpus
+    return rubric, corpus, active_benchmark
 
 
 def _stage_full_happy_chain(mock_openrouter):

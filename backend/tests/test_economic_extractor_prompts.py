@@ -100,7 +100,11 @@ def test_monthly_only_rate_carries_both_rates(mock_openrouter):
             "rationale": "anual = (1+mensual)^12 - 1 = 0.16075",
         },
         "monthly_payment_usd": {"value": 1167.13, "confidence": 0.85, "rationale": "cuota"},
-        "interest_calculation_base": {"value": "outstanding_principal", "confidence": 0.9, "rationale": "saldo insoluto"},
+        "interest_calculation_base": {
+            "value": "outstanding_principal",
+            "confidence": 0.9,
+            "rationale": "saldo insoluto",
+        },
         "payment_periodicity": {"value": "monthly", "confidence": 0.95, "rationale": "mensual"},
     }
     mock_openrouter.post(CHAT_URL).mock(return_value=openrouter_response(payload))
@@ -169,7 +173,11 @@ def test_conflicting_figures_route_through_ambiguous_fields(mock_openrouter):
         "financed_amount_usd": {"value": 72000.0, "confidence": 0.9, "rationale": "saldo"},
         "term_months": {"value": 60, "confidence": 0.9, "rationale": "60 meses"},
         "interest_rate_pct": {"value": 0.12, "confidence": 0.85, "rationale": "12% anual"},
-        "interest_calculation_base": {"value": "outstanding_principal", "confidence": 0.9, "rationale": "saldo insoluto"},
+        "interest_calculation_base": {
+            "value": "outstanding_principal",
+            "confidence": 0.9,
+            "rationale": "saldo insoluto",
+        },
         "payment_periodicity": {"value": "monthly", "confidence": 0.9, "rationale": "mensual"},
     }
     mock_openrouter.post(CHAT_URL).mock(return_value=openrouter_response(payload))
@@ -210,7 +218,11 @@ def test_ambiguous_takes_precedence_over_invalid(mock_openrouter):
         "term_months": {"value": 60, "confidence": 0.9, "rationale": "60 meses"},
         "monthly_payment_usd": {"value": 1200.0, "confidence": 0.85, "rationale": "cuota"},
         "interest_rate_pct": {"value": 0.12, "confidence": 0.85, "rationale": "12% anual"},
-        "interest_calculation_base": {"value": "outstanding_principal", "confidence": 0.9, "rationale": "saldo insoluto"},
+        "interest_calculation_base": {
+            "value": "outstanding_principal",
+            "confidence": 0.9,
+            "rationale": "saldo insoluto",
+        },
         "payment_periodicity": {"value": "monthly", "confidence": 0.9, "rationale": "mensual"},
     }
     mock_openrouter.post(CHAT_URL).mock(return_value=openrouter_response(payload))

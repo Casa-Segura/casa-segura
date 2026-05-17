@@ -117,15 +117,15 @@ ni promedies cifras contradictorias (PRD F5 BR-09 — honestidad).
 # match attribute names on `ExtractedFields` — `_validate_field_specs`
 # asserts this at import time.
 _FIELD_SPECS: Final[dict[str, str]] = {
-    "purchase_price_usd": ("Precio total declarado del inmueble en USD (número). PRD §8.5 " "`price_cash`."),
+    "purchase_price_usd": ("Precio total declarado del inmueble en USD (número). PRD §8.5 `price_cash`."),
     "down_payment_usd": ("Monto de prima o anticipo en USD (número). PRD §8.5 `down_payment`."),
     "down_payment_pct": (
-        "Prima expresada como FRACCIÓN DECIMAL en [0, 1] (ej. 0.10 para " "10%). PRD §8.5 `down_payment_pct`."
+        "Prima expresada como FRACCIÓN DECIMAL en [0, 1] (ej. 0.10 para 10%). PRD §8.5 `down_payment_pct`."
     ),
-    "financed_amount_usd": ("Monto financiado en USD = precio - prima (número). PRD §8.5 " "`financed_amount`."),
-    "monthly_payment_usd": ("Cuota mensual periódica en USD (número). PRD §8.5 " "`monthly_payment`."),
-    "installment_count": ("Número total de cuotas, cuando el contrato lo expresa como conteo " "(entero)."),
-    "term_months": ("Plazo total en MESES enteros (ej. 60 para cinco años). PRD §8.5 " "`term_months`."),
+    "financed_amount_usd": ("Monto financiado en USD = precio - prima (número). PRD §8.5 `financed_amount`."),
+    "monthly_payment_usd": ("Cuota mensual periódica en USD (número). PRD §8.5 `monthly_payment`."),
+    "installment_count": ("Número total de cuotas, cuando el contrato lo expresa como conteo (entero)."),
+    "term_months": ("Plazo total en MESES enteros (ej. 60 para cinco años). PRD §8.5 `term_months`."),
     "interest_rate_pct": (
         "Tasa anual efectiva como DECIMAL (ej. 0.09 para 9%). Si solo hay "
         "mensual, deriva con `(1+mensual)^12 - 1` y nótalo en `rationale`. "
@@ -135,7 +135,7 @@ _FIELD_SPECS: Final[dict[str, str]] = {
         "Tasa mensual como DECIMAL cuando el contrato solo declara la "
         "mensual (ej. 0.015 para 1.5%). PRD §8.5 `monthly_rate_pct`."
     ),
-    "monthly_rent_usd": ("Canon o renta mensual en USD (número), para arrendamientos y " "leasing."),
+    "monthly_rent_usd": ("Canon o renta mensual en USD (número), para arrendamientos y leasing."),
     "deposit_usd": ("Depósito reembolsable en USD (número), típico en arrendamientos."),
     "purchase_option_price_usd": (
         "Precio de la opción de compra al final del plazo en USD (número), "
@@ -153,12 +153,11 @@ _FIELD_SPECS: Final[dict[str, str]] = {
         "menciona). `total_balance` dispara override Art. 12 LPC en F4."
     ),
     "project_name_raw": (
-        "Nombre del proyecto inmobiliario tal y como aparece en el contrato "
-        "(cadena). PRD F2 US-02 `canonical_name`."
+        "Nombre del proyecto inmobiliario tal y como aparece en el contrato (cadena). PRD F2 US-02 `canonical_name`."
     ),
     "property_address": ("Dirección del inmueble (cadena). TRANSITORIO: NO se persiste."),
-    "seller_name": ("Nombre del vendedor / arrendador (cadena). TRANSITORIO: NO se " "persiste."),
-    "buyer_name": ("Nombre del comprador / arrendatario (cadena). TRANSITORIO: NO se " "persiste."),
+    "seller_name": ("Nombre del vendedor / arrendador (cadena). TRANSITORIO: NO se persiste."),
+    "buyer_name": ("Nombre del comprador / arrendatario (cadena). TRANSITORIO: NO se persiste."),
 }
 
 
@@ -174,8 +173,7 @@ def _validate_field_specs() -> None:
     unknown_in_specs = set(_FIELD_SPECS.keys()) - known
     if unknown_in_specs:
         raise RuntimeError(
-            "economic_prompts._FIELD_SPECS references unknown "
-            f"ExtractedFields attributes: {sorted(unknown_in_specs)}"
+            f"economic_prompts._FIELD_SPECS references unknown ExtractedFields attributes: {sorted(unknown_in_specs)}"
         )
     needed: set[str] = set()
     for required in REQUIRED_FIELDS_BY_TYPE.values():
@@ -183,7 +181,7 @@ def _validate_field_specs() -> None:
     missing_specs = needed - set(_FIELD_SPECS.keys())
     if missing_specs:
         raise RuntimeError(
-            "economic_prompts._FIELD_SPECS is missing descriptions for " f"required fields: {sorted(missing_specs)}"
+            f"economic_prompts._FIELD_SPECS is missing descriptions for required fields: {sorted(missing_specs)}"
         )
 
 
@@ -333,17 +331,11 @@ def build_economic_prompt(contract_type: ContractType) -> str:
     """
     if contract_type is ContractType.NOT_CLASSIFIABLE:
         raise KeyError(
-            "NOT_CLASSIFIABLE has no economic extraction prompt; "
-            "the extractor must short-circuit before calling this."
+            "NOT_CLASSIFIABLE has no economic extraction prompt; the extractor must short-circuit before calling this."
         )
     menu = _render_field_menu(contract_type)
     few_shot = _render_few_shot(contract_type)
-    return (
-        f"{_BASE_PRELUDE}\n"
-        f"Campos a extraer para un contrato tipo {contract_type.value}:\n"
-        f"{menu}\n\n"
-        f"{few_shot}\n"
-    )
+    return f"{_BASE_PRELUDE}\nCampos a extraer para un contrato tipo {contract_type.value}:\n{menu}\n\n{few_shot}\n"
 
 
 def build_user_prompt(extracted_text: str) -> str:

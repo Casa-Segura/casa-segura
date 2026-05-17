@@ -189,8 +189,7 @@ def test_parser_accepts_nested_leasing_indicators_shape(mock_openrouter):
     """§8.4 reference shape: `leasing_indicators: {field: {detected, evidence}}`."""
     nested = {
         "leasing_indicators": {
-            key: {"detected": True, "evidence": "n/a"}
-            for key in list(LeasingIndicators.model_fields.keys())[:4]
+            key: {"detected": True, "evidence": "n/a"} for key in list(LeasingIndicators.model_fields.keys())[:4]
         },
         "confidence": 0.88,
         "reasoning": "matches Art. 2",

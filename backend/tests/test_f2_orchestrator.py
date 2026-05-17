@@ -199,9 +199,7 @@ def test_happy_cvp_persists_contract_analysis(mock_openrouter, active_catalog):
     assert analysis.benchmark_version_id == active_catalog[2].version
     # CS-139: CVP routes through the developer-direct rate band per PRD_F5
     # BR-10 (the §8.1 prompt definition of CVP excludes bank financing).
-    rate_comparisons = [
-        c for c in envelope.benchmark_comparisons if c.metric == "annual_rate"
-    ]
+    rate_comparisons = [c for c in envelope.benchmark_comparisons if c.metric == "annual_rate"]
     assert rate_comparisons, "CVP happy path must produce a rate-band comparison"
     assert rate_comparisons[0].metric_label == "Tasa efectiva anual vs financiamiento directo"
 

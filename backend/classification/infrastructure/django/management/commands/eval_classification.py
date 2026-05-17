@@ -190,7 +190,7 @@ class Command(BaseCommand):
             "--fixture",
             default=None,
             dest="fixture",
-            help=("Path to the YAML fixture. Defaults to " "<BASE_DIR>/fixtures/classification_eval_cases.yaml."),
+            help=("Path to the YAML fixture. Defaults to <BASE_DIR>/fixtures/classification_eval_cases.yaml."),
         )
         parser.add_argument(
             "--out",
@@ -213,7 +213,7 @@ class Command(BaseCommand):
             "--dry-run",
             action="store_true",
             dest="dry_run",
-            help=("Validate the YAML schema and print the coverage matrix " "without invoking the LLM. Safe for CI."),
+            help=("Validate the YAML schema and print the coverage matrix without invoking the LLM. Safe for CI."),
         )
 
     # ------------------------------------------------------------------
@@ -232,7 +232,7 @@ class Command(BaseCommand):
         if opts.get("dry_run"):
             self._print_coverage(fixture)
             self.stdout.write(
-                self.style.SUCCESS(f"\nDry-run OK: {len(fixture.cases)} cases validated; " "no LLM calls made.")
+                self.style.SUCCESS(f"\nDry-run OK: {len(fixture.cases)} cases validated; no LLM calls made.")
             )
             return
 
@@ -470,9 +470,7 @@ class Command(BaseCommand):
             self.stdout.write(f"  {ct.value:<18} {hits:>3} / {total:<3}  ({pct:.2%})")
 
         self.stdout.write(
-            self.style.MIGRATE_HEADING(
-                f"\nMacro accuracy: {metrics.macro_accuracy():.4f} " f"(threshold {threshold:.4f})"
-            )
+            self.style.MIGRATE_HEADING(f"\nMacro accuracy: {metrics.macro_accuracy():.4f} (threshold {threshold:.4f})")
         )
 
         nc_prec = metrics.not_classifiable_precision()
@@ -494,8 +492,8 @@ class Command(BaseCommand):
                 self.stdout.write(line)
             fp = metrics.reclassification_fp_rate()
             fn = metrics.reclassification_fn_rate()
-            self.stdout.write(f"\n  FP rate (purchase→LEA wrongly): " f"{fp if fp is None else f'{fp:.4f}'}")
-            self.stdout.write(f"  FN rate (LEA missed as purchase): " f"{fn if fn is None else f'{fn:.4f}'}")
+            self.stdout.write(f"\n  FP rate (purchase→LEA wrongly): {fp if fp is None else f'{fp:.4f}'}")
+            self.stdout.write(f"  FN rate (LEA missed as purchase): {fn if fn is None else f'{fn:.4f}'}")
 
         if metrics.errors:
             self.stdout.write(self.style.WARNING("\nErrors:"))

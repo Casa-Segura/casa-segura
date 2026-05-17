@@ -107,9 +107,7 @@ class LeasingReclassificationResult(BaseModel):
         ),
     )
     should_reclassify: bool = Field(
-        description=(
-            "Denormalized flag: True iff recommended_type != original_type. " "Enforced by a model validator."
-        ),
+        description=("Denormalized flag: True iff recommended_type != original_type. Enforced by a model validator."),
     )
     indicators: LeasingIndicators = Field(
         description=(
@@ -166,7 +164,7 @@ class LeasingReclassificationResult(BaseModel):
         # A reclassification can only ever recommend LEA (PRD US-03).
         if self.should_reclassify and self.recommended_type is not ContractType.LEA:
             raise ValueError(
-                "recommended_type must be LEA when should_reclassify is True; " f"got {self.recommended_type.value}"
+                f"recommended_type must be LEA when should_reclassify is True; got {self.recommended_type.value}"
             )
         return self
 

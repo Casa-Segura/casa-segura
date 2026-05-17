@@ -38,7 +38,6 @@ from platform_core.domain.project_name import (
 )
 from platform_core.infrastructure.django.models import Project
 
-
 PLACEHOLDER_REGEX = re.compile(r"^unknown_[0-9a-f]{8}$")
 
 

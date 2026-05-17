@@ -33,7 +33,7 @@ def test_chunker_returns_empty_for_stub_law():
 
 
 def test_chunker_returns_one_chunk_per_article():
-    body = "### Art. 1 — Primero\nTexto del primero.\n\n" "### Art. 2 — Segundo\nTexto del segundo."
+    body = "### Art. 1 — Primero\nTexto del primero.\n\n### Art. 2 — Segundo\nTexto del segundo."
     drafts = chunk_law(_law(body))
     assert [d.article_number for d in drafts] == ["Art. 1", "Art. 2"]
     assert all(d.anchor.startswith("art-") for d in drafts)

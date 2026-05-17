@@ -91,7 +91,7 @@ class SubmissionUploadView(APIView):
                         "error": "validation_error",
                         "error_code": "INVALID_FORCE_STRATEGY",
                         "detail": (
-                            f"X-Force-Strategy={forced!r} is not a valid extraction " f"strategy. Allowed: {allowed}."
+                            f"X-Force-Strategy={forced!r} is not a valid extraction strategy. Allowed: {allowed}."
                         ),
                     },
                     status=status.HTTP_400_BAD_REQUEST,

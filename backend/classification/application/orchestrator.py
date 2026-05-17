@@ -102,8 +102,6 @@ from economics.application.analyzer import analyze as economics_analyze
 from economics.application.catalog import BenchmarkCatalog
 from economics.application.version import (
     assert_freshness as assert_benchmark_freshness,
-)
-from economics.application.version import (
     latest_active as latest_active_benchmark,
 )
 from economics.infrastructure.django.models import BenchmarkVersion
@@ -249,9 +247,7 @@ class F2Orchestrator:
 
         # Step 2: leasing detection (skipped for non-applicable types).
         leasing = self._detect_leasing(extracted_text, classification.contract_type)
-        effective_type = (
-            leasing.recommended_type if leasing.should_reclassify else classification.contract_type
-        )
+        effective_type = leasing.recommended_type if leasing.should_reclassify else classification.contract_type
 
         # Step 3: project name extraction + linkage.
         link_result, name_canonical = self._link_project(extracted_text, submission_hash)

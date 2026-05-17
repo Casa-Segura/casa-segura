@@ -84,7 +84,7 @@ def extract_text_pdf(file_bytes: bytes) -> ExtractionResult:
         if time.perf_counter() - start > PYPDF_TIMEOUT_SECONDS:
             raise NotAnalyzableError(
                 reason=NotAnalyzableReason.TIMEOUT,
-                message=(f"pypdf wall-clock exceeded {PYPDF_TIMEOUT_SECONDS}s " f"after page {index}/{len(pages)}"),
+                message=(f"pypdf wall-clock exceeded {PYPDF_TIMEOUT_SECONDS}s after page {index}/{len(pages)}"),
             )
         try:
             page_text = page.extract_text() or ""
@@ -103,7 +103,7 @@ def extract_text_pdf(file_bytes: bytes) -> ExtractionResult:
     if len(full_text) < PYPDF_MIN_CHARS:
         raise NotAnalyzableError(
             reason=NotAnalyzableReason.LOW_CONFIDENCE_OCR,
-            message=(f"pypdf yielded {len(full_text)} chars < " f"{PYPDF_MIN_CHARS} (PRD §US-05 BR-08 minimum)"),
+            message=(f"pypdf yielded {len(full_text)} chars < {PYPDF_MIN_CHARS} (PRD §US-05 BR-08 minimum)"),
         )
 
     language = ensure_spanish(full_text)

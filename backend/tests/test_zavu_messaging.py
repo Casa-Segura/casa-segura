@@ -5,6 +5,7 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from django.test import override_settings
 
 from delivery.infrastructure.external.zavu_messaging import send_zavu_email, zavu_email_download_link_html
@@ -16,7 +17,7 @@ def test_zavu_email_download_link_html_escapes():
         link_text="Click <report>",
     )
     assert "Click &lt;report&gt;" in html_out or "&lt;report&gt;" in html_out
-    assert "href=\"https://example.com/a?x=1&amp;y=2\"" in html_out
+    assert 'href="https://example.com/a?x=1&amp;y=2"' in html_out
 
 
 @override_settings(ZAVUDEV_API_KEY="zk_test_x", ZAVU_SENDER_ID="snd_default")
@@ -44,9 +45,7 @@ def test_send_zavu_email_passes_channel_and_merges_attachments(mock_zavu_cls: Ma
     assert call_kw["channel"] == "email"
     assert call_kw["subject"] == "Hi"
     assert call_kw["zavu_sender"] == "snd_default"
-    assert call_kw["extra_body"] == {
-        "attachments": [{"filename": "a.pdf", "path": "https://cdn.example.com/a.pdf"}]
-    }
+    assert call_kw["extra_body"] == {"attachments": [{"filename": "a.pdf", "path": "https://cdn.example.com/a.pdf"}]}
 
 
 @override_settings(ZAVUDEV_API_KEY="", ZAVU_API_KEY="")
