@@ -50,9 +50,9 @@ For day-to-day pickup, start with the phase-first team index in [phases/README.m
 | [[EPIC-03-corpus-rag]] | Legal Corpus & RAG | F3 | Done — Phase 1 closed 2026‑05‑16 (see Phase index recap). |
 | [[EPIC-04-classification]] | Classification & Field Extraction | F2 | Backlog (stub) |
 | [[EPIC-05-economic-analysis]] | Economic Analysis & Benchmarks | F5 | Done — closed 2026‑05‑17 (CS-130..CS-137 shipped; deterministic F5 pipeline live in `backend/economics/`, 103 tests, zero LLM calls per BR-13). |
-| [[EPIC-06-rubric-engine]] | Rubric Engine & Scoring | F4 | Backlog |
+| [[EPIC-06-rubric-engine]] | Rubric Engine & Scoring | F4 | In progress — BVA + override matrix + Hypothesis (`CS-167`..`CS-171` done); BR-16 rubric version stamping remains open on DoD. |
 | [[EPIC-07-report-generation]] | Report Generation | F6 | Backlog (stub) |
-| [[EPIC-08-multichannel-delivery]] | Multi-Channel Delivery | F7 | Backlog |
+| [[EPIC-08-multichannel-delivery]] | Multi-Channel Delivery | F7 | In progress — backend delivery stack shipped (`CS-230`..`CS-248`, `CS-357`); channel picker at submission still open (see EPIC-08 DoD). |
 | [[EPIC-09-retention-privacy]] | Retention & Privacy Jobs | F8 part 2 | Backlog — scheduler contract shipped ([[CS-270]] / [`ADR-0005`](../adr/ADR-0005-retention-job-scheduling.md); execution jobs queued per tickets). |
 | [[EPIC-10-frontend]] | Frontend Web App | — | Done |
 | [[EPIC-11-observability]] | Observability, Security, Disclaimers | — | Backlog (stub) |

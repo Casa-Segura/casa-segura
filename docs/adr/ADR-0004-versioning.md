@@ -5,7 +5,7 @@ status: Accepted
 date: 2026-05-15
 deciders: Backend lane
 supersedes: —
-related: backend/shared/observability/logging.py `SCHEMA_VERSION`, docs/Roadmap/tickets/CS-010.md, docs/Roadmap/tickets/CS-030.md, docs/Roadmap/tickets/CS-033.md, docs/Roadmap/tickets/CS-034.md, _shared/GLOBAL_ASSUMPTIONS.md §17 GQ-02
+related: backend/shared/observability/logging.py `SCHEMA_VERSION`, docs/Roadmap/tickets/CS-010.md, docs/Roadmap/tickets/CS-030.md, docs/Roadmap/tickets/CS-033.md, docs/Roadmap/tickets/CS-034.md, docs/Roadmap/tickets/CS-358.md, _shared/GLOBAL_ASSUMPTIONS.md §17 GQ-02
 ---
 
 ## Context
@@ -86,6 +86,8 @@ replayed deterministically. Anonymization preserves these IDs.
 - Four versioning schemes (semver, semver, date, quarter) to remember.
   Mitigated by the table above and the seed-migration recipe in
   CS-033/CS-034.
+
+**Rubric criteria at score time:** F4 Celery (`rubric.evaluate_analysis`) resolves `Criterion` rows via `CriterionRepository.load_specs_for_analysis` so scoring matches the `ContractAnalysis` stamp (see `docs/Roadmap/tickets/CS-358.md`). “Re-grade with latest rubric” remains an explicit, non-default product path.
 
 ## Alternatives considered
 

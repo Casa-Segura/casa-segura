@@ -3,7 +3,7 @@ project: Casa Segura
 doc_type: phase_index
 phase: 5
 status: living
-last_updated: 2026-05-15
+last_updated: 2026-05-17
 tags:
   - casa-segura
   - roadmap
@@ -29,7 +29,7 @@ Source-of-truth links:
 
 ## Ready Now
 
-No Phase 5 tickets are ready yet. Start after Phase 4 outputs are stable enough to render and deliver.
+**Backend (2026-05-17):** Multi-channel delivery core for [[EPIC-08-multichannel-delivery]] is implemented under `backend/delivery/` (schemas, dispatcher, Celery task, email/SMS/web-link workers, public `/r/…/`, Zavu + SMS webhooks, resend). End-to-end channel selection at upload remains a separate integration item (see EPIC-08 DoD).
 
 ## FE WORK
 

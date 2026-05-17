@@ -3,7 +3,7 @@ project: Casa Segura
 doc_type: phase_index
 phase: 4
 status: living
-last_updated: 2026-05-15
+last_updated: 2026-05-17
 tags:
   - casa-segura
   - roadmap
@@ -53,11 +53,7 @@ No primary FE tickets live in this phase. FE consumes rubric verdicts, overrides
 
 ## INFRA WORK
 
-- [CS-167](../tickets/CS-167.md) - BVA tests for score bands.
-- [CS-168](../tickets/CS-168.md) - BVA tests for B2 interest rate scale.
-- [CS-169](../tickets/CS-169.md) - BVA tests for B1 down-payment scale.
-- [CS-170](../tickets/CS-170.md) - BVA tests for all overrides.
-- [CS-171](../tickets/CS-171.md) - Property-based test for asymmetric penalty.
+**Shipped (2026-05-17):** [[CS-167]]–[[CS-171]] — BVA + Hypothesis coverage in `backend/tests/test_rubric_epic06_bva.py` and `backend/tests/fixtures/overrides/`.
 
 Keep test data traceable to rubric thresholds. Numeric thresholds and overrides need boundary cases, not just happy-path fixtures.
 
