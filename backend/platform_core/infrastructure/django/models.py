@@ -275,6 +275,39 @@ class ContractAnalysis(ModelWithTimeStamps):
         help_text="SHA-256 of the original contract (idempotency; preserved after anonymization)",
     )
 
+    classification_confidence = models.DecimalField(
+        max_digits=4,
+        decimal_places=3,
+        null=True,
+        blank=True,
+        help_text="F2 §5.1: confidence of the accepted classification (NULL until classifier runs)",
+    )
+    classification_attempts = models.PositiveSmallIntegerField(
+        default=0,
+        help_text="F2 §5.1: 0 pre-run, 1 single call, 2 if §8.3 validator fired",
+    )
+    elements_detected = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="F2 §5.1 / US-05: structural boolean flags (public_deed, arbitration_clause, …)",
+    )
+    reclassification_indicators = models.JSONField(
+        null=True,
+        blank=True,
+        help_text="F2 §8.4 envelope {indicators, count, severity}; NULL when leasing detector did not run",
+    )
+    project_name_canonical = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="F2 §5.1 raw canonical project name as extracted (pre-normalization)",
+    )
+    economic_fields_raw = models.JSONField(
+        null=True,
+        blank=True,
+        help_text="F2 §8.5 coerced extraction payload; NULL for non-economic contract types",
+    )
+
     class Meta:
         db_table = "contract_analysis"
         verbose_name = "Contract Analysis"
@@ -291,6 +324,17 @@ class ContractAnalysis(ModelWithTimeStamps):
             models.CheckConstraint(
                 check=Q(delivery_status__in=[s.value for s in DeliveryStatus]),
                 name="ck_contract_analysis_delivery_status_enum",
+            ),
+            models.CheckConstraint(
+                check=(
+                    Q(classification_confidence__isnull=True)
+                    | (Q(classification_confidence__gte=0) & Q(classification_confidence__lte=1))
+                ),
+                name="ck_contract_analysis_classification_confidence_range",
+            ),
+            models.CheckConstraint(
+                check=Q(classification_attempts__lte=3),
+                name="ck_contract_analysis_classification_attempts_max",
             ),
         ]
         indexes = [
