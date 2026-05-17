@@ -6,7 +6,6 @@ from dataclasses import dataclass
 
 from shared.legal import DISCLAIMER_EMAIL_BODY_ES as _BR_DISCLAIMER_ES
 
-
 READABLE_CONTRACT_TYPE_ES: dict[str, str] = {
     "CVP": "compraventa con financiamiento",
     "CVC": "compraventa al contado",
