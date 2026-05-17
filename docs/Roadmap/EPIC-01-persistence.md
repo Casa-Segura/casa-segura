@@ -2,7 +2,7 @@
 id: EPIC-01
 name: Persistence & Schema
 phase: 0
-status: in_progress
+status: done
 depends_on:
   - EPIC-00
 prd_refs:
@@ -28,12 +28,12 @@ This epic does NOT implement retention/anonymization cron jobs — those are [[E
 
 ## Definition of done
 
-- [x] Postgres 15+ with `vector` extension running locally via docker-compose (`pgvector/pgvector:pg16`) — managed host pending deployment phase
+- [x] Postgres 15+ with `vector` extension running locally via docker-compose (`pgvector/pgvector:pg16`); managed host: **Railway** (Postgres plugin for Django services) with **Neon** (or equivalent) fallback if pgvector is unavailable — documented in [`RAILWAY.md`](../../RAILWAY.md) and root [`README.md`](../../README.md) “Base de datos (Postgres + pgvector)”
 - [x] Django migrations configured; `python manage.py migrate` builds a fresh DB from zero (CS-021)
 - [x] Every entity from [[FEATURES_MAP]] §4 has an ORM model and a migration (CS-025, CS-026, CS-027, CS-028, CS-029)
 - [x] CHECK constraints, ENUMs, and indexes enforce the invariants in [[RUBRICA_CONTRATO]] §12 and [[PRD_GENERAL]] BR-04, BR-05, BR-08, BR-16 (CS-026, CS-030 — composite FK, HNSW, GIN, immutability triggers, view checks)
-- [/] Project normalization (`canonical_name` → `normalized_name`) is implemented (CS-031 in_progress — function shipped; AC4 service-layer upsert belongs to F2/EPIC-04)
-- [/] Test fixtures exist for every entity and the test DB resets cleanly between tests (CS-032 in_progress — factories for 12 entities shipped; per-invariant tests against the factories still pending)
+- [x] Project normalization (`canonical_name` → `normalized_name`) + collision upsert via `ProjectLinker` (CS-031 done, tests in `backend/tests/test_project_name_cs031.py`; service also [[CS-112]])
+- [x] Test fixtures exist for every entity and the test DB resets cleanly between tests (CS-032 done — `backend/tests/factories.py`, `conftest.py`; CS-030 retention proofs use `age_to`)
 - [x] Seed: `RubricVersion` 1.0.0 loaded with the criteria catalog transcribed from [[RUBRICA_CONTRATO]] §16 (CS-033 done — `seed_rubric_version --activate` bootstraps the version row; `load_rubric_catalog` then idempotently upserts all criteria from `backend/fixtures/rubric_v1.yaml`. Live DB: 42 rows enumerated by the §16 master table; the rubric prose label "38" is a documentation reconciliation follow-up in CS-033)
 - [x] Seed: `CorpusVersion` placeholder row exists; actual chunks loaded by [[EPIC-03-corpus-rag]] (CS-034)
 
@@ -96,3 +96,4 @@ This epic does NOT implement retention/anonymization cron jobs — those are [[E
 - [[DOMAIN_MODEL]] is the canonical entity reference
 - [[RUBRICA_CONTRATO]] §12.4 lists what is **never** stored — schema must make those columns impossible to add accidentally
 - [[BE-SERVICES]] §2.3 reinforces the privacy separation: curated data persists, user data does not
+- **CI — migration smoke ([[CS-035]]):** GitHub Actions workflow **`CI`**, job **`Backend migration smoke (CS-035)`** in [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) (Postgres 16 + pgvector; forward → `migrate <app> zero` → forward). Branch protection checklist: [`docs/meta/BRANCH_PROTECTION.md`](../meta/BRANCH_PROTECTION.md).

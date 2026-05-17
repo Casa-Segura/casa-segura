@@ -162,7 +162,12 @@ jobs:
 
       - name: Run pytest
         working-directory: backend
-        run: poetry run pytest -v --tb=short
+        run: |
+          start=$(date +%s)
+          poetry run pytest -v --tb=short --reuse-db --create-db
+          end=$(date +%s)
+          echo "Pytest wall time: $((end-start))s (CS-032 budget: Postgres service reused for migrate+pytest; --reuse-db for local re-runs)"
+          if [ $((end-start)) -gt 240 ]; then echo "Pytest exceeded 240s"; exit 1; fi
 
   # ---------------------------------------------------------------------------
   # 3. Migration smoke test (CS-035): forward -> zero -> forward
@@ -245,6 +250,7 @@ jobs:
       - name: Forward migrate (initial)
         working-directory: backend
         run: |
+          echo "MIGRATION_SMOKE_START=$(date +%s)" >> "$GITHUB_ENV"
           start=$(date +%s)
           poetry run python manage.py migrate --no-input
           end=$(date +%s)
@@ -269,6 +275,12 @@ jobs:
           poetry run python manage.py migrate --no-input
           end=$(date +%s)
           echo "Re-apply migrate took $((end - start))s"
+          if [ -n "${MIGRATION_SMOKE_START:-}" ]; then
+            now=$(date +%s)
+            elapsed=$((now - MIGRATION_SMOKE_START))
+            echo "Migration smoke sequence (forward + rollback + re-apply) elapsed: ${elapsed}s (CS-035 max 600s)"
+            if [ "$elapsed" -gt 600 ]; then echo "Migration smoke exceeded 600s"; exit 1; fi
+          fi
 
   # ---------------------------------------------------------------------------
   # 4. Frontend build (lint + typecheck + build)

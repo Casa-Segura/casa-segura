@@ -89,6 +89,16 @@ Divulgación responsable: **[`SECURITY.md`](SECURITY.md)**.
 
 Guías por servicio: [backend/README.md](backend/README.md) · [frontend/README.md](frontend/README.md) · [RAILWAY.md](RAILWAY.md).
 
+### Base de datos (Postgres + pgvector)
+
+- **Local:** [`docker-compose.dev.yml`](docker-compose.dev.yml) usa la imagen **PostgreSQL 16** con pgvector (`pgvector/pgvector:pg16`). Las extensiones `vector`, `pgcrypto` y `uuid-ossp` se crean al iniciar el volumen ([`infra/postgres/init/`](infra/postgres/init/)). Variables: copia [`backend/.env.example`](backend/.env.example) → `backend/.env` (CS-006).
+
+- **Remoto (decisión explícita):** el backend Django, worker, beat y Postgres gestionado viven en **Railway**; la app web Next.js va en **Vercel** (no en Railway). Conexión: `DATABASE_URL` expuesta por Railway; cuando está presente, **anula** los `DB_*` discretos — detalle en [`backend/.env.example`](backend/.env.example) y guía operativa en [`RAILWAY.md`](RAILWAY.md).
+
+- **Si el proveedor no ofrece pgvector** (riesgo R-01-1 en [EPIC-01](docs/Roadmap/EPIC-01-persistence.md)): usar Postgres externo con pgvector, por ejemplo **Neon** como fallback documentado en RAILWAY §3.B — no se compensa con parches en Django; el fallo es de imagen/proveedor.
+
+- **Fallo al crear extensiones (`CREATE EXTENSION vector` erróneo o “extensión no disponible”):** corregir **imagen de Postgres / proveedor** (reprovisionar el plugin, usar Neon u otro host con la extensión). No es un bug de aplicación que se arregle con cambios de código del API.
+
 ## Estructura del repositorio
 
 ```text
@@ -121,6 +131,8 @@ infra/       # Ayudas para desarrollo local (p. ej. init de Postgres)
    ```
 
    Abre [http://localhost:3000](http://localhost:3000). Más detalle: [frontend/README.md](frontend/README.md).
+
+Guía para **protección de rama** / checks obligatorios: [`docs/meta/BRANCH_PROTECTION.md`](docs/meta/BRANCH_PROTECTION.md).
 
 ### Integración continua (CS-004)
 
