@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: phase_index
 status: living
-last_updated: 2026-05-16
+last_updated: 2026-05-17
 tags:
   - casa-segura
   - roadmap
@@ -41,6 +41,8 @@ Use this folder as a phase-first pick list for parallel work:
 **In flight:** [CS-001](../tickets/CS-001.md) (repo posture and README skeleton) is **`in_progress`**; completing it unblocks **`CS-002`** and **`CS-003`**. EPIC-12 optional verification work: [CS-356](../tickets/CS-356.md), [CS-351](../tickets/CS-351.md), [CS-355](../tickets/CS-355.md) are **`in_progress`** across `frontend/` and gated Django stubs under `PROJECT_VERIFICATION_ENABLED` (matrix: [`project-verification-fe-be-gates.md`](../../guides/project-verification-fe-be-gates.md)).
 
 **Phase 1 progress (2026-05-16):** EPIC-03 (Legal Corpus & RAG, CS-080..CS-090) closed with revised multi-Top-K AC after four live calibration runs (final: e5-large + bge-reranker-v2-m3 + ES corpus → Strict Top-1 = 0.633, Top-3 = 0.900, Top-5 = 0.967). **Phase 1 closed 2026-05-16.** EPIC-02 (Contract Ingestion & OCR) and EPIC-03 (Legal Corpus & RAG) both `done`. EPIC-02 ships CS-050..CS-060 (multi-file `files[]` 1–50 + image dimensions + batch caps; router 100-char threshold; pypdf separators/normalization/watchdog/vision-escalation; Pixtral single-call; Tesseract mean-confidence gate; PRD §US-08 language gate + HTTP 422; multi-file SHA-256 idempotency; 15 MB byte cap; latency budget instrumentation). One AC deferred to EPIC-04 / EPIC-06: CS-051 HTTP 409 `is_duplicate` envelope (needs ContractAnalysis lookup). See [PHASE-1-input-pipelines.md](PHASE-1-input-pipelines.md).
+
+**Phase 3 closed 2026-05-17:** EPIC-05 (Economic Analysis & Benchmarks, CS-130..CS-137) shipped. Deterministic F5 pipeline lives in `backend/economics/` — versioned benchmark catalog (CS-130), compound rate normalizer (CS-131), monthly-payment ratio bands (CS-132), French amortization + BR-07 coherence (CS-133), asymmetric benchmark comparisons + USD overcost (CS-134), `EconomicSummary` assembler matching [`ECONOMIC_SUMMARY_CONTRACT.md`](../../analysis/F5_analisis_economico/ECONOMIC_SUMMARY_CONTRACT.md) (CS-135), byte-equal version stamping + BR-12 freshness signal (CS-136), and BR-09 honesty guard (CS-137). 103 tests, zero LLM calls (PRD_F5 BR-13). Pipeline-level wiring of `analyze()` into a post-classification orchestrator is **deferred** — awaits an EPIC-04 orchestrator ticket. See [PHASE-3-economic-analysis.md](PHASE-3-economic-analysis.md).
 
 Phase pages also include phase-local `Ready Now` notes so engineers can see whether their phase has work available. If the global list changes, update this file and [Parallel Work Plan](../PARALLEL_WORK_PLAN.md) in the same documentation pass.
 

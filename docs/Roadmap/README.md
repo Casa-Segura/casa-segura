@@ -49,7 +49,7 @@ For day-to-day pickup, start with the phase-first team index in [phases/README.m
 | [[EPIC-02-ingestion-ocr]] | Contract Ingestion & OCR | F1 | Done — Phase 1 closed 2026‑05‑16 (see Phase index recap). |
 | [[EPIC-03-corpus-rag]] | Legal Corpus & RAG | F3 | Done — Phase 1 closed 2026‑05‑16 (see Phase index recap). |
 | [[EPIC-04-classification]] | Classification & Field Extraction | F2 | Backlog (stub) |
-| [[EPIC-05-economic-analysis]] | Economic Analysis & Benchmarks | F5 | Backlog (stub) |
+| [[EPIC-05-economic-analysis]] | Economic Analysis & Benchmarks | F5 | Done — closed 2026‑05‑17 (CS-130..CS-137 shipped; deterministic F5 pipeline live in `backend/economics/`, 103 tests, zero LLM calls per BR-13). |
 | [[EPIC-06-rubric-engine]] | Rubric Engine & Scoring | F4 | Backlog |
 | [[EPIC-07-report-generation]] | Report Generation | F6 | Backlog (stub) |
 | [[EPIC-08-multichannel-delivery]] | Multi-Channel Delivery | F7 | Backlog |
