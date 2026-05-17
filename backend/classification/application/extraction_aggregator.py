@@ -221,7 +221,11 @@ def _compute_warning_precursors(slots: dict[str, EconomicSlot]) -> list[str]:
 
     base_slot = slots.get("interest_calculation_base")
     if base_slot is not None and base_slot.status is ExtractionStatus.PRESENT and base_slot.value == "total_balance":
-        rate_unverifiable = any(
+        # Precursor fires only when ALL rate slots are non-PRESENT, i.e.
+        # the contract carries the Art. 12 LPC risk AND no rate is
+        # known (monthly OR annual). Knowing one is enough — they
+        # convert via `(1+m)^12 - 1` (PRD F2 BR-08).
+        rate_unverifiable = all(
             ((rate_slot := slots.get(rate_name)) is None or rate_slot.status is not ExtractionStatus.PRESENT)
             for rate_name in _RATE_SLOTS_FOR_INTEREST_BASE
         )

@@ -223,6 +223,13 @@ OPENROUTER_TIMEOUT_SECONDS = env.int("OPENROUTER_TIMEOUT_SECONDS", default=60)
 OPENROUTER_MAX_RETRIES = env.int("OPENROUTER_MAX_RETRIES", default=3)
 
 
+# ─── Internal API token (EPIC-04 PR-6) ───
+# Shared secret for /api/v1/internal/* (currently: the F2 classify QA
+# endpoint). Empty by default → endpoint is unreachable until the operator
+# sets a value (fail-closed). Compared via secrets.compare_digest.
+INTERNAL_API_TOKEN = env("INTERNAL_API_TOKEN", default="")
+
+
 # ─── OCR pipeline (Phase 1, EPIC-02) ───
 OCR_MAX_PAGES = env.int("OCR_MAX_PAGES", default=50)
 OCR_MAX_BYTES = env.int("OCR_MAX_BYTES", default=15 * 1024 * 1024)  # CS-059: PRD §US-01 canonical
