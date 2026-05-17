@@ -9,8 +9,9 @@ import html
 import logging
 from typing import Any
 
-from django.conf import settings
 from zavudev import Zavudev
+
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ def zavu_email_download_link_html(*, url: str, link_text: str) -> str:
     """Minimal HTML body with a single download link (URLs must be verified in Zavu when required)."""
     label = html.escape(link_text)
     href = html.escape(url, quote=True)
-    return f"<p>{label}: <a href=\"{href}\">{label}</a></p>"
+    return f'<p>{label}: <a href="{href}">{label}</a></p>'
 
 
 def _zavu_client():

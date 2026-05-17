@@ -2,7 +2,7 @@
 
 Glues every Phase 4 component together:
 
-1. Resolve ``CriterionSpec`` rows for the active rubric version.
+1. Accept caller-resolved ``CriterionSpec`` rows and rubric version string.
 2. Dispatch evaluators via ``CriterionDispatcher`` (CS-158).
 3. Aggregate scores + band via ``score_calculator.aggregate_total``
    (CS-152 / CS-156 / CS-157).

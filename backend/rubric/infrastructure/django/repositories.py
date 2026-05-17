@@ -1,8 +1,8 @@
 """Repositories that bridge the rubric application layer to Django ORM.
 
-* ``CriterionRepository`` — loads ``Criterion`` rows for the active
-  ``RubricVersion`` and materializes them as ``CriterionSpec`` instances
-  the dispatcher consumes.
+* ``CriterionRepository`` — loads ``Criterion`` rows either for the stamped
+  ``ContractAnalysis.rubric_version`` or, when bootstrap applies, for the active
+  ``RubricVersion`` (see ``load_specs_for_analysis`` / CS-358).
 * ``ContractAnalysisRepository`` — writes the ``FullAnalysisResult`` back
   onto the ``ContractAnalysis`` row (PRD_F4 US-07). The write is atomic:
   every column the rubric owns is updated in one ``save()`` call.
@@ -18,6 +18,10 @@ from platform_core.infrastructure.django.models import ContractAnalysis
 from rubric.application.services.criterion_evaluator import CriterionSpec
 from rubric.domain.entities import FullAnalysisResult
 from rubric.infrastructure.django.models import Criterion, RubricVersion
+
+# Log / analytics: where rubric criterion rows came from for a scoring run.
+RUBRIC_CATALOG_STAMPED = "stamped"
+RUBRIC_CATALOG_ACTIVE_BOOTSTRAP = "active_bootstrap"
 
 
 class CriterionRepository:
@@ -47,6 +51,27 @@ class CriterionRepository:
             )
             for row in rows
         ]
+
+    def load_specs_for_analysis(
+        self,
+        analysis: ContractAnalysis,
+    ) -> tuple[list[CriterionSpec], str, str]:
+        """Resolve specs for scoring: stamped `ContractAnalysis` rubric, else active catalog.
+
+        Returns ``(specs, resolved_rubric_version_string, rubric_catalog_source)`` where
+        ``rubric_catalog_source`` is ``RUBRIC_CATALOG_STAMPED`` or
+        ``RUBRIC_CATALOG_ACTIVE_BOOTSTRAP`` (defensive: unsaved rows / future stubs).
+        """
+
+        stamp = getattr(analysis, "rubric_version_id", None)
+        if stamp:
+            return (
+                self.load_specs_for_version(stamp),
+                stamp,
+                RUBRIC_CATALOG_STAMPED,
+            )
+        specs, active_version = self.load_active_specs()
+        return specs, active_version, RUBRIC_CATALOG_ACTIVE_BOOTSTRAP
 
 
 class ContractAnalysisRepository:
@@ -113,4 +138,9 @@ class ContractAnalysisRepository:
         return payload
 
 
-__all__ = ["ContractAnalysisRepository", "CriterionRepository"]
+__all__ = [
+    "RUBRIC_CATALOG_ACTIVE_BOOTSTRAP",
+    "RUBRIC_CATALOG_STAMPED",
+    "ContractAnalysisRepository",
+    "CriterionRepository",
+]

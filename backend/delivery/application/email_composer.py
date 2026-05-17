@@ -4,12 +4,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from django.conf import settings
-
 _BR_DISCLAIMER_ES = (
-    "Este informe es orientativo y no sustituye asesoría legal. "
-    "Revísalo con un profesional antes de decidir."
+    "Este informe es orientativo y no sustituye asesoría legal. Revísalo con un profesional antes de decidir."
 )
+
+
+READABLE_CONTRACT_TYPE_ES: dict[str, str] = {
+    "CVP": "compraventa con financiamiento",
+    "CVC": "compraventa al contado",
+    "APV": "promesa de compraventa",
+    "LEA": "arrendamiento",
+    "ARV": "arrendamiento con promesa",
+    "ARC": "arrendamiento comercial",
+    "IVU": "IVU",
+    "FSV": "FSV",
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -20,10 +29,16 @@ class EmailComposeResult:
     attachment_filename: str
 
 
-def compose_delivery_email(*, public_short_id: str, band_label: str | None = None) -> EmailComposeResult:
+def compose_delivery_email(
+    *,
+    public_short_id: str,
+    band_label: str | None = None,
+    contract_type_code: str | None = None,
+) -> EmailComposeResult:
     """Build transactional email fields + attachment name — PDF bytes supplied separately."""
     band = (band_label or "informe").strip()
-    subject = f"Casa Segura — tu informe está listo ({public_short_id})"
+    type_es = READABLE_CONTRACT_TYPE_ES.get((contract_type_code or "").strip(), "contrato")
+    subject = f"Tu análisis de contrato — Casa Segura — {type_es}"
     text_body = (
         f"Hola,\n\n"
         f"Tu análisis ({public_short_id}) está listo. "
@@ -38,6 +53,5 @@ def compose_delivery_email(*, public_short_id: str, band_label: str | None = Non
         f"<p>{_BR_DISCLAIMER_ES}</p>"
         f"<p>— Casa Segura</p>"
     )
-    base = getattr(settings, "CASASEGURA_EMAIL_ATTACHMENT_BASENAME", "informe-casa-segura.pdf")
-    filename = f"{base.removesuffix('.pdf')}-{public_short_id}.pdf"
+    filename = f"casa_segura_{public_short_id}.pdf"
     return EmailComposeResult(subject=subject, text_body=text_body, html_body=html_body, attachment_filename=filename)

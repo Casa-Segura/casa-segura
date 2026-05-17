@@ -118,8 +118,7 @@ async def evaluate_a3(spec: CriterionSpec, ctx: EvaluationContext) -> CriterionE
             spec,
             score=0.0,
             justification=(
-                "Cláusula que deja el precio al arbitrio de una de las partes "
-                "(RUBRICA_CONTRATO §4 A3, Art. 1613 CC)."
+                "Cláusula que deja el precio al arbitrio de una de las partes (RUBRICA_CONTRATO §4 A3, Art. 1613 CC)."
             ),
             evidence_snippet=discretionary_hit.snippet,
             override_triggered=OverrideCode.ART_1613_CC,

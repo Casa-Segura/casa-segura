@@ -16,7 +16,18 @@ def plaintext_destination(target_value_encrypted: str | None) -> str:
 
 
 def plaintext_email(target_value_encrypted: str | None) -> str:
-    addr = plaintext_destination(target_value_encrypted)
-    if "@" not in addr:
-        raise ValueError("delivery_destination_not_an_email")
-    return addr
+    """Email destinations — basic shape check after stripping ``enc::``."""
+
+    e = plaintext_destination(target_value_encrypted).strip()
+    if "@" not in e or e.startswith("@") or e.endswith("@"):
+        raise ValueError("delivery_destination_not_email")
+    return e
+
+
+def plaintext_phone(target_value_encrypted: str | None) -> str:
+    """SMS destinations — expect E.164 after stripping ``enc::``."""
+
+    p = plaintext_destination(target_value_encrypted).strip()
+    if len(p) < 8 or not p.startswith("+"):
+        raise ValueError("delivery_destination_not_e164")
+    return p

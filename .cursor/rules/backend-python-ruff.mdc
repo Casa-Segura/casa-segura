@@ -1,0 +1,35 @@
+---
+description: Run Ruff (check, optional --fix) on backend Python before done/commit
+alwaysApply: true
+---
+
+# Backend Python — Ruff before wrap-up or commits
+
+**When:** You edit, refactor, generate, or review code under **`backend/**/*.py`**, or you summarize work as merge/commit-ready touching the Django backend.
+
+**Do this from `backend/`** (canonical venv via Poetry):
+
+```bash
+poetry run ruff check <paths>
+```
+
+Scoping guidelines:
+
+| Situation | Command |
+|-----------|---------|
+| Few edited files only | `poetry run ruff check path/to/a.py path/to/b.py` |
+| Broader certainty | `poetry run ruff check .` |
+
+**Autofix (matches `.pre-commit-config.yaml` hook):**
+
+```bash
+poetry run ruff check <paths> --fix
+```
+
+Then re-run **`ruff check` without `--fix`** (or with `--diff` mindset) until clean.
+
+**Constraints:**
+
+- Prefer **scoped paths** above for speed; expand to `.` before declaring the task done when changes could have ripple effects across `backend/tests/` or sibling modules.
+- **Do not rely on Cursor IDE diagnostics alone** for Ruff; run the CLI.
+- CI also runs **`black --check`** and **`isort --check-only`** on `backend/` (see `.github/workflows/ci.yml`). For large Python edits or style-sensitive diffs, run those locally the same way if you suspect formatting drift — Ruff lint does not replace them.

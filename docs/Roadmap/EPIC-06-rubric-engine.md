@@ -42,8 +42,9 @@ Delivering [[PRD_GENERAL]] US-03 ("System applies the rubric and produces the sc
 - [x] Weight renormalization when criteria don't apply to the detected contract type
 - [x] Verdict synthesis prompt produces a 2–3 sentence summary that contains **zero** legal citations not present in the retrieved RAG context ([[PRD_GENERAL]] BR-02, BR-03)
 - [x] Every `Finding` produced carries: severity, title, description, optional cited clause, optional `LegalReference` (from RAG), recommendation
-- [ ] BVA test suite passes for all numeric thresholds (see ticket-level BVA tables)
-- [x] Rubric version is stamped on every `ContractAnalysis` row ([[PRD_GENERAL]] BR-16)
+- [x] BVA test suite passes for all numeric thresholds (see ticket-level BVA tables)
+- [x] [[PRD_GENERAL]] BR-16 (scoring path): criterion specs for `rubric.evaluate_analysis` resolve from `ContractAnalysis.rubric_version` (snapshot at ingest); Celery retries do not silently follow globally active catalog drift ([[CS-358]], [[ADR-0004-versioning]])
+- [ ] [[PRD_GENERAL]] BR-16 (report/regeneration copy): criterion labels and version footer for on-demand reports use the analysis stamp + `Criterion` rows for that version — [[EPIC-07-report-generation]] / [[CS-208]] (out of scope for EPIC-06)
 
 ## In scope
 
@@ -85,6 +86,7 @@ Delivering [[PRD_GENERAL]] US-03 ("System applies the rubric and produces the sc
 - [[CS-156]] — Band assignment from total score
 - [[CS-157]] — Override forcing: any active override → score=0, band=red
 - [[CS-158]] — Criterion evaluator framework (interface, registry, dispatch)
+- [[CS-358]] — BR-16: resolve rubric catalog for scoring from stamped `ContractAnalysis.rubric_version` (not active singleton by default)
 
 ### Per-category evaluators
 

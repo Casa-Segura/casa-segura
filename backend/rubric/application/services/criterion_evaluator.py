@@ -295,7 +295,7 @@ def _non_applicable_row(spec: CriterionSpec) -> CriterionEvaluation:
         score=0.0,
         weight_in_category=spec.weight_in_category,
         override_triggered=None,
-        justification=(f"Criterion {spec.criterion_id} does not apply to contract type " f"{spec.applicable_types}."),
+        justification=(f"Criterion {spec.criterion_id} does not apply to contract type {spec.applicable_types}."),
         evidence_snippet=None,
     )
 

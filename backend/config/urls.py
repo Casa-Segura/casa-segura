@@ -3,6 +3,8 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from django.contrib import admin
 from django.urls import include, path
 
+from delivery.interfaces.api.resend_views import ResendDeliveryView
+from delivery.interfaces.api.sms_webhook_views import SmsDeliveryCallbackView
 from delivery.interfaces.public_views import PublicReportHtmlView
 from shared.observability.health import health, ready
 
@@ -15,7 +17,9 @@ swagger_url_patterns = [
 # its DRF urls under `<app>.interfaces.api.urls`.
 api_v1_url_patterns = [
     path("", include("ingestion.interfaces.api.urls", namespace="ingestion")),
+    path("contracts/<str:public_short_id>/resend/", ResendDeliveryView.as_view(), name="delivery-resend"),
     path("webhooks/zavu/", include("delivery.interfaces.api.urls")),
+    path("webhooks/sms/", SmsDeliveryCallbackView.as_view(), name="sms-delivery-callback"),
     path("corpus/", include("corpus.interfaces.api.urls", namespace="corpus")),
     path(
         "project-verification/",

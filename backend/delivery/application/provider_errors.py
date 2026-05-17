@@ -75,6 +75,27 @@ def classify_zavu_exception(exc: BaseException) -> ClassifiedDeliveryError:
     return ClassifiedDeliveryError(classification=transient, reason_code="provider_unknown", message=msg)
 
 
+def classify_sms_provider_response(*, status_code: int, body_text: str) -> ClassifiedDeliveryError:
+    """Map SMS REST errors — CS-243 table tests."""
+
+    perm = ErrorClassification.PERMANENT.value
+    transient = ErrorClassification.TRANSIENT.value
+    lower = body_text.lower()
+    if "invalid_phone" in lower or "invalid number" in lower:
+        return ClassifiedDeliveryError(
+            classification=perm, reason_code="INVALID_PHONE_NUMBER", message="invalid phone"
+        )
+    if "malformed" in lower or "template" in lower:
+        return ClassifiedDeliveryError(classification=perm, reason_code="malformed_body", message="malformed")
+    if status_code >= 500:
+        return ClassifiedDeliveryError(
+            classification=transient,
+            reason_code="PROVIDER_UNAVAILABLE",
+            message="sms 5xx",
+        )
+    return ClassifiedDeliveryError(classification=perm, reason_code="GENERIC_PROVIDER_ERROR", message=body_text[:256])
+
+
 def classify_generic(exc: BaseException) -> ClassifiedDeliveryError:
     """Fallback when transport is not Zavu."""
 

@@ -33,7 +33,6 @@ from classification.domain.indicators import (
     IndicatorsFound,
 )
 
-
 # ---------------------------------------------------------------------------
 # ContractType — enum closure (CS-114 AC1, Rule 9)
 # ---------------------------------------------------------------------------

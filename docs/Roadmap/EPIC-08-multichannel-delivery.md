@@ -2,7 +2,7 @@
 id: EPIC-08
 name: Multi-Channel Delivery
 phase: 5
-status: backlog
+status: in_progress
 depends_on:
   - EPIC-01
   - EPIC-07
@@ -31,14 +31,14 @@ Casa Segura is Python / **Django 5.2 LTS** + **DRF** / **Django ORM**, with **Ce
 ## Definition of done
 
 - [ ] User can choose `sms_summary`, `email_pdf`, or `web_link` at submission time
-- [ ] Email path sends PDF as attachment with Spanish subject and body, disclaimer included
-- [ ] SMS path sends a concise summary with score/band, link to full HTML report, and disclaimer shorthand
-- [ ] Web link path serves HTML on demand (regenerated, not persisted per [[PRD_GENERAL]] BR-01)
-- [ ] Link respects TTL; expired links return the friendly Spanish message from [[PRD_GENERAL]] US-05
-- [ ] Delivery target stored only as hash; original value discarded after delivery confirmation
-- [ ] Failed deliveries retry with exponential backoff; permanent failures recorded with reason
-- [ ] On-demand resend works given the `public_short_id` + hash match per [[RUBRICA_CONTRATO]] §13.4
-- [ ] Provider acknowledgements update `DeliveryRequest.status` without logging raw destinations
+- [x] Email path sends PDF as attachment with Spanish subject and body, disclaimer included
+- [x] SMS path sends a concise summary with score/band, link to full HTML report, and disclaimer shorthand
+- [x] Web link path serves HTML on demand (regenerated, not persisted per [[PRD_GENERAL]] BR-01)
+- [x] Link respects TTL; expired links return the friendly Spanish message from [[PRD_GENERAL]] US-05
+- [x] Delivery target stored only as hash; original value discarded after delivery confirmation
+- [x] Failed deliveries retry with exponential backoff; permanent failures recorded with reason
+- [x] On-demand resend works given the `public_short_id` + hash match per [[RUBRICA_CONTRATO]] §13.4
+- [x] Provider acknowledgements update `DeliveryRequest.status` without logging raw destinations
 
 ## In scope
 

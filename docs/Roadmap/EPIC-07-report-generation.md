@@ -29,6 +29,15 @@ Compose the responsive HTML report per [[RUBRICA_CONTRATO]] §11 and render to P
 
 ## Definition of done
 
+<<<<<<< HEAD
+- [ ] HTML template covers the 8 sections in [[RUBRICA_CONTRATO]] §11.1
+- [ ] PDF renderer (WeasyPrint or similar) produces a legible PDF at print density
+- [ ] Disclaimer in header and footer ([[PRD_GENERAL]] BR-07)
+- [ ] Override box prominent when override active
+- [ ] Findings rendered with collapsible legal-reference card per [[BE-SERVICES]] §5
+- [ ] Art. 1686 CC warning always shown ([[PRD_GENERAL]] open question #5 — recommended yes)
+- [ ] Rubric and corpus version visible in footer (**sourced from persisted `ContractAnalysis` and version-scoped catalog rows** — not `load_active_specs()`; [[CS-358]], [[CS-208]])
+=======
 - [x] HTML template covers the 8 sections in [[RUBRICA_CONTRATO]] §11.1
 - [x] PDF renderer (WeasyPrint or similar) produces a legible PDF at print density
 - [x] Disclaimer in header and footer ([[PRD_GENERAL]] BR-07)
@@ -54,5 +63,6 @@ Compose the responsive HTML report per [[RUBRICA_CONTRATO]] §11 and render to P
 
 ## Notes
 
+- **BR-16:** On-demand HTML/PDF must not call `load_active_specs()` for content tied to a specific analysis; use `analysis.rubric_version` and `Criterion` rows for that semver (see [[CS-358]]).
 - The example finding format in [[RUBRICA_CONTRATO]] §11.2 is the visual reference for [[CS-205]]
 - "Tú" register, not "usted" ([[STATUS]] D8)

@@ -47,6 +47,7 @@ build-backend = "poetry.core.masonry.api"
 
 [dependency-groups]
 dev = [
+    "hypothesis (>=6.140.0,<7.0.0)",
     "black (>=26.3.1,<27.0.0)",
     "isort (>=8.0.1,<9.0.0)",
     "pytest (>=9.0.3,<10.0.0)",
@@ -87,3 +88,6 @@ include_trailing_comma = true
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
+markers = [
+    "slow: property / high-volume tests (optional nightly lane)",
+]

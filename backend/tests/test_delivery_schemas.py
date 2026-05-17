@@ -2,17 +2,23 @@
 
 from __future__ import annotations
 
-import pytest
-from pydantic import ValidationError
+from datetime import UTC, datetime, timedelta
 
+import pytest
+from pydantic import SecretStr, ValidationError
+
+from delivery.domain.enums import DeliveryRequestStatus, ErrorClassification
 from delivery.domain.schemas import (
     CHANNEL_VALUES,
     DELIVERY_REQUEST_STATUS_VALUES,
     ERROR_CLASSIFICATION_VALUES,
+    DeliveryChannelDTO,
+    DeliveryRequestDTO,
+    DeliveryRequestStatusDTO,
+    EnqueueDeliveryPayload,
     StrictDeliveryChannel,
     ZavuWebhookPayload,
 )
-from delivery.domain.enums import DeliveryRequestStatus, ErrorClassification
 from platform_core.domain.enums import DeliveryChannel
 
 
@@ -37,7 +43,51 @@ def test_strict_delivery_channel_rejects_whatsapp_alias():
 
 
 def test_zavu_webhook_resolves_message_id_from_nested_dict():
-    p = ZavuWebhookPayload.model_validate(
-        {"type": "message.delivered", "data": {"message": {"id": "msg_x"}}}
-    )
+    p = ZavuWebhookPayload.model_validate({"type": "message.delivered", "data": {"message": {"id": "msg_x"}}})
     assert p.resolve_message_id() == "msg_x"
+
+
+def test_enqueue_payload_allows_web_link_without_target_hash():
+    p = EnqueueDeliveryPayload(
+        analysis_id="a1",
+        channel=DeliveryChannelDTO.WEB_LINK,
+        target_hash="",
+    )
+    assert p.channel == DeliveryChannelDTO.WEB_LINK
+
+
+def test_enqueue_payload_requires_target_hash_for_email():
+    with pytest.raises(ValidationError):
+        EnqueueDeliveryPayload(
+            analysis_id="a1",
+            channel=DeliveryChannelDTO.EMAIL_PDF,
+            target_hash="",
+        )
+
+
+def test_enqueue_payload_rejects_attempt_when_no_retries_remain():
+    with pytest.raises(ValidationError):
+        EnqueueDeliveryPayload(
+            analysis_id="a1",
+            channel=DeliveryChannelDTO.SMS_SUMMARY,
+            target_hash="ab",
+            attempt_count=3,
+            max_attempts=3,
+        )
+
+
+def test_delivery_request_dto_excludes_encrypted_target_from_dump():
+    exp = datetime.now(UTC) + timedelta(days=7)
+    dto = DeliveryRequestDTO(
+        id="00000000-0000-0000-0000-000000000001",
+        analysis_id="00000000-0000-0000-0000-000000000002",
+        channel=DeliveryChannelDTO.EMAIL_PDF,
+        target_hash="abc",
+        status=DeliveryRequestStatusDTO.QUEUED,
+        attempt_count=0,
+        max_attempts=3,
+        expires_at=exp,
+        target_value_encrypted=SecretStr("enc::secret"),
+    )
+    dumped = dto.model_dump()
+    assert "target_value_encrypted" not in dumped

@@ -115,7 +115,7 @@ def load_yaml(path: Path | str) -> BenchmarkPayload:
     next_review_due = _parse_date(data["next_review_due"], field="next_review_due", path=p)
     if next_review_due < released_at.date():
         raise BenchmarkLoaderError(
-            f"{p}: top-level next_review_due ({next_review_due}) is before " f"released_at ({released_at.date()})"
+            f"{p}: top-level next_review_due ({next_review_due}) is before released_at ({released_at.date()})"
         )
 
     changelog = str(data.get("changelog") or "").strip()
@@ -225,7 +225,7 @@ def _validate_entry(key: Any, raw: Any, *, path: Path) -> BenchmarkEntry:  # noq
     value_max = _opt_decimal(raw.get("value_max"), field="value_max", key=benchmark_key, path=path)
     if value_default is None and value_min is None and value_max is None:
         raise BenchmarkLoaderError(
-            f"{path}: entry {benchmark_key!r} must define at least one of " "value_default / value_min / value_max"
+            f"{path}: entry {benchmark_key!r} must define at least one of value_default / value_min / value_max"
         )
     for label, val in (("value_default", value_default), ("value_min", value_min), ("value_max", value_max)):
         if val is not None and val < Decimal("0"):

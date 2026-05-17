@@ -2,7 +2,8 @@
 
 The main task ``rubric.evaluate_analysis`` orchestrates:
 
-1. Load active rubric ``CriterionSpec`` rows.
+1. Resolve ``CriterionSpec`` rows for this analysis (stamped ``rubric_version``,
+   else active catalog — see ``CriterionRepository.load_specs_for_analysis`` / CS-358).
 2. Build ``EvaluationContext`` from the ``ContractAnalysis`` row's
    classification + economic summary + ingestion text.
 3. Run ``RubricEvaluationService.evaluate`` (async) inside ``asyncio.run``.
@@ -43,7 +44,7 @@ def evaluate_analysis(self, analysis_id: str) -> dict:
     )
 
     criterion_repo = CriterionRepository()
-    specs, active_version = criterion_repo.load_active_specs()
+    specs, resolved_version, catalog_source = criterion_repo.load_specs_for_analysis(analysis)
 
     context = EvaluationContext(
         analysis_id=str(analysis.id),
@@ -54,7 +55,7 @@ def evaluate_analysis(self, analysis_id: str) -> dict:
         classification={},
         benchmark_version=(analysis.benchmark_version_id if analysis.benchmark_version_id else None),
         corpus_version=analysis.corpus_version_id,
-        rubric_version=active_version,
+        rubric_version=resolved_version,
     )
 
     service = RubricEvaluationService(registry=build_default_registry())
@@ -62,7 +63,7 @@ def evaluate_analysis(self, analysis_id: str) -> dict:
         service.evaluate(
             specs,
             context,
-            rubric_version=active_version,
+            rubric_version=resolved_version,
             corpus_version=analysis.corpus_version_id or "",
             benchmark_version=analysis.benchmark_version_id,
         )
@@ -77,6 +78,8 @@ def evaluate_analysis(self, analysis_id: str) -> dict:
         band=result.band.value,
         overrides=[c.value for c in result.override_triggered],
         unverifiable_count=result.unverifiable_count,
+        rubric_version=resolved_version,
+        rubric_catalog_source=catalog_source,
     )
 
     return {

@@ -286,7 +286,7 @@ def _run_batch_extraction(
         if result.page_count is not None and result.page_count > settings.OCR_MAX_PAGES:
             raise NotAnalyzableError(
                 reason=NotAnalyzableReason.PAGE_COUNT_EXCEEDED,
-                message=(f"file {upload.filename!r} page_count {result.page_count} " f"> {settings.OCR_MAX_PAGES}"),
+                message=(f"file {upload.filename!r} page_count {result.page_count} > {settings.OCR_MAX_PAGES}"),
             )
 
         header = f"--- FILE {index}: {upload.filename} ---"

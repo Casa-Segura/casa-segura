@@ -49,7 +49,7 @@ def resolve_unverifiable(
 
     if not evaluation.unverifiable:
         raise ValueError(
-            f"resolve_unverifiable called on criterion {evaluation.criterion_id} " "whose unverifiable flag is False"
+            f"resolve_unverifiable called on criterion {evaluation.criterion_id} whose unverifiable flag is False"
         )
     worst = float(worst_case_score)
     if not 0.0 <= worst <= 10.0:
