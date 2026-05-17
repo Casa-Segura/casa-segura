@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { DisclaimerCallout } from "@/components/disclaimer-callout";
 import { DisclaimerFooter } from "@/components/disclaimer-footer";
 import { ProjectVerificationFlowShell } from "@/components/project-verification-flow-shell";
 import { ProjectVerificationOptionalContractCta } from "@/components/project-verification-optional-contract-cta";
@@ -75,6 +76,10 @@ export default async function ProjectVerificationResultPage({
         >
           Inicio
         </Link>
+      </div>
+
+      <div className="mb-4 max-w-xl">
+        <DisclaimerCallout variant="inline" />
       </div>
 
       <main

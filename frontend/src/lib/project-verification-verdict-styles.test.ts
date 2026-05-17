@@ -1,4 +1,8 @@
 import { describe, expect, it } from "vitest";
+import {
+  getProjectVerificationVerdictBannerFingerprint,
+  projectVerificationVerdictAriaLabelForBand,
+} from "@/lib/project-verification-verdict-presenter";
 import { verdictVisualTone } from "@/lib/project-verification-verdict-styles";
 
 describe("project-verification verdict visual tokens", () => {
@@ -19,5 +23,19 @@ describe("project-verification verdict visual tokens", () => {
     expect(verdictVisualTone("green").iconRing).not.toEqual(
       verdictVisualTone("yellow").iconRing,
     );
+  });
+
+  it("SSR banner fingerprints stay distinct across bands", () => {
+    const fingers = (["green", "yellow", "red"] as const).map((v) =>
+      getProjectVerificationVerdictBannerFingerprint(v),
+    );
+    expect(new Set(fingers).size).toBe(3);
+  });
+
+  it("uses distinct accessibility labels per band", () => {
+    const aria = (["green", "yellow", "red"] as const).map(
+      projectVerificationVerdictAriaLabelForBand,
+    );
+    expect(new Set(aria).size).toBe(3);
   });
 });

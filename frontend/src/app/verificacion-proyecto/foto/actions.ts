@@ -6,12 +6,14 @@ import {
   mapBillboardUploadPostFailure,
   postProjectVerificationBillboardUpload,
 } from "@/server/project-verification-backend";
+import { buildManualVerificationHandoffPath } from "@/lib/project-verification-manual-handoff";
 
 export type BillboardUploadFormState =
   | {
       ok: true;
       message: string;
       detail?: string;
+      manualHandoffHref: string;
     }
   | { ok: false; formError: string };
 
@@ -66,12 +68,17 @@ export async function submitProjectVerificationBillboardUpload(
 
   const post = await postProjectVerificationBillboardUpload(fileOrError);
   if (post.ok) {
+    const manualHandoffHref = buildManualVerificationHandoffPath({
+      ...(post.prefills ?? {}),
+      source: "billboard_stub_continue",
+    });
     return {
       ok: true,
       message: post.stub
         ? "Foto recibida por el stub. La imagen se descarta sin guardarla; el OCR real se conectará después."
         : "Foto recibida. Cuando el backend tenga OCR real, acá seguirá la lectura automática.",
       detail: post.detail,
+      manualHandoffHref,
     };
   }
 

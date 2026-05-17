@@ -49,6 +49,8 @@ export type BillboardUploadPostOk = {
   ok: true;
   detail?: string;
   stub?: boolean;
+  /** OCR / stubs may attach structured hints for `/manual`. */
+  prefills?: Partial<ManualVerificationEcho>;
 };
 
 export type BillboardUploadPostFail = {
@@ -69,10 +71,7 @@ function billboardUploadUrl(base: string): string {
   return `${base}${BILLBOARD_UPLOAD_PATH}`;
 }
 
-function readEcho(raw: Record<string, unknown>): ManualVerificationEcho | null {
-  const echoRaw = raw.echo;
-  if (typeof echoRaw !== "object" || echoRaw === null) return null;
-  const e = echoRaw as Record<string, unknown>;
+function readEchoFields(e: Record<string, unknown>): ManualVerificationEcho | null {
   const pick = (k: string, ...alts: string[]) => {
     for (const key of [k, ...alts]) {
       const v = e[key];
@@ -86,6 +85,35 @@ function readEcho(raw: Record<string, unknown>): ManualVerificationEcho | null {
   const address = pick("address");
   if (!developer && !project && !permit && !address) return null;
   return { developer, project, permit, address };
+}
+
+function pickEchoEnvelope(raw: Record<string, unknown>): Record<string, unknown> | null {
+  const candidates = [
+    raw.echo,
+    raw.manual_prefill,
+    raw.manualPrefill,
+    raw.prefill_echo,
+    raw.prefillEcho,
+  ];
+  for (const c of candidates) {
+    if (typeof c === "object" && c !== null) {
+      return c as Record<string, unknown>;
+    }
+  }
+  return null;
+}
+
+/**
+ * Parses manual echo/prefill objects from Django/FE JSON envelopes (camelCase + snake_case).
+ */
+export function parseManualVerificationEcho(
+  envelope: Record<string, unknown>,
+): ManualVerificationEcho | null {
+  const nested = pickEchoEnvelope(envelope);
+  if (nested) {
+    return readEchoFields(nested);
+  }
+  return readEchoFields(envelope);
 }
 
 export async function postProjectVerificationManual(payload: {
@@ -132,7 +160,7 @@ export async function postProjectVerificationManual(payload: {
         body: { error_code: "invalid_manual_response" },
       };
 
-    const echo = readEcho(body);
+    const echo = parseManualVerificationEcho(body);
     if (!echo)
       return {
         ok: false,
@@ -212,7 +240,21 @@ export async function postProjectVerificationBillboardUpload(
         ? raw.detail.trim()
         : undefined;
     const stub = Boolean(raw && raw.stub === true);
-    return { ok: true, detail, stub };
+    const parsedEcho = raw ? parseManualVerificationEcho(raw) : null;
+    const prefills: Partial<ManualVerificationEcho> = {};
+    if (parsedEcho) {
+      if (parsedEcho.developer.trim()) prefills.developer = parsedEcho.developer;
+      if (parsedEcho.project.trim()) prefills.project = parsedEcho.project;
+      if (parsedEcho.permit.trim()) prefills.permit = parsedEcho.permit;
+      if (parsedEcho.address.trim()) prefills.address = parsedEcho.address;
+    }
+    const hasPrefills = Object.keys(prefills).length > 0;
+    return {
+      ok: true,
+      detail,
+      stub,
+      ...(hasPrefills ? { prefills } : {}),
+    };
   } catch {
     clearTimeout(t);
     return { ok: false, status: 0, body: null };

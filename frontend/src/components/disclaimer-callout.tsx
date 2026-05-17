@@ -5,7 +5,7 @@ import {
   DISCLAIMER_EXTENDED_FOOTER,
   DISCLAIMER_GATE_LABEL,
   DISCLAIMER_SHORT,
-} from "@/legal/disclaimer";
+} from "@/legal/disclaimer-registry";
 
 const focusRing =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
