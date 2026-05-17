@@ -47,23 +47,26 @@ def expire_links_task() -> int:
 
 @shared_task(name=TASK_ANONYMIZE)
 def anonymize_old_analyses_task() -> int:
-    """Hooks CS-273 — placeholder schedules must stay disabled until implemented."""
+    """Daily anonymization (CS-273) + privacy audit rows (CS-276)."""
 
     return run_retention_job_safe(
         TASK_ANONYMIZE,
         "anonymize_old_analyses",
-        runners.run_anonymize_old_analyses,
+        lambda: runners.run_anonymize_old_analyses(
+            batch_size=settings.JOB_BATCH_SIZE,
+            policy_days=settings.ANONYMIZATION_AFTER_DAYS,
+        ),
     )
 
 
 @shared_task(name=TASK_RECOMPUTE_PROJECT)
 def recompute_project_metrics_task() -> int:
-    """Hooks CS-275 — placeholder schedules stay disabled until implemented."""
+    """Hourly project aggregates (CS-275)."""
 
     return run_retention_job_safe(
         TASK_RECOMPUTE_PROJECT,
         "recompute_project_metrics",
-        runners.run_recompute_project_metrics,
+        lambda: runners.run_recompute_project_metrics(batch_size=settings.JOB_BATCH_SIZE),
     )
 
 

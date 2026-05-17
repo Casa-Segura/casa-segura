@@ -77,4 +77,4 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 USER appuser
 
-CMD ["celery", "-A", "shared.infrastructure.celery", "worker", "-l", "INFO"]
+CMD ["celery", "-A", "config.celery", "worker", "-l", "INFO"]

@@ -2,7 +2,7 @@
 project: Casa Segura
 doc_type: parallel_work_plan
 status: living
-last_updated: 2026-05-17  # EPIC-06/07 index sync; Phase 6 queue; EPIC-04 narrative
+last_updated: 2026-05-17  # Phase 6 EPIC-09 closure; EPIC-06/07; EPIC-04 narrative
 tags:
   - casa-segura
   - roadmap
@@ -20,7 +20,7 @@ Use this plan to decide who owns which folder, which tickets are safe to start, 
 - **`CS-270`** — retention scheduler ADR + harness — **`done`** (2026-05-16). [ADR-0005](../adr/ADR-0005-retention-job-scheduling.md); `backend/scripts/retention_scheduler_dry_validate.py`; `make retention-scheduler-dry-validate`; CI `backend-lint` gate.
 - **EPIC-10 (Frontend Web App)** — **`done` (2026-05-16).** [`CS-298`](tickets/CS-298.md) Vercel production + previews; [`CS-299`](tickets/CS-299.md) physical Android QA (360px / 4G) per checklist (`frontend/docs/CS-299-mobile-qa-checklist.md`).
 - **EPIC-06 / EPIC-07** — **`done`** (2026-05-17). Rubric engine Definition of done complete; F6 HTML/PDF in `backend/reports/`; public TTL `/r/` uses canonical [`generate_report_html`](../../backend/reports/application/services/html_renderer.py) ([`CS-247`](tickets/CS-247.md)).
-- **Phase 6 — next retention jobs:** **`CS-271`** / **`CS-272`** (`depends_on: CS-270`). **`CS-270`** is **`done`** — pick either cleanup job next; then **`CS-273`–`CS-276`** per ticket chains — see [`PHASE-6-privacy-closure.md`](phases/PHASE-6-privacy-closure.md).
+- **Phase 6 — EPIC-09 retention lane:** **`CS-271`**, **`CS-272`**, **`CS-274`**, **`CS-273`**, **`CS-275`**, **`CS-276`** → **`done`** (2026-05-17). See [`EPIC-09-retention-privacy.md`](EPIC-09-retention-privacy.md) and [`PHASE-6-privacy-closure.md`](phases/PHASE-6-privacy-closure.md).
 - **EPIC-08 gap:** submission-time channel picker (`sms_summary` / `email_pdf` / `web_link`) — Epic DoD line 1 still `[ ]`.
 - **EPIC-12** — Optional project verification: [`CS-356`](tickets/CS-356.md) / [`CS-351`](tickets/CS-351.md) / [`CS-355`](tickets/CS-355.md) are **`in_progress`** (`frontend/` + gated Django stubs; enable FE/BE independently only with awareness of mismatch behaviour documented in [`project-verification-fe-be-gates.md`](../guides/project-verification-fe-be-gates.md)).
 
@@ -255,15 +255,17 @@ Recommended split:
 
 ### Phase 6 - Privacy Closure
 
+**Status:** EPIC-09 retention + privacy jobs **`done`** (2026-05-17).
+
 Main tickets:
 
-- Retention and privacy jobs: `CS-270` through `CS-276`.
+- Retention and privacy jobs: `CS-270` through `CS-276` — all shipped or superseded by epic closure (`CS-270` scheduler ADR; `CS-271`–`CS-276` jobs + audit).
 
 Recommended split:
 
-- `BE WORK`: cleanup SQL, anonymization, link expiration, recompute project metrics, and audit rows.
+- `BE WORK`: cleanup SQL, anonymization, link expiration, recompute project metrics, and audit rows — **landed** under `backend/platform_core/worker/retention/`.
 - `FE WORK`: expired-link behavior coordination.
-- `INFRA WORK`: scheduler ADR and operational contract.
+- `INFRA WORK`: scheduler ADR and operational contract (`CS-270` **done**).
 - `API / AI CONNECTIONS`: no primary tickets; privacy review still covers prompts, OCR text, delivery targets, reports, and logs.
 
 ### Cross-Cutting

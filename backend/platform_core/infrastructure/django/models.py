@@ -203,6 +203,12 @@ class ContractAnalysis(ModelWithTimeStamps):
     critical_findings_count = models.PositiveIntegerField(default=0, help_text="Count of `critical` severity findings")
     unverifiable_count = models.PositiveIntegerField(default=0, help_text="Count of unverifiable criteria")
 
+    executive_summary = models.TextField(
+        blank=True,
+        default="",
+        help_text="F4 synthesized verdict narrative; preserved after anonymization (PRD F8 US-07)",
+    )
+
     economic_summary = models.JSONField(
         null=True,
         blank=True,

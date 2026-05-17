@@ -249,6 +249,7 @@ class ContractAnalysisFactory(factory.django.DjangoModelFactory):
     findings_count = 0
     critical_findings_count = 0
     unverifiable_count = 0
+    executive_summary = ""
     economic_summary = None
     rubric_version = factory.SubFactory(RubricVersionFactory)
     corpus_version = factory.SubFactory(CorpusVersionFactory)

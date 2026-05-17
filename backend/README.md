@@ -62,7 +62,7 @@ make runserver
 | `make seed-rubric` | Idempotent `seed_rubric_version --activate` |
 | `make seed-corpus` | Idempotent `seed_corpus_version --activate` |
 | `make retention-scheduler-dry-validate` | ADR-0005 / CS-270: SLA + TZ sanity (no DB) |
-| `poetry run python manage.py run_retention_job <job_name>` | ADR-0005 manual invoke — same entrypoints as Celery (`cleanup_transient`, `cleanup_delivery_targets`, `expire_links`, …) |
+| `poetry run python manage.py run_retention_job <job_name>` | ADR-0005 manual invoke — same entrypoints as Celery (`cleanup_transient`, `cleanup_delivery_targets`, `expire_links`, `anonymize_old_analyses`, `recompute_project_metrics`) |
 | `make runserver` | Django dev server on :8000 |
 | `make celery-worker` / `make celery-beat` | Async runtime |
 | `make dev-up` / `make dev-down` / `make dev-logs` | Wrapper around `docker compose -f ../docker-compose.dev.yml ...` |
@@ -96,6 +96,10 @@ SQL: `vector`, `pgcrypto`, `uuid-ossp`.
   catalogs.
 - For rollback during local dev: `make rollback APP=<module> TO=<migration_name>`.
 - For a clean slate during local dev: `make fresh-db`.
+
+## Retention jobs (F8 / EPIC-09)
+
+Scheduled tasks register via `django-celery-beat` (see migration `platform_core.0008_retention_audit_constraint_and_beat`). The hourly project-metrics sweep **excludes** projects whose JSON `metadata` contains `"placeholder": true` (JSON contains semantics — missing key is fine). To recompute aggregates for a single excluded UUID (ops repair): import `recompute_metrics_for_project` from `platform_core.worker.retention.runners` and call it with that project id.
 
 ## Transactions
 

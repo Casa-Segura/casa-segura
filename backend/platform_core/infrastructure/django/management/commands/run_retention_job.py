@@ -40,12 +40,15 @@ def _registered_jobs() -> dict[str, Callable[[], int]]:
         "anonymize_old_analyses": lambda: run_retention_job_safe(
             TASK_ANONYMIZE,
             "anonymize_old_analyses",
-            runners.run_anonymize_old_analyses,
+            lambda: runners.run_anonymize_old_analyses(
+                batch_size=settings.JOB_BATCH_SIZE,
+                policy_days=settings.ANONYMIZATION_AFTER_DAYS,
+            ),
         ),
         "recompute_project_metrics": lambda: run_retention_job_safe(
             TASK_RECOMPUTE_PROJECT,
             "recompute_project_metrics",
-            runners.run_recompute_project_metrics,
+            lambda: runners.run_recompute_project_metrics(batch_size=settings.JOB_BATCH_SIZE),
         ),
     }
 
