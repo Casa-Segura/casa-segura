@@ -27,6 +27,7 @@ from django.utils import timezone
 from pgvector.django import CosineDistance
 
 from corpus.application.embeddings import embed_query
+from corpus.application.reranker import is_enabled as reranker_enabled, score as reranker_score
 from corpus.application.tags import normalize_tag
 from corpus.application.version import latest_active
 from corpus.infrastructure.django.models import (
@@ -173,15 +174,29 @@ class LegalCitationService:
         # i.e. distance ≤ 1 - threshold.
         max_distance = 1.0 - threshold
 
+        # When reranking, pull a deeper pool from pgvector and let the
+        # cross-encoder reorder. The bi-encoder gives recall; the
+        # cross-encoder gives ordering.
+        use_reranker = reranker_enabled()
+        pool_size = settings.RAG_RERANKER_POOL_SIZE if use_reranker else top_k
+
         queryset = (
             LegalChunk.objects.filter(corpus_version=self.corpus_version)
             .annotate(distance=CosineDistance("embedding", query_vector))
             .filter(distance__lte=max_distance)
-            .order_by("distance")[:top_k]
+            .order_by("distance")[:pool_size]
         )
 
+        chunks = list(queryset)
+        if use_reranker and chunks:
+            scores = reranker_score(finding, [c.text_paraphrased for c in chunks])
+            chunks = [c for _, c in sorted(zip(scores, chunks, strict=True), key=lambda x: -x[0])]
+            chunks = chunks[:top_k]
+        else:
+            chunks = chunks[:top_k]
+
         citations: list[LegalCitation] = []
-        for chunk in queryset:
+        for chunk in chunks:
             similarity = 1.0 - float(chunk.distance)
             citations.append(
                 LegalCitation(

@@ -233,7 +233,10 @@ OCR_TESSERACT_MIN_CONFIDENCE = env.int("OCR_TESSERACT_MIN_CONFIDENCE", default=6
 # ─── RAG retrieval (Phase 1, EPIC-03) ───
 RAG_SIMILARITY_THRESHOLD = env.float("RAG_SIMILARITY_THRESHOLD", default=0.65)
 RAG_TOP_K = env.int("RAG_TOP_K", default=5)
-EMBEDDING_MODEL = env("EMBEDDING_MODEL", default="paraphrase-multilingual-MiniLM-L12-v2")
+RAG_RERANKER_ENABLED = env.bool("RAG_RERANKER_ENABLED", default=False)
+RAG_RERANKER_MODEL = env("RAG_RERANKER_MODEL", default="BAAI/bge-reranker-v2-m3")
+RAG_RERANKER_POOL_SIZE = env.int("RAG_RERANKER_POOL_SIZE", default=10)
+EMBEDDING_MODEL = env("EMBEDDING_MODEL", default="intfloat/multilingual-e5-large")
 EMBEDDING_DEVICE = env("EMBEDDING_DEVICE", default="cpu")
 EMBEDDING_BATCH_SIZE = env.int("EMBEDDING_BATCH_SIZE", default=32)
 

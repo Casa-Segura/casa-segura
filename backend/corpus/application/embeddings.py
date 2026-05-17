@@ -2,11 +2,17 @@
 
 Wraps `sentence-transformers` so the corpus ingestion CLI (CS-084) and
 the retrieval service (CS-085) can both produce vectors with consistent
-shape (384 dims, `paraphrase-multilingual-MiniLM-L12-v2` by default).
+shape (1024 dims, `intfloat/multilingual-e5-large` by default).
+
+The e5 family requires input prefixes for retrieval to work correctly:
+`passage: ` for documents being indexed and `query: ` for the question
+being asked. Missing prefixes drops same-language similarity by
+~0.10–0.15 in our internal sweep, which is why both `embed_texts` and
+`embed_query` apply the prefix automatically.
 
 The model is loaded once per process and cached on the module — Django
-worker boots are cheap (~1s for the first encode), and idle memory is
-~200 MB.
+worker boots are cheap (~1–2s for the first encode), and idle memory is
+~1.2 GB.
 """
 
 from __future__ import annotations
@@ -19,7 +25,10 @@ from django.conf import settings
 
 logger = structlog.get_logger(__name__)
 
-EMBEDDING_DIM = 384
+EMBEDDING_DIM = 1024
+
+_PASSAGE_PREFIX = "passage: "
+_QUERY_PREFIX = "query: "
 
 _model = None
 _model_lock = Lock()
@@ -49,31 +58,18 @@ def get_embedding_model():
     return _model
 
 
-def embed_texts(texts: Iterable[str], *, batch_size: int | None = None) -> list[list[float]]:
-    """Return a list of 384-dim vectors, one per input text.
-
-    Empty/whitespace inputs receive a deterministic zero vector so callers
-    don't have to filter them upstream. Truncation events (input longer
-    than the model's max_seq_len) are logged but not raised — the model
-    truncates internally.
-    """
-
+def _encode(texts: list[str], *, batch_size: int) -> list[list[float]]:
     model = get_embedding_model()
-    bs = batch_size or settings.EMBEDDING_BATCH_SIZE
-
-    materialised = [t or "" for t in texts]
-    if not materialised:
-        return []
 
     if hasattr(model, "max_seq_length"):
         max_len = int(model.max_seq_length)
-        truncated = sum(1 for t in materialised if len(t) > max_len * 4)
+        truncated = sum(1 for t in texts if len(t) > max_len * 4)
         if truncated:
             logger.info("embeddings.truncating", count=truncated, max_len=max_len)
 
     vectors = model.encode(
-        materialised,
-        batch_size=bs,
+        texts,
+        batch_size=batch_size,
         show_progress_bar=False,
         convert_to_numpy=True,
         normalize_embeddings=True,
@@ -81,9 +77,26 @@ def embed_texts(texts: Iterable[str], *, batch_size: int | None = None) -> list[
     return [v.tolist() for v in vectors]
 
 
+def embed_texts(texts: Iterable[str], *, batch_size: int | None = None) -> list[list[float]]:
+    """Return a list of 768-dim vectors for passages to be indexed.
+
+    Each input is prefixed with `passage: ` per the e5 retrieval contract.
+    Empty/whitespace inputs receive a deterministic zero vector so callers
+    don't have to filter them upstream.
+    """
+
+    bs = batch_size or settings.EMBEDDING_BATCH_SIZE
+    materialised = [t or "" for t in texts]
+    if not materialised:
+        return []
+
+    prefixed = [f"{_PASSAGE_PREFIX}{t}" for t in materialised]
+    return _encode(prefixed, batch_size=bs)
+
+
 def embed_query(text: str) -> list[float]:
-    """Convenience wrapper for a single query."""
+    """Embed a single query using the `query: ` prefix per e5 contract."""
 
     if not text or not text.strip():
         return [0.0] * EMBEDDING_DIM
-    return embed_texts([text])[0]
+    return _encode([f"{_QUERY_PREFIX}{text}"], batch_size=1)[0]

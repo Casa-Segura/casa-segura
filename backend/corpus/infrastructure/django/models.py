@@ -17,7 +17,7 @@ from pgvector.django import VectorField
 from common.infrastructure.django.models import ModelWithTimeStamps
 from corpus.domain.enums import LegalDocumentStatus, SeverityHint
 
-EMBEDDING_DIM = 384  # paraphrase-multilingual-MiniLM-L12-v2
+EMBEDDING_DIM = 1024  # intfloat/multilingual-e5-large
 
 
 class CorpusVersion(ModelWithTimeStamps):
@@ -114,7 +114,8 @@ class LegalDocument(ModelWithTimeStamps):
 class LegalChunk(ModelWithTimeStamps):
     """Indexable corpus fragment, typically an article or sub-article. RAG retrieval unit (DOMAIN §3.6).
 
-    Embedding generated with `paraphrase-multilingual-MiniLM-L12-v2` (384 dim).
+    Embedding generated with `intfloat/multilingual-e5-large` (1024 dim) using the
+    `passage: ` input prefix at ingest and `query: ` at retrieve.
     HNSW index with vector_cosine_ops applied in CS-030."""
 
     id = models.UUIDField(primary_key=True)
@@ -133,7 +134,7 @@ class LegalChunk(ModelWithTimeStamps):
     anchor = models.CharField(max_length=64, help_text="Anchor slug, e.g. 'art-4'")
     text_paraphrased = models.TextField(help_text="Curated paraphrase shown to the user")
     text_verbatim = models.TextField(blank=True, default="", help_text="Verbatim article text (may be long)")
-    embedding = VectorField(dimensions=EMBEDDING_DIM, help_text="384-dim embedding of the paraphrased text")
+    embedding = VectorField(dimensions=EMBEDDING_DIM, help_text="1024-dim e5-large embedding of the paraphrased text")
     tags = ArrayField(
         models.CharField(max_length=64),
         default=list,
