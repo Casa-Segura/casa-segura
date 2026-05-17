@@ -7,8 +7,9 @@ last_updated: 2026-05-16
 # Phase 1 implementation pass (Pixtral OCR architecture) committed in d613c2d.
 # EPIC-03 (Legal Corpus & RAG) closed 2026-05-16 with revised multi-Top-K AC after
 # four live calibration runs (CS-087). EPIC-02 (Contract Ingestion & OCR) still in_progress;
-# CS-052 + CS-054 + CS-055 + CS-056 + CS-060 closed 2026-05-16 (router 100-char threshold
-# + force_strategy override; Pixtral single-call AC re-anchor; Tesseract mean-confidence
+# CS-052 + CS-053 + CS-054 + CS-055 + CS-056 + CS-060 closed 2026-05-16 (router 100-char
+# threshold + force_strategy override; pypdf separators + normalization + 30s watchdog +
+# 500-char vision escalation; Pixtral single-call AC re-anchor; Tesseract mean-confidence
 # gate at 60.0; PRD §US-08 language gate + HTTP 422 envelopes; latency budget
 # instrumentation with page-bucket histogram + TIMEOUT counter).
 tags:
@@ -40,10 +41,10 @@ Source-of-truth links:
 Phase 1 backend lane status (2026-05-16):
 
 - ✅ `done` (EPIC-03 Legal Corpus & RAG closed): CS-080..CS-090. Architecture is `intfloat/multilingual-e5-large` (1024-dim) + `BAAI/bge-reranker-v2-m3` over top-10 vectorial candidates. Corpus re-authored in Spanish. Final metrics: Strict Top-1 = 0.633, Article-level Top-3 = 0.900, Top-5 = 0.967 (revised AC; trace in CS-087 "Live calibration runs #1–#4").
-- ✅ `done`: CS-052 (`ocr.detect_kind` 100-char threshold + `force_strategy` override), CS-054 (Pixtral single-call extraction — AC re-anchored), CS-055 (Tesseract Spanish fallback mean-confidence gate at 60.0), CS-056 (language gate 2000-char window + 0.85 threshold + HTTP 422), CS-057 (discard-after-extract invariant), CS-058 (disclaimer gate), CS-060 (latency budget instrumentation with page-bucket histogram + TIMEOUT counter).
-- 🟡 `in_progress` (EPIC-02 Contract Ingestion & OCR — the only remaining blocker for Phase 1 closure): CS-050/051/053/059.
+- ✅ `done`: CS-052 (`ocr.detect_kind` 100-char threshold + `force_strategy` override), CS-053 (pypdf separators + normalization + 30s watchdog + 500-char vision escalation), CS-054 (Pixtral single-call extraction — AC re-anchored), CS-055 (Tesseract Spanish fallback mean-confidence gate at 60.0), CS-056 (language gate 2000-char window + 0.85 threshold + HTTP 422), CS-057 (discard-after-extract invariant), CS-058 (disclaimer gate), CS-060 (latency budget instrumentation with page-bucket histogram + TIMEOUT counter).
+- 🟡 `in_progress` (EPIC-02 Contract Ingestion & OCR — the only remaining blocker for Phase 1 closure): CS-050/051/059.
 
-The next backend-blocking pickup on this phase is **EPIC-02 closure**: ship the CS-053 page separators + 500-char vision retry + 30s timeout, the multi-file upload + image dimension validator (CS-050), and enforce page-count caps + 15 MB byte cap (CS-059). See [PHASE-1-config-checklist.md](PHASE-1-config-checklist.md).
+The next backend-blocking pickup on this phase is **EPIC-02 closure**: ship the multi-file upload + image dimension validator (CS-050) and enforce per-submission page-count caps + 15 MB byte cap (CS-059, CS-051 multi-file hash). See [PHASE-1-config-checklist.md](PHASE-1-config-checklist.md).
 
 Out-of-phase pickups still pending:
 
@@ -61,7 +62,7 @@ FE should keep coordinating disclaimer copy with [CS-291](../tickets/CS-291.md) 
 - [CS-050](../tickets/CS-050.md) - Upload endpoint with format and size validation.
 - [CS-051](../tickets/CS-051.md) - Content hash for idempotency.
 - ~~[CS-052](../tickets/CS-052.md)~~ — **done** (`ocr.detect_kind` with PRD §US-04 strict `> 100`-char threshold + `force_strategy` override via `X-Force-Strategy` header + BVA at 99/100/101).
-- [CS-053](../tickets/CS-053.md) - Text-PDF extraction with pypdf.
+- ~~[CS-053](../tickets/CS-053.md)~~ — **done** (pypdf with `--- PAGE N ---` 1-indexed separators + NFKC/CRLF/NBSP/soft-hyphen normalization + 30s per-page wall-clock watchdog + 500-char escalation to vision via orchestrator).
 - ~~[CS-054](../tickets/CS-054.md)~~ — **done** (single-call Pixtral via OpenRouter `file-parser` plugin for PDFs + direct `image_url` for images; AC re-anchored to single-call architecture per EPIC-02 audit).
 - ~~[CS-055](../tickets/CS-055.md)~~ — **done** (Tesseract Spanish fallback with PRD §US-07 mean-confidence gate at 60.0; `-1` layout placeholders excluded; BVA 59.9/60.0/60.1 covered).
 - ~~[CS-056](../tickets/CS-056.md)~~ — **done** (PRD §US-08 language gate over first 2000 chars with strict `> 0.85` confidence + low-confidence warning log; HTTP 422 `LANGUAGE_NOT_SUPPORTED` / `TEXT_TOO_SHORT` envelopes; BVA at 0.849/0.850/0.851 covered).

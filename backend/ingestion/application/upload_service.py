@@ -220,7 +220,12 @@ def _attempt_extraction(
         order.append(ExtractionStrategy.TESSERACT)
 
     last_error: NotAnalyzableError | None = None
-    for strategy in order:
+    visited: set[ExtractionStrategy] = set()
+    while order:
+        strategy = order.pop(0)
+        if strategy in visited:
+            continue
+        visited.add(strategy)
         job = OcrJob.objects.create(
             submission=submission,
             strategy=strategy.value,
@@ -240,6 +245,15 @@ def _attempt_extraction(
             job.completed_at = timezone.now()
             job.save(update_fields=["status", "error", "error_code", "completed_at"])
             last_error = exc
+            # PRD §US-05 BR-08: pypdf with <500 chars / no usable text
+            # escalates to vision so a scanned-PDF mis-classified as
+            # native-text still gets a chance at extraction.
+            if (
+                strategy == ExtractionStrategy.PYPDF
+                and exc.reason == NotAnalyzableReason.LOW_CONFIDENCE_OCR
+                and ExtractionStrategy.VISION_LLM not in visited
+            ):
+                order.append(ExtractionStrategy.VISION_LLM)
             continue
         else:
             elapsed = time.perf_counter() - start
