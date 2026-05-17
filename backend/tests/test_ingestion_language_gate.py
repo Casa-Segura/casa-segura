@@ -5,22 +5,22 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 import pytest
-from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APIClient
+
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from ingestion.application.ocr.errors import (
     ExtractionResult,
     NotAnalyzableError,
     NotAnalyzableReason,
 )
-from ingestion.application.upload_service import FileUpload, UploadRequest, ingest_upload  # noqa: F401
 from ingestion.application.ocr.language import (
     LANGUAGE_DETECTION_WINDOW_CHARS,
     detect_language,
     ensure_spanish,
 )
+from ingestion.application.upload_service import FileUpload, UploadRequest, ingest_upload  # noqa: F401
 from ingestion.domain.enums import DisclaimerAcceptanceMethod, ProcessingStatus
-
 
 # ─── Detector wiring: 2000-char window + detect_langs() ────────────────
 
@@ -98,9 +98,7 @@ def test_detect_language_undetectable_below_min_chars():
 
 
 def _tiny_pdf() -> SimpleUploadedFile:
-    body = (
-        b"%PDF-1.1\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<<>>\n%%EOF"
-    )
+    body = b"%PDF-1.1\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<<>>\n%%EOF"
     return SimpleUploadedFile("c.pdf", body, content_type="application/pdf")
 
 

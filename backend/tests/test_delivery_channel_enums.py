@@ -23,10 +23,6 @@ def test_contract_analysis_delivery_status_uses_sms_terminal_state():
 def test_delivery_request_channel_constraint_matches_enum():
     from delivery.infrastructure.django.models import DeliveryRequest
 
-    constraint = next(
-        c
-        for c in DeliveryRequest._meta.constraints
-        if c.name == "ck_delivery_channel_enum"
-    )
+    constraint = next(c for c in DeliveryRequest._meta.constraints if c.name == "ck_delivery_channel_enum")
     assert "sms_summary" in str(constraint.condition)
     assert "whatsapp_summary" not in str(constraint.condition)

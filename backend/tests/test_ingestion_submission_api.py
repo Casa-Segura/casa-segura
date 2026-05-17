@@ -5,18 +5,17 @@ from __future__ import annotations
 from unittest.mock import patch
 
 import pytest
+from rest_framework.test import APIClient
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
-from rest_framework.test import APIClient
 
 from ingestion.application.ocr.errors import ExtractionResult
 from ingestion.domain.enums import DisclaimerAcceptanceMethod
 
 
 def _tiny_pdf() -> SimpleUploadedFile:
-    body = (
-        b"%PDF-1.1\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<<>>\n%%EOF"
-    )
+    body = b"%PDF-1.1\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<<>>\n%%EOF"
     return SimpleUploadedFile("c.pdf", body, content_type="application/pdf")
 
 

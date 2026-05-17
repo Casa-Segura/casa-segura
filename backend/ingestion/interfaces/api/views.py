@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from django.utils import timezone
 
 from ingestion.application.ocr.errors import NotAnalyzableError, NotAnalyzableReason
 from ingestion.application.upload_service import (
@@ -49,13 +50,9 @@ class SubmissionUploadView(APIView):
 
         # Multi-file shape: prefer `files[]` over the legacy single `file`
         # field. Both are validated through the same SubmissionUploadSerializer.
-        files_list = request.FILES.getlist("files") or (
-            [request.FILES["file"]] if "file" in request.FILES else []
-        )
+        files_list = request.FILES.getlist("files") or ([request.FILES["file"]] if "file" in request.FILES else [])
 
-        serializer = SubmissionUploadSerializer(
-            data=merged, context={"file_count": len(files_list)}
-        )
+        serializer = SubmissionUploadSerializer(data=merged, context={"file_count": len(files_list)})
         serializer.is_valid(raise_exception=True)
 
         if not files_list:
@@ -79,9 +76,7 @@ class SubmissionUploadView(APIView):
             )
 
         disclaimer_at = timezone.now()
-        disclaimer_method = DisclaimerAcceptanceMethod(
-            serializer.validated_data["disclaimer_method"]
-        )
+        disclaimer_method = DisclaimerAcceptanceMethod(serializer.validated_data["disclaimer_method"])
         source = SubmissionSource(serializer.validated_data["source"])
 
         forced = request.headers.get("X-Force-Strategy")
@@ -96,8 +91,7 @@ class SubmissionUploadView(APIView):
                         "error": "validation_error",
                         "error_code": "INVALID_FORCE_STRATEGY",
                         "detail": (
-                            f"X-Force-Strategy={forced!r} is not a valid extraction "
-                            f"strategy. Allowed: {allowed}."
+                            f"X-Force-Strategy={forced!r} is not a valid extraction " f"strategy. Allowed: {allowed}."
                         ),
                     },
                     status=status.HTTP_400_BAD_REQUEST,

@@ -19,9 +19,10 @@ def merge_submission_upload_aliases(data: Mapping[str, Any]) -> dict[str, Any]:
     for key in key_iter:
         merged[key] = data.get(key)
 
-    if (merged.get("disclaimer_method") in (None, "")) and merged.get(
-        "disclaimer_acceptance_method"
-    ) not in (None, ""):
+    if (merged.get("disclaimer_method") in (None, "")) and merged.get("disclaimer_acceptance_method") not in (
+        None,
+        "",
+    ):
         merged["disclaimer_method"] = merged["disclaimer_acceptance_method"]
 
     if (merged.get("source") in (None, "")) and merged.get("submission_source") not in (

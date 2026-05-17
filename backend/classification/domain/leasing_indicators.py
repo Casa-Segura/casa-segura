@@ -98,23 +98,16 @@ class LeasingIndicators(BaseModel):
     taxes_to_buyer: bool = Field(
         default=False,
         description=(
-            "Indicador 4 (Art. 2 LAF): tributos, tasas, multas e "
-            "impuestos sobre el bien recaen en el comprador."
+            "Indicador 4 (Art. 2 LAF): tributos, tasas, multas e " "impuestos sobre el bien recaen en el comprador."
         ),
     )
     risks_to_buyer: bool = Field(
         default=False,
-        description=(
-            "Indicador 5 (Art. 2 LAF): riesgos asegurables y no "
-            "asegurables recaen en el comprador."
-        ),
+        description=("Indicador 5 (Art. 2 LAF): riesgos asegurables y no " "asegurables recaen en el comprador."),
     )
     payments_as_rent: bool = Field(
         default=False,
-        description=(
-            "Indicador 6 (Art. 2 LAF): los pagos se denominan canon en "
-            "lugar de cuota de precio."
-        ),
+        description=("Indicador 6 (Art. 2 LAF): los pagos se denominan canon en " "lugar de cuota de precio."),
     )
 
     @computed_field  # type: ignore[prop-decorator]
@@ -145,9 +138,7 @@ class LeasingIndicators(BaseModel):
         loudly rather than silently never reclassifying.
         """
         if not (0 <= threshold <= LAF_INDICATOR_COUNT):
-            raise ValueError(
-                f"threshold must be in [0, {LAF_INDICATOR_COUNT}]; got {threshold!r}"
-            )
+            raise ValueError(f"threshold must be in [0, {LAF_INDICATOR_COUNT}]; got {threshold!r}")
         return self.total_indicators_found >= threshold
 
 

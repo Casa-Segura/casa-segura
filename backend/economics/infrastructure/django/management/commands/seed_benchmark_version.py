@@ -52,18 +52,12 @@ class Command(BaseCommand):
                 },
             )
             self.stdout.write(
-                self.style.SUCCESS(
-                    f"{'created' if created else 'exists'}: BenchmarkVersion {obj.version}"
-                )
+                self.style.SUCCESS(f"{'created' if created else 'exists'}: BenchmarkVersion {obj.version}")
             )
 
             if activate:
-                BenchmarkVersion.objects.exclude(version=version).filter(is_active=True).update(
-                    is_active=False
-                )
+                BenchmarkVersion.objects.exclude(version=version).filter(is_active=True).update(is_active=False)
                 if not obj.is_active:
                     obj.is_active = True
                     obj.save(update_fields=["is_active"])
-                self.stdout.write(
-                    self.style.SUCCESS(f"activated: BenchmarkVersion {obj.version}")
-                )
+                self.stdout.write(self.style.SUCCESS(f"activated: BenchmarkVersion {obj.version}"))

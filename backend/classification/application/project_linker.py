@@ -58,10 +58,10 @@ from typing import TYPE_CHECKING
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
+from classification.domain.project_link import ProjectLinkResult
+
 # Cross-bounded-context import: see module docstring "DDD layering note".
 from platform_core.infrastructure.django.models import Project
-
-from classification.domain.project_link import ProjectLinkResult
 
 if TYPE_CHECKING:
     from classification.domain.project_name_extraction import ProjectNameExtraction
@@ -158,11 +158,7 @@ class ProjectLinker:
         now = timezone.now()
 
         with transaction.atomic():
-            existing = (
-                Project.objects.select_for_update()
-                .filter(normalized_name=extraction.normalized)
-                .first()
-            )
+            existing = Project.objects.select_for_update().filter(normalized_name=extraction.normalized).first()
             if existing is not None:
                 existing.last_analyzed = now
                 existing.save(update_fields=["last_analyzed", "updated_at"])

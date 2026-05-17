@@ -11,7 +11,6 @@ from unittest.mock import patch
 from ingestion.application.ocr.router import detect_kind
 from ingestion.domain.enums import ExtractionStrategy, FileFormat
 
-
 # ─── MIME-based dispatch ────────────────────────────────────────────────
 
 

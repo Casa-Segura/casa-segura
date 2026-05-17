@@ -14,6 +14,7 @@ from decimal import Decimal
 from pathlib import Path
 
 import pytest
+
 from django.core.management import CommandError, call_command
 
 from economics.application.benchmark_loader import (
@@ -215,9 +216,7 @@ def test_upsert_benchmarks_persists_version_and_rows():
     assert version_obj.version == "2026-Q2"
     assert created == len(payload.entries)
     assert updated == 0
-    assert EconomicBenchmark.objects.filter(benchmark_version=version_obj).count() == len(
-        payload.entries
-    )
+    assert EconomicBenchmark.objects.filter(benchmark_version=version_obj).count() == len(payload.entries)
 
 
 @pytest.mark.django_db
@@ -255,9 +254,7 @@ def test_load_benchmark_catalog_command_loads_and_activates():
     active = latest_active()
     assert active is not None
     assert active.version == "2026-Q2"
-    bench = EconomicBenchmark.objects.get(
-        benchmark_key="bank_mortgage_rate_mid", benchmark_version=active
-    )
+    bench = EconomicBenchmark.objects.get(benchmark_key="bank_mortgage_rate_mid", benchmark_version=active)
     assert bench.value_default == Decimal("0.0800")
     assert bench.unit == "pct"
     assert "CVC" in bench.applicable_contract_types

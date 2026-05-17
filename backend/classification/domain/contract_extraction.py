@@ -63,9 +63,7 @@ class ContractExtraction(BaseModel):
         known = set(ExtractedFields.model_fields.keys())
         unknown = set(self.field_confidences.keys()) - known
         if unknown:
-            raise ValueError(
-                f"field_confidences references unknown ExtractedFields keys: {sorted(unknown)}"
-            )
+            raise ValueError(f"field_confidences references unknown ExtractedFields keys: {sorted(unknown)}")
         return self
 
 

@@ -25,7 +25,6 @@ from economics.application.rate_normalizer import (
     normalize_annual_rate,
 )
 
-
 # ─── Helpers ─────────────────────────────────────────────────────────────────
 
 
@@ -89,9 +88,9 @@ def test_compound_vs_linear_guard():
 
     result = normalize_annual_rate(extraction)
 
-    assert result.annual_rate_pct != Decimal("0.1800"), (
-        "regression — compound formula collapsed to linear `12*m`; PRD_F5 BR-05"
-    )
+    assert result.annual_rate_pct != Decimal(
+        "0.1800"
+    ), "regression — compound formula collapsed to linear `12*m`; PRD_F5 BR-05"
 
 
 def test_annual_takes_precedence_when_both_consistent():
@@ -203,9 +202,7 @@ def test_ambiguous_slot_treated_as_not_present():
     """PRD_F5 US-01: non-PRESENT slots are not consumed even if `.value` carries a number."""
 
     extraction = _extraction(
-        interest_rate_pct=_slot(
-            "interest_rate_pct", 0.09, ExtractionStatus.AMBIGUOUS, confidence=0.4
-        ),
+        interest_rate_pct=_slot("interest_rate_pct", 0.09, ExtractionStatus.AMBIGUOUS, confidence=0.4),
     )
 
     result = normalize_annual_rate(extraction)

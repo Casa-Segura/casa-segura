@@ -47,7 +47,6 @@ from __future__ import annotations
 
 from classification.domain.contract_type import ContractType
 
-
 SYSTEM_PROMPT: str = """\
 Eres un analista experto en contratos inmobiliarios salvadoreños. Tu tarea \
 es clasificar un contrato en uno de los siguientes nueve resultados \
@@ -113,72 +112,72 @@ TEXTO DEL CONTRATO:
 FEW_SHOT_ANCHORS: dict[ContractType, str] = {
     ContractType.CVC: (
         "Ejemplo CVC — Compraventa al contado:\n"
-        "\"JUAN PÉREZ vende a MARÍA LÓPEZ el inmueble ubicado en Calle Falsa "
+        '"JUAN PÉREZ vende a MARÍA LÓPEZ el inmueble ubicado en Calle Falsa '
         "123, por el precio único de TREINTA MIL DÓLARES (USD 30,000.00) "
         "que la compradora entrega en este acto en su totalidad. No hay "
-        "saldo pendiente ni cuotas.\""
+        'saldo pendiente ni cuotas."'
     ),
     ContractType.CVP: (
         "Ejemplo CVP — Compraventa a plazos:\n"
-        "\"El precio total del inmueble en Residencial Sintético es de "
+        '"El precio total del inmueble en Residencial Sintético es de '
         "OCHENTA MIL DÓLARES (USD 80,000.00), pagaderos así: prima de "
         "OCHO MIL DÓLARES al firmar y SETENTA Y DOS cuotas mensuales de "
-        "UN MIL DÓLARES cada una directamente al vendedor JUAN PÉREZ.\""
+        'UN MIL DÓLARES cada una directamente al vendedor JUAN PÉREZ."'
     ),
     ContractType.ARV: (
         "Ejemplo ARV — Arrendamiento de vivienda:\n"
-        "\"MARÍA LÓPEZ da en arrendamiento a JUAN PÉREZ la casa de "
+        '"MARÍA LÓPEZ da en arrendamiento a JUAN PÉREZ la casa de '
         "habitación situada en Calle Falsa 123, por canon mensual de "
         "CUATROCIENTOS DÓLARES (USD 400.00), por plazo de doce meses "
-        "prorrogable. El presente contrato no confiere opción de compra.\""
+        'prorrogable. El presente contrato no confiere opción de compra."'
     ),
     ContractType.ARC: (
         "Ejemplo ARC — Arrendamiento de local comercial pequeño:\n"
-        "\"MARÍA LÓPEZ arrienda a JUAN PÉREZ el local comercial número 2 "
+        '"MARÍA LÓPEZ arrienda a JUAN PÉREZ el local comercial número 2 '
         "ubicado en Calle Falsa 123, destinado exclusivamente al giro de "
         "pequeño comercio (pupusería), por canon mensual de TRESCIENTOS "
-        "DÓLARES (USD 300.00) por plazo de un año.\""
+        'DÓLARES (USD 300.00) por plazo de un año."'
     ),
     ContractType.APV: (
         "Ejemplo APV — Arrendamiento con promesa de venta:\n"
-        "\"JUAN PÉREZ arrienda a MARÍA LÓPEZ la vivienda de Residencial "
+        '"JUAN PÉREZ arrienda a MARÍA LÓPEZ la vivienda de Residencial '
         "Sintético, por canon mensual de QUINIENTOS DÓLARES por SESENTA "
         "meses. Al término del plazo, la arrendataria podrá ejercer la "
         "promesa de venta pagando un saldo de DIEZ MIL DÓLARES, "
-        "imputándose los cánones al precio total.\""
+        'imputándose los cánones al precio total."'
     ),
     ContractType.LEA: (
         "Ejemplo LEA — Leasing financiero inmobiliario:\n"
-        "\"LEASING SINTÉTICO S.A., propietaria del inmueble en Calle Falsa "
+        '"LEASING SINTÉTICO S.A., propietaria del inmueble en Calle Falsa '
         "123, lo entrega en arrendamiento financiero a JUAN PÉREZ por "
         "PLAZO FORZOSO de DOSCIENTOS CUARENTA meses, mediante canon "
         "mensual de UN MIL DÓLARES. Al final del plazo, el arrendatario "
         "podrá ejercer la opción de compra por la suma simbólica de "
         "CIEN DÓLARES (USD 100.00). La propiedad permanece en LEASING "
-        "SINTÉTICO hasta el ejercicio de la opción.\""
+        'SINTÉTICO hasta el ejercicio de la opción."'
     ),
     ContractType.IVU: (
         "Ejemplo IVU — Contrato institucional del Instituto de Vivienda "
         "Urbana:\n"
-        "\"El Instituto de Vivienda Urbana adjudica a JUAN PÉREZ la "
+        '"El Instituto de Vivienda Urbana adjudica a JUAN PÉREZ la '
         "vivienda número 7 del Bloque B, bajo el régimen institucional "
         "de Bien de Familia, con cuota mensual de CIENTO CINCUENTA "
-        "DÓLARES por el plazo institucional vigente.\""
+        'DÓLARES por el plazo institucional vigente."'
     ),
     ContractType.FSV: (
         "Ejemplo FSV — Compraventa financiada por el Fondo Social para la "
         "Vivienda:\n"
-        "\"JUAN PÉREZ adquiere la vivienda situada en Residencial "
+        '"JUAN PÉREZ adquiere la vivienda situada en Residencial '
         "Sintético por SESENTA MIL DÓLARES, de los cuales el Fondo "
         "Social para la Vivienda financia CINCUENTA Y CUATRO MIL "
         "DÓLARES a CIENTO OCHENTA meses plazo, conforme la normativa "
-        "del FSV.\""
+        'del FSV."'
     ),
     ContractType.NOT_CLASSIFIABLE: (
         "Ejemplo NOT_CLASSIFIABLE — Donación (fuera del alcance):\n"
-        "\"JUAN PÉREZ dona pura, simple e irrevocablemente a MARÍA LÓPEZ "
+        '"JUAN PÉREZ dona pura, simple e irrevocablemente a MARÍA LÓPEZ '
         "el inmueble situado en Calle Falsa 123, sin contraprestación "
-        "alguna.\" Este documento es una donación, no una compraventa ni "
+        'alguna." Este documento es una donación, no una compraventa ni '
         "arrendamiento ni leasing, por lo que se devuelve "
         "NOT_CLASSIFIABLE."
     ),

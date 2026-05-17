@@ -31,7 +31,6 @@ from economics.application.benchmark_comparator import (
 )
 from economics.domain.benchmark_comparison import BenchmarkSegment
 
-
 BANK_BAND = RateBand(
     min_value=Decimal("0.07"),
     max_value=Decimal("0.09"),
@@ -62,10 +61,7 @@ def test_select_segment_picks_fsv_for_fsv_contracts():
 
 
 def test_select_segment_developer_direct_when_hint():
-    assert (
-        select_segment(ContractType.CVP, has_developer_direct_hint=True)
-        == BenchmarkSegment.DEVELOPER_DIRECT
-    )
+    assert select_segment(ContractType.CVP, has_developer_direct_hint=True) == BenchmarkSegment.DEVELOPER_DIRECT
 
 
 # ─── BVA at assessment band edges ────────────────────────────────────────────

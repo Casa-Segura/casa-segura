@@ -11,14 +11,13 @@ wants to retune.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from collections.abc import Iterable
 
 import yaml
 
 from corpus.application.retrieval import LegalCitationService
-
 
 DEFAULT_FIXTURE = Path(__file__).resolve().parents[2] / "fixtures" / "rag_eval_cases.yaml"
 
@@ -89,10 +88,7 @@ def evaluate_threshold(
     return EvalReport(
         threshold=threshold,
         top_1_precision=hits / max(len(cases), 1),
-        per_category={
-            cat: hits / total if total else 0.0
-            for cat, (hits, total) in per_cat_hits.items()
-        },
+        per_category={cat: hits / total if total else 0.0 for cat, (hits, total) in per_cat_hits.items()},
         misses=misses,
     )
 

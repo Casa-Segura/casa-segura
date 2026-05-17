@@ -36,7 +36,6 @@ from economics.domain.benchmark_comparison import (
 )
 from economics.domain.enums import BenchmarkAssessment
 
-
 _QUANTIZE = Decimal("0.0001")
 _USD_QUANTIZE = Decimal("0.01")
 
@@ -136,9 +135,7 @@ def compute_overcost(
         return None
 
     # BR-11: FSV inside its own band → skip.
-    if segment == BenchmarkSegment.FSV and (
-        segment_band.min_value <= contract_annual_pct <= segment_band.max_value
-    ):
+    if segment == BenchmarkSegment.FSV and (segment_band.min_value <= contract_annual_pct <= segment_band.max_value):
         return None
 
     # BR-02 asymmetric: favorable contracts never produce an overcost.

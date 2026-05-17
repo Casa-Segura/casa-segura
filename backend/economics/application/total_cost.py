@@ -28,7 +28,6 @@ from classification.domain.economic_slot import EconomicSlot
 from classification.domain.extraction_status import ExtractionStatus
 from economics.domain.total_cost import TotalCostBundle
 
-
 # PRD_F5 BR-07 — extracted vs theoretical coherence tolerance.
 COHERENCE_TOLERANCE = 0.05
 
@@ -110,20 +109,14 @@ def compute_total_cost(
     else:
         total_paid = None
 
-    multiplier = (
-        total_paid / price if (total_paid is not None and price is not None and price > 0) else None
-    )
+    multiplier = total_paid / price if (total_paid is not None and price is not None and price > 0) else None
 
     coherent, coherence_warning = _check_coherence(monthly, theoretical)
 
     warnings: list[str] = []
     if coherence_warning is not None:
         warnings.append(coherence_warning)
-    if (
-        ivu_max_term_months is not None
-        and term is not None
-        and term > ivu_max_term_months
-    ):
+    if ivu_max_term_months is not None and term is not None and term > ivu_max_term_months:
         warnings.append(WARNING_TERM_EXCESSIVE)
 
     return TotalCostBundle(
@@ -148,9 +141,7 @@ def _slot_value(slot: EconomicSlot | None) -> float | None:
     return float(value)
 
 
-def _resolve_financed_amount(
-    financed_slot: float | None, price: float | None, down: float | None
-) -> float | None:
+def _resolve_financed_amount(financed_slot: float | None, price: float | None, down: float | None) -> float | None:
     """Echo extracted `financed_amount` when present; else derive `price - down`.
 
     BR-09 forbids silently substituting zero. If neither path is usable the

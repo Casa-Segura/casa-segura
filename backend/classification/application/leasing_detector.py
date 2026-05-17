@@ -231,9 +231,7 @@ class LeasingReclassificationDetector:
         # returned: the legal-product hinge (4-of-6) is in our threshold
         # constant, not in the prompt's interpretation.
         should_reclassify = indicators.is_leasing(threshold=self._threshold)
-        recommended_type = (
-            ContractType.LEA if should_reclassify else initial_type
-        )
+        recommended_type = ContractType.LEA if should_reclassify else initial_type
 
         try:
             return LeasingReclassificationResult(

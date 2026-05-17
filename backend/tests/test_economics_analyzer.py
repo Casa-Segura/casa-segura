@@ -24,7 +24,6 @@ from economics.application.benchmark_loader import load_yaml, upsert_benchmarks
 from economics.application.catalog import BenchmarkCatalog
 from economics.domain.economic_summary import DerivationStatus, EconomicSummary
 
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PRODUCTION_FIXTURE = REPO_ROOT / "backend" / "fixtures" / "economic_benchmarks_2026q2.yaml"
 
@@ -48,9 +47,7 @@ def _full_extraction() -> AggregatedExtraction:
             "interest_rate_pct": _slot("interest_rate_pct", 0.18),
             "monthly_payment_usd": _slot("monthly_payment_usd", 1083.50),
             "payment_periodicity": _slot("payment_periodicity", "monthly"),
-            "interest_calculation_base": _slot(
-                "interest_calculation_base", "total_balance"
-            ),
+            "interest_calculation_base": _slot("interest_calculation_base", "total_balance"),
         },
         warning_precursors=["interest_calculation_base_unfavorable"],
     )
@@ -116,8 +113,7 @@ def test_full_extraction_produces_full_summary(catalog):
     assert summary.fields_derived.total_cost_vs_cash_multiplier is not None
     # 18% contract vs 8% bank mid → 10pp delta → well_above_market.
     assert any(
-        c.metric == "annual_rate" and c.assessment == "well_above_market"
-        for c in summary.benchmark_comparisons
+        c.metric == "annual_rate" and c.assessment == "well_above_market" for c in summary.benchmark_comparisons
     )
     # Overcost present and positive (BR-02 — not skipped because contract > benchmark).
     assert summary.overcost is not None

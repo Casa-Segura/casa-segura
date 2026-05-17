@@ -22,18 +22,14 @@ SCHEMA_VERSION = "1.0.0"
 SERVICE_NAME = "casa-segura-api"
 
 
-def _add_service_context(
-    _: Any, __: str, event_dict: MutableMapping[str, Any]
-) -> MutableMapping[str, Any]:
+def _add_service_context(_: Any, __: str, event_dict: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
     """Always-on keys: service name + schema version."""
     event_dict.setdefault("service", SERVICE_NAME)
     event_dict.setdefault("schema_version", SCHEMA_VERSION)
     return event_dict
 
 
-def _add_default_versions(
-    _: Any, __: str, event_dict: MutableMapping[str, Any]
-) -> MutableMapping[str, Any]:
+def _add_default_versions(_: Any, __: str, event_dict: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
     """Ensure rubric/corpus/benchmark versions are present (default None) for log shape stability."""
     event_dict.setdefault("rubric_version", None)
     event_dict.setdefault("corpus_version", None)

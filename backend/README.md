@@ -126,17 +126,18 @@ gitignored. Variables consumed by `config/settings.py` via `django-environ`.
 
 ### Python interpreter
 
-[`pyproject.toml`](pyproject.toml) allows **`>=3.11,<4.0`**. **GitHub Actions uses Python 3.11.** **`.python-version`** is only a convenience pin for pyenv-local dev — use **3.11.x** for parity with CI, or another supported **3.12.x / 3.13.x** version.
+[`pyproject.toml`](pyproject.toml) requires **`>=3.11,<4.0`**. **GitHub Actions uses Python 3.11** (see [`.github/workflows/ci.yml`](../.github/workflows/ci.yml)). **`backend/.python-version`** pins a pyenv-local default (**3.11.9**) so `black`, `ruff`, and Poetry match CI and Docker.
 
-Do **not** use **Python 3.14+** yet for `make install`: dependency **`tiktoken`** builds native code via PyO3, whose bundled PyO3 only supports Python through **3.13** today (install fails with “newer than PyO3's maximum”). Use **pyenv**:
+Use **pyenv**:
 
 ```bash
-pyenv install 3.11.11   # or any installed 3.11.x / 3.12.x / 3.13.x
-cd backend && pyenv local 3.11.11 && python3 --version
-poetry env remove --all && poetry env use "$(command -v python3)" && make install
+pyenv install 3.11.9
+cd backend && pyenv local 3.11.9 && python3 --version
+poetry env remove --all 2>/dev/null || true
+poetry env use "$(command -v python3)" && make install
 ```
 
-Rust is unnecessary when a **manylinux/macOS wheel** exists for your Python (typical on **3.11–3.13**).
+If **`tiktoken`** (or another native dep) has no wheel for your OS/Python combo, you may need a **Rust** toolchain for that build; CI and the `python:3.11-slim` images use combinations that ship wheels.
 
 ## Tests
 

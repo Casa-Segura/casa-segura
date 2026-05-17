@@ -23,12 +23,12 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+
 from django.db import transaction
 from django.utils import timezone
 
 from economics.domain.enums import BenchmarkUnit
 from economics.infrastructure.django.models import BenchmarkVersion, EconomicBenchmark
-
 
 # DOMAIN_MODEL §3.8 caps applicable_contract_types entries at 16 chars (matches
 # the ArrayField CharField in the model). Keep the constant local rather than
@@ -101,15 +101,11 @@ def load_yaml(path: Path | str) -> BenchmarkPayload:
         raise BenchmarkLoaderError(f"Invalid YAML at {p}: {exc}") from exc
 
     if not isinstance(data, dict):
-        raise BenchmarkLoaderError(
-            f"{p}: expected a top-level mapping, got {type(data).__name__}"
-        )
+        raise BenchmarkLoaderError(f"{p}: expected a top-level mapping, got {type(data).__name__}")
 
     missing = REQUIRED_TOP_LEVEL - set(data)
     if missing:
-        raise BenchmarkLoaderError(
-            f"{p}: missing required top-level keys: {sorted(missing)}"
-        )
+        raise BenchmarkLoaderError(f"{p}: missing required top-level keys: {sorted(missing)}")
 
     version = str(data["version"]).strip()
     if not version:
@@ -119,8 +115,7 @@ def load_yaml(path: Path | str) -> BenchmarkPayload:
     next_review_due = _parse_date(data["next_review_due"], field="next_review_due", path=p)
     if next_review_due < released_at.date():
         raise BenchmarkLoaderError(
-            f"{p}: top-level next_review_due ({next_review_due}) is before "
-            f"released_at ({released_at.date()})"
+            f"{p}: top-level next_review_due ({next_review_due}) is before " f"released_at ({released_at.date()})"
         )
 
     changelog = str(data.get("changelog") or "").strip()
@@ -199,9 +194,7 @@ def upsert_benchmarks(
             updated_count += 1
 
     if activate:
-        BenchmarkVersion.objects.exclude(version=payload.version).filter(
-            is_active=True
-        ).update(is_active=False)
+        BenchmarkVersion.objects.exclude(version=payload.version).filter(is_active=True).update(is_active=False)
         if not version_obj.is_active:
             version_obj.is_active = True
             version_obj.save(update_fields=["is_active"])
@@ -212,25 +205,19 @@ def upsert_benchmarks(
 # ─── Internals ───────────────────────────────────────────────────────────────
 
 
-def _validate_entry(key: Any, raw: Any, *, path: Path) -> BenchmarkEntry:  # noqa: PLR0912 — sequential YAML field validation; splitting into helpers bloats more than it clarifies (mirrors `rubric/.../load_rubric_catalog.py::Command.handle`).
+def _validate_entry(key: Any, raw: Any, *, path: Path) -> BenchmarkEntry:  # noqa: PLR0912
     if not isinstance(key, str) or not key.strip():
         raise BenchmarkLoaderError(f"{path}: benchmark key {key!r} must be a non-empty string")
     benchmark_key = key.strip()
     if len(benchmark_key) > BENCHMARK_KEY_MAX:
-        raise BenchmarkLoaderError(
-            f"{path}: benchmark_key {benchmark_key!r} exceeds {BENCHMARK_KEY_MAX} chars"
-        )
+        raise BenchmarkLoaderError(f"{path}: benchmark_key {benchmark_key!r} exceeds {BENCHMARK_KEY_MAX} chars")
 
     if not isinstance(raw, dict):
-        raise BenchmarkLoaderError(
-            f"{path}: entry {benchmark_key!r} must be a mapping, got {type(raw).__name__}"
-        )
+        raise BenchmarkLoaderError(f"{path}: entry {benchmark_key!r} must be a mapping, got {type(raw).__name__}")
 
     missing = REQUIRED_BENCHMARK_KEYS - set(raw)
     if missing:
-        raise BenchmarkLoaderError(
-            f"{path}: entry {benchmark_key!r} missing required fields: {sorted(missing)}"
-        )
+        raise BenchmarkLoaderError(f"{path}: entry {benchmark_key!r} missing required fields: {sorted(missing)}")
 
     # At least one of value_default / value_min / value_max must be set.
     value_default = _opt_decimal(raw.get("value_default"), field="value_default", key=benchmark_key, path=path)
@@ -238,14 +225,11 @@ def _validate_entry(key: Any, raw: Any, *, path: Path) -> BenchmarkEntry:  # noq
     value_max = _opt_decimal(raw.get("value_max"), field="value_max", key=benchmark_key, path=path)
     if value_default is None and value_min is None and value_max is None:
         raise BenchmarkLoaderError(
-            f"{path}: entry {benchmark_key!r} must define at least one of "
-            "value_default / value_min / value_max"
+            f"{path}: entry {benchmark_key!r} must define at least one of " "value_default / value_min / value_max"
         )
     for label, val in (("value_default", value_default), ("value_min", value_min), ("value_max", value_max)):
         if val is not None and val < Decimal("0"):
-            raise BenchmarkLoaderError(
-                f"{path}: entry {benchmark_key!r} {label} must be >= 0, got {val}"
-            )
+            raise BenchmarkLoaderError(f"{path}: entry {benchmark_key!r} {label} must be >= 0, got {val}")
     if value_min is not None and value_max is not None and value_min > value_max:
         raise BenchmarkLoaderError(
             f"{path}: entry {benchmark_key!r} value_min ({value_min}) > value_max ({value_max})"
@@ -253,9 +237,7 @@ def _validate_entry(key: Any, raw: Any, *, path: Path) -> BenchmarkEntry:  # noq
 
     unit = str(raw["unit"]).strip()
     if unit not in VALID_UNITS:
-        raise BenchmarkLoaderError(
-            f"{path}: entry {benchmark_key!r} unit {unit!r} not in {sorted(VALID_UNITS)}"
-        )
+        raise BenchmarkLoaderError(f"{path}: entry {benchmark_key!r} unit {unit!r} not in {sorted(VALID_UNITS)}")
 
     types_raw = raw["applicable_contract_types"]
     if not isinstance(types_raw, list) or not types_raw:
@@ -283,9 +265,7 @@ def _validate_entry(key: Any, raw: Any, *, path: Path) -> BenchmarkEntry:  # noq
     notes = str(raw.get("notes") or "").strip()
 
     last_updated = _parse_date(raw["last_updated"], field=f"{benchmark_key}.last_updated", path=path)
-    next_review_due = _parse_date(
-        raw["next_review_due"], field=f"{benchmark_key}.next_review_due", path=path
-    )
+    next_review_due = _parse_date(raw["next_review_due"], field=f"{benchmark_key}.next_review_due", path=path)
     if next_review_due < last_updated:
         raise BenchmarkLoaderError(
             f"{path}: entry {benchmark_key!r} next_review_due ({next_review_due}) "
@@ -313,9 +293,7 @@ def _opt_decimal(value: Any, *, field: str, key: str, path: Path) -> Decimal | N
     try:
         return Decimal(str(value))
     except (TypeError, ValueError, ArithmeticError) as exc:
-        raise BenchmarkLoaderError(
-            f"{path}: entry {key!r} {field}={value!r} is not a valid decimal: {exc}"
-        ) from exc
+        raise BenchmarkLoaderError(f"{path}: entry {key!r} {field}={value!r} is not a valid decimal: {exc}") from exc
 
 
 def _parse_date(value: Any, *, field: str, path: Path) -> date:
@@ -327,25 +305,17 @@ def _parse_date(value: Any, *, field: str, path: Path) -> date:
     try:
         return date.fromisoformat(text.split("T", 1)[0])
     except ValueError as exc:
-        raise BenchmarkLoaderError(
-            f"{path}: field {field!r} value {value!r} is not an ISO date: {exc}"
-        ) from exc
+        raise BenchmarkLoaderError(f"{path}: field {field!r} value {value!r} is not an ISO date: {exc}") from exc
 
 
 def _parse_datetime(value: Any, *, field: str, path: Path) -> datetime:
     if isinstance(value, datetime):
         return value if timezone.is_aware(value) else timezone.make_aware(value, UTC)
     if isinstance(value, date):
-        return timezone.make_aware(
-            datetime(value.year, value.month, value.day), UTC
-        )
+        return timezone.make_aware(datetime(value.year, value.month, value.day), UTC)
     text = str(value).strip().replace("Z", "+00:00")
     try:
         parsed = datetime.fromisoformat(text)
     except ValueError as exc:
-        raise BenchmarkLoaderError(
-            f"{path}: field {field!r} value {value!r} is not an ISO datetime: {exc}"
-        ) from exc
-    return (
-        parsed if timezone.is_aware(parsed) else timezone.make_aware(parsed, UTC)
-    )
+        raise BenchmarkLoaderError(f"{path}: field {field!r} value {value!r} is not an ISO datetime: {exc}") from exc
+    return parsed if timezone.is_aware(parsed) else timezone.make_aware(parsed, UTC)

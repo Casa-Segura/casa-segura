@@ -20,6 +20,7 @@ from __future__ import annotations
 import base64
 
 import structlog
+
 from django.conf import settings
 
 from ingestion.application.ocr.errors import (

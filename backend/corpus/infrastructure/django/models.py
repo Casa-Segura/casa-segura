@@ -8,11 +8,12 @@ from __future__ import annotations
 
 from typing import ClassVar
 
+from pgvector.django import VectorField
+
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.db.models import Q
-from pgvector.django import VectorField
 
 from common.infrastructure.django.models import ModelWithTimeStamps
 from corpus.domain.enums import LegalDocumentStatus, SeverityHint

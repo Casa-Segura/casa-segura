@@ -6,8 +6,9 @@ from __future__ import annotations
 from unittest.mock import patch
 
 import pytest
-from django.utils import timezone
 from prometheus_client import REGISTRY
+
+from django.utils import timezone
 
 from ingestion.application.ocr.errors import (
     ExtractionResult,
@@ -76,6 +77,7 @@ def test_three_page_pdf_emits_page_markers_in_order(monkeypatch):
     monkeypatch.setattr(pypdf_ext, "ensure_spanish", lambda _: "es")
     import sys
     import types as _types
+
     monkeypatch.setitem(
         sys.modules,
         "pypdf",
@@ -97,11 +99,11 @@ def test_three_page_pdf_emits_page_markers_in_order(monkeypatch):
 @pytest.mark.parametrize(
     "raw,expected_substring",
     [
-        ("línea1\r\nlínea2", "línea1\nlínea2"),       # CRLF → LF
-        ("hola\u00a0mundo", "hola mundo"),                # NBSP -> space
-        ("guio\u00adn", "guion"),                          # soft hyphen stripped
-        ("texto\u200b limpio", "texto limpio"),          # zero-width space stripped
-        ("malo\x01control", "malocontrol"),               # C0 control char dropped
+        ("línea1\r\nlínea2", "línea1\nlínea2"),  # CRLF → LF
+        ("hola\u00a0mundo", "hola mundo"),  # NBSP -> space
+        ("guio\u00adn", "guion"),  # soft hyphen stripped
+        ("texto\u200b limpio", "texto limpio"),  # zero-width space stripped
+        ("malo\x01control", "malocontrol"),  # C0 control char dropped
     ],
 )
 def test_normalize_text_handles_whitespace_and_controls(raw, expected_substring):
@@ -117,6 +119,7 @@ def test_watchdog_fires_when_pypdf_exceeds_30s(monkeypatch):
     fake_reader = _fake_reader(["pagina uno", "pagina dos", "pagina tres"])
     import sys
     import types as _types
+
     monkeypatch.setitem(
         sys.modules,
         "pypdf",
@@ -150,6 +153,7 @@ def test_pypdf_below_500_chars_raises_low_confidence(monkeypatch):
     fake_reader = _fake_reader([short, short, short])
     import sys
     import types as _types
+
     monkeypatch.setitem(
         sys.modules,
         "pypdf",

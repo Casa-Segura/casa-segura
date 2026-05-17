@@ -12,6 +12,7 @@ from __future__ import annotations
 from datetime import date
 
 import structlog
+
 from django.db import transaction
 from django.utils import timezone
 
@@ -34,9 +35,7 @@ def activate(version: str) -> BenchmarkVersion:
 
     target = BenchmarkVersion.objects.select_for_update().get(pk=version)
     if not target.is_active:
-        BenchmarkVersion.objects.filter(is_active=True).exclude(pk=version).update(
-            is_active=False
-        )
+        BenchmarkVersion.objects.filter(is_active=True).exclude(pk=version).update(is_active=False)
         target.is_active = True
         target.save(update_fields=["is_active"])
         logger.info("benchmark.version.activated", version=version)
@@ -67,9 +66,7 @@ def assert_freshness(version: BenchmarkVersion | None, *, today: date | None = N
     # The freshest `next_review_due` across all rows for this version is the
     # one most relevant to staleness — but `BenchmarkVersion` itself does not
     # carry that field, so we pick the minimum across child rows.
-    next_review = (
-        version.benchmarks.values_list("next_review_due", flat=True).order_by("next_review_due").first()
-    )
+    next_review = version.benchmarks.values_list("next_review_due", flat=True).order_by("next_review_due").first()
     if next_review is None:
         return
     if reference > next_review:

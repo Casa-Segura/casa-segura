@@ -115,33 +115,15 @@ inventes un valor para satisfacer el esquema.
 # match attribute names on `ExtractedFields` — `_validate_field_specs`
 # asserts this at import time.
 _FIELD_SPECS: Final[dict[str, str]] = {
-    "purchase_price_usd": (
-        "Precio total declarado del inmueble en USD (número). PRD §8.5 "
-        "`price_cash`."
-    ),
-    "down_payment_usd": (
-        "Monto de prima o anticipo en USD (número). PRD §8.5 `down_payment`."
-    ),
+    "purchase_price_usd": ("Precio total declarado del inmueble en USD (número). PRD §8.5 " "`price_cash`."),
+    "down_payment_usd": ("Monto de prima o anticipo en USD (número). PRD §8.5 `down_payment`."),
     "down_payment_pct": (
-        "Prima expresada como FRACCIÓN DECIMAL en [0, 1] (ej. 0.10 para "
-        "10%). PRD §8.5 `down_payment_pct`."
+        "Prima expresada como FRACCIÓN DECIMAL en [0, 1] (ej. 0.10 para " "10%). PRD §8.5 `down_payment_pct`."
     ),
-    "financed_amount_usd": (
-        "Monto financiado en USD = precio - prima (número). PRD §8.5 "
-        "`financed_amount`."
-    ),
-    "monthly_payment_usd": (
-        "Cuota mensual periódica en USD (número). PRD §8.5 "
-        "`monthly_payment`."
-    ),
-    "installment_count": (
-        "Número total de cuotas, cuando el contrato lo expresa como conteo "
-        "(entero)."
-    ),
-    "term_months": (
-        "Plazo total en MESES enteros (ej. 60 para cinco años). PRD §8.5 "
-        "`term_months`."
-    ),
+    "financed_amount_usd": ("Monto financiado en USD = precio - prima (número). PRD §8.5 " "`financed_amount`."),
+    "monthly_payment_usd": ("Cuota mensual periódica en USD (número). PRD §8.5 " "`monthly_payment`."),
+    "installment_count": ("Número total de cuotas, cuando el contrato lo expresa como conteo " "(entero)."),
+    "term_months": ("Plazo total en MESES enteros (ej. 60 para cinco años). PRD §8.5 " "`term_months`."),
     "interest_rate_pct": (
         "Tasa anual efectiva como DECIMAL (ej. 0.09 para 9%). Si solo hay "
         "mensual, deriva con `(1+mensual)^12 - 1` y nótalo en `rationale`. "
@@ -151,13 +133,8 @@ _FIELD_SPECS: Final[dict[str, str]] = {
         "Tasa mensual como DECIMAL cuando el contrato solo declara la "
         "mensual (ej. 0.015 para 1.5%). PRD §8.5 `monthly_rate_pct`."
     ),
-    "monthly_rent_usd": (
-        "Canon o renta mensual en USD (número), para arrendamientos y "
-        "leasing."
-    ),
-    "deposit_usd": (
-        "Depósito reembolsable en USD (número), típico en arrendamientos."
-    ),
+    "monthly_rent_usd": ("Canon o renta mensual en USD (número), para arrendamientos y " "leasing."),
+    "deposit_usd": ("Depósito reembolsable en USD (número), típico en arrendamientos."),
     "purchase_option_price_usd": (
         "Precio de la opción de compra al final del plazo en USD (número), "
         "para LEA / APV. PRD F2 US-03 indicador Art. 2 LAF #2."
@@ -166,9 +143,7 @@ _FIELD_SPECS: Final[dict[str, str]] = {
         "Código de moneda reportado: usa `USD` por defecto, `SVC` si el "
         "contrato usa colones (tras la conversión histórica)."
     ),
-    "payment_periodicity": (
-        "Uno de: `monthly`, `biweekly`, `weekly`, `other`. PRD §8.5."
-    ),
+    "payment_periodicity": ("Uno de: `monthly`, `biweekly`, `weekly`, `other`. PRD §8.5."),
     "interest_calculation_base": (
         "Uno de: `outstanding_principal` (si dice 'sobre saldo insoluto' o "
         "'sobre capital pendiente'), `total_balance` (si dice 'sobre saldo "
@@ -179,17 +154,9 @@ _FIELD_SPECS: Final[dict[str, str]] = {
         "Nombre del proyecto inmobiliario tal y como aparece en el contrato "
         "(cadena). PRD F2 US-02 `canonical_name`."
     ),
-    "property_address": (
-        "Dirección del inmueble (cadena). TRANSITORIO: NO se persiste."
-    ),
-    "seller_name": (
-        "Nombre del vendedor / arrendador (cadena). TRANSITORIO: NO se "
-        "persiste."
-    ),
-    "buyer_name": (
-        "Nombre del comprador / arrendatario (cadena). TRANSITORIO: NO se "
-        "persiste."
-    ),
+    "property_address": ("Dirección del inmueble (cadena). TRANSITORIO: NO se persiste."),
+    "seller_name": ("Nombre del vendedor / arrendador (cadena). TRANSITORIO: NO se " "persiste."),
+    "buyer_name": ("Nombre del comprador / arrendatario (cadena). TRANSITORIO: NO se " "persiste."),
 }
 
 
@@ -214,8 +181,7 @@ def _validate_field_specs() -> None:
     missing_specs = needed - set(_FIELD_SPECS.keys())
     if missing_specs:
         raise RuntimeError(
-            "economic_prompts._FIELD_SPECS is missing descriptions for "
-            f"required fields: {sorted(missing_specs)}"
+            "economic_prompts._FIELD_SPECS is missing descriptions for " f"required fields: {sorted(missing_specs)}"
         )
 
 
@@ -231,9 +197,9 @@ _validate_field_specs()
 _FEW_SHOT_ANCHORS: Final[dict[ContractType, str]] = {
     ContractType.CVC: (
         "Ejemplo CVC (sintético, sin PII real):\n"
-        "Texto: \"El comprador entrega en este acto la suma única de "
+        'Texto: "El comprador entrega en este acto la suma única de '
         "TREINTA MIL DÓLARES (USD 30,000.00) por el inmueble del "
-        "Residencial Sintético. No existen cuotas ni saldo pendiente.\"\n"
+        'Residencial Sintético. No existen cuotas ni saldo pendiente."\n'
         "Salida JSON:\n"
         "{\n"
         '  "purchase_price_usd": {"value": 30000.0, "confidence": 0.95, '
@@ -246,10 +212,10 @@ _FEW_SHOT_ANCHORS: Final[dict[ContractType, str]] = {
     ),
     ContractType.CVP: (
         "Ejemplo CVP (sintético, sin PII real):\n"
-        "Texto: \"Precio total OCHENTA MIL DÓLARES (USD 80,000.00), "
+        'Texto: "Precio total OCHENTA MIL DÓLARES (USD 80,000.00), '
         "pagaderos: prima de OCHO MIL DÓLARES al firmar (10%), saldo en "
         "72 cuotas mensuales de UN MIL DÓLARES con interés del 1.5% "
-        "mensual sobre saldo insoluto, directamente al vendedor.\"\n"
+        'mensual sobre saldo insoluto, directamente al vendedor."\n'
         "Salida JSON:\n"
         "{\n"
         '  "purchase_price_usd": {"value": 80000.0, "confidence": 0.95, '
@@ -276,10 +242,10 @@ _FEW_SHOT_ANCHORS: Final[dict[ContractType, str]] = {
     ),
     ContractType.ARV: (
         "Ejemplo ARV (sintético, sin PII real):\n"
-        "Texto: \"Se da en arrendamiento la vivienda del Residencial "
+        'Texto: "Se da en arrendamiento la vivienda del Residencial '
         "Sintético, canon mensual CUATROCIENTOS DÓLARES (USD 400.00), "
         "depósito de garantía CUATROCIENTOS DÓLARES, plazo de 12 meses "
-        "prorrogable. Sin opción de compra.\"\n"
+        'prorrogable. Sin opción de compra."\n'
         "Salida JSON:\n"
         "{\n"
         '  "monthly_rent_usd": {"value": 400.0, "confidence": 0.98, '
@@ -298,11 +264,11 @@ _FEW_SHOT_ANCHORS: Final[dict[ContractType, str]] = {
     ),
     ContractType.LEA: (
         "Ejemplo LEA (sintético, sin PII real):\n"
-        "Texto: \"LEASING SINTÉTICO S.A. entrega en arrendamiento "
+        'Texto: "LEASING SINTÉTICO S.A. entrega en arrendamiento '
         "financiero el inmueble por plazo forzoso de 240 meses, canon "
         "mensual UN MIL DÓLARES (USD 1,000.00), con opción de compra al "
         "final por la suma simbólica de CIEN DÓLARES (USD 100.00). Tasa "
-        "implícita anual del 9%.\"\n"
+        'implícita anual del 9%."\n'
         "Salida JSON:\n"
         "{\n"
         '  "monthly_rent_usd": {"value": 1000.0, "confidence": 0.95, '

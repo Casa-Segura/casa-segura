@@ -26,6 +26,7 @@ from datetime import datetime
 from io import BytesIO
 
 import structlog
+
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
@@ -60,8 +61,13 @@ logger = structlog.get_logger(__name__)
 
 
 _ALLOWED_FORMATS = {f.value for f in FileFormat}
-_IMAGE_FORMATS = {FileFormat.JPG.value, FileFormat.JPEG.value, FileFormat.PNG.value,
-                  FileFormat.WEBP.value, FileFormat.HEIC.value}
+_IMAGE_FORMATS = {
+    FileFormat.JPG.value,
+    FileFormat.JPEG.value,
+    FileFormat.PNG.value,
+    FileFormat.WEBP.value,
+    FileFormat.HEIC.value,
+}
 _SUCCESS_STATUSES = {OcrJobStatus.SUCCESS}
 
 # PRD §US-01 batch limits.
@@ -244,9 +250,7 @@ def _compose_submission_hash(files: tuple[FileUpload, ...]) -> str:
     if len(files) == 1:
         return _hash_bytes(files[0].file_bytes)
 
-    per_file = sorted(
-        (upload.filename, _hash_bytes(upload.file_bytes)) for upload in files
-    )
+    per_file = sorted((upload.filename, _hash_bytes(upload.file_bytes)) for upload in files)
     concat = "".join(hexhash for _, hexhash in per_file).encode("ascii")
     return hashlib.sha256(concat).hexdigest()
 
@@ -278,16 +282,11 @@ def _run_batch_extraction(
             filename=upload.filename,
             force_strategy=req.force_strategy,
         )
-        result, elapsed, winning = _attempt_extraction(
-            submission, req=per_file_req, primary=routing.strategy
-        )
+        result, elapsed, winning = _attempt_extraction(submission, req=per_file_req, primary=routing.strategy)
         if result.page_count is not None and result.page_count > settings.OCR_MAX_PAGES:
             raise NotAnalyzableError(
                 reason=NotAnalyzableReason.PAGE_COUNT_EXCEEDED,
-                message=(
-                    f"file {upload.filename!r} page_count {result.page_count} "
-                    f"> {settings.OCR_MAX_PAGES}"
-                ),
+                message=(f"file {upload.filename!r} page_count {result.page_count} " f"> {settings.OCR_MAX_PAGES}"),
             )
 
         header = f"--- FILE {index}: {upload.filename} ---"
@@ -566,14 +565,10 @@ def _mark_failed(submission: ContractSubmission, exc: NotAnalyzableError) -> Non
         # in [[CS-056]]; the 500-char trigger arrives with [[CS-053]].
         NotAnalyzableReason.TEXT_TOO_SHORT: ProcessingStatus.FAILED_EXTRACTION,
     }
-    submission.processing_status = status_map.get(
-        exc.reason, ProcessingStatus.FAILED_EXTRACTION
-    ).value
+    submission.processing_status = status_map.get(exc.reason, ProcessingStatus.FAILED_EXTRACTION).value
     submission.error_code = exc.reason.value
     submission.error_reason = exc.message[:1000]
-    submission.save(
-        update_fields=["processing_status", "error_code", "error_reason"]
-    )
+    submission.save(update_fields=["processing_status", "error_code", "error_reason"])
 
 
 def _timed(stage: str, strategy: str, fn, /, *args, **kwargs):

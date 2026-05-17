@@ -12,8 +12,9 @@ from __future__ import annotations
 from unittest.mock import patch
 
 import pytest
-from django.utils import timezone
 from prometheus_client import REGISTRY
+
+from django.utils import timezone
 
 from ingestion.application.ocr.errors import (
     ExtractionResult,
@@ -127,9 +128,7 @@ def test_extract_pages_histogram_records_observation_with_fake_clock(monkeypatch
         "ingestion.application.upload_service._run_extractor",
         return_value=fake_result,
     ):
-        ingest_upload(
-            _request(_minimal_pdf_bytes(), force_strategy=ExtractionStrategy.PYPDF)
-        )
+        ingest_upload(_request(_minimal_pdf_bytes(), force_strategy=ExtractionStrategy.PYPDF))
 
     after_count = _sample(
         "casa_segura_ingest_extract_pages_duration_seconds_count",
@@ -164,9 +163,7 @@ def test_timeout_counter_increments_on_timeout_reason(monkeypatch):
             message="watchdog fired",
         ),
     ):
-        ingest_upload(
-            _request(_minimal_pdf_bytes(), content_type="application/pdf")
-        )
+        ingest_upload(_request(_minimal_pdf_bytes(), content_type="application/pdf"))
 
     after = _sample(
         "casa_segura_ingest_timeouts_total",

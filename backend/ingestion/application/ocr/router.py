@@ -29,9 +29,7 @@ _PDF_NATIVE_TEXT_THRESHOLD = 100
 
 
 PDF_MIME = "application/pdf"
-IMAGE_MIMES: frozenset[str] = frozenset(
-    {"image/jpeg", "image/jpg", "image/png", "image/webp", "image/heic"}
-)
+IMAGE_MIMES: frozenset[str] = frozenset({"image/jpeg", "image/jpg", "image/png", "image/webp", "image/heic"})
 
 
 @dataclass(frozen=True)

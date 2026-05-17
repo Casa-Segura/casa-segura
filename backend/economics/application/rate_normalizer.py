@@ -18,13 +18,12 @@ precision of `EconomicBenchmark.value_default` (DecimalField 18,4).
 
 from __future__ import annotations
 
-from decimal import Decimal, ROUND_HALF_EVEN
+from decimal import ROUND_HALF_EVEN, Decimal
 
 from classification.domain.aggregated_extraction import AggregatedExtraction
 from classification.domain.economic_slot import EconomicSlot
 from classification.domain.extraction_status import ExtractionStatus
 from economics.domain.rate_normalization import RateNormalization
-
 
 # PRD_F5 US-01 — annual rate stored as decimal in [0, 1] (0% to 100%).
 RATE_MIN = 0.0
@@ -96,9 +95,7 @@ def _slot_value(slot: EconomicSlot | None) -> float | None:
     return float(value)
 
 
-def _normalize_from_annual(
-    annual: float, monthly: float | None
-) -> RateNormalization:
+def _normalize_from_annual(annual: float, monthly: float | None) -> RateNormalization:
     if not _in_range(annual):
         return RateNormalization(
             annual_rate_pct=None,

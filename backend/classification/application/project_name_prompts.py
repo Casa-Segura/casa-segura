@@ -29,7 +29,6 @@ contract excerpts here under any circumstance.
 
 from __future__ import annotations
 
-
 SYSTEM_PROMPT: str = """\
 Eres un analista experto en contratos inmobiliarios salvadoreños. Tu \
 única tarea en esta llamada es identificar el nombre del PROYECTO \
@@ -88,9 +87,7 @@ FEW_SHOT_ANCHORS: list[dict[str, str]] = [
             "ubicado en Calle Falsa 123, municipio sintético. Vendedora: "
             "Constructora PLACEHOLDER, S.A. de C.V."
         ),
-        "expected_json": (
-            '{"project_name_raw": "Residencial Los Ébanos", "confidence": 0.95}'
-        ),
+        "expected_json": ('{"project_name_raw": "Residencial Los Ébanos", "confidence": 0.95}'),
         "explanation": (
             "El nombre del proyecto es 'Residencial Los Ébanos'. "
             "'Constructora PLACEHOLDER' es la razón social de la vendedora "
@@ -119,9 +116,7 @@ FEW_SHOT_ANCHORS: list[dict[str, str]] = [
             "Constructora PLACEHOLDER, S.A. de C.V., que desarrolla el "
             "complejo habitacional Sintético Norte."
         ),
-        "expected_json": (
-            '{"project_name_raw": "Las Palmeras II", "confidence": 0.55}'
-        ),
+        "expected_json": ('{"project_name_raw": "Las Palmeras II", "confidence": 0.55}'),
         "explanation": (
             "Hay dos candidatos: 'Las Palmeras II' (identifica el inmueble) "
             "y 'Sintético Norte' (otro proyecto de la misma constructora). "

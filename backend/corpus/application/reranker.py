@@ -17,6 +17,7 @@ from __future__ import annotations
 from threading import Lock
 
 import structlog
+
 from django.conf import settings
 
 logger = structlog.get_logger(__name__)

@@ -21,12 +21,10 @@ its precursors into the warning list before deduplication.
 
 from __future__ import annotations
 
-
 from classification.domain.aggregated_extraction import AggregatedExtraction
 from classification.domain.economic_slot import EconomicSlot
 from classification.domain.extraction_status import ExtractionStatus
 from economics.domain.total_cost import TotalCostBundle
-
 
 DOWN_PAYMENT_TOLERANCE = 0.05  # PRD_F5 BR-07-style 5% cross-check.
 
@@ -34,9 +32,7 @@ WARNING_DOWN_PAYMENT_INCONSISTENT = "down_payment_inconsistent"
 WARNING_TOTAL_COST_NOT_DISCLOSED = "total_cost_not_disclosed"
 
 
-def detect_precursors(
-    extraction: AggregatedExtraction, bundle: TotalCostBundle
-) -> tuple[str, ...]:
+def detect_precursors(extraction: AggregatedExtraction, bundle: TotalCostBundle) -> tuple[str, ...]:
     """Return additional warning precursor codes triggered by cross-slot checks."""
 
     precursors: list[str] = []

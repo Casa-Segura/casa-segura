@@ -6,12 +6,13 @@ import uuid
 from typing import Any
 
 import structlog
-from django.conf import settings
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from django.conf import settings
 
 from shared.domain.exceptions import ForbiddenDomainException
 
@@ -25,9 +26,7 @@ def _manual_detail() -> str:
     return "Recibimos los datos para referencia; stub sin persistencia (EPIC-12)"
 
 
-_BILLBOARD_ACCEPT_DETAIL = (
-    "Imagen descartada en el stub sin persistencia. OCR real se enlaza en CS-350."
-)
+_BILLBOARD_ACCEPT_DETAIL = "Imagen descartada en el stub sin persistencia. OCR real se enlaza en CS-350."
 
 
 # Mirrors `frontend/src/lib/project-verification-fixtures.ts` verdict JSON shape.

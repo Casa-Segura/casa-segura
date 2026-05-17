@@ -16,6 +16,7 @@ from __future__ import annotations
 from io import BytesIO
 
 import structlog
+
 from django.conf import settings
 
 from ingestion.application.ocr.errors import (
@@ -97,11 +98,7 @@ def extract_via_tesseract(*, file_bytes: bytes, content_type: str) -> Extraction
     # Drop the placeholder `-1` entries Tesseract returns for layout boxes
     # that contain no recognised glyphs. Mean confidence per PRD §US-07
     # AC3 is computed over the words that actually carry text.
-    word_confs = [
-        (word, _safe_float(conf))
-        for word, conf in zip(words, confs, strict=False)
-        if word.strip()
-    ]
+    word_confs = [(word, _safe_float(conf)) for word, conf in zip(words, confs, strict=False) if word.strip()]
     word_confs = [(w, c) for w, c in word_confs if c >= 0]
 
     if not word_confs:
@@ -114,9 +111,7 @@ def extract_via_tesseract(*, file_bytes: bytes, content_type: str) -> Extraction
     if mean_conf < min_confidence:
         raise NotAnalyzableError(
             reason=NotAnalyzableReason.LOW_CONFIDENCE_OCR,
-            message=(
-                f"tesseract mean confidence {mean_conf:.2f} < {min_confidence}"
-            ),
+            message=(f"tesseract mean confidence {mean_conf:.2f} < {min_confidence}"),
         )
 
     text = " ".join(w for w, _ in word_confs).strip()

@@ -31,7 +31,6 @@ from economics.application.renormalizer import (
 from economics.application.total_cost import compute_total_cost
 from economics.domain.economic_summary import DerivationStatus
 
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PRODUCTION_FIXTURE = REPO_ROOT / "backend" / "fixtures" / "economic_benchmarks_2026q2.yaml"
 

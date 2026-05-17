@@ -25,7 +25,6 @@ from classification.domain.economic_slot import EconomicSlot
 from classification.domain.extraction_status import ExtractionStatus
 from economics.domain.payment_ratio import MonthlyRatioBand, RatioComputation
 
-
 SKIP_REASON_INSUFFICIENT_INPUTS = "insufficient_inputs"
 SKIP_REASON_ZERO_TERM = "zero_term"
 

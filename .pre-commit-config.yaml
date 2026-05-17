@@ -17,9 +17,8 @@
 # - Tests are intentionally NOT wired (deferred).
 
 default_language_version:
-  # Interpreter for hook virtualenvs; use `python3` so devs aren't blocked if
-  # only `python3.12+/3.13` exist locally. Backend + CI canonical version: 3.11
-  # (`.github/workflows/ci.yml`, Poetry).
+  # Interpreter for hook virtualenvs. CI + `backend/pyproject.toml`/`ruff.toml`
+  # target Python 3.11; use a 3.11 `python3` on PATH (e.g. pyenv, `backend/.python-version`).
   python: python3
 
 repos:

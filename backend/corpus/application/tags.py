@@ -16,7 +16,6 @@ import re
 import unicodedata
 from collections.abc import Iterable
 
-
 _NON_ALNUM_RE = re.compile(r"[^a-z0-9]+")
 
 

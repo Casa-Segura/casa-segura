@@ -49,9 +49,7 @@ _RATE_SLOTS_FOR_INTEREST_BASE: Final[tuple[str, ...]] = (
 # Closed list of warning precursor codes this aggregator can emit. Kept
 # at module scope so callers / tests can introspect the surface without
 # parsing PRD prose. Aligned with PRD_F5 §6 / US-06.
-WARNING_PRECURSOR_INTEREST_BASE_UNFAVORABLE: Final[str] = (
-    "interest_calculation_base_unfavorable"
-)
+WARNING_PRECURSOR_INTEREST_BASE_UNFAVORABLE: Final[str] = "interest_calculation_base_unfavorable"
 
 
 def aggregate_extraction(extraction: ContractExtraction) -> AggregatedExtraction:
@@ -91,11 +89,7 @@ def aggregate_extraction(extraction: ContractExtraction) -> AggregatedExtraction
     # to `unverifiable` are kept too so callers see the INVALID slot even
     # if it is not in the required set for this contract type.
     required = set(REQUIRED_FIELDS_BY_TYPE.get(contract_type, set()))
-    extractor_populated = {
-        name
-        for name in ExtractedFields.model_fields
-        if getattr(extracted, name) is not None
-    }
+    extractor_populated = {name for name in ExtractedFields.model_fields if getattr(extracted, name) is not None}
     demoted_invalid = set(extraction.unverifiable_fields)
     relevant_fields = required | extractor_populated | demoted_invalid
 
@@ -123,12 +117,8 @@ def aggregate_extraction(extraction: ContractExtraction) -> AggregatedExtraction
             rationale=rationale,
         )
 
-    unverifiable_fields = sorted(
-        name for name, slot in slots.items() if slot.status is not ExtractionStatus.PRESENT
-    )
-    ambiguous_count = sum(
-        1 for slot in slots.values() if slot.status is ExtractionStatus.AMBIGUOUS
-    )
+    unverifiable_fields = sorted(name for name, slot in slots.items() if slot.status is not ExtractionStatus.PRESENT)
+    ambiguous_count = sum(1 for slot in slots.values() if slot.status is ExtractionStatus.AMBIGUOUS)
     warning_precursors = _compute_warning_precursors(slots)
 
     return AggregatedExtraction(
@@ -223,16 +213,9 @@ def _compute_warning_precursors(slots: dict[str, EconomicSlot]) -> list[str]:
     precursors: list[str] = []
 
     base_slot = slots.get("interest_calculation_base")
-    if (
-        base_slot is not None
-        and base_slot.status is ExtractionStatus.PRESENT
-        and base_slot.value == "total_balance"
-    ):
+    if base_slot is not None and base_slot.status is ExtractionStatus.PRESENT and base_slot.value == "total_balance":
         rate_unverifiable = any(
-            (
-                (rate_slot := slots.get(rate_name)) is None
-                or rate_slot.status is not ExtractionStatus.PRESENT
-            )
+            ((rate_slot := slots.get(rate_name)) is None or rate_slot.status is not ExtractionStatus.PRESENT)
             for rate_name in _RATE_SLOTS_FOR_INTEREST_BASE
         )
         if rate_unverifiable:

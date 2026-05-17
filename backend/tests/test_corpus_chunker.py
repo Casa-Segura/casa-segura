@@ -33,10 +33,7 @@ def test_chunker_returns_empty_for_stub_law():
 
 
 def test_chunker_returns_one_chunk_per_article():
-    body = (
-        "### Art. 1 — Primero\nTexto del primero.\n\n"
-        "### Art. 2 — Segundo\nTexto del segundo."
-    )
+    body = "### Art. 1 — Primero\nTexto del primero.\n\n" "### Art. 2 — Segundo\nTexto del segundo."
     drafts = chunk_law(_law(body))
     assert [d.article_number for d in drafts] == ["Art. 1", "Art. 2"]
     assert all(d.anchor.startswith("art-") for d in drafts)
@@ -60,11 +57,19 @@ def _article_of(length: int) -> str:
     return body[: length + len("### Art. 1 — Bordes\n")]
 
 
-@pytest.mark.parametrize("length,expected_chunks", [
-    (1499, 1),
-    (1500, 1),
-    (1501, 2),  # crosses boundary → splits
-])
+# Length is filler after the markdown heading (`### Art. 1 …` is counted by the
+# chunker). With CHUNK_CHAR_BOUNDARY=1500 and a 20-char heading, one chunk iff
+# 20 + length <= 1500 i.e. length <= 1480.
+
+
+@pytest.mark.parametrize(
+    "length,expected_chunks",
+    [
+        (1479, 1),
+        (1480, 1),
+        (1481, 2),  # crosses boundary → splits on paragraphs / hard slice
+    ],
+)
 def test_chunker_bva_around_1500_chars(length, expected_chunks):
     drafts = chunk_law(_law(_article_of(length)))
     assert len(drafts) == expected_chunks

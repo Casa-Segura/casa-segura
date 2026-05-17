@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 
 import pytest
+
 from django.utils import timezone
 
 from ingestion.application.upload_service import (
@@ -27,9 +28,7 @@ def _file(file_bytes: bytes, filename: str) -> FileUpload:
 def _expected_multi_hash(files: list[tuple[bytes, str]]) -> str:
     """Mirror the PRD §US-03 composition rule for verification."""
 
-    per_file = sorted(
-        (filename, hashlib.sha256(b).hexdigest()) for b, filename in files
-    )
+    per_file = sorted((filename, hashlib.sha256(b).hexdigest()) for b, filename in files)
     return hashlib.sha256("".join(h for _, h in per_file).encode("ascii")).hexdigest()
 
 
@@ -53,9 +52,7 @@ def test_multi_file_hash_is_deterministic_under_filename_ordering():
 def test_multi_file_hash_changes_when_filename_changes():
     """PRD §US-03 — renaming a file changes the composed hash."""
 
-    composed_a = _compose_submission_hash(
-        (_file(b"alfa contents", "alfa.pdf"), _file(b"beta contents", "beta.pdf"))
-    )
+    composed_a = _compose_submission_hash((_file(b"alfa contents", "alfa.pdf"), _file(b"beta contents", "beta.pdf")))
     composed_renamed = _compose_submission_hash(
         (_file(b"alfa contents", "renamed.pdf"), _file(b"beta contents", "beta.pdf"))
     )

@@ -27,9 +27,7 @@ class SubmissionUploadSerializer(serializers.Serializer):
         # least one upload without forcing a specific field name.
         file_count = (self.context or {}).get("file_count", 0)
         if file_count == 0 and "file" not in attrs:
-            raise serializers.ValidationError(
-                {"file": "at least one file must be supplied (file= or files=)"}
-            )
+            raise serializers.ValidationError({"file": "at least one file must be supplied (file= or files=)"})
         return attrs
 
 

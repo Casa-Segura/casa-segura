@@ -8,7 +8,6 @@ import pytest
 
 from corpus.application.loader import laws_summary, load_corpus_markdown
 
-
 CORPUS_ROOT = Path(__file__).resolve().parents[2] / "docs" / "RAG Legal context"
 
 

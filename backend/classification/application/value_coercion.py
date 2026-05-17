@@ -86,12 +86,10 @@ _INTEREST_BASE_MAP: Final[dict[str, str]] = {
 # Decimal-with-optional-thousands matcher. Accepts ``1,234.56``, ``1234.56``,
 # ``1234``, ``.56``, ``1,234``. Rejects locales like ``1.234,56`` (European)
 # to avoid silently inverting decimals/thousands.
-_NUMERIC_RE: Final[re.Pattern[str]] = re.compile(
-    r"-?(?:\d{1,3}(?:,\d{3})+|\d+)?(?:\.\d+)?"
-)
+_NUMERIC_RE: Final[re.Pattern[str]] = re.compile(r"-?(?:\d{1,3}(?:,\d{3})+|\d+)?(?:\.\d+)?")
 
 
-def coerce_float(raw: object) -> float | None:  # noqa: PLR0911 - explicit early returns are clearer than nested branches for this dispatch.
+def coerce_float(raw: object) -> float | None:  # noqa: PLR0911
     """Coerce an LLM-returned money / rate / percentage value to ``float``.
 
     Examples (no PII):

@@ -36,7 +36,6 @@ from ingestion.application.ocr.errors import (
 from ingestion.application.ocr.language import ensure_spanish
 from ingestion.application.ocr.tokens import count_tokens
 
-
 PYPDF_TIMEOUT_SECONDS = 30
 PYPDF_MIN_CHARS = 500
 PAGE_HEADER_TEMPLATE = "--- PAGE {n} ---"
@@ -85,10 +84,7 @@ def extract_text_pdf(file_bytes: bytes) -> ExtractionResult:
         if time.perf_counter() - start > PYPDF_TIMEOUT_SECONDS:
             raise NotAnalyzableError(
                 reason=NotAnalyzableReason.TIMEOUT,
-                message=(
-                    f"pypdf wall-clock exceeded {PYPDF_TIMEOUT_SECONDS}s "
-                    f"after page {index}/{len(pages)}"
-                ),
+                message=(f"pypdf wall-clock exceeded {PYPDF_TIMEOUT_SECONDS}s " f"after page {index}/{len(pages)}"),
             )
         try:
             page_text = page.extract_text() or ""
@@ -107,10 +103,7 @@ def extract_text_pdf(file_bytes: bytes) -> ExtractionResult:
     if len(full_text) < PYPDF_MIN_CHARS:
         raise NotAnalyzableError(
             reason=NotAnalyzableReason.LOW_CONFIDENCE_OCR,
-            message=(
-                f"pypdf yielded {len(full_text)} chars < "
-                f"{PYPDF_MIN_CHARS} (PRD §US-05 BR-08 minimum)"
-            ),
+            message=(f"pypdf yielded {len(full_text)} chars < " f"{PYPDF_MIN_CHARS} (PRD §US-05 BR-08 minimum)"),
         )
 
     language = ensure_spanish(full_text)
@@ -138,10 +131,6 @@ def _normalize_text(text: str) -> str:
     normalized = unicodedata.normalize("NFKC", text)
     normalized = normalized.replace("\r\n", "\n").replace("\r", "\n")
     # \u00a0 = NBSP, \u00ad = soft hyphen, \u200b = zero-width space
-    normalized = (
-        normalized.replace("\u00a0", " ")
-        .replace("\u00ad", "")
-        .replace("\u200b", "")
-    )
+    normalized = normalized.replace("\u00a0", " ").replace("\u00ad", "").replace("\u200b", "")
     normalized = _CONTROL_CHARS_RE.sub("", normalized)
     return normalized.strip()

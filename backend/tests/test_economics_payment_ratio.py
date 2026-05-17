@@ -28,7 +28,6 @@ from economics.application.payment_ratio import (
 )
 from economics.domain.payment_ratio import MonthlyRatioBand
 
-
 HEALTHY_MAX = Decimal("1.2")
 HIGH_MAX = Decimal("1.4")
 EXCESSIVE_MIN = Decimal("1.7")
@@ -60,9 +59,7 @@ def _extraction(
             statuses.get("purchase_price_usd", ExtractionStatus.PRESENT),
         )
     if term is not None:
-        slots["term_months"] = _slot(
-            "term_months", term, statuses.get("term_months", ExtractionStatus.PRESENT)
-        )
+        slots["term_months"] = _slot("term_months", term, statuses.get("term_months", ExtractionStatus.PRESENT))
     if monthly is not None:
         slots["monthly_payment_usd"] = _slot(
             "monthly_payment_usd",
@@ -89,9 +86,7 @@ def test_golden_vector_from_ticket():
 
     assert result.skip_reason is None
     assert result.ratio == Decimal("3.2505")
-    assert result.baseline_monthly_linear == Decimal(
-        "333.3333"
-    )  # 80000/240 = 333.33333..., quantized
+    assert result.baseline_monthly_linear == Decimal("333.3333")  # 80000/240 = 333.33333..., quantized
     assert result.band == MonthlyRatioBand.EXCESSIVE
 
 
@@ -110,9 +105,7 @@ def test_division_order_guard():
     # The inverse `baseline / monthly` would be ~0.307. Asserting the value is
     # well above 1 anchors the asymmetric direction.
     assert result.ratio is not None
-    assert result.ratio > Decimal("1.0"), (
-        "regression — division swapped: ratio collapsed below 1 (RUBRICA §5 B5)"
-    )
+    assert result.ratio > Decimal("1.0"), "regression — division swapped: ratio collapsed below 1 (RUBRICA §5 B5)"
 
 
 # ─── BVA at each rail edge ───────────────────────────────────────────────────

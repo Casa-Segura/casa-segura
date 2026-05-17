@@ -28,6 +28,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -73,10 +74,7 @@ class Command(BaseCommand):
             "--fixture",
             default=None,
             dest="fixture",
-            help=(
-                "Path to the YAML fixture. Defaults to "
-                "<BASE_DIR>/fixtures/rubric_v1.yaml."
-            ),
+            help=("Path to the YAML fixture. Defaults to " "<BASE_DIR>/fixtures/rubric_v1.yaml."),
         )
         parser.add_argument(
             "--activate",
@@ -86,7 +84,7 @@ class Command(BaseCommand):
 
     # ------------------------------------------------------------------ handle
 
-    def handle(self, *args: Any, **opts: Any) -> None:  # noqa: PLR0912 — sequential orchestration: load → validate → drift-warn → upsert → activate; splitting bloats more than it clarifies.
+    def handle(self, *args: Any, **opts: Any) -> None:  # noqa: PLR0912
         rubric_version: str = opts["rubric_version"]
         fixture_arg: str | None = opts["fixture"]
         activate: bool = opts["activate"]
@@ -131,8 +129,7 @@ class Command(BaseCommand):
                     )
                 if version_obj.categories != categories_payload:
                     drift_warnings.append(
-                        "rubric_version.categories drifted from fixture (immutable; "
-                        "requires manual reconciliation)"
+                        "rubric_version.categories drifted from fixture (immutable; " "requires manual reconciliation)"
                     )
 
             created_count = 0
@@ -141,8 +138,7 @@ class Command(BaseCommand):
                 missing = REQUIRED_CRITERION_KEYS - set(raw)
                 if missing:
                     raise CommandError(
-                        f"{fixture_path}:criteria[{idx}] missing required fields: "
-                        f"{sorted(missing)}"
+                        f"{fixture_path}:criteria[{idx}] missing required fields: " f"{sorted(missing)}"
                     )
 
                 defaults = _criterion_defaults(raw, fixture_path, idx)
@@ -158,9 +154,7 @@ class Command(BaseCommand):
                     updated_count += 1
 
             if activate:
-                RubricVersion.objects.exclude(version=rubric_version).filter(
-                    is_active=True
-                ).update(is_active=False)
+                RubricVersion.objects.exclude(version=rubric_version).filter(is_active=True).update(is_active=False)
                 if not version_obj.is_active:
                     version_obj.is_active = True
                     version_obj.save(update_fields=["is_active", "updated_at"])
@@ -201,9 +195,7 @@ class Command(BaseCommand):
     def _validate_payload(self, data: dict[str, Any], path: Path, expected_version: str) -> None:
         missing_top = {"rubric_version", "categories", "criteria"} - set(data)
         if missing_top:
-            raise CommandError(
-                f"{path}: missing required top-level keys: {sorted(missing_top)}"
-            )
+            raise CommandError(f"{path}: missing required top-level keys: {sorted(missing_top)}")
         if data["rubric_version"] != expected_version:
             raise CommandError(
                 f"{path}: rubric_version in fixture is '{data['rubric_version']}' "
@@ -233,15 +225,12 @@ def _criterion_defaults(raw: dict[str, Any], path: Path, idx: int) -> dict[str, 
 
     category = raw["category"]
     if category not in {c.value for c in Category}:
-        raise CommandError(
-            f"{path}:criteria[{idx}] (code={raw['code']!r}) has invalid category {category!r}"
-        )
+        raise CommandError(f"{path}:criteria[{idx}] (code={raw['code']!r}) has invalid category {category!r}")
 
     weight = Decimal(str(raw["weight_in_category"]))
     if not (Decimal("0") < weight <= Decimal("100")):
         raise CommandError(
-            f"{path}:criteria[{idx}] (code={raw['code']!r}) weight_in_category "
-            f"{weight} outside (0, 100]"
+            f"{path}:criteria[{idx}] (code={raw['code']!r}) weight_in_category " f"{weight} outside (0, 100]"
         )
 
     applicable_types = _ensure_string_list(
@@ -280,9 +269,7 @@ def _criterion_defaults(raw: dict[str, Any], path: Path, idx: int) -> dict[str, 
     }
 
     if "worst_case_when_unverifiable" in raw and raw["worst_case_when_unverifiable"] is not None:
-        defaults["worst_case_when_unverifiable"] = Decimal(
-            str(raw["worst_case_when_unverifiable"])
-        )
+        defaults["worst_case_when_unverifiable"] = Decimal(str(raw["worst_case_when_unverifiable"]))
 
     return defaults
 
@@ -297,25 +284,16 @@ def _ensure_string_list(
     allow_empty: bool = False,
 ) -> list[str]:
     if not isinstance(value, list):
-        raise CommandError(
-            f"{path}:criteria[{idx}] field {field!r} must be a list, got {type(value).__name__}"
-        )
+        raise CommandError(f"{path}:criteria[{idx}] field {field!r} must be a list, got {type(value).__name__}")
     if not value and not allow_empty:
-        raise CommandError(
-            f"{path}:criteria[{idx}] field {field!r} must contain at least one entry"
-        )
+        raise CommandError(f"{path}:criteria[{idx}] field {field!r} must contain at least one entry")
     out: list[str] = []
     for item in value:
         s = str(item).strip()
         if not s:
-            raise CommandError(
-                f"{path}:criteria[{idx}] field {field!r} contains an empty string"
-            )
+            raise CommandError(f"{path}:criteria[{idx}] field {field!r} contains an empty string")
         if len(s) > max_len:
-            raise CommandError(
-                f"{path}:criteria[{idx}] field {field!r} entry {s!r} exceeds "
-                f"max length {max_len}"
-            )
+            raise CommandError(f"{path}:criteria[{idx}] field {field!r} entry {s!r} exceeds " f"max length {max_len}")
         out.append(s)
     return out
 

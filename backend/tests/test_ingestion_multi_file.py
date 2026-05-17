@@ -6,10 +6,11 @@ import io
 from unittest.mock import patch
 
 import pytest
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.utils import timezone
 from PIL import Image
 from rest_framework.test import APIClient
+
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.utils import timezone
 
 from ingestion.application.ocr.errors import (
     ExtractionResult,
@@ -36,10 +37,7 @@ def _png_bytes(width: int, height: int) -> bytes:
 
 
 def _pdf_bytes(suffix: bytes = b"") -> bytes:
-    return (
-        b"%PDF-1.1\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<<>>\n%%EOF"
-        + suffix
-    )
+    return b"%PDF-1.1\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<<>>\n%%EOF" + suffix
 
 
 def _file(file_bytes: bytes, filename: str, content_type: str) -> FileUpload:
@@ -75,10 +73,7 @@ def test_50_files_accepted_at_cap(settings):
     """50 files (PRD §US-01 cap) must pass batch validation."""
 
     settings.OCR_MAX_BYTES = 10 * 1024 * 1024
-    files = tuple(
-        _file(_pdf_bytes(f"\n%{i}".encode()), f"contract_{i}.pdf", "application/pdf")
-        for i in range(50)
-    )
+    files = tuple(_file(_pdf_bytes(f"\n%{i}".encode()), f"contract_{i}.pdf", "application/pdf") for i in range(50))
     with patch(
         "ingestion.application.upload_service._run_extractor",
         return_value=_fake_result(page_count=1),
@@ -92,10 +87,7 @@ def test_50_files_accepted_at_cap(settings):
 def test_51_files_rejected_with_too_many_files(settings):
     """51 files crosses the PRD cap → TOO_MANY_FILES."""
 
-    files = tuple(
-        _file(_pdf_bytes(f"\n%{i}".encode()), f"contract_{i}.pdf", "application/pdf")
-        for i in range(51)
-    )
+    files = tuple(_file(_pdf_bytes(f"\n%{i}".encode()), f"contract_{i}.pdf", "application/pdf") for i in range(51))
     with pytest.raises(NotAnalyzableError) as exc:
         ingest_upload(_request(files=files))
     assert exc.value.reason == NotAnalyzableReason.TOO_MANY_FILES
@@ -107,18 +99,16 @@ def test_51_files_rejected_with_too_many_files(settings):
 @pytest.mark.parametrize(
     "width,height",
     [
-        (599, 800),     # 1px under min width
-        (600, 799),     # 1px under min height
+        (599, 800),  # 1px under min width
+        (600, 799),  # 1px under min height
         (8001, 10000),  # 1px over max width
-        (600, 10001),   # 1px over max height
+        (600, 10001),  # 1px over max height
     ],
 )
 @pytest.mark.django_db
 def test_image_dimensions_outside_bounds_rejected(width, height):
     with pytest.raises(NotAnalyzableError) as exc:
-        ingest_upload(
-            _request(files=(_file(_png_bytes(width, height), "shot.png", "image/png"),))
-        )
+        ingest_upload(_request(files=(_file(_png_bytes(width, height), "shot.png", "image/png"),)))
     assert exc.value.reason == NotAnalyzableReason.IMAGE_DIMENSIONS_INVALID
 
 

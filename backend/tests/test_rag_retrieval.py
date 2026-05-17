@@ -14,6 +14,7 @@ import pytest
 from corpus.application.retrieval import LegalCitationService
 from corpus.application.tags import normalize_tag
 from corpus.infrastructure.django.models import (
+    EMBEDDING_DIM,
     CorpusVersion,
     LegalChunk,
     LegalDocument,
@@ -22,13 +23,10 @@ from corpus.infrastructure.django.models import (
 )
 
 
-EMBED_DIM = 384
-
-
 def _unit_vector(direction: int) -> list[float]:
-    """Return a 384-dim vector with `1.0` at `direction` and 0 elsewhere."""
+    """Return ``EMBEDDING_DIM``-length vector with ``1.0`` at ``direction``, else zeros."""
 
-    v = [0.0] * EMBED_DIM
+    v = [0.0] * EMBEDDING_DIM
     v[direction] = 1.0
     return v
 
@@ -108,9 +106,7 @@ def test_pattern_shortcut_skips_vector_search(seeded_corpus, monkeypatch):
 
 def test_vector_search_respects_threshold(seeded_corpus, monkeypatch):
     version, chunk_a, _ = seeded_corpus
-    monkeypatch.setattr(
-        "corpus.application.retrieval.embed_query", lambda text: _unit_vector(0)
-    )
+    monkeypatch.setattr("corpus.application.retrieval.embed_query", lambda text: _unit_vector(0))
 
     service = LegalCitationService(corpus_version=version)
     citations = service.retrieve_legal_basis(finding="contrato escrito", threshold=0.65)
@@ -123,9 +119,8 @@ def test_vector_search_returns_empty_when_threshold_too_high(seeded_corpus, monk
     version, _, _ = seeded_corpus
     monkeypatch.setattr(
         "corpus.application.retrieval.embed_query",
-        lambda text: [1.0 / EMBED_DIM ** 0.5] * EMBED_DIM,  # cosine ~ 1/sqrt(dim)
+        lambda text: [1.0 / EMBEDDING_DIM**0.5] * EMBEDDING_DIM,  # cosine ~ 1/sqrt(dim)
     )
-
     service = LegalCitationService(corpus_version=version)
     citations = service.retrieve_legal_basis(finding="anything", threshold=0.99)
     assert citations == []

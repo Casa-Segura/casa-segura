@@ -24,9 +24,10 @@ def test_normalize_tag_strips_accents_and_punctuation(raw, expected):
 
 
 def test_normalize_tags_dedupes_preserving_order():
-    assert normalize_tags(
-        ["Arrendamiento", "ARRENDAMIENTO", "Cláusula nula", "arrendamiento"]
-    ) == ["arrendamiento", "clausula_nula"]
+    assert normalize_tags(["Arrendamiento", "ARRENDAMIENTO", "Cláusula nula", "arrendamiento"]) == [
+        "arrendamiento",
+        "clausula_nula",
+    ]
 
 
 def test_normalize_tags_ignores_falsy():

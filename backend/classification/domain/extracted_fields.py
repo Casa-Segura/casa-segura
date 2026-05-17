@@ -115,8 +115,7 @@ class ExtractedFields(BaseModel):
         default=None,
         ge=0,
         description=(
-            "Predefined end-of-term purchase option price for LEA/APV "
-            "(PRD_F2 US-03 Art. 2 LAF indicator 2)."
+            "Predefined end-of-term purchase option price for LEA/APV " "(PRD_F2 US-03 Art. 2 LAF indicator 2)."
         ),
     )
 

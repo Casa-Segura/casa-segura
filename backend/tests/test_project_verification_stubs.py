@@ -5,10 +5,11 @@ from __future__ import annotations
 from io import BytesIO
 
 import pytest
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import override_settings
 from PIL import Image
 from rest_framework.test import APIClient
+
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
 
 
 def _tiny_png_upload() -> SimpleUploadedFile:
@@ -33,9 +34,7 @@ _MANUAL_PAYLOAD = {
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("path_suffix", ["manual/", "billboard-upload/", "demo-result/"])
-def test_project_verification_forbidden_when_disabled(
-    api_client: APIClient, path_suffix: str
-):
+def test_project_verification_forbidden_when_disabled(api_client: APIClient, path_suffix: str):
     urls = {"manual/": "post", "billboard-upload/": "post", "demo-result/": "get"}
     method = urls[path_suffix]
 
@@ -129,9 +128,7 @@ def test_billboard_upload_returns_202_stub(api_client: APIClient):
     ("verdict", "headline_kw"),
     [("green", "alentadora"), ("red", "Riesgos")],
 )
-def test_demo_result_returns_fixture_aligned_json(
-    api_client: APIClient, verdict: str, headline_kw: str
-):
+def test_demo_result_returns_fixture_aligned_json(api_client: APIClient, verdict: str, headline_kw: str):
     resp = api_client.get(
         "/api/v1/project-verification/demo-result/",
         {"v": verdict},

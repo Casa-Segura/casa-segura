@@ -44,9 +44,10 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
+
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from classification.application.classifier import (
     ClassificationError,
@@ -57,14 +58,11 @@ from classification.application.leasing_detector import (
 )
 from classification.domain.contract_type import ContractType
 
-
 DEFAULT_FIXTURE = "fixtures/classification_eval_cases.yaml"
 
 # Purchase types that trigger the leasing reclassification pass per
 # PRD F2 BR-02 / US-03 (and the detector's APPLICABLE_INITIAL_TYPES).
-PURCHASE_TYPES: frozenset[ContractType] = frozenset(
-    {ContractType.CVC, ContractType.CVP, ContractType.APV}
-)
+PURCHASE_TYPES: frozenset[ContractType] = frozenset({ContractType.CVC, ContractType.CVP, ContractType.APV})
 
 
 # ---------------------------------------------------------------------------
@@ -141,9 +139,7 @@ class _Metrics:
     not_classifiable_tp: int = 0
     not_classifiable_fp: int = 0
     not_classifiable_fn: int = 0
-    reclassification_matrix: dict[str, Counter[str]] = field(
-        default_factory=lambda: defaultdict(Counter)
-    )
+    reclassification_matrix: dict[str, Counter[str]] = field(default_factory=lambda: defaultdict(Counter))
     reclassification_fp: int = 0  # purchase incorrectly recommended LEA
     reclassification_fn: int = 0  # disguised leasing missed (expected LEA, got purchase)
     reclassification_total_purchase: int = 0
@@ -194,10 +190,7 @@ class Command(BaseCommand):
             "--fixture",
             default=None,
             dest="fixture",
-            help=(
-                "Path to the YAML fixture. Defaults to "
-                "<BASE_DIR>/fixtures/classification_eval_cases.yaml."
-            ),
+            help=("Path to the YAML fixture. Defaults to " "<BASE_DIR>/fixtures/classification_eval_cases.yaml."),
         )
         parser.add_argument(
             "--out",
@@ -220,10 +213,7 @@ class Command(BaseCommand):
             "--dry-run",
             action="store_true",
             dest="dry_run",
-            help=(
-                "Validate the YAML schema and print the coverage matrix "
-                "without invoking the LLM. Safe for CI."
-            ),
+            help=("Validate the YAML schema and print the coverage matrix " "without invoking the LLM. Safe for CI."),
         )
 
     # ------------------------------------------------------------------
@@ -242,10 +232,7 @@ class Command(BaseCommand):
         if opts.get("dry_run"):
             self._print_coverage(fixture)
             self.stdout.write(
-                self.style.SUCCESS(
-                    f"\nDry-run OK: {len(fixture.cases)} cases validated; "
-                    "no LLM calls made."
-                )
+                self.style.SUCCESS(f"\nDry-run OK: {len(fixture.cases)} cases validated; " "no LLM calls made.")
             )
             return
 
@@ -259,11 +246,7 @@ class Command(BaseCommand):
 
         observed = metrics.macro_accuracy()
         if observed < threshold:
-            self.stderr.write(
-                self.style.ERROR(
-                    f"FAIL: macro accuracy {observed:.4f} below threshold {threshold:.4f}"
-                )
-            )
+            self.stderr.write(self.style.ERROR(f"FAIL: macro accuracy {observed:.4f} below threshold {threshold:.4f}"))
             sys.exit(1)
 
     # ------------------------------------------------------------------
@@ -282,9 +265,7 @@ class Command(BaseCommand):
             raise CommandError(f"Invalid YAML at {path}: {exc}") from exc
 
         if not isinstance(data, dict):
-            raise CommandError(
-                f"{path}: expected top-level mapping, got {type(data).__name__}"
-            )
+            raise CommandError(f"{path}: expected top-level mapping, got {type(data).__name__}")
 
         try:
             fixture = _Fixture.model_validate(data)
@@ -322,9 +303,13 @@ class Command(BaseCommand):
         for ct in ContractType:
             n = counts.get(ct.value, 0)
             line = f"  {ct.value:<18} {n:>3}"
-            if ct in PURCHASE_TYPES | {ContractType.ARV, ContractType.ARC,
-                                         ContractType.LEA, ContractType.IVU,
-                                         ContractType.FSV}:
+            if ct in PURCHASE_TYPES | {
+                ContractType.ARV,
+                ContractType.ARC,
+                ContractType.LEA,
+                ContractType.IVU,
+                ContractType.FSV,
+            }:
                 # The eight covered types must each have ≥3 fixtures (AC1).
                 marker = "OK" if n >= 3 else "FAIL (need ≥3)"
                 line += f"   {marker}"
@@ -333,11 +318,7 @@ class Command(BaseCommand):
                 line += f"   {marker}"
             self.stdout.write(line)
 
-        self.stdout.write(
-            self.style.MIGRATE_HEADING(
-                f"\nTotal cases: {len(fixture.cases)} (CS-115 AC2 requires ≥20)"
-            )
-        )
+        self.stdout.write(self.style.MIGRATE_HEADING(f"\nTotal cases: {len(fixture.cases)} (CS-115 AC2 requires ≥20)"))
         self.stdout.write("\nThresholds (PRD F2 §9):")
         for name, value in fixture.thresholds.model_dump().items():
             self.stdout.write(f"  {name:<40} {value}")
@@ -369,9 +350,7 @@ class Command(BaseCommand):
                 predicted_type=ContractType.NOT_CLASSIFIABLE,
                 predicted_confidence=0.0,
                 leasing_expected_count=(
-                    case.expected.leasing_indicators.expected_count
-                    if case.expected.leasing_indicators
-                    else None
+                    case.expected.leasing_indicators.expected_count if case.expected.leasing_indicators else None
                 ),
                 leasing_observed_count=None,
                 leasing_expected_recommendation=(
@@ -400,9 +379,7 @@ class Command(BaseCommand):
                     predicted_type=result.contract_type,
                     predicted_confidence=result.confidence,
                     leasing_expected_count=(
-                        case.expected.leasing_indicators.expected_count
-                        if case.expected.leasing_indicators
-                        else None
+                        case.expected.leasing_indicators.expected_count if case.expected.leasing_indicators else None
                     ),
                     leasing_observed_count=None,
                     leasing_expected_recommendation=(
@@ -420,15 +397,11 @@ class Command(BaseCommand):
             predicted_type=result.contract_type,
             predicted_confidence=result.confidence,
             leasing_expected_count=(
-                case.expected.leasing_indicators.expected_count
-                if case.expected.leasing_indicators
-                else None
+                case.expected.leasing_indicators.expected_count if case.expected.leasing_indicators else None
             ),
             leasing_observed_count=leasing_observed_count,
             leasing_expected_recommendation=(
-                case.expected.leasing_indicators.expected_recommendation
-                if case.expected.leasing_indicators
-                else None
+                case.expected.leasing_indicators.expected_recommendation if case.expected.leasing_indicators else None
             ),
             leasing_observed_recommendation=leasing_observed_rec,
             error=None,
@@ -475,9 +448,7 @@ class Command(BaseCommand):
                 metrics.reclassification_matrix[row][col] += 1
 
                 expected_lea = o.leasing_expected_recommendation is ContractType.LEA
-                observed_lea = (
-                    o.leasing_observed_recommendation is ContractType.LEA
-                )
+                observed_lea = o.leasing_observed_recommendation is ContractType.LEA
                 if not expected_lea and observed_lea:
                     metrics.reclassification_fp += 1
                 if expected_lea and not observed_lea:
@@ -496,30 +467,21 @@ class Command(BaseCommand):
                 continue
             hits = metrics.per_type_correct.get(ct.value, 0)
             pct = hits / total if total else 0.0
-            self.stdout.write(
-                f"  {ct.value:<18} {hits:>3} / {total:<3}  ({pct:.2%})"
-            )
+            self.stdout.write(f"  {ct.value:<18} {hits:>3} / {total:<3}  ({pct:.2%})")
 
         self.stdout.write(
             self.style.MIGRATE_HEADING(
-                f"\nMacro accuracy: {metrics.macro_accuracy():.4f} "
-                f"(threshold {threshold:.4f})"
+                f"\nMacro accuracy: {metrics.macro_accuracy():.4f} " f"(threshold {threshold:.4f})"
             )
         )
 
         nc_prec = metrics.not_classifiable_precision()
         nc_rec = metrics.not_classifiable_recall()
         self.stdout.write("\nNOT_CLASSIFIABLE:")
-        self.stdout.write(
-            f"  precision: {nc_prec if nc_prec is None else f'{nc_prec:.4f}'}"
-        )
-        self.stdout.write(
-            f"  recall:    {nc_rec if nc_rec is None else f'{nc_rec:.4f}'}"
-        )
+        self.stdout.write(f"  precision: {nc_prec if nc_prec is None else f'{nc_prec:.4f}'}")
+        self.stdout.write(f"  recall:    {nc_rec if nc_rec is None else f'{nc_rec:.4f}'}")
 
-        self.stdout.write(
-            self.style.MIGRATE_HEADING("\nReclassification confusion (purchase → final)")
-        )
+        self.stdout.write(self.style.MIGRATE_HEADING("\nReclassification confusion (purchase → final)"))
         if metrics.reclassification_total_purchase == 0:
             self.stdout.write("  (no purchase cases declared leasing expectations)")
         else:
@@ -528,20 +490,12 @@ class Command(BaseCommand):
             self.stdout.write(header)
             for row in ["CVC", "CVP", "APV", "LEA"]:
                 counts = metrics.reclassification_matrix.get(row, Counter())
-                line = f"  {row:<14}" + "  ".join(
-                    f"{counts.get(col, 0):>5}" for col in cols
-                )
+                line = f"  {row:<14}" + "  ".join(f"{counts.get(col, 0):>5}" for col in cols)
                 self.stdout.write(line)
             fp = metrics.reclassification_fp_rate()
             fn = metrics.reclassification_fn_rate()
-            self.stdout.write(
-                f"\n  FP rate (purchase→LEA wrongly): "
-                f"{fp if fp is None else f'{fp:.4f}'}"
-            )
-            self.stdout.write(
-                f"  FN rate (LEA missed as purchase): "
-                f"{fn if fn is None else f'{fn:.4f}'}"
-            )
+            self.stdout.write(f"\n  FP rate (purchase→LEA wrongly): " f"{fp if fp is None else f'{fp:.4f}'}")
+            self.stdout.write(f"  FN rate (LEA missed as purchase): " f"{fn if fn is None else f'{fn:.4f}'}")
 
         if metrics.errors:
             self.stdout.write(self.style.WARNING("\nErrors:"))
@@ -570,10 +524,7 @@ class Command(BaseCommand):
                     "total_purchase_cases": metrics.reclassification_total_purchase,
                     "false_positive_rate": metrics.reclassification_fp_rate(),
                     "false_negative_rate": metrics.reclassification_fn_rate(),
-                    "matrix": {
-                        row: dict(counts)
-                        for row, counts in metrics.reclassification_matrix.items()
-                    },
+                    "matrix": {row: dict(counts) for row, counts in metrics.reclassification_matrix.items()},
                 },
             },
             "per_type": {
@@ -592,14 +543,10 @@ class Command(BaseCommand):
                     "leasing_expected_count": o.leasing_expected_count,
                     "leasing_observed_count": o.leasing_observed_count,
                     "leasing_expected_recommendation": (
-                        o.leasing_expected_recommendation.value
-                        if o.leasing_expected_recommendation
-                        else None
+                        o.leasing_expected_recommendation.value if o.leasing_expected_recommendation else None
                     ),
                     "leasing_observed_recommendation": (
-                        o.leasing_observed_recommendation.value
-                        if o.leasing_observed_recommendation
-                        else None
+                        o.leasing_observed_recommendation.value if o.leasing_observed_recommendation else None
                     ),
                     "error": o.error,
                 }

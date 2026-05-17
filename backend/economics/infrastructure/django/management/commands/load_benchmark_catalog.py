@@ -79,9 +79,7 @@ class Command(BaseCommand):
                 "correct YAML file."
             )
 
-        version_obj, created_count, updated_count = upsert_benchmarks(
-            payload, activate=activate
-        )
+        version_obj, created_count, updated_count = upsert_benchmarks(payload, activate=activate)
 
         self.stdout.write(
             self.style.SUCCESS(
@@ -90,9 +88,7 @@ class Command(BaseCommand):
             )
         )
         if activate:
-            self.stdout.write(
-                self.style.SUCCESS(f"activated: BenchmarkVersion {version_obj.version}")
-            )
+            self.stdout.write(self.style.SUCCESS(f"activated: BenchmarkVersion {version_obj.version}"))
 
     def _resolve_fixture_path(self, fixture_arg: str | None) -> Path:
         if fixture_arg:

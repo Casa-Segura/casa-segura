@@ -38,8 +38,7 @@ from economics.application.rate_normalizer import normalize_annual_rate
 from economics.application.renormalizer import detect_precursors
 from economics.application.total_cost import compute_total_cost
 from economics.application.warning_catalog import to_warning_or_none
-from economics.domain.benchmark_comparison import BenchmarkComparison
-from economics.domain.benchmark_comparison import BenchmarkSegment
+from economics.domain.benchmark_comparison import BenchmarkComparison, BenchmarkSegment
 from economics.domain.economic_summary import (
     DerivationStatus,
     EconomicSummary,
@@ -47,7 +46,6 @@ from economics.domain.economic_summary import (
     FieldsDerived,
     FieldsExtracted,
 )
-
 
 _QUANTIZE_DEC = Decimal("0.0001")
 
@@ -226,9 +224,11 @@ def _build_rate_band(catalog: BenchmarkCatalog, segment: BenchmarkSegment) -> Ra
         max_v = _benchmark_value(catalog, "developer_direct_rate_max")
         # Catalog may not ship an explicit mid for developer-direct; derive it
         # locally as the midpoint of min/max when both are present.
-        mid_v = ((min_v + max_v) / Decimal("2")).quantize(
-            _QUANTIZE_DEC, rounding=ROUND_HALF_EVEN
-        ) if (min_v is not None and max_v is not None) else None
+        mid_v = (
+            ((min_v + max_v) / Decimal("2")).quantize(_QUANTIZE_DEC, rounding=ROUND_HALF_EVEN)
+            if (min_v is not None and max_v is not None)
+            else None
+        )
         # No persisted mid_benchmark_key for developer_direct; cite the upper
         # bound as the comparison anchor.
         key = "developer_direct_rate_max"
@@ -281,9 +281,11 @@ def _build_fields_extracted(extraction: AggregatedExtraction) -> FieldsExtracted
         down_payment=_decimal(_slot_value(extraction.slots.get("down_payment_usd"))),
         down_payment_pct=_decimal(_slot_value(extraction.slots.get("down_payment_pct"))),
         financed_amount=_decimal(_slot_value(extraction.slots.get("financed_amount_usd"))),
-        term_months=int(_slot_value(extraction.slots.get("term_months")))
-        if _slot_value(extraction.slots.get("term_months")) is not None
-        else None,
+        term_months=(
+            int(_slot_value(extraction.slots.get("term_months")))
+            if _slot_value(extraction.slots.get("term_months")) is not None
+            else None
+        ),
         annual_rate_pct=_decimal(_slot_value(extraction.slots.get("interest_rate_pct"))),
         monthly_rate_pct=_decimal(_slot_value(extraction.slots.get("monthly_rate_pct"))),
         monthly_payment=_decimal(_slot_value(extraction.slots.get("monthly_payment_usd"))),

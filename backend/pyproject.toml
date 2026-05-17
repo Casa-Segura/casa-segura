@@ -58,6 +58,9 @@ dev = [
 
 [tool.black]
 line-length = 119
+# Match CI (`.github/workflows/ci.yml`), Docker base images, and `ruff.toml`.
+# Keeps `black --check` parsing the same grammar as the Actions runner.
+target-version = ["py311"]
 extend-exclude = '''
 /(
   | migrations

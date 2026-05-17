@@ -17,6 +17,7 @@ from pathlib import Path
 
 import pytest
 import structlog
+
 from django.utils import timezone
 
 from classification.domain.aggregated_extraction import AggregatedExtraction
@@ -29,7 +30,6 @@ from economics.application.catalog import BenchmarkCatalog
 from economics.application.version import assert_freshness, latest_active
 from economics.infrastructure.django.models import EconomicBenchmark
 from shared.observability.logging import _add_default_versions
-
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PRODUCTION_FIXTURE = REPO_ROOT / "backend" / "fixtures" / "economic_benchmarks_2026q2.yaml"
@@ -130,9 +130,7 @@ def test_freshness_warning_when_next_review_due_in_past(loaded_catalog, caplog):
 
     # Backdate every benchmark's `next_review_due` to yesterday.
     yesterday = timezone.now().date() - timedelta(days=1)
-    EconomicBenchmark.objects.filter(
-        benchmark_version=latest_active()
-    ).update(next_review_due=yesterday)
+    EconomicBenchmark.objects.filter(benchmark_version=latest_active()).update(next_review_due=yesterday)
 
     # Capture structlog log records via the stdlib logging integration.
     structlog.reset_defaults()

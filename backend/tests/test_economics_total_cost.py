@@ -42,9 +42,7 @@ def _extraction(**slot_values: float | int | None) -> AggregatedExtraction:
 
 
 def test_french_amortization_golden_vector():
-    payment = compute_theoretical_monthly_payment(
-        financed_amount=72_000.0, annual_rate_pct=0.09, term_months=240
-    )
+    payment = compute_theoretical_monthly_payment(financed_amount=72_000.0, annual_rate_pct=0.09, term_months=240)
     assert payment is not None
     assert payment == pytest.approx(647.81, abs=0.01)
 
@@ -58,9 +56,7 @@ def test_french_amortization_formula_guard():
 
     payment = compute_theoretical_monthly_payment(72_000.0, 0.09, 240)
     assert payment is not None
-    assert payment < 1000, (
-        "regression — amortization denominator collapsed to `r * n`; PRD_F5 BR-06"
-    )
+    assert payment < 1000, "regression — amortization denominator collapsed to `r * n`; PRD_F5 BR-06"
 
 
 def test_zero_rate_yields_straight_line_payment():
@@ -225,9 +221,7 @@ def test_term_excessive_warning(term: int, ivu_max: int, expected_warning: bool)
         monthly_payment_usd=650.0,
     )
 
-    bundle = compute_total_cost(
-        extraction, annual_rate_pct=Decimal("0.09"), ivu_max_term_months=ivu_max
-    )
+    bundle = compute_total_cost(extraction, annual_rate_pct=Decimal("0.09"), ivu_max_term_months=ivu_max)
 
     if expected_warning:
         assert WARNING_TERM_EXCESSIVE in bundle.warning_precursors

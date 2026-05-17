@@ -45,9 +45,7 @@ from classification.domain.leasing_indicators import (
 
 # Set of types for which CS-111 even runs (PRD F2 BR-02 / US-03).
 # Re-exported so the detector and orchestrator share one definition.
-APPLICABLE_INITIAL_TYPES: frozenset[ContractType] = frozenset(
-    {ContractType.CVC, ContractType.CVP, ContractType.APV}
-)
+APPLICABLE_INITIAL_TYPES: frozenset[ContractType] = frozenset({ContractType.CVC, ContractType.CVP, ContractType.APV})
 
 
 SYSTEM_PROMPT: str = f"""\
@@ -120,7 +118,7 @@ TEXTO DEL CONTRATO:
 FEW_SHOT_ANCHORS: tuple[str, ...] = (
     # 1) Clear LEA — six indicators fire.
     "Ejemplo 1 — LEA evidente (6/6 indicadores):\n"
-    "Contrato: \"LEASING SINTÉTICO S.A., propietaria del inmueble en "
+    'Contrato: "LEASING SINTÉTICO S.A., propietaria del inmueble en '
     "Calle Falsa 123, lo entrega a JUAN PÉREZ por PLAZO FORZOSO de "
     "DOSCIENTOS CUARENTA meses. La rescisión anticipada obliga al "
     "arrendatario a pagar el saldo total restante. Los pagos se "
@@ -130,71 +128,71 @@ FEW_SHOT_ANCHORS: tuple[str, ...] = (
     "conserva la propiedad hasta el ejercicio de la opción. Todos "
     "los impuestos, tasas y multas sobre el inmueble corren por "
     "cuenta del arrendatario. Los riesgos asegurables y no "
-    "asegurables recaen sobre el arrendatario.\"\n"
+    'asegurables recaen sobre el arrendatario."\n'
     "Tipo inicial: CVP\n"
     "JSON esperado:\n"
     "{\n"
-    "    \"mandatory_term\": true,\n"
-    "    \"predefined_purchase_option\": true,\n"
-    "    \"ownership_retained\": true,\n"
-    "    \"taxes_to_buyer\": true,\n"
-    "    \"risks_to_buyer\": true,\n"
-    "    \"payments_as_rent\": true,\n"
-    "    \"should_reclassify\": true,\n"
-    "    \"confidence\": 0.95,\n"
-    "    \"reasoning\": \"Los seis indicadores del Art. 2 LAF aparecen "
+    '    "mandatory_term": true,\n'
+    '    "predefined_purchase_option": true,\n'
+    '    "ownership_retained": true,\n'
+    '    "taxes_to_buyer": true,\n'
+    '    "risks_to_buyer": true,\n'
+    '    "payments_as_rent": true,\n'
+    '    "should_reclassify": true,\n'
+    '    "confidence": 0.95,\n'
+    '    "reasoning": "Los seis indicadores del Art. 2 LAF aparecen '
     "explícitamente: plazo forzoso, opción simbólica, retención de "
-    "dominio, impuestos y riesgos al arrendatario, y pagos como canon.\"\n"
+    'dominio, impuestos y riesgos al arrendatario, y pagos como canon."\n'
     "}",
     # 2) Clear purchase (CVP) — zero indicators fire.
     "Ejemplo 2 — Compraventa a plazos legítima (0/6 indicadores):\n"
-    "Contrato: \"JUAN PÉREZ vende a MARÍA LÓPEZ el inmueble situado en "
+    'Contrato: "JUAN PÉREZ vende a MARÍA LÓPEZ el inmueble situado en '
     "Residencial Sintético por OCHENTA MIL DÓLARES (USD 80,000.00), "
     "pagaderos así: prima de OCHO MIL DÓLARES al firmar y SETENTA Y "
     "DOS cuotas mensuales de UN MIL DÓLARES cada una. La propiedad "
     "se transfiere a la compradora en este acto. Los impuestos "
     "municipales y prediales corren por cuenta de la compradora "
-    "como nueva propietaria.\"\n"
+    'como nueva propietaria."\n'
     "Tipo inicial: CVP\n"
     "JSON esperado:\n"
     "{\n"
-    "    \"mandatory_term\": false,\n"
-    "    \"predefined_purchase_option\": false,\n"
-    "    \"ownership_retained\": false,\n"
-    "    \"taxes_to_buyer\": false,\n"
-    "    \"risks_to_buyer\": false,\n"
-    "    \"payments_as_rent\": false,\n"
-    "    \"should_reclassify\": false,\n"
-    "    \"confidence\": 0.92,\n"
-    "    \"reasoning\": \"La propiedad se transfiere al firmar y los "
+    '    "mandatory_term": false,\n'
+    '    "predefined_purchase_option": false,\n'
+    '    "ownership_retained": false,\n'
+    '    "taxes_to_buyer": false,\n'
+    '    "risks_to_buyer": false,\n'
+    '    "payments_as_rent": false,\n'
+    '    "should_reclassify": false,\n'
+    '    "confidence": 0.92,\n'
+    '    "reasoning": "La propiedad se transfiere al firmar y los '
     "pagos son cuotas de precio, no canon; ningún indicador del "
-    "Art. 2 LAF está presente.\"\n"
+    'Art. 2 LAF está presente."\n'
     "}",
     # 3) Borderline — exactly 3 indicators fire (under BR-03 threshold).
     "Ejemplo 3 — Caso borderline (3/6 indicadores, NO reclasifica):\n"
-    "Contrato: \"JUAN PÉREZ promete vender a MARÍA LÓPEZ la vivienda "
+    'Contrato: "JUAN PÉREZ promete vender a MARÍA LÓPEZ la vivienda '
     "de Residencial Sintético. Mientras tanto, MARÍA LÓPEZ pagará un "
     "canon mensual de QUINIENTOS DÓLARES por SESENTA meses. Al "
     "término, podrá ejercer la opción de compra por el saldo de "
     "DIEZ MIL DÓLARES. JUAN PÉREZ conserva la propiedad hasta el "
     "ejercicio de la opción. Los impuestos prediales son cubiertos "
     "por el vendedor durante el plazo. Los riesgos del inmueble "
-    "permanecen con el vendedor mientras dure el contrato.\"\n"
+    'permanecen con el vendedor mientras dure el contrato."\n'
     "Tipo inicial: APV\n"
     "JSON esperado:\n"
     "{\n"
-    "    \"mandatory_term\": false,\n"
-    "    \"predefined_purchase_option\": true,\n"
-    "    \"ownership_retained\": true,\n"
-    "    \"taxes_to_buyer\": false,\n"
-    "    \"risks_to_buyer\": false,\n"
-    "    \"payments_as_rent\": true,\n"
-    "    \"should_reclassify\": false,\n"
-    "    \"confidence\": 0.80,\n"
-    "    \"reasoning\": \"Tres indicadores presentes (opción de compra, "
+    '    "mandatory_term": false,\n'
+    '    "predefined_purchase_option": true,\n'
+    '    "ownership_retained": true,\n'
+    '    "taxes_to_buyer": false,\n'
+    '    "risks_to_buyer": false,\n'
+    '    "payments_as_rent": true,\n'
+    '    "should_reclassify": false,\n'
+    '    "confidence": 0.80,\n'
+    '    "reasoning": "Tres indicadores presentes (opción de compra, '
     "retención de dominio, pagos como canon); impuestos y riesgos "
     "siguen en el vendedor, por lo que no se alcanza el umbral de "
-    "4 de 6.\"\n"
+    '4 de 6."\n'
     "}",
 )
 
