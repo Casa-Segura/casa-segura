@@ -93,17 +93,37 @@ def extract_via_tesseract(*, file_bytes: bytes, content_type: str) -> Extraction
 
     words = data.get("text", []) or []
     confs = data.get("conf", []) or []
-    accepted = [
-        word
-        for word, conf in zip(words, confs, strict=False)
-        if word.strip() and _safe_float(conf) >= min_confidence
-    ]
-    text = " ".join(accepted).strip()
 
+    # Drop the placeholder `-1` entries Tesseract returns for layout boxes
+    # that contain no recognised glyphs. Mean confidence per PRD §US-07
+    # AC3 is computed over the words that actually carry text.
+    word_confs = [
+        (word, _safe_float(conf))
+        for word, conf in zip(words, confs, strict=False)
+        if word.strip()
+    ]
+    word_confs = [(w, c) for w, c in word_confs if c >= 0]
+
+    if not word_confs:
+        raise NotAnalyzableError(
+            reason=NotAnalyzableReason.LOW_CONFIDENCE_OCR,
+            message="tesseract produced no recognisable words",
+        )
+
+    mean_conf = sum(c for _, c in word_confs) / len(word_confs)
+    if mean_conf < min_confidence:
+        raise NotAnalyzableError(
+            reason=NotAnalyzableReason.LOW_CONFIDENCE_OCR,
+            message=(
+                f"tesseract mean confidence {mean_conf:.2f} < {min_confidence}"
+            ),
+        )
+
+    text = " ".join(w for w, _ in word_confs).strip()
     if not text:
         raise NotAnalyzableError(
             reason=NotAnalyzableReason.LOW_CONFIDENCE_OCR,
-            message=f"tesseract produced no words above confidence {min_confidence}",
+            message="tesseract produced empty text after filtering",
         )
 
     language = ensure_spanish(text)
