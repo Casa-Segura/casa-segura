@@ -40,18 +40,15 @@ export default function EnlaceExpiradoPage() {
           </div>
           <LegalSummary title="Por qué ocurre">
             Los reportes están disponibles por tiempo limitado. Pasado ese
-            periodo, el enlace expira y los datos dejan de estar accesibles desde
-            esta vista pública.
+            periodo, el enlace expira y los datos dejan de estar accesibles
+            desde esta vista pública.
           </LegalSummary>
           <p className="break-words text-base leading-relaxed text-text-secondary">
             Si acabás de abrir el enlace y ves este mensaje, puede haber un
             retraso puntual: intentá de nuevo en unos minutos o iniciá un
             análisis nuevo.
           </p>
-          <CasaLinkButton
-            href="/subir"
-            className="mt-2 w-full"
-          >
+          <CasaLinkButton href="/subir" className="mt-2 w-full">
             Empezar un análisis nuevo
           </CasaLinkButton>
         </main>

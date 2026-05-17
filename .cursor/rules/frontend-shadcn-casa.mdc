@@ -1,0 +1,13 @@
+---
+description: shadcn/ui alongside Casa semantic design tokens (`frontend/`)
+globs: frontend/**/*.{tsx,ts,css}
+alwaysApply: false
+---
+
+# shadcn/ui + Casa tokens
+
+- Canonical UI shell deploys from **`frontend/`** (Next.js App Router + Tailwind CSS v4).
+- **`components.json`** configures shadcn/ui (Radix presets, `@/components/ui`).
+- Casa product surfaces prioritize semantic tokens from `src/app/globals.css` **`@theme inline`** (`bg-bg`, `text-text-primary`, `bg-accent`, etc.). `:root` shadcn variables map **`--background` / `--foreground`** to Casa cream/ink so `bg-background` stays consistent.
+- New primitives: prefer **`@/components/casa-ui`** for product polish; pull from **`@/components/ui/*`** when a shadcn building block fits without fighting tokens.
+- Do not regress BR-07: user-visible disclaimers route through **`@/legal/disclaimer`** / `DisclaimerFooter`.

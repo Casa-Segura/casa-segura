@@ -1,13 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import "react-pdf/dist/Page/AnnotationLayer.css";
@@ -70,9 +64,7 @@ export function ContractUploadPreview({
     const el = announceRef.current;
     if (!el) return;
     el.textContent =
-      total != null
-        ? `Página ${page} de ${total}`
-        : `Página ${page}`;
+      total != null ? `Página ${page} de ${total}` : `Página ${page}`;
   }, []);
 
   useEffect(() => {
@@ -102,22 +94,24 @@ export function ContractUploadPreview({
       )}
     >
       <header className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-surface-muted px-3 py-2">
-        <p className="min-w-0 truncate text-xs font-medium text-text-secondary" title={fileName}>
+        <p
+          className="min-w-0 truncate text-xs font-medium text-text-secondary"
+          title={fileName}
+        >
           {kind === "pdf" ? "PDF · " : "Imagen · "}
           {fileName}
         </p>
         {kind === "pdf" && pdfNumPages != null ? (
-          <span className="shrink-0 tabular-nums text-xs text-text-secondary" aria-hidden>
+          <span
+            className="shrink-0 tabular-nums text-xs text-text-secondary"
+            aria-hidden
+          >
             {pdfPage}/{pdfNumPages}
           </span>
         ) : null}
       </header>
 
-      <div
-        ref={announceRef}
-        className="sr-only"
-        aria-live="polite"
-      />
+      <div ref={announceRef} className="sr-only" aria-live="polite" />
 
       <div className="min-h-0 flex-1 overflow-auto p-3 touch-manipulation">
         {kind === "image" ? (
@@ -133,7 +127,10 @@ export function ContractUploadPreview({
             />
           </div>
         ) : pdfLoadError ? (
-          <p className="text-sm leading-relaxed text-text-secondary" role="status">
+          <p
+            className="text-sm leading-relaxed text-text-secondary"
+            role="status"
+          >
             {pdfLoadError}
           </p>
         ) : (
@@ -143,7 +140,10 @@ export function ContractUploadPreview({
               loading={
                 <div className="space-y-2" aria-busy="true">
                   <SkeletonBlock className="h-4 w-3/5" label="Cargando PDF" />
-                  <SkeletonBlock className="h-48 w-full" label="Cargando página" />
+                  <SkeletonBlock
+                    className="h-48 w-full"
+                    label="Cargando página"
+                  />
                   <SkeletonBlock className="h-4 w-4/5" label="Cargando PDF" />
                 </div>
               }
@@ -173,9 +173,7 @@ export function ContractUploadPreview({
                   onClick={() =>
                     setPdfPage((p) => {
                       const next = Math.max(1, p - 1);
-                      queueMicrotask(() =>
-                        announcePage(next, pdfNumPages),
-                      );
+                      queueMicrotask(() => announcePage(next, pdfNumPages));
                       return next;
                     })
                   }
@@ -192,9 +190,7 @@ export function ContractUploadPreview({
                   onClick={() =>
                     setPdfPage((p) => {
                       const next = Math.min(pdfNumPages, p + 1);
-                      queueMicrotask(() =>
-                        announcePage(next, pdfNumPages),
-                      );
+                      queueMicrotask(() => announcePage(next, pdfNumPages));
                       return next;
                     })
                   }

@@ -98,9 +98,9 @@ def test_three_page_pdf_emits_page_markers_in_order(monkeypatch):
     "raw,expected_substring",
     [
         ("línea1\r\nlínea2", "línea1\nlínea2"),       # CRLF → LF
-        ("hola mundo", "hola mundo"),                # NBSP → space
-        ("guio­n", "guion"),                          # soft hyphen stripped
-        ("texto​ limpio", "texto limpio"),          # zero-width space stripped
+        ("hola\u00a0mundo", "hola mundo"),                # NBSP -> space
+        ("guio\u00adn", "guion"),                          # soft hyphen stripped
+        ("texto\u200b limpio", "texto limpio"),          # zero-width space stripped
         ("malo\x01control", "malocontrol"),               # C0 control char dropped
     ],
 )

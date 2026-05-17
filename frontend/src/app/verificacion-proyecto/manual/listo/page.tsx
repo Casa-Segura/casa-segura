@@ -54,8 +54,9 @@ export default async function ProjectVerificationManualDonePage({
                   Datos del proyecto recibidos
                 </h1>
                 <p className="mt-3 max-w-xl text-base leading-relaxed text-text-secondary">
-                  Guardá esta referencia cuando coordinés con tu equipo o soporte técnico
-                  sobre este envío. El análisis de contratos sigue siendo un flujo aparte.
+                  Guardá esta referencia cuando coordinés con tu equipo o
+                  soporte técnico sobre este envío. El análisis de contratos
+                  sigue siendo un flujo aparte.
                 </p>
                 {referenceId ? (
                   <p className="mt-4 rounded-[var(--radius-input)] border border-border bg-accent-light/50 p-3 font-mono text-sm text-text-primary break-words">
@@ -93,7 +94,10 @@ export default async function ProjectVerificationManualDonePage({
           className="flex flex-col gap-3 lg:sticky lg:top-6"
           aria-label="Siguientes pasos"
         >
-          <nav className="flex flex-col gap-3" aria-labelledby="manual-done-nav-h">
+          <nav
+            className="flex flex-col gap-3"
+            aria-labelledby="manual-done-nav-h"
+          >
             <p id="manual-done-nav-h" className="sr-only">
               Acciones rápidas
             </p>

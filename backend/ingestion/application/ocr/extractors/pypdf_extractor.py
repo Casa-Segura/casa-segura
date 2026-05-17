@@ -137,11 +137,11 @@ def _normalize_text(text: str) -> str:
 
     normalized = unicodedata.normalize("NFKC", text)
     normalized = normalized.replace("\r\n", "\n").replace("\r", "\n")
-    #   = NBSP, ­ = SOFT HYPHEN, ​ = ZERO WIDTH SPACE
+    # \u00a0 = NBSP, \u00ad = soft hyphen, \u200b = zero-width space
     normalized = (
-        normalized.replace(" ", " ")
-        .replace("­", "")
-        .replace("​", "")
+        normalized.replace("\u00a0", " ")
+        .replace("\u00ad", "")
+        .replace("\u200b", "")
     )
     normalized = _CONTROL_CHARS_RE.sub("", normalized)
     return normalized.strip()

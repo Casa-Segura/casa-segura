@@ -122,9 +122,24 @@ infra/       # Ayudas para desarrollo local (p. ej. init de Postgres)
 
    Abre [http://localhost:3000](http://localhost:3000). Más detalle: [frontend/README.md](frontend/README.md).
 
+### Integración continua (CS-004)
+
+El workflow [**`.github/workflows/ci.yml`**](.github/workflows/ci.yml) corre en **`push`** y **`pull_request`** contra `main` y `development`. Trabajo útil cuando configures protección de rama en GitHub (nombre de checks exactos):
+
+| Check en GitHub        | Rol |
+| -----------------------| --- |
+| **Backend lint**        | Poetry + Ruff / Black (`--check`) / isort (`--check-only`) + script de validación de retención |
+| **Backend tests**       | Postgres 16 (`pgvector`) + Redis → migraciones → `pytest` |
+| **Backend migration smoke (CS-035)** | Migrar → `migrate app zero` en orden → volver a migrar |
+| **Frontend build**      | Node 22 → `npm ci` → ESLint → **Vitest** → `tsc --noEmit` → `next build` |
+
+Forks pueden reproducirlos con `act` opcionalmente; la vía habitual es abrir PR al repo público para que Actions reporte resultado.
+
+Los fallos deliberados en **Python** muestran códigos de regla **`ruff`** en el log (p. ej. `F401` por import sin uso), que es cómo sabemos que el job de lint no está “silent green”.
+
 ### Pre-commit (CS-005)
 
-Los hooks locales en [`.pre-commit-config.yaml`](.pre-commit-config.yaml) ejecutan `ruff` (lint + formato) sobre `backend/**/*.py`, `prettier --check` sobre `frontend/**/*.{ts,tsx,js,jsx,json,md}`, y comprobaciones genéricas (fin de archivo, espacios finales, YAML/TOML/conflictos). Versiones alineadas con `backend/pyproject.toml`. ESLint y mypy siguen orientados a CI (notas en el propio config). Instalación única por clon:
+Los hooks locales en [`.pre-commit-config.yaml`](.pre-commit-config.yaml) ejecutan **`ruff` (lint + autofix)** sobre `backend/**/*.py`, **`prettier --check`** (`prettier@3.8.3`) sobre `frontend/**/*.{ts,tsx,js,jsx,json,md}`, y comprobaciones genéricas (fin de archivo, espacios finales, YAML/TOML/conflictos). **`ruff format` no corre en pre-commit** (CI usa Black más Ruff lint). **`end-of-file-fixer`** omite **`docs/`**, **`frontend/public/`** y **`.cursor/rules/`** para evitar churn en roadmap o artefactos públicos cuando no tocás esos ficheros. Ruff está alineado con `backend/pyproject.toml`. ESLint y mypy siguen orientados a CI (notas en el propio config). Instalación única por clon:
 
 ```bash
 pip install pre-commit          # o: pipx install pre-commit

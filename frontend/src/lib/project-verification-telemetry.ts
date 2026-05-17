@@ -20,7 +20,8 @@ export type ProjectVerificationTelemetryPayload =
   | ProjectVerificationTelemetryCtaImpressionPayload;
 
 function isTelemetryLogEnabled(): boolean {
-  const raw = process.env.PROJECT_VERIFICATION_TELEMETRY_LOG?.trim().toLowerCase();
+  const raw =
+    process.env.PROJECT_VERIFICATION_TELEMETRY_LOG?.trim().toLowerCase();
   return raw === "1" || raw === "true" || raw === "yes";
 }
 

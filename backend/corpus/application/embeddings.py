@@ -7,11 +7,11 @@ shape (1024 dims, `intfloat/multilingual-e5-large` by default).
 The e5 family requires input prefixes for retrieval to work correctly:
 `passage: ` for documents being indexed and `query: ` for the question
 being asked. Missing prefixes drops same-language similarity by
-~0.10–0.15 in our internal sweep, which is why both `embed_texts` and
+~0.10-0.15 in our internal sweep, which is why both `embed_texts` and
 `embed_query` apply the prefix automatically.
 
-The model is loaded once per process and cached on the module — Django
-worker boots are cheap (~1–2s for the first encode), and idle memory is
+The model is loaded once per process and cached on the module --- Django
+worker boots are cheap (~1-2s for the first encode), and idle memory is
 ~1.2 GB.
 """
 

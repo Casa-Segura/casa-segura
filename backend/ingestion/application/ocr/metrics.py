@@ -7,11 +7,11 @@ Labels stay coarse to keep cardinality bounded.
 Cardinality budget (PRD §9 / EPIC-02 DoD): well under the <20-combinations
 invariant.
 
-  * INGEST_STAGE_DURATION:        2 stages × 3 strategies = 6 series
-  * INGEST_EXTRACT_PAGES_DURATION 3 strategies × 3 page buckets = 9 series
-  * INGEST_OUTCOMES_TOTAL:        2 outcomes × ~10 error codes ≤ 20 series
-  * INGEST_TIMEOUTS_TOTAL:        2 stages × 3 strategies = 6 series
-  * OPENROUTER_CALLS:             ~3 models × 2 outcomes = 6 series
+  * INGEST_STAGE_DURATION:        2 stages x 3 strategies = 6 series
+  * INGEST_EXTRACT_PAGES_DURATION 3 strategies x 3 page buckets = 9 series
+  * INGEST_OUTCOMES_TOTAL:        2 outcomes x ~10 error codes ≤ 20 series
+  * INGEST_TIMEOUTS_TOTAL:        2 stages x 3 strategies = 6 series
+  * OPENROUTER_CALLS:             ~3 models x 2 outcomes = 6 series
 
 Page buckets follow the SLA roll-up taxonomy from
 [[PRD_F1_INGESTA_Y_OCR]] §9: `1`, `2-10`, `11+`. Mapping lives in
@@ -66,7 +66,7 @@ OPENROUTER_CALLS = Counter(
 def page_bucket(page_count: int | None) -> str:
     """Map a page count to its coarse Prometheus label.
 
-    PRD §9 SLA roll-up: 1-page docs are the bulk of submissions; 2–10
+    PRD §9 SLA roll-up: 1-page docs are the bulk of submissions; 2-10
     covers most multi-page rentals; 11+ catches the outliers within the
     50-page per-file cap from [[CS-059]].
     """

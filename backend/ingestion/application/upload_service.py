@@ -10,7 +10,7 @@ Public surface:
 
   * ``ingest_upload(UploadRequest)`` → returns the persisted
     ``ContractSubmission``. Accepts ``files=(FileUpload(...), …)`` with
-    1–50 entries (PRD §US-01 / [[CS-050]]).
+    1-50 entries (PRD §US-01 / [[CS-050]]).
 
 The function is intentionally synchronous: in Phase 1 the request is
 served end-to-end inside the worker process. Async pipelining via Celery
@@ -198,7 +198,7 @@ def _validate_batch(files: tuple[FileUpload, ...]) -> None:
 
 
 def _validate_image_dimensions(upload: FileUpload) -> None:
-    """Enforce PRD §US-01 image bounds (600×800 min, 8000×10000 max)."""
+    """Enforce PRD §US-01 image bounds (600x800 min, 8000x10000 max)."""
 
     ext = upload.filename.rsplit(".", 1)[-1].lower() if "." in upload.filename else ""
     ct = (upload.content_type or "").lower()

@@ -199,9 +199,7 @@ export function DeliveryChannelFields(props: Props) {
             aria-describedby={
               fieldErrors.phone ? `${idPrefix}-phone-err` : undefined
             }
-            onChange={(e) =>
-              onChange({ ...value, phone: e.target.value })
-            }
+            onChange={(e) => onChange({ ...value, phone: e.target.value })}
             onBlur={() => props.onBlurField?.("phone")}
             className={`min-h-[44px] rounded-[var(--radius-input)] border border-border px-4 py-2 text-base font-mono text-text-primary outline-none placeholder:text-text-secondary ${focusRing}`}
             placeholder="+503XXXXXXXX…"

@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  parseManualVerificationEcho,
-} from "@/server/project-verification-backend";
+import { parseManualVerificationEcho } from "@/server/project-verification-backend";
 
 describe("parseManualVerificationEcho", () => {
   it("parses nested echo payloads", () => {

@@ -114,8 +114,8 @@ export default async function ProjectVerificationResultPage({
                   <strong className="font-semibold text-text-primary">
                     no se cruza con registros externos
                   </strong>
-                  . Cuando el job esté listo, vas a abrir el estado real desde una
-                  referencia o ID sin cambiar cómo cargás los datos.
+                  . Cuando el job esté listo, vas a abrir el estado real desde
+                  una referencia o ID sin cambiar cómo cargás los datos.
                 </p>
                 {referenceId ? (
                   <p className="mt-3 rounded-[var(--radius-input)] border border-border bg-white/70 px-3 py-2 font-mono text-xs break-words text-text-primary">
@@ -159,9 +159,9 @@ export default async function ProjectVerificationResultPage({
               Cómo se conectará después
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-text-secondary">
-              El diseño ya separa la vista demo de un resultado real. Más adelante
-              `/resultado?id=...` u otra ruta por referencia podrá consultar el
-              estado del job sin cambiar el flujo de captura.
+              El diseño ya separa la vista demo de un resultado real. Más
+              adelante `/resultado?id=...` u otra ruta por referencia podrá
+              consultar el estado del job sin cambiar el flujo de captura.
             </p>
           </section>
 
@@ -169,7 +169,9 @@ export default async function ProjectVerificationResultPage({
             aria-label="Ejemplos de resultado por banda"
             className="rounded-[var(--radius-input)] border border-border bg-surface px-4 py-3 text-xs lg:hidden"
           >
-            <div className="text-text-secondary">{verdictBandSwitchLinks()}</div>
+            <div className="text-text-secondary">
+              {verdictBandSwitchLinks()}
+            </div>
           </nav>
         </div>
 
@@ -181,7 +183,9 @@ export default async function ProjectVerificationResultPage({
             aria-label="Ejemplos de resultado por banda"
             className="rounded-[var(--radius-input)] border border-border bg-surface px-4 py-3 text-xs max-lg:hidden"
           >
-            <div className="text-text-secondary">{verdictBandSwitchLinks()}</div>
+            <div className="text-text-secondary">
+              {verdictBandSwitchLinks()}
+            </div>
           </nav>
 
           <nav
@@ -190,8 +194,8 @@ export default async function ProjectVerificationResultPage({
           >
             <ProjectVerificationOptionalContractCta />
             <p className="text-center text-sm text-text-secondary">
-              Podés ignorar estas sugerencias: el contrato ya es accesible desde el
-              inicio y desde el pie de página.
+              Podés ignorar estas sugerencias: el contrato ya es accesible desde
+              el inicio y desde el pie de página.
             </p>
           </nav>
         </aside>

@@ -2,7 +2,7 @@
 id: EPIC-00
 name: Foundation & Tooling
 phase: 0
-status: in_progress
+status: done
 depends_on: []
 prd_refs:
   - ARCHITECTURE
@@ -27,17 +27,17 @@ This epic is BE-heavy on purpose — the FE scaffold is a thin shell that waits 
 ## Definition of done
 
 - [x] Repo public on GitHub under MIT, README states project posture and "not legal advice" disclaimer
-- [x] `apps/api` runs locally via `python manage.py runserver` (backend/ Django 5.2) with `/api/health/` + `/api/ready/`; tests run green (CS-002 — ruff/mypy lint backlog of 184/13 errors still deferred)
-- [x] `apps/web` runs `next dev` locally with one page (EPIC-10 shell + landing page) (CS-002 + EPIC-10)
-- [/] CI runs lint + type-check + test + build on every PR — workflow exists (`.github/workflows/ci.yml`) but lint/type gates rely on CS-002 cleanup before they're zero-error blocking (CS-004 in_progress)
-- [/] `.env.example` enumerates every variable the system needs (CS-006 in_progress — has the Phase-1 OCR/RAG keys; still missing some PRD-canonical names like `OCR_FALLBACK_ENABLED`, `TESSERACT_LANG`, `PDF_MAX_PAGES`, `DB_POOL_*`, `ANONYMIZATION_AFTER_DAYS`, `JOB_*`)
+- [x] `backend/` Django 5.2 API runs locally via `python manage.py runserver` with `/api/health/` + `/api/ready/`; pytest workflows stay green alongside remaining strict-island backlog noted in [[CS-002]]
+- [x] `frontend/` ships the production Next.js App Router experience (landing, `/subir`, optional PV segment) gated by documented env vars + disclaimers (`CS-003` + [[EPIC-10-frontend]] collaboration)
+- [x] CI runs backend lint/tests/migration smoke plus frontend lint/tests/typecheck/build on every PR (`.github/workflows/ci.yml`; check names enumerated in **`README`** — closes [[CS-004]])
+- [x] `backend/.env.example` documents the consolidated PRD env surface incl. OCR/RAG + retention knobs + Railway appendix ([[CS-006]])
 - [x] Structured logging emits JSON with correlation ID and version stamps (`shared/observability/logging.py` + `middleware.py`) (CS-007)
 - [x] Standard error response shape is documented and used by every endpoint (CS-009 — README §"Backend API contract")
 - [x] Versioning ADR exists: how `rubric_version`, `corpus_version`, API `schema_version` are bumped (ADR-0004, CS-010)
 
 ## In scope
 
-- Monorepo skeleton (`apps/api`, `apps/web`, `packages/` if shared types emerge)
+- Monorepo skeleton (**`backend/`** Django + **`frontend/`** Next.js — packages/ only when shared types merit it)
 - Tooling: ruff, black, mypy, pytest on Python; ESLint, Prettier, TypeScript, Vitest on web
 - Dockerfile for the API, docker-compose for local Postgres + Redis
 - Pre-commit hooks
@@ -51,7 +51,7 @@ This epic is BE-heavy on purpose — the FE scaffold is a thin shell that waits 
 - Any service-layer code beyond /health — those live in their feature epics
 - Production deploy targets — that's [[EPIC-11-observability]]
 - Auth — the product has no user accounts (D3); nothing to scaffold
-- Frontend pages beyond a placeholder — see [[EPIC-10-frontend]]
+- Frontend-only UX beyond [[EPIC-10-frontend]] scope — future tickets split delivery vs this foundation milestone
 
 ## Dependencies
 
@@ -64,8 +64,8 @@ This epic is BE-heavy on purpose — the FE scaffold is a thin shell that waits 
 - [[CS-002]] — Django + DRF API scaffold with pyproject, ruff, mypy, pytest (per [ADR-0001](../adr/ADR-0001-django-backend-stack.md))
 - [[CS-003]] — Next.js scaffold with Tailwind, shadcn/ui, ESLint, Prettier
 - [[CS-004]] — CI pipeline (lint, type-check, test, build) on PR
-- [[CS-005]] — Pre-commit hooks for both `apps/api` and `apps/web`
-- [[CS-006]] — Secrets baseline (.env.example with every variable from [[BE-SERVICES]] §9)
+- [[CS-005]] — Pre-commit hooks for **`backend/`** + **`frontend/`**
+- [[CS-006]] — Secrets baseline (`backend/.env.example` reflecting [[BE-SERVICES]] §9)
 - [[CS-007]] — Structured logging with correlation IDs and version fields
 - [[CS-008]] — Health and readiness endpoints
 - [[CS-009]] — Standard error envelope schema

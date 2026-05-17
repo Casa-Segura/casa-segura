@@ -1,6 +1,7 @@
 /** Deep-link query contract for OCR-degraded manual handoff (CS-351 until CS-350 wiring). */
 
-export const MANUAL_VERIFICATION_ROUTE = "/verificacion-proyecto/manual" as const;
+export const MANUAL_VERIFICATION_ROUTE =
+  "/verificacion-proyecto/manual" as const;
 
 export const MANUAL_HANDOFF_PREFILL_KEYS = [
   "developer",
@@ -46,7 +47,9 @@ export type ParsedManualVerificationHandoff = {
   hasPrefill: boolean;
 };
 
-export function clampHandoffField(value: string | undefined): string | undefined {
+export function clampHandoffField(
+  value: string | undefined,
+): string | undefined {
   const t = value?.trim();
   if (!t) return undefined;
   return t.slice(0, MAX_PREFILL_CHARS);
@@ -87,9 +90,7 @@ export function buildManualVerificationHandoffPath(
   input: ManualVerificationHandoffInput,
 ): string {
   const qs = buildManualVerificationHandoffSearchParams(input).toString();
-  return qs
-    ? `${MANUAL_VERIFICATION_ROUTE}?${qs}`
-    : MANUAL_VERIFICATION_ROUTE;
+  return qs ? `${MANUAL_VERIFICATION_ROUTE}?${qs}` : MANUAL_VERIFICATION_ROUTE;
 }
 
 /** Parse App Router searchParams / plain records (multi-value keys use first entry). */

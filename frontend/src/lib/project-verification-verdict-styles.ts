@@ -18,8 +18,7 @@ export function verdictVisualTone(
         container:
           "border-verdict-green bg-verdict-green-bg border-2 [--verdict-accent:var(--color-verdict-green)]",
         title: "text-verdict-green",
-        iconRing:
-          "bg-white/85 text-verdict-green ring-2 ring-verdict-green/30",
+        iconRing: "bg-white/85 text-verdict-green ring-2 ring-verdict-green/30",
       };
     case "red":
       return {

@@ -20,7 +20,9 @@ You can start editing the landing route by modifying [`src/app/page.tsx`](src/ap
 
 Format: `npm run format` (writes) or `npm run format:check` (CI-style).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to load **Inter** (design token `font-body` from `docs/Design/casa-segura.pen`).
+This project uses [`next/font`](https://nextjs.org/docs/app/basic-features/fonts) to load display fonts (**Geist Sans** surfaces as `--font-geist`; **Inter** and **Newsreader** stay wired for serif/display tokens).
+
+**UI kit:** Casa-specific composed components live in [`src/components/casa-ui/`](src/components/casa-ui/). [shadcn/ui](https://ui.shadcn.com/) is initialized at [`components.json`](components.json) with primitives under [`src/components/ui/`](src/components/ui/); Casa semantic colors (`bg-bg`, `text-text-primary`) remain the default in `globals.css`. Add shadcn pieces with `npx shadcn@latest add …` when a stock primitive fits the roadmap.
 
 ## BVA — landing (CS-290)
 
@@ -63,9 +65,9 @@ Additional optional toggles mirror [`frontend/src/server/contract-env.ts`](src/s
 
 ### Optional project verification UI (CS-356 / EPIC-12)
 
-| Variable                       | When set                                | Behavior                                                                                                   |
-| ------------------------------ | --------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `PROJECT_VERIFICATION_ENABLED` | `true` / `1` / `yes` (case-insensitive) | Exposes `/verificacion-proyecto` (stub hub, manual form shell, demo result page) and a footer link on `/`. |
+| Variable                             | When set                                | Behavior                                                                                                                                                                            |
+| ------------------------------------ | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PROJECT_VERIFICATION_ENABLED`       | `true` / `1` / `yes` (case-insensitive) | Exposes `/verificacion-proyecto` (stub hub, manual form shell, demo result page) and a footer link on `/`.                                                                          |
 | `PROJECT_VERIFICATION_TELEMETRY_LOG` | `true` / `1` / `yes` (case-insensitive) | Server-only: writes **JSON lines** to stdout for optional PV events (manual form handoff, optional contract CTA impression). **No** OCR text, addresses, filenames, or form bodies. |
 
 **Default:** `PROJECT_VERIFICATION_ENABLED` unset → off. Half-enabled flows are avoided: disabled deployments return **404** for that segment with a friendly [`not-found`](src/app/verificacion-proyecto/not-found.tsx) message.

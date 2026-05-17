@@ -48,9 +48,9 @@ export default function ProjectVerificationBillboardPhotoPage() {
               Subí una foto clara de la valla
             </h1>
             <p className="mt-3 max-w-xl text-base leading-relaxed text-text-secondary">
-              Este camino prepara la lectura automática. Por ahora el stub confirma
-              que el archivo llega; después el OCR podrá completar o sugerir los
-              campos del formulario manual.
+              Este camino prepara la lectura automática. Por ahora el stub
+              confirma que el archivo llega; después el OCR podrá completar o
+              sugerir los campos del formulario manual.
             </p>
           </header>
 
@@ -78,9 +78,18 @@ export default function ProjectVerificationBillboardPhotoPage() {
             Antes de enviar
           </h2>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-text-secondary">
-            <li>Incluí nombre del proyecto, desarrollador, permiso y dirección visible.</li>
-            <li>Buscá buena luz y encuadrá el texto; evitá cortar bordes con datos.</li>
-            <li>Podés volver después al formulario manual si el OCR propone valores raros.</li>
+            <li>
+              Incluí nombre del proyecto, desarrollador, permiso y dirección
+              visible.
+            </li>
+            <li>
+              Buscá buena luz y encuadrá el texto; evitá cortar bordes con
+              datos.
+            </li>
+            <li>
+              Podés volver después al formulario manual si el OCR propone
+              valores raros.
+            </li>
           </ul>
         </aside>
       </main>

@@ -95,7 +95,7 @@ export function AnalysisWorkbench({
   const complete = mode === "complete";
   const loading = mode === "loading";
   const preview = !loading && !complete;
-  const liveAsset = preview ? assetPreview ?? undefined : undefined;
+  const liveAsset = preview ? (assetPreview ?? undefined) : undefined;
   const showOutcomeActions = complete;
   const showLivePreview = Boolean(liveAsset);
   const reduceMotion = useReducedMotion();
@@ -186,8 +186,8 @@ export function AnalysisWorkbench({
                     Revisando tu contrato
                   </h2>
                   <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                    Estamos leyendo el documento, detectando cláusulas y preparando
-                    las áreas de interés para el reporte final.
+                    Estamos leyendo el documento, detectando cláusulas y
+                    preparando las áreas de interés para el reporte final.
                   </p>
                 </div>
                 <ProgressTimeline steps={defaultSteps} progress={58} />
@@ -279,9 +279,9 @@ function PreviewCompanionPanel() {
           Así se verá tu informe en escritorio
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-          Esta columna se llena cuando el análisis corre de verdad: primero verás
-          el progreso y placeholders animados, después el resultado completo.
-          Todavía no hay datos de tu contrato.
+          Esta columna se llena cuando el análisis corre de verdad: primero
+          verás el progreso y placeholders animados, después el resultado
+          completo. Todavía no hay datos de tu contrato.
         </p>
       </div>
       <section

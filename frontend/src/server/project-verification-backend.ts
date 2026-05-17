@@ -71,7 +71,9 @@ function billboardUploadUrl(base: string): string {
   return `${base}${BILLBOARD_UPLOAD_PATH}`;
 }
 
-function readEchoFields(e: Record<string, unknown>): ManualVerificationEcho | null {
+function readEchoFields(
+  e: Record<string, unknown>,
+): ManualVerificationEcho | null {
   const pick = (k: string, ...alts: string[]) => {
     for (const key of [k, ...alts]) {
       const v = e[key];
@@ -87,7 +89,9 @@ function readEchoFields(e: Record<string, unknown>): ManualVerificationEcho | nu
   return { developer, project, permit, address };
 }
 
-function pickEchoEnvelope(raw: Record<string, unknown>): Record<string, unknown> | null {
+function pickEchoEnvelope(
+  raw: Record<string, unknown>,
+): Record<string, unknown> | null {
   const candidates = [
     raw.echo,
     raw.manual_prefill,
@@ -243,7 +247,8 @@ export async function postProjectVerificationBillboardUpload(
     const parsedEcho = raw ? parseManualVerificationEcho(raw) : null;
     const prefills: Partial<ManualVerificationEcho> = {};
     if (parsedEcho) {
-      if (parsedEcho.developer.trim()) prefills.developer = parsedEcho.developer;
+      if (parsedEcho.developer.trim())
+        prefills.developer = parsedEcho.developer;
       if (parsedEcho.project.trim()) prefills.project = parsedEcho.project;
       if (parsedEcho.permit.trim()) prefills.permit = parsedEcho.permit;
       if (parsedEcho.address.trim()) prefills.address = parsedEcho.address;

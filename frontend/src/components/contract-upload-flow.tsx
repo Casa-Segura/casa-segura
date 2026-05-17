@@ -1,7 +1,14 @@
 "use client";
 
 import type { DragEvent } from "react";
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { FileArrowUp, Trash } from "@phosphor-icons/react";
@@ -485,13 +492,9 @@ export function ContractUploadFlow() {
           {!busy && previewObjectUrl && files.length > 0 ? (
             <ContractUploadPreview
               key={previewObjectUrl}
-              kind={contractFilePreviewKind(
-                files[resolvedPreviewFileIndex]!,
-              )}
+              kind={contractFilePreviewKind(files[resolvedPreviewFileIndex]!)}
               objectUrl={previewObjectUrl}
-              fileName={
-                files[resolvedPreviewFileIndex]!.name
-              }
+              fileName={files[resolvedPreviewFileIndex]!.name}
             />
           ) : null}
         </section>
@@ -519,18 +522,24 @@ export function ContractUploadFlow() {
           }}
         />
 
-        {(disclaimerReminder || globalError) ? (
+        {disclaimerReminder || globalError ? (
           <div aria-live="assertive" className="flex flex-col gap-2">
             {disclaimerReminder ? (
-            <p role="alert" className="text-sm font-semibold text-verdict-red">
-              Confirmá primero la casilla de aviso legal; sin eso tu envío puede
-              ser rechazado por el servidor.
-            </p>
+              <p
+                role="alert"
+                className="text-sm font-semibold text-verdict-red"
+              >
+                Confirmá primero la casilla de aviso legal; sin eso tu envío
+                puede ser rechazado por el servidor.
+              </p>
             ) : null}
             {globalError ? (
-            <p role="alert" className="text-sm font-semibold text-verdict-red">
-              {globalError}
-            </p>
+              <p
+                role="alert"
+                className="text-sm font-semibold text-verdict-red"
+              >
+                {globalError}
+              </p>
             ) : null}
           </div>
         ) : null}
@@ -603,8 +612,12 @@ export function ContractUploadFlow() {
       </section>
 
       <AnalysisWorkbench
-        mode={busy ? "loading" : result?.kind === "success" ? "complete" : "preview"}
-        publicShortId={result?.kind === "success" ? result.submissionId : undefined}
+        mode={
+          busy ? "loading" : result?.kind === "success" ? "complete" : "preview"
+        }
+        publicShortId={
+          result?.kind === "success" ? result.submissionId : undefined
+        }
         assetPreview={mesaAssetPreview ?? undefined}
       />
     </div>

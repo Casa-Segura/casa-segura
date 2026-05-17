@@ -83,8 +83,8 @@ export function ProjectVerificationOptionalContractCta() {
       className="flex flex-col gap-3 rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-sm"
     >
       <p className="text-sm leading-relaxed text-text-secondary">
-        Si ya tenés un borrador, podés seguir con el análisis de contratos cuando
-        quieras. Es independiente de esta verificación.
+        Si ya tenés un borrador, podés seguir con el análisis de contratos
+        cuando quieras. Es independiente de esta verificación.
       </p>
       <Link
         href="/subir"

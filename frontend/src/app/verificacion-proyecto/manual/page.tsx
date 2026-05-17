@@ -73,7 +73,8 @@ export default async function ProjectVerificationManualPage({
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-text-secondary">
             Respaldo cuando la lectura automática de la valla falle. Hoy solo
-            validamos en el servidor sin guardar datos permanentes hasta que exista API.
+            validamos en el servidor sin guardar datos permanentes hasta que
+            exista API.
           </p>
           <div className="mt-6">
             <ProjectVerificationManualForm

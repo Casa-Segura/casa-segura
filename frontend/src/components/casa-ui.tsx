@@ -165,7 +165,8 @@ export function StatusPill({
       <span
         className={cx(
           "size-1.5 rounded-full bg-current",
-          pulse && "motion-safe:animate-[casa-pulse-soft_1.8s_ease-in-out_infinite]",
+          pulse &&
+            "motion-safe:animate-[casa-pulse-soft_1.8s_ease-in-out_infinite]",
         )}
         aria-hidden
       />
@@ -188,7 +189,12 @@ export function DisclaimerPanel({
         toneClasses[tone],
       )}
     >
-      <Info size={20} weight="regular" className="mt-0.5 shrink-0" aria-hidden />
+      <Info
+        size={20}
+        weight="regular"
+        className="mt-0.5 shrink-0"
+        aria-hidden
+      />
       <div className="min-w-0">{children}</div>
     </aside>
   );
@@ -321,7 +327,8 @@ export function FindingCard({
   body: string;
   citation?: string;
 }) {
-  const Icon = tone === "green" ? CheckCircle : tone === "yellow" ? Warning : XCircle;
+  const Icon =
+    tone === "green" ? CheckCircle : tone === "yellow" ? Warning : XCircle;
   return (
     <article className="rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-[var(--shadow-soft)]">
       <div className="flex gap-3">
@@ -418,8 +425,8 @@ export function DocumentPreview({
             Tu documento aparecerá aquí
           </p>
           <p className="mt-2 max-w-[34ch] text-sm leading-relaxed text-text-secondary">
-            Cuando envíes el contrato, esta vista mostrará la lectura en curso
-            y luego los fragmentos que destacamos para el informe.
+            Cuando envíes el contrato, esta vista mostrará la lectura en curso y
+            luego los fragmentos que destacamos para el informe.
           </p>
         </div>
       ) : (
@@ -497,7 +504,8 @@ function DocumentHighlight({
     <div
       className={cx(
         "my-3 h-3 rounded-full transition-[opacity,transform] duration-[var(--motion-slow)]",
-        active && "motion-safe:animate-[casa-pulse-soft_2.2s_ease-in-out_infinite]",
+        active &&
+          "motion-safe:animate-[casa-pulse-soft_2.2s_ease-in-out_infinite]",
         tone === "green" && "bg-verdict-green/45",
         tone === "yellow" && "bg-verdict-yellow/45",
         tone === "red" && "bg-verdict-red/45",

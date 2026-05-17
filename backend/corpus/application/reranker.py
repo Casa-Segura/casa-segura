@@ -2,7 +2,7 @@
 
 The bi-encoder dense retrieval (`embed_query` + pgvector) gives us solid
 recall (Top-5 article-level ≈ 0.80 on the eval set) but weak ordering:
-the right answer often lands at rank 2–4 because cosine scores cluster
+the right answer often lands at rank 2-4 because cosine scores cluster
 within ~0.03. This module wraps a cross-encoder (default
 `BAAI/bge-reranker-v2-m3`, multilingual, 568M params) that scores each
 (query, candidate) pair attending to both sequences and produces a

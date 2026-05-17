@@ -16,6 +16,8 @@ describe("getProjectVerificationFixture", () => {
     expect(getProjectVerificationFixture(null).verdict).toBe("yellow");
     expect(getProjectVerificationFixture(undefined).verdict).toBe("yellow");
     expect(getProjectVerificationFixture(["green"]).verdict).toBe("yellow");
-    expect(getProjectVerificationFixture({ v: "green" }).verdict).toBe("yellow");
+    expect(getProjectVerificationFixture({ v: "green" }).verdict).toBe(
+      "yellow",
+    );
   });
 });

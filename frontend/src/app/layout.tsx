@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Newsreader } from "next/font/google";
+import { Inter, Newsreader, Geist } from "next/font/google";
 import { DISCLAIMER_SHORT } from "@/legal/disclaimer";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,7 +30,13 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${inter.variable} ${newsreader.variable} h-full antialiased`}
+      className={cn(
+        "h-full",
+        inter.variable,
+        newsreader.variable,
+        geist.variable,
+        "font-sans",
+      )}
     >
       <body className="min-h-dvh flex flex-col touch-manipulation [-webkit-tap-highlight-color:transparent]">
         <a

@@ -98,7 +98,10 @@ export function ProjectVerificationManualForm({
         >
           Desarrollador / constructor
         </label>
-        <p id="developer-hint" className="text-xs leading-snug text-text-secondary">
+        <p
+          id="developer-hint"
+          className="text-xs leading-snug text-text-secondary"
+        >
           Usá el nombre visible en el cartel o material del proyecto.
         </p>
         <input
@@ -165,7 +168,10 @@ export function ProjectVerificationManualForm({
         >
           Permiso / expediente
         </label>
-        <p id="permit-hint" className="text-xs leading-snug text-text-secondary">
+        <p
+          id="permit-hint"
+          className="text-xs leading-snug text-text-secondary"
+        >
           Números y guiones tal como aparecen en la valla, si los tenés.
         </p>
         <input
@@ -198,8 +204,12 @@ export function ProjectVerificationManualForm({
         >
           Dirección aproximada
         </label>
-        <p id="address-hint" className="text-xs leading-snug text-text-secondary">
-          Municipio o punto de referencia; no necesitamos la dirección catastral completa.
+        <p
+          id="address-hint"
+          className="text-xs leading-snug text-text-secondary"
+        >
+          Municipio o punto de referencia; no necesitamos la dirección catastral
+          completa.
         </p>
         <textarea
           id="address"
@@ -232,7 +242,10 @@ export function ProjectVerificationManualForm({
       >
         {pending ? (
           <>
-            <span aria-hidden className="mr-2 inline-block size-4 animate-spin rounded-full border-2 border-white/40 border-t-white motion-reduce:animate-none" />
+            <span
+              aria-hidden
+              className="mr-2 inline-block size-4 animate-spin rounded-full border-2 border-white/40 border-t-white motion-reduce:animate-none"
+            />
             Verificando…
           </>
         ) : (

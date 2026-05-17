@@ -7,11 +7,12 @@ export function contractFilePreviewKind(file: File): "pdf" | "image" {
 }
 
 /** Prefer first PDF in the list so preview matches likely primary doc. */
-export function defaultContractPreviewFileIndex(files: readonly File[]): number {
+export function defaultContractPreviewFileIndex(
+  files: readonly File[],
+): number {
   const pdfIdx = files.findIndex(
     (f) =>
-      f.type === "application/pdf" ||
-      f.name.toLowerCase().endsWith(".pdf"),
+      f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf"),
   );
   return pdfIdx >= 0 ? pdfIdx : 0;
 }

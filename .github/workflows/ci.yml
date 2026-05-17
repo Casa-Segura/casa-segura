@@ -1,6 +1,6 @@
 # CI pipeline for Casa Segura monorepo
 # Closes:
-#   - CS-004: CI pipeline on PR (backend lint/test, frontend build)
+#   - CS-004: CI pipeline on PR (backend lint/test + frontend lint/test/typecheck/build)
 #   - CS-035: Migration smoke test in CI (forward, rollback to zero, re-apply)
 name: CI
 
@@ -291,6 +291,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Unit tests (Vitest)
+        run: npm test
 
       - name: Typecheck
         run: npx tsc --noEmit

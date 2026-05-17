@@ -1,6 +1,10 @@
 "use client";
 
-import { ArrowCounterClockwise, Camera, CheckCircle } from "@phosphor-icons/react";
+import {
+  ArrowCounterClockwise,
+  Camera,
+  CheckCircle,
+} from "@phosphor-icons/react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import {
@@ -218,13 +222,28 @@ function BillboardWorkbench({
                 aria-label="Leyendo campos visibles"
               >
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <SkeletonBlock className="h-3 w-28" label="Leyendo texto visible" />
-                  <SkeletonBlock className="h-3 w-14" label="Progreso parcial" />
+                  <SkeletonBlock
+                    className="h-3 w-28"
+                    label="Leyendo texto visible"
+                  />
+                  <SkeletonBlock
+                    className="h-3 w-14"
+                    label="Progreso parcial"
+                  />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <SkeletonBlock className="h-12 w-full" label="Dato detectado" />
-                  <SkeletonBlock className="h-12 w-full" label="Dato detectado" />
-                  <SkeletonBlock className="h-12 w-10/12" label="Dato detectado" />
+                  <SkeletonBlock
+                    className="h-12 w-full"
+                    label="Dato detectado"
+                  />
+                  <SkeletonBlock
+                    className="h-12 w-full"
+                    label="Dato detectado"
+                  />
+                  <SkeletonBlock
+                    className="h-12 w-10/12"
+                    label="Dato detectado"
+                  />
                 </div>
               </section>
             </div>

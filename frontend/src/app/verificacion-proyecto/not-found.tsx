@@ -25,9 +25,9 @@ export default function ProjectVerificationNotFound() {
               Esta sección no está disponible en esta instalación
             </h1>
             <p className="mt-3 max-w-prose text-base leading-relaxed text-text-secondary">
-              La verificación opcional de proyecto o valla no está habilitada en esta
-              instancia según configuración actual. Tu flujo principal queda igual: podés
-              analizar contratos cuando quieras.
+              La verificación opcional de proyecto o valla no está habilitada en
+              esta instancia según configuración actual. Tu flujo principal
+              queda igual: podés analizar contratos cuando quieras.
             </p>
           </div>
         </div>
@@ -44,8 +44,8 @@ export default function ProjectVerificationNotFound() {
               aria-hidden
             />
             <p className="text-sm leading-relaxed text-text-primary">
-              El análisis de contratos sigue disponible; esta beta no bloquea /subir
-              ni otras páginas.
+              El análisis de contratos sigue disponible; esta beta no bloquea
+              /subir ni otras páginas.
             </p>
           </div>
         </aside>

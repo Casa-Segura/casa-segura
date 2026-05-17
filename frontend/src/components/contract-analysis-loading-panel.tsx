@@ -94,9 +94,18 @@ export function ContractAnalysisLoadingPanel() {
             <SkeletonBlock className="h-3 w-14" label="Preparando conteo" />
           </div>
           <div className="flex flex-col gap-3">
-            <SkeletonBlock className="h-12 w-full" label="Hallazgo en revisión" />
-            <SkeletonBlock className="h-12 w-11/12" label="Hallazgo en revisión" />
-            <SkeletonBlock className="h-12 w-10/12" label="Hallazgo en revisión" />
+            <SkeletonBlock
+              className="h-12 w-full"
+              label="Hallazgo en revisión"
+            />
+            <SkeletonBlock
+              className="h-12 w-11/12"
+              label="Hallazgo en revisión"
+            />
+            <SkeletonBlock
+              className="h-12 w-10/12"
+              label="Hallazgo en revisión"
+            />
           </div>
         </div>
 

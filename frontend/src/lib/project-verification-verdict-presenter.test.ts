@@ -34,8 +34,6 @@ describe("project-verification-verdict-presenter", () => {
     expect(projectVerificationVerdictAriaLabelForBand("yellow")).toContain(
       "amarilla",
     );
-    expect(projectVerificationVerdictAriaLabelForBand("red")).toContain(
-      "roja",
-    );
+    expect(projectVerificationVerdictAriaLabelForBand("red")).toContain("roja");
   });
 });

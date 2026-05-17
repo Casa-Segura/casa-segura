@@ -33,7 +33,7 @@ def patched_detect_langs():
         yield mock_detect
 
 
-def _Lang(code: str, prob: float):  # noqa: N802 — match langdetect.Language shape
+def _Lang(code: str, prob: float):
     return MagicMock(lang=code, prob=prob)
 
 
