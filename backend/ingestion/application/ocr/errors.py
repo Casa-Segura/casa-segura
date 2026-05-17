@@ -29,6 +29,7 @@ class NotAnalyzableReason(StrEnum):
     OCR_UNAVAILABLE = "ocr_unavailable"
     UPSTREAM_LLM_ERROR = "upstream_llm_error"
     TIMEOUT = "timeout"
+    TEXT_TOO_SHORT = "text_too_short"
 
 
 @dataclass(frozen=True)

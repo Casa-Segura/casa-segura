@@ -334,6 +334,10 @@ def _mark_failed(submission: ContractSubmission, exc: NotAnalyzableError) -> Non
         NotAnalyzableReason.SIZE_EXCEEDED: ProcessingStatus.REJECTED_SIZE,
         NotAnalyzableReason.PAGE_COUNT_EXCEEDED: ProcessingStatus.REJECTED_SIZE,
         NotAnalyzableReason.UNSUPPORTED_FORMAT: ProcessingStatus.REJECTED_TYPE,
+        # PRD §7.4 — TEXT_TOO_SHORT maps to failed_extraction (the OCR
+        # path completed but didn't yield enough analysable text). Wired
+        # in [[CS-056]]; the 500-char trigger arrives with [[CS-053]].
+        NotAnalyzableReason.TEXT_TOO_SHORT: ProcessingStatus.FAILED_EXTRACTION,
     }
     submission.processing_status = status_map.get(
         exc.reason, ProcessingStatus.FAILED_EXTRACTION

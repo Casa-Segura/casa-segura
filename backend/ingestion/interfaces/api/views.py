@@ -9,11 +9,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ingestion.application.ocr.errors import NotAnalyzableError
+from ingestion.application.ocr.errors import NotAnalyzableError, NotAnalyzableReason
 from ingestion.application.upload_service import UploadRequest, ingest_upload
 from ingestion.domain.enums import (
     DisclaimerAcceptanceMethod,
     ExtractionStrategy,
+    ProcessingStatus,
     SubmissionSource,
 )
 from ingestion.infrastructure.django.models import ContractSubmission
@@ -97,7 +98,33 @@ class SubmissionUploadView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        body = SubmissionResponseSerializer(outcome.submission).data
+        sub = outcome.submission
+
+        # PRD §7.4 — Spanish-only policy returns HTTP 422 LANGUAGE_NOT_SUPPORTED
+        # when the language gate rejects the submission, even though the OCR
+        # path completed end-to-end. TEXT_TOO_SHORT (CS-053) lands here too.
+        if sub.processing_status == ProcessingStatus.REJECTED_LANGUAGE.value:
+            return Response(
+                {
+                    "error": "not_analyzable",
+                    "error_code": "LANGUAGE_NOT_SUPPORTED",
+                    "detail": sub.error_reason or "non-spanish content detected",
+                    "submission_id": str(sub.id),
+                },
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+        if sub.error_code == NotAnalyzableReason.TEXT_TOO_SHORT.value:
+            return Response(
+                {
+                    "error": "not_analyzable",
+                    "error_code": "TEXT_TOO_SHORT",
+                    "detail": sub.error_reason or "extracted text below minimum threshold",
+                    "submission_id": str(sub.id),
+                },
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+
+        body = SubmissionResponseSerializer(sub).data
         http_status = status.HTTP_201_CREATED if outcome.created else status.HTTP_200_OK
         return Response(body, status=http_status)
 
