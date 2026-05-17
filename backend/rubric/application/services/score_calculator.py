@@ -72,6 +72,16 @@ class AggregationResult:
     category_scores: tuple[CategoryScore, ...]
 
 
+# ── CS-152: single place for 1-decimal banker's rounding (BVA tests import) ─
+
+
+def banker_round_score_total(value: float | Decimal) -> Decimal:
+    """Round a raw aggregate to 1 decimal with ``ROUND_HALF_EVEN`` (CS-152)."""
+
+    v = Decimal(str(value)) if not isinstance(value, Decimal) else value
+    return v.quantize(_ONE_DECIMAL, rounding=ROUND_HALF_EVEN)
+
+
 # ── CS-156: band assignment ─────────────────────────────────────────────
 
 
@@ -229,7 +239,7 @@ def aggregate_total(
     if abs(eff_sum - Decimal("1")) > _FLOAT_TOLERANCE:
         raise AssertionError(f"effective weights drifted: sum={eff_sum}")
 
-    rounded = total.quantize(_ONE_DECIMAL, rounding=ROUND_HALF_EVEN)
+    rounded = banker_round_score_total(total)
 
     if overrides:
         return AggregationResult(
@@ -266,5 +276,6 @@ __all__ = [
     "NoApplicableCriteriaError",
     "aggregate_total",
     "assign_band",
+    "banker_round_score_total",
     "compute_category_scores",
 ]

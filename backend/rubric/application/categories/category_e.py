@@ -157,7 +157,7 @@ async def evaluate_e9(spec: CriterionSpec, ctx: EvaluationContext) -> CriterionE
             spec,
             score=0.0,
             justification=(
-                "Penalidad desproporcionada al consumidor (p. ej. pérdida total de lo pagado por " "incumplir un mes)."
+                "Penalidad desproporcionada al consumidor (p. ej. pérdida total de lo pagado por incumplir un mes)."
             ),
             evidence_snippet=hit.snippet,
         )

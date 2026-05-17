@@ -70,8 +70,7 @@ async def evaluate_b1(spec: CriterionSpec, ctx: EvaluationContext) -> CriterionE
         spec,
         score=ladder.score,
         justification=(
-            f"Prima de {pct.normalize()}% del precio total — banda '{ladder.band_label}' "
-            "según RUBRICA_CONTRATO §5 B1."
+            f"Prima de {pct.normalize()}% del precio total — banda '{ladder.band_label}' según RUBRICA_CONTRATO §5 B1."
         ),
     )
 
@@ -98,7 +97,10 @@ async def evaluate_b2(spec: CriterionSpec, ctx: EvaluationContext) -> CriterionE
         return _unverifiable(
             spec,
             UnverifiableReason.F5_BLOCKED,
-            "Tasa anual ausente y sin equivalente convertible — RUBRICA_CONTRATO §5 B2 unverifiable.",
+            (
+                "Tasa efectiva anual no expresada ni convertible — "
+                "Art. 19 lit. j LPC exige divulgar la tasa anual efectiva (RUBRICA_CONTRATO §5 B2)."
+            ),
         )
     # Normalize fraction (0-1) into percent points.
     if annual_rate <= Decimal("1"):
@@ -150,8 +152,7 @@ async def evaluate_b4(spec: CriterionSpec, ctx: EvaluationContext) -> CriterionE
         spec,
         score=ladder.score,
         justification=(
-            f"Costo total = {multiplier.normalize()}x del precio contado — "
-            f"banda '{ladder.band_label}' según §5 B4."
+            f"Costo total = {multiplier.normalize()}x del precio contado — banda '{ladder.band_label}' según §5 B4."
         ),
     )
 
@@ -183,7 +184,7 @@ async def evaluate_b5(spec: CriterionSpec, ctx: EvaluationContext) -> CriterionE
         spec,
         score=ladder.score,
         justification=(
-            f"Ratio B5 = {ratio.normalize()} (cuota mensual / cuota lineal) — " f"banda '{ladder.band_label}'."
+            f"Ratio B5 = {ratio.normalize()} (cuota mensual / cuota lineal) — banda '{ladder.band_label}'."
         ),
     )
 
@@ -220,7 +221,7 @@ async def evaluate_b7(spec: CriterionSpec, ctx: EvaluationContext) -> CriterionE
             spec,
             score=0.0,
             justification=(
-                "Interés moratorio computado sobre saldo total — viola Art. 12 LPC. " "Override forzoso del rubric."
+                "Interés moratorio computado sobre saldo total — viola Art. 12 LPC. Override forzoso del rubric."
             ),
             evidence_snippet=hit.snippet,
             override_triggered=OverrideCode.ART_12_LPC,
@@ -274,8 +275,7 @@ async def evaluate_b9(spec: CriterionSpec, ctx: EvaluationContext) -> CriterionE
             spec,
             score=0.0,
             justification=(
-                "Permite modificación unilateral de precio o condiciones (Art. 13 LPC). "
-                "Override forzoso del rubric."
+                "Permite modificación unilateral de precio o condiciones (Art. 13 LPC). Override forzoso del rubric."
             ),
             evidence_snippet=hit.snippet,
             override_triggered=OverrideCode.ART_13_LPC,

@@ -74,7 +74,7 @@ class Command(BaseCommand):
             "--fixture",
             default=None,
             dest="fixture",
-            help=("Path to the YAML fixture. Defaults to " "<BASE_DIR>/fixtures/rubric_v1.yaml."),
+            help=("Path to the YAML fixture. Defaults to <BASE_DIR>/fixtures/rubric_v1.yaml."),
         )
         parser.add_argument(
             "--activate",
@@ -129,7 +129,7 @@ class Command(BaseCommand):
                     )
                 if version_obj.categories != categories_payload:
                     drift_warnings.append(
-                        "rubric_version.categories drifted from fixture (immutable; " "requires manual reconciliation)"
+                        "rubric_version.categories drifted from fixture (immutable; requires manual reconciliation)"
                     )
 
             created_count = 0
@@ -137,9 +137,7 @@ class Command(BaseCommand):
             for idx, raw in enumerate(criteria_payload, start=1):
                 missing = REQUIRED_CRITERION_KEYS - set(raw)
                 if missing:
-                    raise CommandError(
-                        f"{fixture_path}:criteria[{idx}] missing required fields: " f"{sorted(missing)}"
-                    )
+                    raise CommandError(f"{fixture_path}:criteria[{idx}] missing required fields: {sorted(missing)}")
 
                 defaults = _criterion_defaults(raw, fixture_path, idx)
 
@@ -230,7 +228,7 @@ def _criterion_defaults(raw: dict[str, Any], path: Path, idx: int) -> dict[str, 
     weight = Decimal(str(raw["weight_in_category"]))
     if not (Decimal("0") < weight <= Decimal("100")):
         raise CommandError(
-            f"{path}:criteria[{idx}] (code={raw['code']!r}) weight_in_category " f"{weight} outside (0, 100]"
+            f"{path}:criteria[{idx}] (code={raw['code']!r}) weight_in_category {weight} outside (0, 100]"
         )
 
     applicable_types = _ensure_string_list(
@@ -293,7 +291,7 @@ def _ensure_string_list(
         if not s:
             raise CommandError(f"{path}:criteria[{idx}] field {field!r} contains an empty string")
         if len(s) > max_len:
-            raise CommandError(f"{path}:criteria[{idx}] field {field!r} entry {s!r} exceeds " f"max length {max_len}")
+            raise CommandError(f"{path}:criteria[{idx}] field {field!r} entry {s!r} exceeds max length {max_len}")
         out.append(s)
     return out
 
