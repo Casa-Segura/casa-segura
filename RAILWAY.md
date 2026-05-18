@@ -127,27 +127,40 @@ For each of `web`, `worker`, `beat`:
      railpack autodetection and you'll see
      `directory .../snapshot-target-unpack/backend does not exist`).
    - **Source → Watch Paths**: `/backend/**`
-   - **Source → Config File Path**: **one config file per service**
-     (see table below). `web` uses the default `railway.toml`; the
-     other two **must** point to their own file or Railway will load
-     the web defaults and silently force-build `Dockerfile.web`.
    - **Build → Builder**: **`Dockerfile`** (set this **explicitly** in
      the dashboard — railpack, Railway's new default, can ignore the
-     `[build].builder = "DOCKERFILE"` line in the toml and autodetect
-     Python instead, which fails on the monorepo layout).
-   - Dashboard fields for **Dockerfile Path / Start Command /
-     preDeployCommand / Healthcheck Path** can stay empty — every
-     process-specific value lives in the per-service toml.
+     `[build].builder = "DOCKERFILE"` line in `railway.toml` and
+     autodetect Python instead, which fails on the monorepo layout).
+   - **Build → Dockerfile Path**: see table below (one Dockerfile per
+     service; do not leave blank — the default `Dockerfile` no longer
+     exists).
+   - **Deploy → Pre-deploy Command**: see table below (web only — the
+     other two **must** leave it empty).
+   - **Deploy → Start Command**: see table below (overrides the toml's
+     default).
+   - **Deploy → Healthcheck Path**: `/api/health/` (web only; blank for
+     worker/beat).
 
 The `worker` service **must** stay deployed for contract uploads to finish after OCR:
 it runs `ingestion.process_submission_pipeline` (F2 → rubric → delivery). Without it,
 submissions remain stuck past `extracted`.
 
-| Service | Config File Path | Dockerfile Path (in that toml) | Start Command (in that toml) |
-|---|---|---|---|
-| `web` | `railway.toml` *(blank = default)* | `Dockerfile.web` | `sh -c 'gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -'` |
-| `worker` | `railway.worker.toml` | `Dockerfile.worker` | `celery -A config.celery worker -l INFO --concurrency=2` |
-| `beat` | `railway.beat.toml` | `Dockerfile.beat` | `celery -A config.celery beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler` |
+| Service | Dockerfile Path | Pre-deploy Command | Start Command | Healthcheck Path |
+|---|---|---|---|---|
+| `web` | `Dockerfile.web` | `python manage.py migrate --noinput && python manage.py collectstatic --noinput` | `sh -c 'gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -'` | `/api/health/` |
+| `worker` | `Dockerfile.worker` | *(empty)* | `celery -A config.celery worker -l INFO --concurrency=2` | *(empty)* |
+| `beat` | `Dockerfile.beat` | *(empty)* | `celery -A config.celery beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler` | *(empty)* |
+
+> **Why everything lives in the dashboard.** All three services share
+> `/backend` as Root Directory and therefore load the same
+> `backend/railway.toml`. Railway's config-as-code precedence
+> (https://docs.railway.com/config-as-code/reference) makes any key in
+> that file **override the dashboard**, so process-specific keys
+> (`dockerfilePath`, `startCommand`, `preDeployCommand`,
+> `healthcheckPath`) cannot live in the shared toml — they'd force the
+> worker / beat services into the web stack. The toml therefore only
+> carries the truly-shared `builder = DOCKERFILE` and the restart
+> policy; everything else is in the dashboard per service.
 
 > **Why one Dockerfile per service.** Railway's dashboard does not expose
 > `--target` for multi-stage builds reliably, so each process ships its own
@@ -156,19 +169,10 @@ submissions remain stuck past `extracted`.
 > three). The `worker` image adds Tesseract + Poppler + libheif for OCR;
 > `web` and `beat` skip those layers for a smaller image.
 
-> **Why `web` owns `preDeployCommand`.** `railway.toml` runs
-> `python manage.py migrate && collectstatic` before traffic shifts.
-> The worker/beat toml files **omit** that key — running migrate from
-> three services in parallel races on Postgres advisory locks.
-> Migrations are idempotent so running them on every web deploy is safe.
-
-> **Why three toml files instead of one + dashboard overrides.**
-> Railway's config-as-code precedence rules (https://docs.railway.com/config-as-code/reference)
-> make any key set in the loaded toml **override the dashboard**. A
-> single shared `railway.toml` with `dockerfilePath = "Dockerfile.web"`
-> silently forces the worker and beat services to build the web image,
-> regardless of what the dashboard says. The per-service file split
-> keeps every process-specific knob in code and prevents that drift.
+> **Why `web` owns `preDeployCommand`.** Running `manage.py migrate +
+> collectstatic` from three services in parallel races on Postgres
+> advisory locks. The web is the only service that touches the schema
+> on deploy. Worker and beat **must** leave Pre-deploy Command empty.
 
 > **Domain only on `web`.** Settings → Networking → Generate Domain
 > only for the `web` service. Worker and beat are private.
