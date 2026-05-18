@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import sys
+
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
@@ -9,6 +11,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from django.utils import timezone
+
+
+def _web_banner(message: str, **fields) -> None:
+    extras = "  ".join(f"{k}={v}" for k, v in fields.items() if v is not None)
+    line = f"  [WEB]    {message:<32}  {extras}".rstrip()
+    print(line, file=sys.stdout, flush=True)
 
 from ingestion.application.ocr.errors import NotAnalyzableError, NotAnalyzableReason
 from ingestion.application.post_ocr_pipeline import schedule_post_ocr_pipeline
@@ -46,6 +54,12 @@ class SubmissionUploadView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request) -> Response:
+        _web_banner(
+            "POST /api/v1/submissions/",
+            content_type=request.content_type,
+            field_keys=list(request.data.keys()),
+            file_keys=list(request.FILES.keys()),
+        )
         merged = merge_submission_upload_aliases(request.data)
         require_disclaimer_accepted_or_raise(merged)
 
@@ -109,6 +123,7 @@ class SubmissionUploadView(APIView):
         try:
             outcome = ingest_upload(req)
         except NotAnalyzableError as exc:
+            _web_banner("400 NotAnalyzable", code=exc.reason.value, msg=exc.message[:160])
             return Response(
                 {
                     "error": "not_analyzable",
@@ -119,6 +134,13 @@ class SubmissionUploadView(APIView):
             )
 
         sub = outcome.submission
+        _web_banner(
+            "ingest outcome",
+            submission_id=str(sub.id)[:8],
+            created=outcome.created,
+            status=sub.processing_status,
+            error_code=sub.error_code,
+        )
 
         # PRD §7.4 — Spanish-only policy returns HTTP 422 LANGUAGE_NOT_SUPPORTED
         # when the language gate rejects the submission, even though the OCR
