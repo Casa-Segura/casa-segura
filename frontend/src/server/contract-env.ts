@@ -62,6 +62,12 @@ export function readUploadEnabled(): boolean {
   return process.env.CASASEGURA_UPLOAD_ENABLED !== "false";
 }
 
+/** Optional readiness path (CS-008); probed only when polling times out. Default `/api/ready/`. */
+export function readContractApiReadyPath(): string {
+  const p = process.env.CASASEGURA_API_READY_PATH?.trim();
+  return p && p.length ? p : "/api/ready/";
+}
+
 /**
  * Path template for the public HTML report (F7 `GET /r/{id}` style).
  * Placeholder `{{id}}` is replaced with `public_short_id` (URL-encoded).

@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from django.utils import timezone
 
 from ingestion.application.ocr.errors import NotAnalyzableError, NotAnalyzableReason
+from ingestion.application.post_ocr_pipeline import schedule_post_ocr_pipeline
 from ingestion.application.upload_service import (
     FileUpload,
     UploadRequest,
@@ -142,6 +143,20 @@ class SubmissionUploadView(APIView):
                 },
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
+
+        handoff = outcome.extracted_text_handoff
+        if (
+            handoff
+            and sub.processing_status == ProcessingStatus.EXTRACTED.value
+            and sub.analysis_id is None
+        ):
+            schedule_post_ocr_pipeline(
+                submission_id=str(sub.id),
+                extracted_text=handoff,
+                delivery_channel=serializer.validated_data["delivery_channel"],
+                delivery_target=serializer.validated_data.get("delivery_target"),
+            )
+            sub.refresh_from_db(fields=["processing_status", "analysis_id"])
 
         body = SubmissionResponseSerializer(sub).data
         http_status = status.HTTP_201_CREATED if outcome.created else status.HTTP_200_OK

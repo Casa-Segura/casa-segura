@@ -139,6 +139,10 @@ For each of `web`, `worker`, `beat`:
    - **Deploy → Healthcheck Path**: `/api/health/` (web only; blank for
      worker/beat).
 
+The `worker` service **must** stay deployed for contract uploads to finish after OCR:
+it runs `ingestion.process_submission_pipeline` (F2 → rubric → delivery). Without it,
+submissions remain stuck past `extracted`.
+
 | Service | Dockerfile Path | Start Command |
 |---|---|---|
 | `web` | `Dockerfile.web` *(default from `railway.toml`)* | `sh -c 'gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -'` |
@@ -182,6 +186,8 @@ replaced — type `${{` in the value field and Railway autocompletes.
 | `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` | Reference variable. Overrides discrete `DB_*` knobs |
 | `CELERY_BROKER_URL` | `${{Redis.REDIS_URL}}` | Reference variable |
 | `CELERY_RESULT_BACKEND` | `${{Redis.REDIS_URL}}` | Reference variable |
+| `INGEST_HANDOFF_REDIS_URL` | _(omit)_ | Optional; defaults to `CELERY_BROKER_URL`. Use a dedicated Redis DB only if you intentionally isolate Celery broker traffic from OCR JSON blobs |
+| `INGEST_HANDOFF_TTL_SECONDS` | `300` | TTL for transient OCR→worker payloads (never stored in Postgres) |
 | `OPENROUTER_API_KEY` | `sk-or-v1-...` | Secret; from OpenRouter dashboard |
 | `OPENROUTER_OCR_MODEL` | `mistralai/pixtral-large-2411` | Or whatever model the current EPIC-02 plan locks |
 | `OPENROUTER_PDF_PLUGIN_ENGINE` | `mistral-ocr` | |
@@ -218,6 +224,11 @@ After all three services + Postgres + Redis are wired:
    `celery@... ready` within ~20s.
 5. Trigger a deploy on `beat`. Logs should show
    `beat: Starting...` (only one beat instance — never scale to >1).
+6. End-to-end contract path: after `POST /api/v1/submissions/` from the app,
+   `worker` logs should show `pipeline.task.completed` (or structured equivalents)
+   once `ingestion.process_submission_pipeline` finishes. If uploads stall at
+   `extracted`, confirm Redis variables match on **both** `web` and `worker`
+   and that the worker service is running.
 
 ---
 
@@ -242,3 +253,5 @@ After all three services + Postgres + Redis are wired:
   `RAILWAY_PUBLIC_DOMAIN` auto-host, WhiteNoise, `SECURE_PROXY_SSL_HEADER`.
 - `backend/.env.example` — Documents Railway-only env vars in its tail
   section (commented; not meant for local `.env`).
+- `backend/ingestion/application/post_ocr_pipeline.py` — Redis handoff + enqueue after OCR.
+- `backend/ingestion/infrastructure/celery/pipeline_tasks.py` — Celery task `ingestion.process_submission_pipeline`.

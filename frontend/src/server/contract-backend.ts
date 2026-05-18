@@ -9,6 +9,7 @@ import {
 } from "@/lib/backend-error-map";
 import {
   readContractApiBase,
+  readContractApiReadyPath,
   readPollBackoffMsSeries,
   readPollBudgetMs,
   readSubmissionStatusTemplate,
@@ -352,6 +353,26 @@ export type FlowResult =
       fatal?: boolean;
     };
 
+async function probeApiReadyAfterPollTimeout(base: string): Promise<boolean> {
+  const path = readContractApiReadyPath();
+  const url = `${base}${path.startsWith("/") ? path : `/${path}`}`;
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), 10_000);
+  try {
+    const res = await fetch(url, {
+      method: "GET",
+      headers: DEFAULT_HEADERS_ACCEPT,
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    clearTimeout(t);
+    return res.ok;
+  } catch {
+    clearTimeout(t);
+    return false;
+  }
+}
+
 /** Joins multipart forward + backoff polling inside the Server Action (single client round-trip). */
 export async function runContractSubmissionServerFlow(
   formData: FormData,
@@ -386,11 +407,13 @@ export async function runContractSubmissionServerFlow(
 
   const terminal = await pollSubmissionUntilTerminal(post.submissionId);
   if ("kind" in terminal && terminal.kind === "timeout") {
+    const backendLikelyUp = await probeApiReadyAfterPollTimeout(base);
     return {
       outcome: "error",
       fatal: false,
-      message:
-        "Seguimos analizándolo en servidor; la consulta tardó más de lo que podemos mostrar desde aquí. Si no recibes nada por el canal elegido, vuelve a intentar dentro de varios minutos.",
+      message: backendLikelyUp
+        ? "Seguimos procesando tu contrato en segundo plano y puede tardar varios minutos más. Si elegiste SMS o correo, te avisaremos cuando el envío esté confirmado; si solo elegiste enlace web, abrilo desde aquí cuando el estado pase a disponible. Si no ves cambios, volvé a intentar más tarde."
+        : "No pudimos confirmar que el servidor terminó el análisis a tiempo y el chequeo rápido de disponibilidad falló: revisá que la API y el worker de Celery estén activos. Podés intentar de nuevo en varios minutos.",
     };
   }
 
@@ -423,10 +446,10 @@ function summarizeChannelFromFd(fd: FormData): string {
   const ch = `${fd.get("delivery_channel") ?? ""}`;
   switch (ch) {
     case "sms_summary":
-      return "Te enviamos un SMS con un breve resumen y enlace cuando esté.";
+      return "Si elegiste SMS: enviaremos un breve resumen y enlace cuando el envío esté confirmado.";
     case "email_pdf":
-      return "Recibirás un PDF si el proceso termina bien.";
+      return "Si elegiste correo: enviaremos el PDF cuando el proceso termine y el envío esté confirmado.";
     default:
-      return "Podrás abrir tu informe desde un enlace cuando esté listo.";
+      return "Si elegiste solo enlace web: podrás abrir el informe aquí cuando el enlace esté disponible.";
   }
 }

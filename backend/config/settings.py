@@ -208,6 +208,10 @@ SIMPLE_JWT = {
 
 CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="redis://localhost:6379/0")
+# Optional override when Celery shares Redis but handoff keys should use another DB/URL.
+INGEST_HANDOFF_REDIS_URL = env("INGEST_HANDOFF_REDIS_URL", default="")
+# OCR → pipeline worker transient payload TTL (seconds); keeps extracted text out of Postgres.
+INGEST_HANDOFF_TTL_SECONDS = env.int("INGEST_HANDOFF_TTL_SECONDS", default=300)
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"

@@ -13,4 +13,5 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 
 # Retention tasks live outside INSTALLED_APPS autodiscovery path (ADR-0005).
+import ingestion.infrastructure.celery.pipeline_tasks  # noqa: E402, F401
 import platform_core.worker.retention.tasks  # noqa: E402, F401

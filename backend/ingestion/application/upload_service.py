@@ -12,9 +12,9 @@ Public surface:
     ``ContractSubmission``. Accepts ``files=(FileUpload(...), …)`` with
     1-50 entries (PRD §US-01 / [[CS-050]]).
 
-The function is intentionally synchronous: in Phase 1 the request is
-served end-to-end inside the worker process. Async pipelining via Celery
-will be added in Phase 2 (see CS-060 follow-ups).
+The function is intentionally synchronous for OCR inside the web worker.
+Classification + rubric + delivery run on the Celery ``ingestion.process_submission_pipeline`` task
+after a Redis handoff (see ``ingestion.application.post_ocr_pipeline``).
 """
 
 from __future__ import annotations
@@ -106,6 +106,7 @@ class UploadRequest:
 class IngestOutcome:
     submission: ContractSubmission
     created: bool
+    extracted_text_handoff: str | None = None
 
 
 def ingest_upload(req: UploadRequest) -> IngestOutcome:
@@ -117,35 +118,41 @@ def ingest_upload(req: UploadRequest) -> IngestOutcome:
 
     existing = ContractSubmission.objects.filter(submission_hash=submission_hash).first()
     if existing is not None:
-        logger.info(
-            "ingest.idempotent_hit",
-            submission_id=str(existing.id),
-            status=existing.processing_status,
+        resume_pipeline = existing.processing_status == ProcessingStatus.EXTRACTED.value and existing.analysis_id is None
+        if not resume_pipeline:
+            logger.info(
+                "ingest.idempotent_hit",
+                submission_id=str(existing.id),
+                status=existing.processing_status,
+            )
+            return IngestOutcome(submission=existing, created=False)
+
+        submission = existing
+        created = False
+    else:
+        # Resolve routing for the first file so the submission carries an
+        # attempted strategy label for observability. Multi-file submissions
+        # route each file independently inside ``_run_batch_extraction``.
+        primary_file = req.files[0]
+        routing = _timed(
+            "route",
+            "unknown",
+            detect_kind,
+            content_type=primary_file.content_type,
+            file_bytes=primary_file.file_bytes,
+            filename=primary_file.filename,
+            force_strategy=req.force_strategy,
         )
-        return IngestOutcome(submission=existing, created=False)
 
-    # Resolve routing for the first file so the submission carries an
-    # attempted strategy label for observability. Multi-file submissions
-    # route each file independently inside ``_run_batch_extraction``.
-    primary_file = req.files[0]
-    routing = _timed(
-        "route",
-        "unknown",
-        detect_kind,
-        content_type=primary_file.content_type,
-        file_bytes=primary_file.file_bytes,
-        filename=primary_file.filename,
-        force_strategy=req.force_strategy,
-    )
-
-    total_bytes = sum(len(f.file_bytes) for f in req.files)
-    submission = _create_initial_submission(
-        req=req,
-        submission_hash=submission_hash,
-        routing_strategy=routing.strategy,
-        file_format=routing.file_format,
-        total_bytes=total_bytes,
-    )
+        total_bytes = sum(len(f.file_bytes) for f in req.files)
+        submission = _create_initial_submission(
+            req=req,
+            submission_hash=submission_hash,
+            routing_strategy=routing.strategy,
+            file_format=routing.file_format,
+            total_bytes=total_bytes,
+        )
+        created = True
 
     try:
         combined = _run_batch_extraction(submission, req=req)
@@ -153,7 +160,7 @@ def ingest_upload(req: UploadRequest) -> IngestOutcome:
     except NotAnalyzableError as exc:
         _mark_failed(submission, exc)
         INGEST_OUTCOMES.labels(outcome="rejected", error_code=exc.reason.value).inc()
-        return IngestOutcome(submission=submission, created=True)
+        return IngestOutcome(submission=submission, created=created)
 
     _persist_success(
         submission,
@@ -162,7 +169,11 @@ def ingest_upload(req: UploadRequest) -> IngestOutcome:
         strategy=combined.winning_strategy,
     )
     INGEST_OUTCOMES.labels(outcome="success", error_code="").inc()
-    return IngestOutcome(submission=submission, created=True)
+    return IngestOutcome(
+        submission=submission,
+        created=created,
+        extracted_text_handoff=combined.result.text,
+    )
 
 
 # ─── batch helpers ─────────────────────────────────────────────────────

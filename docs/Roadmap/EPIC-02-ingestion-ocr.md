@@ -62,6 +62,7 @@ Receive contract uploads (PDF, JPG, PNG, HEIC, WEBP), detect document kind, extr
 - [[CS-058]] — Disclaimer acceptance gate
 - [[CS-059]] — Page-count and size caps (`PDF_MAX_PAGES`)
 - [[CS-060]] — Latency budget instrumentation
+- [[CS-359]] — Post-OCR Celery pipeline (handoff → F2 → rubric → delivery) → **done** 2026-05-17
 
 ## Notes
 
@@ -72,6 +73,7 @@ Receive contract uploads (PDF, JPG, PNG, HEIC, WEBP), detect document kind, extr
 
 EPIC-02 closed alongside the CS-059 + CS-051 commit. Phase 1 closure follows because EPIC-03 (Legal Corpus & RAG) is already `done`. Open follow-ups tracked outside this epic:
 
+- Post-OCR Celery continuation from public upload through F2, rubric, and delivery handoff — shipped as [[CS-359]] (**done** 2026-05-17); requires a running Celery worker + Redis handoff parity with web (see `RAILWAY.md`).
 - HTTP 409 `is_duplicate=true` envelope on resubmission — blocked by [[EPIC-04]] / [[EPIC-06]] (ContractAnalysis lookup). Recorded in [[CS-051]] AC checklist.
 - Multi-file majority routing rule for mixed-MIME submissions — recorded in [[CS-052]] AC checklist; the router signature is ready, the orchestrator still treats each file independently which is correct for the MVP.
 - Submission-wide 5-minute wall-clock budget — parked for the Phase 2 Celery refactor (noted in [[CS-054]] / [[CS-060]]).

@@ -32,13 +32,8 @@ from rubric.infrastructure.django.repositories import (
 logger = structlog.get_logger(__name__)
 
 
-@shared_task(name="rubric.evaluate_analysis", bind=True, max_retries=2, autoretry_for=(LookupError,))
-def evaluate_analysis(self, analysis_id: str) -> dict:
-    """Evaluate ``analysis_id`` end-to-end and persist the result.
-
-    Returns a compact dict for downstream tasks (F6 / F8) so they can
-    react without re-reading the row when they only need the band/score.
-    """
+def run_rubric_evaluation_sync(analysis_id: str) -> dict:
+    """Evaluate ``analysis_id`` synchronously (shared by Celery task + ingest pipeline)."""
 
     wall_start = time.perf_counter()
     logger.info("rubric.evaluate_analysis.started", analysis_id=analysis_id)
@@ -97,4 +92,15 @@ def evaluate_analysis(self, analysis_id: str) -> dict:
     }
 
 
-__all__ = ["evaluate_analysis"]
+@shared_task(name="rubric.evaluate_analysis", bind=True, max_retries=2, autoretry_for=(LookupError,))
+def evaluate_analysis(self, analysis_id: str) -> dict:
+    """Evaluate ``analysis_id`` end-to-end and persist the result.
+
+    Returns a compact dict for downstream tasks (F6 / F8) so they can
+    react without re-reading the row when they only need the band/score.
+    """
+
+    return run_rubric_evaluation_sync(analysis_id)
+
+
+__all__ = ["evaluate_analysis", "run_rubric_evaluation_sync"]
