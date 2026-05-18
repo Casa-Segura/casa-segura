@@ -20,7 +20,7 @@ from delivery.application.provider_errors import ClassifiedDeliveryError, classi
 from delivery.application.retry_policy import next_attempt_not_before
 from delivery.application.sms_compose import SmsCompositionError, compose_sms_summary
 from delivery.application.sms_rate_limit import sms_send_allowed
-from delivery.application.stub_pdf import StubReportPdfGenerator
+from delivery.application.report_pdf_generator import ContractReportPdfGenerator
 from delivery.application.target_plaintext import plaintext_email, plaintext_phone
 from delivery.domain.enums import DeliveryRequestStatus, ErrorClassification
 from delivery.infrastructure.django.models import DeliveryRequest
@@ -246,7 +246,7 @@ def process_email_pdf_delivery(dr: DeliveryRequest) -> None:
         band_label=band_label,
         contract_type_code=analysis.contract_type,
     )
-    pdf_gen = StubReportPdfGenerator()
+    pdf_gen = ContractReportPdfGenerator()
     transport = ZavuEmailTransport()
 
     try:
