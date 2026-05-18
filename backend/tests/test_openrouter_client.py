@@ -5,6 +5,8 @@ Uses `respx` to mock the outbound HTTP layer; no real network calls.
 
 from __future__ import annotations
 
+import logging
+
 import httpx
 import pytest
 import respx
@@ -60,6 +62,28 @@ def test_chat_completion_returns_content_and_usage(mock_router):
     assert result.tokens_prompt == 10
     assert result.tokens_completion == 5
     assert result.cost_usd_cents == 1  # 0.0123 USD -> 1 cent (rounded)
+
+
+def test_chat_completion_logs_completed_event(mock_router, caplog):
+    mock_router.post(f"{BASE_URL}/chat/completions").mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "choices": [{"message": {"content": "extracted text"}}],
+                "usage": {"prompt_tokens": 10, "completion_tokens": 5, "cost": 0.0123},
+            },
+        )
+    )
+
+    with caplog.at_level(logging.INFO, logger="shared.llm.openrouter"):
+        with _client() as client:
+            client.chat_completion(
+                model="mistralai/pixtral-large-2411",
+                messages=[{"role": "user", "content": "hello"}],
+            )
+
+    merged = " ".join(rec.getMessage() for rec in caplog.records)
+    assert "openrouter.chat_completion.completed" in merged
 
 
 def test_chat_completion_injects_plugins_for_pdf(mock_router):
@@ -125,15 +149,19 @@ def test_missing_api_key_raises_at_call_time():
     assert exc.value.status_code is None
 
 
-def test_exhausted_retries_raise(mock_router):
+def test_exhausted_retries_raise(mock_router, caplog):
     mock_router.post(f"{BASE_URL}/chat/completions").mock(return_value=httpx.Response(500, json={"error": "boom"}))
 
-    with _client(max_retries=2) as client:
-        with pytest.raises(OpenRouterError):
-            client.chat_completion(
-                model="m",
-                messages=[{"role": "user", "content": "x"}],
-            )
+    with caplog.at_level(logging.WARNING, logger="shared.llm.openrouter"):
+        with _client(max_retries=2) as client:
+            with pytest.raises(OpenRouterError):
+                client.chat_completion(
+                    model="m",
+                    messages=[{"role": "user", "content": "x"}],
+                )
+
+    merged = " ".join(rec.getMessage() for rec in caplog.records)
+    assert "openrouter.chat_completion.exhausted_retries" in merged
 
 
 def test_response_without_content_raises(mock_router):

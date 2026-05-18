@@ -17,6 +17,7 @@ Exercises the persisted envelope EPIC-06 will consume:
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 import pytest
@@ -204,6 +205,25 @@ def test_happy_cvp_persists_contract_analysis(mock_openrouter, active_catalog):
     assert rate_comparisons[0].metric_label == "Tasa efectiva anual vs financiamiento directo"
 
 
+@pytest.mark.django_db
+def test_happy_path_emits_f2_pipeline_step_logs(mock_openrouter, active_catalog, caplog):
+    _stage_calls(
+        mock_openrouter,
+        _classification_payload(),
+        _leasing_skip_payload(),
+        _project_name_payload(),
+        _economic_payload_full(),
+    )
+    with caplog.at_level(logging.INFO, logger="classification.application.orchestrator"):
+        with F2Orchestrator(client=_client()) as orchestrator:
+            orchestrator.run(submission_hash=SUBMISSION_HASH, extracted_text=TEXT)
+
+    merged = " ".join(rec.getMessage() for rec in caplog.records)
+    assert "f2.pipeline.step_started" in merged
+    assert "f2.pipeline.step_finished" in merged
+    assert "f2_orchestrator.completed" in merged
+
+
 # ---------------------------------------------------------------------------
 # CVP -> LEA reclassification
 # ---------------------------------------------------------------------------
@@ -282,6 +302,7 @@ def test_low_confidence_returns_not_classifiable_envelope(mock_openrouter, activ
 def test_parse_failure_marks_submission_failed_and_creates_no_row(
     mock_openrouter,
     active_catalog,
+    caplog,
 ):
     """LLM_PARSE_FAILED -> ContractSubmission.processing_status flipped, no row."""
     submission = ContractSubmissionFactory(
@@ -297,11 +318,15 @@ def test_parse_failure_marks_submission_failed_and_creates_no_row(
         ),
     )
 
-    with F2Orchestrator(client=_client()) as orchestrator:
-        with pytest.raises(F2OrchestratorError) as exc:
-            orchestrator.run(submission_hash=SUBMISSION_HASH, extracted_text=TEXT)
+    with caplog.at_level(logging.WARNING, logger="classification.application.orchestrator"):
+        with F2Orchestrator(client=_client()) as orchestrator:
+            with pytest.raises(F2OrchestratorError) as exc:
+                orchestrator.run(submission_hash=SUBMISSION_HASH, extracted_text=TEXT)
 
     assert exc.value.code == "FAILED_CLASSIFICATION"
+    merged = " ".join(rec.getMessage() for rec in caplog.records)
+    assert "f2.pipeline.step_failed" in merged
+
     submission.refresh_from_db()
     assert submission.processing_status == ProcessingStatus.FAILED_CLASSIFICATION.value
     assert ContractAnalysis.objects.filter(submission_hash=SUBMISSION_HASH).count() == 0

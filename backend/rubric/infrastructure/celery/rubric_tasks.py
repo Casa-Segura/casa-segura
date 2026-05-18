@@ -15,6 +15,7 @@ The main task ``rubric.evaluate_analysis`` orchestrates:
 from __future__ import annotations
 
 import asyncio
+import time
 
 import structlog
 from celery import shared_task
@@ -38,6 +39,9 @@ def evaluate_analysis(self, analysis_id: str) -> dict:
     Returns a compact dict for downstream tasks (F6 / F8) so they can
     react without re-reading the row when they only need the band/score.
     """
+
+    wall_start = time.perf_counter()
+    logger.info("rubric.evaluate_analysis.started", analysis_id=analysis_id)
 
     analysis = ContractAnalysis.objects.select_related("rubric_version", "corpus_version", "benchmark_version").get(
         pk=analysis_id
@@ -71,9 +75,11 @@ def evaluate_analysis(self, analysis_id: str) -> dict:
 
     ContractAnalysisRepository().persist(analysis_id, result)
 
+    elapsed_ms = round((time.perf_counter() - wall_start) * 1000)
     logger.info(
         "rubric.evaluate_analysis.completed",
         analysis_id=analysis_id,
+        elapsed_ms=elapsed_ms,
         score_total=result.score_total,
         band=result.band.value,
         overrides=[c.value for c in result.override_triggered],

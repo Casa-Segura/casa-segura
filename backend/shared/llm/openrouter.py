@@ -26,6 +26,8 @@ import structlog
 
 from django.conf import settings
 
+from shared.observability.pipeline_metrics import OPENROUTER_REQUEST_DURATION
+
 logger = structlog.get_logger(__name__)
 
 
@@ -131,12 +133,18 @@ class OpenRouterClient:
             "X-Title": self.x_title,
         }
 
+        def _observe_error(seconds: float) -> None:
+            OPENROUTER_REQUEST_DURATION.labels(model=model, outcome="error").observe(seconds)
+
+        wall_start = time.perf_counter()
         last_exc: Exception | None = None
         for attempt in range(1, self.max_retries + 1):
+            req_start = time.perf_counter()
             try:
                 response = self._client.post("/chat/completions", json=body, headers=headers)
             except (httpx.TransportError, httpx.TimeoutException) as exc:
                 last_exc = exc
+                _observe_error(time.perf_counter() - req_start)
                 logger.warning(
                     "openrouter.transport_error",
                     attempt=attempt,
@@ -152,6 +160,7 @@ class OpenRouterClient:
                     status_code=response.status_code,
                     payload=_safe_json(response),
                 )
+                _observe_error(time.perf_counter() - req_start)
                 logger.warning(
                     "openrouter.upstream_5xx",
                     attempt=attempt,
@@ -162,15 +171,38 @@ class OpenRouterClient:
                 continue
 
             if response.status_code >= 400:
+                _observe_error(time.perf_counter() - req_start)
                 raise OpenRouterError(
                     f"OpenRouter {response.status_code}: {response.text[:500]}",
                     status_code=response.status_code,
                     payload=_safe_json(response),
                 )
 
-            return _parse_response(response.json())
+            try:
+                payload = response.json()
+                parsed = _parse_response(payload)
+            except OpenRouterError:
+                _observe_error(time.perf_counter() - req_start)
+                raise
+
+            elapsed_ms = round((time.perf_counter() - req_start) * 1000)
+            OPENROUTER_REQUEST_DURATION.labels(model=model, outcome="success").observe(elapsed_ms / 1000.0)
+            logger.info(
+                "openrouter.chat_completion.completed",
+                model=model,
+                elapsed_ms=elapsed_ms,
+                attempt=attempt,
+            )
+            return parsed
 
         # Exhausted retries.
+        elapsed_ms_total = round((time.perf_counter() - wall_start) * 1000)
+        logger.warning(
+            "openrouter.chat_completion.exhausted_retries",
+            model=model,
+            attempts=self.max_retries,
+            elapsed_ms_total=elapsed_ms_total,
+        )
         raise OpenRouterError(
             "OpenRouter exhausted retries",
             status_code=getattr(last_exc, "status_code", None),

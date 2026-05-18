@@ -61,13 +61,14 @@ surface.
 
 from __future__ import annotations
 
-import logging
 import secrets
 import string
+import time
 import uuid
 from dataclasses import dataclass
 from typing import Any
 
+import structlog
 from django.db import transaction
 from django.utils import timezone
 
@@ -110,8 +111,41 @@ from ingestion.infrastructure.django.models import ContractSubmission
 from platform_core.infrastructure.django.models import ContractAnalysis
 from rubric.infrastructure.django.models import RubricVersion
 from shared.llm.openrouter import OpenRouterClient
+from shared.observability.pipeline_metrics import F2_STAGE_DURATION
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
+
+
+def _submission_hash12(submission_hash: str) -> str:
+    return submission_hash.strip()[:12]
+
+
+def _f2_step_started(step: str, submission_hash12: str) -> float:
+    logger.info("f2.pipeline.step_started", step=step, submission_hash12=submission_hash12)
+    return time.perf_counter()
+
+
+def _f2_step_finished(step: str, submission_hash12: str, start: float, **extra: Any) -> None:
+    elapsed_ms = round((time.perf_counter() - start) * 1000)
+    F2_STAGE_DURATION.labels(step=step).observe(elapsed_ms / 1000.0)
+    logger.info(
+        "f2.pipeline.step_finished",
+        step=step,
+        submission_hash12=submission_hash12,
+        elapsed_ms=elapsed_ms,
+        **extra,
+    )
+
+
+def _f2_step_failed(step: str, submission_hash12: str, start: float, code: str | None) -> None:
+    elapsed_ms = round((time.perf_counter() - start) * 1000)
+    logger.warning(
+        "f2.pipeline.step_failed",
+        step=step,
+        submission_hash12=submission_hash12,
+        code=code or "unknown",
+        elapsed_ms=elapsed_ms,
+    )
 
 
 # Contract types that have an economic prompt registered in
@@ -230,7 +264,7 @@ class F2Orchestrator:
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
-    def run(self, *, submission_hash: str, extracted_text: str) -> F2OrchestratorResult:
+    def run(self, *, submission_hash: str, extracted_text: str) -> F2OrchestratorResult:  # noqa: PLR0915
         """Run the full F2 pipeline and persist a :class:`ContractAnalysis`.
 
         Raises :class:`F2OrchestratorError` on classification parse failure
@@ -242,45 +276,107 @@ class F2Orchestrator:
         if not extracted_text or not extracted_text.strip():
             raise F2OrchestratorError("extracted_text is empty", code="EMPTY_INPUT")
 
+        h12 = _submission_hash12(submission_hash)
+
         # Step 1: classify (PRD F2 §US-01).
-        classification = self._classify(submission_hash, extracted_text)
+        start = _f2_step_started("classify", h12)
+        try:
+            classification = self._classify(submission_hash, extracted_text)
+        except F2OrchestratorError as exc:
+            _f2_step_failed("classify", h12, start, exc.code)
+            raise
+        except Exception as exc:
+            _f2_step_failed("classify", h12, start, type(exc).__name__)
+            raise
+        _f2_step_finished(
+            "classify",
+            h12,
+            start,
+            classification_attempts=classification.classification_attempts,
+            declared_contract_type=classification.contract_type.value,
+        )
 
         # Step 2: leasing detection (skipped for non-applicable types).
-        leasing = self._detect_leasing(extracted_text, classification.contract_type)
-        effective_type = leasing.recommended_type if leasing.should_reclassify else classification.contract_type
+        start = _f2_step_started("leasing", h12)
+        try:
+            leasing = self._detect_leasing(extracted_text, classification.contract_type)
+            effective_type = leasing.recommended_type if leasing.should_reclassify else classification.contract_type
+        except F2OrchestratorError as exc:
+            _f2_step_failed("leasing", h12, start, exc.code)
+            raise
+        except Exception as exc:
+            _f2_step_failed("leasing", h12, start, type(exc).__name__)
+            raise
+        _f2_step_finished(
+            "leasing",
+            h12,
+            start,
+            should_reclassify=leasing.should_reclassify,
+            leasing_severity=leasing.severity.value,
+            effective_contract_type=effective_type.value,
+        )
 
         # Step 3: project name extraction + linkage.
-        link_result, name_canonical = self._link_project(extracted_text, submission_hash)
+        start = _f2_step_started("project_link", h12)
+        try:
+            link_result, name_canonical = self._link_project(extracted_text, submission_hash)
+        except F2OrchestratorError as exc:
+            _f2_step_failed("project_link", h12, start, exc.code)
+            raise
+        except Exception as exc:
+            _f2_step_failed("project_link", h12, start, type(exc).__name__)
+            raise
+        _f2_step_finished("project_link", h12, start)
 
         # Step 4: economic extraction (skipped on NOT_CLASSIFIABLE).
-        extraction = self._extract_economics(extracted_text, effective_type)
-
-        # Step 5: aggregate into the per-slot status payload.
-        aggregated = aggregate_extraction(extraction)
-
-        # Step 6: single transactional write to ContractAnalysis.
-        analysis, was_created = self._persist(
-            submission_hash=submission_hash,
-            classification=classification,
-            leasing=leasing,
-            effective_type=effective_type,
-            link_result_project_id=link_result,
-            project_name_canonical=name_canonical,
-            extraction=extraction,
-            aggregated=aggregated,
+        start = _f2_step_started("economics", h12)
+        try:
+            extraction = self._extract_economics(extracted_text, effective_type)
+        except F2OrchestratorError as exc:
+            _f2_step_failed("economics", h12, start, exc.code)
+            raise
+        except Exception as exc:
+            _f2_step_failed("economics", h12, start, type(exc).__name__)
+            raise
+        _f2_step_finished(
+            "economics",
+            h12,
+            start,
+            skipped_llm=extraction.contract_type is ContractType.NOT_CLASSIFIABLE
+            or extraction.contract_type not in _ECONOMIC_CONTRACT_TYPES,
         )
+
+        # Step 5-6: aggregate + single transactional write (includes F5 analyze inside persist).
+        start = _f2_step_started("persist", h12)
+        try:
+            aggregated = aggregate_extraction(extraction)
+            analysis, was_created = self._persist(
+                submission_hash=submission_hash,
+                classification=classification,
+                leasing=leasing,
+                effective_type=effective_type,
+                link_result_project_id=link_result,
+                project_name_canonical=name_canonical,
+                extraction=extraction,
+                aggregated=aggregated,
+            )
+        except F2OrchestratorError as exc:
+            _f2_step_failed("persist", h12, start, exc.code)
+            raise
+        except Exception as exc:
+            _f2_step_failed("persist", h12, start, type(exc).__name__)
+            raise
+        _f2_step_finished("persist", h12, start, was_created=was_created)
 
         logger.info(
             "f2_orchestrator.completed",
-            extra={
-                "submission_hash": submission_hash[:12],
-                "effective_contract_type": effective_type.value,
-                "was_created": was_created,
-                "classification_attempts": classification.classification_attempts,
-                "leasing_severity": leasing.severity.value,
-                "unverifiable_count": len(aggregated.unverifiable_fields),
-                "ambiguous_count": aggregated.ambiguous_count,
-            },
+            submission_hash12=h12,
+            effective_contract_type=effective_type.value,
+            was_created=was_created,
+            classification_attempts=classification.classification_attempts,
+            leasing_severity=leasing.severity.value,
+            unverifiable_count=len(aggregated.unverifiable_fields),
+            ambiguous_count=aggregated.ambiguous_count,
         )
 
         return F2OrchestratorResult(
@@ -385,7 +481,7 @@ class F2Orchestrator:
             # error the caller cares about.
             logger.info(
                 "f2_orchestrator.submission_not_found_on_mark_failed",
-                extra={"submission_hash": submission_hash[:12]},
+                submission_hash12=_submission_hash12(submission_hash),
             )
 
     def _persist(
