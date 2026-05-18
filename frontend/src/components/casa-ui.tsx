@@ -1,6 +1,7 @@
 "use client";
 
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { LinkProps } from "next/link";
 import {
@@ -9,10 +10,10 @@ import {
   FileText,
   Info,
   Scales,
-  ShieldCheck,
   Warning,
   XCircle,
 } from "@phosphor-icons/react";
+import { BRAND_LOGO_ALT, BRAND_LOGO_PATH } from "@/lib/site";
 
 export const focusRing =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
@@ -38,23 +39,37 @@ const toneClasses: Record<Tone, string> = {
 export function BrandMark({
   label = "Casa Segura",
   inverse = false,
+  showLabel = true,
 }: {
   label?: string;
   inverse?: boolean;
+  /** When false, only the logo mark is shown (wordmark is in `alt` on the image). */
+  showLabel?: boolean;
 }) {
   return (
-    <span className="inline-flex items-center gap-2.5" translate="no">
-      <span className="inline-flex size-8 items-center justify-center rounded-[8px] bg-accent text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2)]">
-        <ShieldCheck size={18} weight="bold" aria-hidden />
-      </span>
-      <span
-        className={cx(
-          "text-sm font-semibold tracking-tight",
-          inverse ? "text-white/90" : "text-text-primary",
-        )}
-      >
-        {label}
-      </span>
+    <span
+      className="inline-flex items-center gap-2.5"
+      translate="no"
+      aria-label={showLabel ? undefined : label}
+    >
+      <Image
+        src={BRAND_LOGO_PATH}
+        alt={showLabel ? "" : BRAND_LOGO_ALT}
+        width={32}
+        height={32}
+        className="size-8 shrink-0 rounded-[8px]"
+        aria-hidden={showLabel ? true : undefined}
+      />
+      {showLabel ? (
+        <span
+          className={cx(
+            "text-sm font-semibold tracking-tight",
+            inverse ? "text-white/90" : "text-text-primary",
+          )}
+        >
+          {label}
+        </span>
+      ) : null}
     </span>
   );
 }

@@ -119,9 +119,8 @@ export default function PrivacyPage() {
                   href={PUBLIC_SOURCE_REPO_URL}
                   className="font-medium text-accent underline underline-offset-4 hover:opacity-90 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                   rel="noopener noreferrer"
-                  translate="no"
                 >
-                  {PUBLIC_SOURCE_REPO_URL.replace(/^https:\/\//, "")}
+                  <span translate="no">Casa Segura Repository</span>
                 </a>
               </p>
             </section>

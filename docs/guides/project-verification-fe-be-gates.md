@@ -2,6 +2,8 @@
 
 Operational reference for the optional `/verificacion-proyecto` surface and Django endpoints under `/api/v1/project-verification/`.
 
+> **Browser UI:** The Next.js segment under `/verificacion-proyecto` **redirects to `/`** on every request (hub and nested routes are not reachable in the browser). Server modules remain for maintenance and API rehearsals; behaviour below still describes **backend** gates and any direct HTTP calls to Django.
+
 ## Env contract — core gate
 
 | Side | Variable | Default | Truthy tokens |
@@ -38,12 +40,13 @@ Both sides should stay **paired**. A mismatch is louder than silently half-worki
 
 ## Behaviour matrix — route + handler pairing
 
-| Frontend gate | Backend gate | User-visible behaviour | Notes |
-|---|---|---|---|
-| On | On | Routes render (`/verificacion-proyecto/*`). OCR → manual handoff preserves structured prefills (`source=` query), manual POST flashes a short-lived **HTTP-only** verdict cookie (`/resultado`). | Pair with live `CASASEGURA_API_BASE_URL`. |
-| Off | Off | Next returns **404** for `/verificacion-proyecto` (`not-found` segment). Django endpoints reply **403** with CS‑009 envelopes (`error_code: project_verification_disabled`). | Mirrors “nothing to see here” while probes stay deterministic. |
-| On | Off | Hub renders, but uploads/manual POST/`demo-result` return **403** + `project_verification_disabled`; copy maps via `frontend/src/lib/backend-error-map.ts`. | Misconfigured rollout pairing — fix env before shipping UI. |
-| Off | On | Next hides routes (404). Direct API curls/tests keep working. | Staged rehearsals without exposing UI. |
+| Scope | Backend gate | Behaviour |
+|---|---|---|
+| Browser (`/verificacion-proyecto/*`) | any | **Always redirects to `/`.** Layout: [`frontend/src/app/verificacion-proyecto/layout.tsx`](../../../frontend/src/app/verificacion-proyecto/layout.tsx). |
+| Django API (`/api/v1/project-verification/...`) | Off | **403** with CS‑009 envelopes (`error_code: project_verification_disabled`). |
+| Django API (`/api/v1/project-verification/...`) | On | EPIC‑12 JSON contracts (manual POST, billboard stubs, etc.); pair with `CASASEGURA_API_BASE_URL` from Next server actions when exercising from the app shell. |
+
+The Next.js env flag `PROJECT_VERIFICATION_ENABLED` still gates **server actions** that call Django; it does **not** re-enable a public hub because the segment layout always redirects.
 
 There is intentionally **no browser E2E** in CI for this epic; regressions freeze at **Vitest**, **pytest**, and Django `manage.py check`.
 

@@ -132,6 +132,16 @@ infra/       # Ayudas para desarrollo local (p. ej. init de Postgres)
 
    Abre [http://localhost:3000](http://localhost:3000). Más detalle: [frontend/README.md](frontend/README.md).
 
+### Probar la experiencia web con datos de prueba
+
+Los PDF y la imagen en la carpeta compartida están pensados para **El Salvador**; el mismo flujo sirve para demos en **LATAM** cuando amplies muestras regionales.
+
+1. Abrí la carpeta **[datos de prueba](https://drive.google.com/drive/folders/1iTzumO-TPEulBXOxe4W6D0pTgGzWhtrl?usp=sharing)** en Google Drive (solo lectura).
+2. Descargá uno de los PDF de ejemplo (los prefijos del nombre indican escenarios distintos).
+3. En la app (local o desplegada), entrá a **`/subir`**, subí el archivo y seguí el informe hasta la entrega que configures.
+
+Para ver el análisis de punta a punta necesitás el backend y las variables descritas arriba; si solo querés recorrer la UX sin API activa, seguí el modo sin backend en [frontend/README.md](frontend/README.md).
+
 Guía para **protección de rama** / checks obligatorios: [`docs/meta/BRANCH_PROTECTION.md`](docs/meta/BRANCH_PROTECTION.md).
 
 ### Integración continua (CS-004)

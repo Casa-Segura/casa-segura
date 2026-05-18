@@ -1,20 +1,17 @@
-import { notFound } from "next/navigation";
-import { isProjectVerificationEnabled } from "@/lib/project-verification-env";
+import { redirect } from "next/navigation";
 
-/** Env gate must run per deployment/request — avoid baking `PROJECT_VERIFICATION_ENABLED` at build time. */
+/** Evaluate redirects per request — avoid baking route behaviour at build time. */
 export const dynamic = "force-dynamic";
 
 /**
- * When the gate is off, all routes under this segment return 404 via `not-found.tsx`
- * (CS-356 — optional flow must not look half-enabled).
+ * Optional billboard verification was retired from the public UI; deep links land on home.
+ * Backend gates under `PROJECT_VERIFICATION_*` still apply for API rehearsal.
  */
 export default function ProjectVerificationLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  if (!isProjectVerificationEnabled()) {
-    notFound();
-  }
-  return children;
+  void children;
+  redirect("/");
 }

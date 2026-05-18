@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowCta, BrandMark, DocumentPreview } from "@/components/casa-ui";
 import { DisclaimerFooter } from "@/components/disclaimer-footer";
+import { TestDataDriveCallout } from "@/components/test-data-drive-callout";
 import { DISCLAIMER_SHORT } from "@/legal/disclaimer";
-import { isProjectVerificationEnabled } from "@/lib/project-verification-env";
 import { PUBLIC_SOURCE_REPO_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -12,8 +12,6 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  const projectVerificationOn = isProjectVerificationEnabled();
-
   return (
     <div className="flex min-h-dvh flex-1 flex-col bg-bg px-4 py-6 sm:px-6 lg:px-8">
       <main
@@ -58,14 +56,6 @@ export default function Home() {
                 Analizar un contrato
                 <ArrowCta />
               </Link>
-              {projectVerificationOn ? (
-                <Link
-                  href="/verificacion-proyecto"
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-[var(--radius-input)] border border-border bg-surface px-5 py-3 text-center text-base font-semibold text-text-primary shadow-sm transition-[background-color,transform] duration-[var(--motion-fast)] hover:bg-accent-light active:translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                >
-                  Verificar proyecto
-                </Link>
-              ) : null}
             </div>
             <div className="grid grid-cols-3 gap-3 border-t border-border pt-5 text-sm text-text-secondary">
               <div>
@@ -125,6 +115,8 @@ export default function Home() {
           </div>
         </section>
 
+        <TestDataDriveCallout />
+
         <section className="rounded-[var(--radius-panel)] bg-accent p-6 text-white lg:p-10">
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
@@ -132,9 +124,15 @@ export default function Home() {
                 Empezá gratis. Comparte con quien lo necesite.
               </h2>
               <p className="mt-3 max-w-[64ch] text-sm leading-relaxed text-white/75">
-                El análisis básico no requiere registro ni tarjeta. La
-                verificación de proyectos es opcional y no bloquea el flujo de
-                contratos.
+                El análisis básico no requiere registro ni tarjeta: subí el
+                contrato en{" "}
+                <Link
+                  href="/subir"
+                  className="font-semibold text-white underline underline-offset-4 hover:text-white/95 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  /subir
+                </Link>{" "}
+                y seguí el informe paso a paso.
               </p>
             </div>
             <Link
@@ -182,14 +180,6 @@ export default function Home() {
               >
                 Política de privacidad
               </Link>
-              {projectVerificationOn ? (
-                <Link
-                  href="/verificacion-proyecto"
-                  className="inline-flex min-h-[44px] max-w-fit items-center justify-center font-medium text-accent underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                >
-                  Verificación de proyecto (opcional)
-                </Link>
-              ) : null}
               <a
                 href={PUBLIC_SOURCE_REPO_URL}
                 rel="noopener noreferrer"

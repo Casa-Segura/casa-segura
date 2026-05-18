@@ -2,6 +2,7 @@
 
 import { Camera, FileText, ShieldCheck } from "@phosphor-icons/react";
 import { StepPill, cx, focusRing } from "@/components/casa-ui";
+import { TestDataDriveCallout } from "@/components/test-data-drive-callout";
 
 export type ScanIntent = "contract" | "billboard";
 
@@ -63,6 +64,12 @@ export function ScanIntentSelector({
             <IntentCard key={option.id} option={option} onSelect={onSelect} />
           ))}
         </div>
+
+        <TestDataDriveCallout
+          variant="compact"
+          className="mt-6"
+          headingId="scan-test-data-heading"
+        />
       </div>
 
       <aside className="rounded-[var(--radius-panel)] border border-border bg-surface-muted p-5 shadow-[var(--shadow-soft)] lg:sticky lg:top-6">
