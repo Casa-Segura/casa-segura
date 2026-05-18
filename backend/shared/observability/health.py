@@ -11,7 +11,6 @@ Both emit structlog records with `correlation_id` already bound by
 from __future__ import annotations
 
 import socket
-from urllib.parse import urlparse
 
 import redis
 import structlog
@@ -60,11 +59,12 @@ def _check_redis() -> tuple[bool, str | None]:
     if not url or not url.startswith(("redis://", "rediss://")):
         return True, None  # Redis not configured -> not gating readiness
     try:
-        parsed = urlparse(url)
-        client = redis.Redis(
-            host=parsed.hostname or "localhost",
-            port=parsed.port or 6379,
-            db=int((parsed.path or "/0").lstrip("/") or 0),
+        # ``from_url`` honors username + password embedded in the URL.
+        # The earlier ``Redis(host=..., port=...)`` form discarded
+        # credentials and would surface as AuthenticationError on
+        # managed Redis (Railway, Upstash, Elasticache w/ auth).
+        client = redis.Redis.from_url(
+            url,
             socket_connect_timeout=1,
             socket_timeout=1,
         )

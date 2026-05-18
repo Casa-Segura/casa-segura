@@ -7,6 +7,9 @@ A structlog processor + a recursive-dict scrubber that:
   accidentally pasting bodies / OCR text into a log line.
 * Redacts substrings matching email / phone heuristics so an arbitrary
   ``message`` field can't leak contact data.
+* Skips entire values for structural / safe keys (timestamps, levels,
+  schema metadata, correlation ids, version stamps, http path/method)
+  so the redactor does not mangle deterministic fields.
 
 The scrubber is the *first* processor in the structlog chain (see
 ``shared/observability/logging.py``) so every downstream processor —
@@ -69,25 +72,95 @@ DENY_LOG_KEYS: frozenset[str] = frozenset(
     }
 )
 
+# Structural / non-PII keys the scrubber leaves untouched. Inline PII
+# regexes are skipped for these because their values are deterministic
+# IDs, ISO timestamps, version strings, or routing metadata. Including
+# the timestamp here fixes the ``[REDACTED]T01:02:[REDACTED]Z`` bug —
+# the phone regex was matching ``2026-05-18`` and ``17.123456Z``.
+SAFE_LOG_KEYS: frozenset[str] = frozenset(
+    {
+        "timestamp",
+        "time",
+        "@timestamp",
+        "level",
+        "log_level",
+        "logger",
+        "logger_name",
+        "service",
+        "schema_version",
+        "correlation_id",
+        "request_id",
+        "trace_id",
+        "span_id",
+        "http_path",
+        "http_method",
+        "http_status",
+        "status_code",
+        "latency_ms",
+        "elapsed_ms",
+        "rubric_version",
+        "corpus_version",
+        "benchmark_version",
+        "event",
+        "exception",
+        "exc_info",
+        "stack_info",
+        # Identifier keys — UUIDs and short IDs are structural, not PII.
+        "analysis_id",
+        "submission_id",
+        "public_short_id",
+        "project_id",
+        "report_id",
+        "ocr_job_id",
+        "delivery_request_id",
+        "celery_task_id",
+        "id",
+    }
+)
+
 REDACTED_PLACEHOLDER = "[REDACTED]"
 MAX_STRING_LEN = 1024
 
 _EMAIL_RX = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
-# Phone: 8+ digits with optional +/spaces/dashes; coarse but matches SV
-# numbers (e.g. +503 7000-0000 or 70000000).
-_PHONE_RX = re.compile(r"\+?\d[\d\s().-]{7,}\d")
+# Phone heuristic: 8+ digits in a `+`-prefixed or grouped run that uses
+# only digit-or-(space|dash|paren) separators — periods and colons are
+# **excluded** so ISO timestamps and version strings don't match.
+# Hex-letter lookahead/lookbehind keeps the regex from clipping UUID
+# fragments (UUIDs interleave hex letters with digit groups, e.g.
+# ``41231716-5b1f-42a3-...``). A digit-count post-check on the match
+# enforces the 8-digit minimum so 4-digit years etc. don't trip it.
+_PHONE_CANDIDATE_RX = re.compile(r"(?<![a-fA-F0-9\-])\+?\d[\d\s()\-]{6,}\d(?![a-fA-F0-9\-])")
+_PHONE_MIN_DIGITS = 8
+_ISO_TIMESTAMP_RX = re.compile(r"^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}")
+
+
+def _redact_phone(match: re.Match[str]) -> str:
+    snippet = match.group(0)
+    digit_count = sum(1 for c in snippet if c.isdigit())
+    if digit_count < _PHONE_MIN_DIGITS:
+        return snippet
+    return REDACTED_PLACEHOLDER
 
 
 def _redact_inline(text: str) -> str:
     text = _EMAIL_RX.sub(REDACTED_PLACEHOLDER, text)
-    text = _PHONE_RX.sub(REDACTED_PLACEHOLDER, text)
+    text = _PHONE_CANDIDATE_RX.sub(_redact_phone, text)
     if len(text) > MAX_STRING_LEN:
         text = text[: MAX_STRING_LEN - 1] + "…"
     return text
 
 
-def _scrub_value(value: Any) -> Any:
+def _looks_like_timestamp(value: str) -> bool:
+    return bool(_ISO_TIMESTAMP_RX.match(value))
+
+
+def _scrub_value(value: Any, *, key: str | None = None) -> Any:  # noqa: PLR0911 — single-pass type dispatch is clearer flat
     if isinstance(value, str):
+        if key and key.lower() in SAFE_LOG_KEYS:
+            # Truncate runaway values but leave structural keys alone.
+            return value if len(value) <= MAX_STRING_LEN else value[: MAX_STRING_LEN - 1] + "…"
+        if _looks_like_timestamp(value):
+            return value
         return _redact_inline(value)
     if isinstance(value, dict):
         return _scrub_mapping(value)
@@ -105,7 +178,7 @@ def _scrub_mapping(payload: MutableMapping[str, Any] | dict[str, Any]) -> dict[s
         if isinstance(key_lower, str) and key_lower in DENY_LOG_KEYS:
             out[key] = REDACTED_PLACEHOLDER
             continue
-        out[key] = _scrub_value(value)
+        out[key] = _scrub_value(value, key=key if isinstance(key, str) else None)
     return out
 
 
@@ -134,11 +207,19 @@ def deny_log_keys() -> Iterable[str]:
     return tuple(sorted(DENY_LOG_KEYS))
 
 
+def safe_log_keys() -> Iterable[str]:
+    """Return the safe-key allow-list (read-only view)."""
+
+    return tuple(sorted(SAFE_LOG_KEYS))
+
+
 __all__ = [
     "DENY_LOG_KEYS",
     "MAX_STRING_LEN",
     "REDACTED_PLACEHOLDER",
+    "SAFE_LOG_KEYS",
     "deny_log_keys",
+    "safe_log_keys",
     "scrub_event_dict",
     "scrub_payload",
 ]
