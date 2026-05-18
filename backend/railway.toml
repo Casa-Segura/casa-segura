@@ -1,19 +1,32 @@
 # Railway — shared backend config for web, worker, and beat.
 #
 # Layout: one Railway project, three Git-backed services (web, worker,
-# beat) all using `/backend` as Root Directory. Each service runs its
-# own Dockerfile (Dockerfile.web / .worker / .beat) and its own start
-# command.
+# beat) all using `/backend` as Root Directory. Railway loads this file
+# for every service mounted at `/backend` and config-as-code precedence
+# rules (https://docs.railway.com/config-as-code/reference) make any
+# key set here OVERRIDE the dashboard. So this file carries ONLY the
+# keys that are identical across web/worker/beat.
 #
-# ⚠ This file is loaded for EVERY service that mounts /backend, and
-# Railway's config-as-code precedence rules
-# (https://docs.railway.com/config-as-code/reference) make any key set
-# here OVERRIDE the dashboard for the same service. So only the keys
-# that are TRULY shared across web/worker/beat live here.
+# Per-service knobs live in TWO places:
 #
-# Process-specific keys (dockerfilePath, startCommand,
-# preDeployCommand, healthcheckPath) MUST be set per-service in the
-# Railway dashboard — see RAILWAY.md §5 for the per-service table.
+# 1. `RAILWAY_DOCKERFILE_PATH` env var on each service. This selects
+#    the Dockerfile that the service builds:
+#       web    → RAILWAY_DOCKERFILE_PATH=Dockerfile.web
+#       worker → RAILWAY_DOCKERFILE_PATH=Dockerfile.worker
+#       beat   → RAILWAY_DOCKERFILE_PATH=Dockerfile.beat
+#    Once the right image is built, the Dockerfile's own CMD line is
+#    the start command (gunicorn / celery worker / celery beat). No
+#    startCommand is needed in the toml or the dashboard.
+#
+# 2. Dashboard fields for `preDeployCommand` (web only — migrate +
+#    collectstatic) and `healthcheckPath` (web only — /api/health/).
+#    The worker and beat dashboards must leave both fields empty.
+#
+# Why no `dockerfilePath` here: if it were here, all three services
+# would build `Dockerfile.web` (the bug that produced TCP_ABORT_ON_DATA
+# to Postgres from a gunicorn-on-worker process). The env var keeps
+# this knob per-service while staying versioned (set it once per
+# service in the dashboard Variables; it never changes).
 
 [build]
 builder = "DOCKERFILE"

@@ -131,36 +131,48 @@ For each of `web`, `worker`, `beat`:
      the dashboard — railpack, Railway's new default, can ignore the
      `[build].builder = "DOCKERFILE"` line in `railway.toml` and
      autodetect Python instead, which fails on the monorepo layout).
-   - **Build → Dockerfile Path**: see table below (one Dockerfile per
-     service; do not leave blank — the default `Dockerfile` no longer
-     exists).
+   - Leave **Build → Dockerfile Path** and **Deploy → Start Command**
+     blank. They are set via env vars + Dockerfile CMD (see below).
    - **Deploy → Pre-deploy Command**: see table below (web only — the
      other two **must** leave it empty).
-   - **Deploy → Start Command**: see table below (overrides the toml's
-     default).
    - **Deploy → Healthcheck Path**: `/api/health/` (web only; blank for
      worker/beat).
+
+3. Service **Variables** — set the per-service Dockerfile selector
+   (this is **per service**, never shared):
+
+   | Service | Variable | Value |
+   |---|---|---|
+   | `web` | `RAILWAY_DOCKERFILE_PATH` | `Dockerfile.web` |
+   | `worker` | `RAILWAY_DOCKERFILE_PATH` | `Dockerfile.worker` |
+   | `beat` | `RAILWAY_DOCKERFILE_PATH` | `Dockerfile.beat` |
 
 The `worker` service **must** stay deployed for contract uploads to finish after OCR:
 it runs `ingestion.process_submission_pipeline` (F2 → rubric → delivery). Without it,
 submissions remain stuck past `extracted`.
 
-| Service | Dockerfile Path | Pre-deploy Command | Start Command | Healthcheck Path |
+| Service | RAILWAY_DOCKERFILE_PATH | Effective start command (from Dockerfile `CMD`) | Pre-deploy Command | Healthcheck Path |
 |---|---|---|---|---|
-| `web` | `Dockerfile.web` | `python manage.py migrate --noinput && python manage.py collectstatic --noinput` | `sh -c 'gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -'` | `/api/health/` |
-| `worker` | `Dockerfile.worker` | *(empty)* | `celery -A config.celery worker -l INFO --concurrency=2` | *(empty)* |
-| `beat` | `Dockerfile.beat` | *(empty)* | `celery -A config.celery beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler` | *(empty)* |
+| `web` | `Dockerfile.web` | `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --access-logfile -` | `python manage.py migrate --noinput && python manage.py collectstatic --noinput` | `/api/health/` |
+| `worker` | `Dockerfile.worker` | `celery -A config.celery worker -l INFO` | *(empty)* | *(empty)* |
+| `beat` | `Dockerfile.beat` | `celery -A config.celery beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler` | *(empty)* | *(empty)* |
 
-> **Why everything lives in the dashboard.** All three services share
-> `/backend` as Root Directory and therefore load the same
-> `backend/railway.toml`. Railway's config-as-code precedence
-> (https://docs.railway.com/config-as-code/reference) makes any key in
-> that file **override the dashboard**, so process-specific keys
-> (`dockerfilePath`, `startCommand`, `preDeployCommand`,
-> `healthcheckPath`) cannot live in the shared toml — they'd force the
-> worker / beat services into the web stack. The toml therefore only
-> carries the truly-shared `builder = DOCKERFILE` and the restart
-> policy; everything else is in the dashboard per service.
+> **Why the start command is in the Dockerfile, not the dashboard.**
+> Each Dockerfile (`Dockerfile.web` / `.worker` / `.beat`) ends with
+> its own `CMD` line. When Railway builds the right image for a
+> service (selected via `RAILWAY_DOCKERFILE_PATH`), the CMD baked into
+> that image is automatically the right process. Leaving Start Command
+> blank in the dashboard lets the image's CMD win — no per-service
+> override needed.
+
+> **Why `RAILWAY_DOCKERFILE_PATH` lives in Variables, not in `railway.toml`.**
+> All three services share `/backend` as Root Directory and load the
+> same `backend/railway.toml`. Railway's config-as-code precedence
+> (https://docs.railway.com/config-as-code/reference) would force
+> every service to use any `dockerfilePath` set in the shared toml.
+> Env vars are per-service, so this is the only place that can keep
+> the selector versioned per service without a Dockerfile-Path
+> override-fight.
 
 > **Why one Dockerfile per service.** Railway's dashboard does not expose
 > `--target` for multi-stage builds reliably, so each process ships its own
