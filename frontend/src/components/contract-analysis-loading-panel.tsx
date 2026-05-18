@@ -14,6 +14,10 @@ import {
   StatusPill,
   type ProgressStep,
 } from "@/components/casa-ui";
+import {
+  progressForElapsed,
+  withAnalysisLoadingProgress,
+} from "@/domain/analysis-loading-progress";
 
 /**
  * CS-293 — rotating tú reassurance + busy indicator; aria-live polite; wall-clock cadence.
@@ -47,6 +51,7 @@ export function ContractAnalysisLoadingPanel() {
     ? ANALYSIS_LOADING_LONG_WAIT_LINE
     : (ANALYSIS_LOADING_LINES[rotationIndex] ?? "");
   const progress = progressForElapsed(elapsedMs);
+  const steps = withAnalysisLoadingProgress(MODAL_LOADING_TEMPLATES, progress);
 
   return (
     <div
@@ -82,10 +87,7 @@ export function ContractAnalysisLoadingPanel() {
         </div>
 
         <div className="mt-5">
-          <ProgressTimeline
-            steps={buildLoadingSteps(progress)}
-            progress={progress}
-          />
+          <ProgressTimeline steps={steps} progress={progress} />
         </div>
 
         <div className="mt-5 rounded-[var(--radius-card)] border border-border bg-surface-subtle p-4">
@@ -119,46 +121,31 @@ export function ContractAnalysisLoadingPanel() {
   );
 }
 
-function progressForElapsed(elapsedMs: number): number {
-  if (elapsedMs < 4_000) return 18;
-  if (elapsedMs < 12_000) return 40;
-  if (elapsedMs < 28_000) return 58;
-  if (elapsedMs < 50_000) return 76;
-  if (elapsedMs < ANALYSIS_LOADING_LONG_WAIT_THRESHOLD_MS) return 88;
-  return 92;
-}
-
-function buildLoadingSteps(progress: number): ProgressStep[] {
-  return [
+const MODAL_LOADING_TEMPLATES: Pick<ProgressStep, "id" | "label" | "detail">[] =
+  [
     {
       id: "upload",
       label: "Contrato recibido",
       detail: "Validamos formato, tamaño y consentimiento.",
-      state: "done",
     },
     {
       id: "ocr",
       label: "Extrayendo texto del contrato",
       detail: "OCR y lectura del PDF en progreso.",
-      state: progress >= 40 ? "done" : "active",
     },
     {
       id: "criteria",
       label: "Analizando 38 criterios",
       detail: "Detectamos cláusulas y áreas de interés.",
-      state: progress >= 76 ? "done" : progress >= 40 ? "active" : "pending",
     },
     {
       id: "report",
       label: "Generando reporte PDF",
       detail: "Ordenamos hallazgos, citas y recomendaciones.",
-      state: progress >= 88 ? "active" : "pending",
     },
     {
       id: "delivery",
       label: "Preparando entrega",
       detail: "Confirmamos el canal que elegiste.",
-      state: "pending",
     },
   ];
-}

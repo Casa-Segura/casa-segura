@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   CheckCircle,
@@ -20,6 +21,10 @@ import {
   cx,
   type ProgressStep,
 } from "@/components/casa-ui";
+import {
+  progressForElapsed,
+  withAnalysisLoadingProgress,
+} from "@/domain/analysis-loading-progress";
 
 const ContractUploadPreview = dynamic(
   () => import("@/components/contract-upload-preview"),
@@ -45,43 +50,43 @@ export type AnalysisWorkbenchAssetPreview = {
 
 type WorkbenchMode = "loading" | "complete" | "preview";
 
-const defaultSteps: ProgressStep[] = [
+const workbenchLoadingTemplates: Pick<
+  ProgressStep,
+  "id" | "label" | "detail"
+>[] = [
   {
     id: "upload",
     label: "Contrato recibido",
     detail: "Guardamos el archivo sólo para este análisis.",
-    state: "done",
   },
   {
     id: "ocr",
     label: "Extrayendo texto",
     detail: "OCR y lectura del PDF en progreso.",
-    state: "done",
   },
   {
     id: "criteria",
     label: "Analizando 38 criterios",
     detail: "Comparando cláusulas contra señales de riesgo.",
-    state: "active",
   },
   {
     id: "report",
     label: "Generando reporte",
     detail: "Preparando resumen, citas y recomendaciones.",
-    state: "pending",
   },
   {
     id: "delivery",
     label: "Confirmando entrega",
     detail: "PDF, SMS o enlace web según tu selección.",
-    state: "pending",
   },
 ];
 
-const completedSteps: ProgressStep[] = defaultSteps.map((step) => ({
-  ...step,
-  state: "done",
-}));
+const completedSteps: ProgressStep[] = workbenchLoadingTemplates.map(
+  (step) => ({
+    ...step,
+    state: "done" as const,
+  }),
+);
 
 export function AnalysisWorkbench({
   mode = "preview",
@@ -178,20 +183,7 @@ export function AnalysisWorkbench({
                 transition={{ type: "spring", stiffness: 130, damping: 22 }}
                 className="flex flex-col gap-5"
               >
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-                    En vivo
-                  </p>
-                  <h2 className="mt-2 text-xl font-semibold tracking-tight text-text-primary">
-                    Revisando tu contrato
-                  </h2>
-                  <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                    Estamos leyendo el documento, detectando cláusulas y
-                    preparando las áreas de interés para el reporte final.
-                  </p>
-                </div>
-                <ProgressTimeline steps={defaultSteps} progress={58} />
-                <SkeletonPanel />
+                <WorkbenchLoadingColumn />
               </motion.div>
             ) : complete ? (
               <motion.div
@@ -259,6 +251,41 @@ export function AnalysisWorkbench({
         ) : null}
       </aside>
     </section>
+  );
+}
+
+/** Mounts only while desktop workbench is in loading mode; wall-clock progress matches CS-293 modal. */
+function WorkbenchLoadingColumn() {
+  const [elapsedMs, setElapsedMs] = useState(0);
+
+  useEffect(() => {
+    const start = Date.now();
+    const id = window.setInterval(() => {
+      setElapsedMs(Date.now() - start);
+    }, 1_000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const progress = progressForElapsed(elapsedMs);
+  const steps = withAnalysisLoadingProgress(workbenchLoadingTemplates, progress);
+
+  return (
+    <>
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          En vivo
+        </p>
+        <h2 className="mt-2 text-xl font-semibold tracking-tight text-text-primary">
+          Revisando tu contrato
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+          Estamos leyendo el documento, detectando cláusulas y preparando las
+          áreas de interés para el reporte final.
+        </p>
+      </div>
+      <ProgressTimeline steps={steps} progress={progress} />
+      <SkeletonPanel />
+    </>
   );
 }
 
