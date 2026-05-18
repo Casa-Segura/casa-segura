@@ -262,7 +262,7 @@ EMBEDDING_BATCH_SIZE = env.int("EMBEDDING_BATCH_SIZE", default=32)
 # Note: ACTIVE_CORPUSF_VERSION carries a legacy typo. Phase 1 honours
 # both spellings (preferring the typo to match the live `.env`), and a
 # follow-up will rename when the live secrets are updated.
-ACTIVE_RUBRIC_VERSION = env("ACTIVE_RUBRIC_VERSION", default="")
+ACTIVE_RUBRIC_VERSION = env("ACTIVE_RUBRIC_VERSION", default="1.0.0")
 ACTIVE_CORPUS_VERSION = env("ACTIVE_CORPUS_VERSION", default=env("ACTIVE_CORPUSF_VERSION", default=""))
 ACTIVE_BENCHMARK_VERSION = env("ACTIVE_BENCHMARK_VERSION", default="")
 
