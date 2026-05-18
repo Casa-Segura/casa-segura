@@ -1,0 +1,19 @@
+# Railway service config for the Casa Segura backend — `worker` service.
+#
+# This file is loaded ONLY when the worker service has
+# Settings → Source → Config File Path = railway.worker.toml. The
+# default railway.toml ships the web defaults; mixing the two without
+# the override would force the worker to build Dockerfile.web and run
+# gunicorn (which is the exact bug history this layout prevents).
+#
+# No `preDeployCommand` — migrations + collectstatic are owned by the
+# web service. No `healthcheckPath` — celery is not an HTTP server.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile.worker"
+
+[deploy]
+startCommand = "celery -A config.celery worker -l INFO --concurrency=2"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5

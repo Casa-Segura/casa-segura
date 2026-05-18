@@ -1,22 +1,38 @@
-# Railway — shared backend config for web, worker, and beat
-# (all three share Root Directory `/backend` so this file is loaded for each).
+# Railway service config for the Casa Segura backend — `web` service.
 #
-# ⚠ CRITICAL: Railway's config-as-code OVERRIDES the dashboard for any key
-# present in this file (https://docs.railway.com/config-as-code/reference).
-# Three services share this file — only keys that are identical across web,
-# worker, and beat may live here. Process-specific keys (dockerfilePath,
-# startCommand, preDeployCommand, healthcheckPath) MUST be set per-service
-# in the dashboard (or via RAILWAY_DOCKERFILE_PATH for the build target).
+# Multi-service layout: web / worker / beat each pick a dedicated config
+# file via Railway → Service → Settings → Source → Config File Path:
 #
-# Bug history: leaving `dockerfilePath = "Dockerfile.web"` here silently
-# forced the worker and beat services to build the web (gunicorn) image,
-# crashed them on the missing $PORT and a healthcheck they don't serve,
-# and meant Celery tasks (email, SMS, rubric pipeline) never ran. See
-# RAILWAY.md §5 for the per-service dashboard table.
+#   web    → railway.toml          (this file)
+#   worker → railway.worker.toml
+#   beat   → railway.beat.toml
+#
+# Railway's config-as-code precedence rules
+# (https://docs.railway.com/config-as-code/reference) mean any key set
+# here OVERRIDES the dashboard for the service that loads it. The three
+# files diverge precisely on the process-specific keys
+# (dockerfilePath / startCommand / preDeployCommand / healthcheckPath)
+# so worker and beat never accidentally inherit the web stack.
 
 [build]
 builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile.web"
 
 [deploy]
+# Run migrations + collectstatic on every deploy before traffic shifts.
+# Owned by `web` only — worker/beat must NOT run migrate (race on
+# Postgres advisory locks). The other two services point to their own
+# config file which omits this key.
+preDeployCommand = "python manage.py migrate --noinput && python manage.py collectstatic --noinput"
+
+# Bind to $PORT (Railway sets this). `sh -c` is required so $PORT
+# expands; Railway runs startCommand in exec form otherwise.
+startCommand = "sh -c 'gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -'"
+
+# Healthcheck — DRF health endpoint wired in CS-008. Returns 200 if
+# Django boots. Worker/beat omit this — they have no HTTP listener.
+healthcheckPath = "/api/health/"
+healthcheckTimeout = 30
+
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 5
